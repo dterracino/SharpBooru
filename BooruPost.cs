@@ -5,7 +5,10 @@ using System.Text;
 
 namespace SharpBooru
 {
-    class BooruPost
+    public class BooruPost : IDisposable
     {
+        private int ID;
+        private BooruImage Thumbnail;
+        private BooruImage Image;
     }
 }
