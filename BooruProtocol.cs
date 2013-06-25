@@ -5,6 +5,23 @@ namespace TEAM_ALPHA.SharpBooru
 {
     public class BooruProtocol
     {
+        /*
+         * Posts
+         *  Edit post
+         *  Remove post
+         *  Get post
+         *  Get image
+         *  
+         * Tags
+         *  Edit tag
+         *  (Add tag)
+         *  Remove tag
+         *  
+         * Aliases
+         *  Add alias
+         *  Remove alias
+         */
+
         public class Request
         {
             private ushort _Command;

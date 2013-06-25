@@ -22,6 +22,6 @@ namespace TEAM_ALPHA.SharpBooru
         public bool Private;
         public byte[] CompareImage;
 
-        public List<int> Tags;
+        public List<BooruTag> Tags;
     }
 }
