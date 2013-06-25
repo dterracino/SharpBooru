@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Drawing;
+using System.IO.Compression;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -39,6 +40,7 @@ namespace TEAM_ALPHA.SharpBooru
                     Booru booru = null;
                     if (File.Exists(Folder + "booru"))
                         using (FileStream fs = File.Open(Folder + "booru", FileMode.Open, FileAccess.Read, FileShare.Read))
+                        using (GZipStream gzstream = new GZipStream(fs, CompressionMode.Decompress))
                             booru = (Booru)formatter.Deserialize(fs);
                     else booru = new Booru();
                     booru._Folder = Folder;
@@ -53,6 +55,7 @@ namespace TEAM_ALPHA.SharpBooru
         {
             BinaryFormatter formatter = new BinaryFormatter();
             using (FileStream fs = File.Open(_Folder + "booru", FileMode.Create, FileAccess.Write, FileShare.Read))
+            using (GZipStream gzstream = new GZipStream(fs, CompressionMode.Compress))
                 formatter.Serialize(fs, this);
         }
 
@@ -62,5 +65,9 @@ namespace TEAM_ALPHA.SharpBooru
             //info.AddValue("tags", Tags);
             //info.AddValue("aliases", Aliases);
         }
+
+        public void Add(BooruPost Post) { Posts.Add(Post); }
+        public void Remove(BooruPost Post) { Posts.Remove(Post); }
+        public BooruPost this[int Index] { get { return Posts[Index]; } set { Posts[Index] = value; } }
     }
 }

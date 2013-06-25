@@ -8,6 +8,8 @@ namespace TEAM_ALPHA.SharpBooru
     [Serializable]
     public class BooruPost
     {
+        public uint ID;
+
         public Size Size;
         public BooruImage Image;
         public BooruImage Thumbnail;
