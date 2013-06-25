@@ -7,19 +7,19 @@ namespace TEAM_ALPHA.SharpBooru
     {
         /*
          * Posts
-         *  Edit post
-         *  Remove post
-         *  Get post
-         *  Get image
+         *  Edit post       Post ID     Dictionary<Variable, NewValue>
+         *  Remove post     Post ID
+         *  Get post        Post ID
+         *  Get image       Post ID
          *  
          * Tags
-         *  Edit tag
-         *  (Add tag)
-         *  Remove tag
+         *  Edit tag        Tag         Dictionary<Variable, NewValue>
+         *  (Add tag)       Tag         Dictionary<Variable, Values>
+         *  Remove tag      Tag
          *  
          * Aliases
-         *  Add alias
-         *  Remove alias
+         *  Add alias       Alias       Tag
+         *  Remove alias    Alias
          */
 
         public class Request
