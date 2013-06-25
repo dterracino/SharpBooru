@@ -1,11 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Drawing;
 
-namespace SharpBooru
+namespace TEAM_ALPHA.SharpBooru
 {
-    class BooruPost
+    public class BooruPost
     {
+        public uint ID;
+
+        public Size Size;
+        public BooruImage Image;
+        public BooruImage Thumbnail;
+
+        public string Comment;
+        public DateTime CreationDate;
+        public ushort EditCount;
+        public byte Rating;
+        public short Score;
+        public string Source;
+        public ushort ViewCount;
+        public bool Private;
+        public byte[] CompareImage;
     }
 }

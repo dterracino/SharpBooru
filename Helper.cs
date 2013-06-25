@@ -3,12 +3,9 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Drawing;
-//using System.Reflection;
-//using System.Windows.Forsm;
-//using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-namespace TEAM_ALPHA.SQLBooru
+namespace TEAM_ALPHA.SharpBooru
 {
     public class Helper
     {

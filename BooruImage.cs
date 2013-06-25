@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Security.Cryptography;
 
-namespace TEAM_ALPHA.SQLBooru
+namespace TEAM_ALPHA.SharpBooru
 {
     //TODO Check for null in constructors
     public class BooruImage : IDisposable, ICloneable

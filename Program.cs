@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SharpBooru
+namespace TEAM_ALPHA.SharpBooru
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
