@@ -6,7 +6,6 @@ using System.Security.Cryptography;
 
 namespace TEAM_ALPHA.SharpBooru
 {
-    //TODO Check for null in constructors
     public class BooruImage : IDisposable, ICloneable
     {
         private Bitmap _Bitmap;
