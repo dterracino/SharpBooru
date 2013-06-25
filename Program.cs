@@ -9,6 +9,9 @@ namespace TEAM_ALPHA.SharpBooru
     {
         static void Main(string[] args)
         {
+            Booru booru = Booru.Load("C:\\sharpBooru");
+            booru.Posts.Add(0, new BooruPost());
+            booru.Save();
         }
     }
 }

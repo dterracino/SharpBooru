@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Drawing;
+using System;
+using System.Collections.Generic;
 
 namespace TEAM_ALPHA.SharpBooru
 {
+    [Serializable]
     public class BooruPost
     {
-        public uint ID;
-
         public Size Size;
         public BooruImage Image;
         public BooruImage Thumbnail;
@@ -20,5 +21,7 @@ namespace TEAM_ALPHA.SharpBooru
         public ushort ViewCount;
         public bool Private;
         public byte[] CompareImage;
+
+        public List<int> Tags;
     }
 }
