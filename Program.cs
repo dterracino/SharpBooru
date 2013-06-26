@@ -9,8 +9,7 @@ namespace TEAM_ALPHA.SharpBooru
     {
         static void Main(string[] args)
         {
-            Booru booru = Booru.Load("C:\\SharpBooru");
-            booru.Save();
+
         }
     }
 }

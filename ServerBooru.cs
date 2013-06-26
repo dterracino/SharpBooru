@@ -10,10 +10,10 @@ using System.Runtime.Serialization.Formatters.Binary;
 namespace TEAM_ALPHA.SharpBooru
 {
     [Serializable]
-    public class Booru : ISerializable
+    public class ServerBooru : ISerializable
     {
-        private Booru() { }
-        protected Booru(SerializationInfo info, StreamingContext context)
+        private ServerBooru() { }
+        protected ServerBooru(SerializationInfo info, StreamingContext context)
         {
             Posts = (List<BooruPost>)info.GetValue("posts", typeof(List<BooruPost>));
             //Tags = (Dictionary<int, BooruTag>)info.GetValue("tags", typeof(Dictionary<int, BooruTag>));
@@ -28,7 +28,7 @@ namespace TEAM_ALPHA.SharpBooru
         private string _Folder;
         public string Folder { get { return _Folder; } }
 
-        public static Booru Load(string Folder)
+        public static ServerBooru Load(string Folder)
         {
             if (!string.IsNullOrWhiteSpace(Folder))
             {
@@ -37,12 +37,12 @@ namespace TEAM_ALPHA.SharpBooru
                 if (Directory.Exists(Folder))
                 {
                     BinaryFormatter formatter = new BinaryFormatter();
-                    Booru booru = null;
+                    ServerBooru booru = null;
                     if (File.Exists(Folder + "booru"))
                         using (FileStream fs = File.Open(Folder + "booru", FileMode.Open, FileAccess.Read, FileShare.Read))
                         using (GZipStream gzstream = new GZipStream(fs, CompressionMode.Decompress))
-                            booru = (Booru)formatter.Deserialize(fs);
-                    else booru = new Booru();
+                            booru = (ServerBooru)formatter.Deserialize(gzstream);
+                    else booru = new ServerBooru();
                     booru._Folder = Folder;
                     return booru;
                 }
@@ -56,7 +56,7 @@ namespace TEAM_ALPHA.SharpBooru
             BinaryFormatter formatter = new BinaryFormatter();
             using (FileStream fs = File.Open(_Folder + "booru", FileMode.Create, FileAccess.Write, FileShare.Read))
             using (GZipStream gzstream = new GZipStream(fs, CompressionMode.Compress))
-                formatter.Serialize(fs, this);
+                formatter.Serialize(gzstream, this);
         }
 
         public void GetObjectData(SerializationInfo info, StreamingContext context)

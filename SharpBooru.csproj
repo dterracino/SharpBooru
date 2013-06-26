@@ -38,7 +38,8 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Booru.cs" />
+    <Compile Include="ClientBooru.cs" />
+    <Compile Include="ServerBooru.cs" />
     <Compile Include="BooruImage.cs" />
     <Compile Include="BooruPost.cs" />
     <Compile Include="BooruProtocol.cs" />
