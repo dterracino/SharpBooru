@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace TEAM_ALPHA.SharpBooru
+namespace TA.SharpBooru.Server
 {
     public class Program
     {

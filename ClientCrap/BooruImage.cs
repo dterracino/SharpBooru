@@ -5,7 +5,7 @@ using System.Drawing.Imaging;
 using System.Security.Cryptography;
 using System.Runtime.Serialization;
 
-namespace TEAM_ALPHA.SharpBooru
+namespace TA.SharpBooru
 {
     [Serializable]
     public class BooruImage : IDisposable, ICloneable, ISerializable

@@ -2,18 +2,19 @@
 using System.IO;
 using System.Drawing;
 using System.Collections.Generic;
+using ProtoBuf;
 
-namespace TEAM_ALPHA.SharpBooru
+namespace TA.SharpBooru
 {
-    [Serializable]
-    public class BooruPost : IDisposable
+    [ProtoContract]
+    public class BooruPost
     {
-        public uint ID;
-
+        [ProtoMember(1)]
+        public ulong ID;
+        
+        //TODO Add ProtoMember attributes
         public Size Size;
-        public MemoryStream Image;
-        public MemoryStream CompareImage;
-        public MemoryStream Thumbnail;
+        public byte[] Thumbnail;
 
         public string Comment;
         public DateTime CreationDate;
@@ -25,12 +26,5 @@ namespace TEAM_ALPHA.SharpBooru
         public bool Private;
 
         public List<BooruTag> Tags;
-
-        public void Dispose()
-        {
-            Image.Dispose();
-            CompareImage.Dispose();
-            Thumbnail.Dispose();
-        }
     }
 }

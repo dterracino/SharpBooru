@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace TEAM_ALPHA.SharpBooru
+namespace TA.SharpBooru
 {
     public class BooruProtocol
     {

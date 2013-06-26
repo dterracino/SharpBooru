@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Drawing;
+using ProtoBuf;
 
-namespace TEAM_ALPHA.SharpBooru
+namespace TA.SharpBooru
 {
-    [Serializable]
+    [ProtoContract]
     public class BooruTag
     {
         public BooruTag(string Tag) { this.Tag = Tag; }
@@ -15,9 +16,16 @@ namespace TEAM_ALPHA.SharpBooru
             this.Color = Color;
         }
 
+        [ProtoMember(1)]
+        public ulong ID;
+
+        [ProtoMember(2)]
         public string Tag = "unknown";
+        [ProtoMember(3)]
         public string Type = "Temporary";
+        [ProtoMember(4)]
         public string Description = "Temporary tags";
+        [ProtoMember(5)]
         public Color Color = Color.Black;
     }
 }

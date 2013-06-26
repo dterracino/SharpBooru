@@ -5,7 +5,7 @@ using System.Text;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace TEAM_ALPHA.SharpBooru
+namespace TA.SharpBooru
 {
     public class Helper
     {

@@ -4,7 +4,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Net.Security;
 
-namespace SharpBooru
+namespace TA.SharpBooru.Server
 {
     public class ClientBooru : IDisposable
     {
@@ -13,9 +13,9 @@ namespace SharpBooru
         private IPEndPoint _EndPoint;
         string _Username, _Password;
         private TcpClient _Client;
+
+        private NetworkStream _NetworkStream;
         private SslStream _SSLStream;
-        private BinaryWriter _Writer;
-        private BinaryReader _Reader;
 
         public ClientBooru(string Server, ushort Port, string Username, string Password)
         {
@@ -40,14 +40,13 @@ namespace SharpBooru
             if (!_Client.Connected)
             {
                 _Client.Connect(_EndPoint);
-                _SSLStream = new SslStream(_Client.GetStream(), true, delegate { return true; });
+                _NetworkStream = _Client.GetStream();
+                _SSLStream = new SslStream(_NetworkStream, true, delegate { return true; });
                 _SSLStream.AuthenticateAsClient("SharpBooruServer");
-                _Reader = new BinaryReader(_SSLStream);
-                _Writer = new BinaryWriter(_SSLStream);
             }
         }
 
-        private object RequestResource(TEAM_ALPHA.SharpBooru.BooruProtocol.Command Command, object TargetObject, object Payload)
+        private object RequestResource(BooruProtocol.Command Command, object TargetObject, object Payload)
         {
             return null;
         }

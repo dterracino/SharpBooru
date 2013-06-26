@@ -8,8 +8,8 @@
     <ProjectGuid>{CFC86CCC-0330-4AD2-9536-242F23295CC9}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SharpBooru</RootNamespace>
-    <AssemblyName>SharpBooru</AssemblyName>
+    <RootNamespace>TA.SharpBooru.Server</RootNamespace>
+    <AssemblyName>SharpBooruServer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -39,7 +39,8 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientBooru.cs" />
+    <Compile Include="BooruClasses\BooruInfo.cs" />
+    <Compile Include="ClientCrap\ClientBooru.cs" />
     <Compile Include="protobuf-net\BclHelpers.cs" />
     <Compile Include="protobuf-net\BufferExtension.cs" />
     <Compile Include="protobuf-net\BufferPool.cs" />
@@ -126,10 +127,10 @@
     <Compile Include="protobuf-net\SubItemToken.cs" />
     <Compile Include="protobuf-net\WireType.cs" />
     <Compile Include="ServerBooru.cs" />
-    <Compile Include="BooruImage.cs" />
-    <Compile Include="BooruPost.cs" />
+    <Compile Include="ClientCrap\BooruImage.cs" />
+    <Compile Include="BooruClasses\BooruPost.cs" />
     <Compile Include="BooruProtocol.cs" />
-    <Compile Include="BooruTag.cs" />
+    <Compile Include="BooruClasses\BooruTag.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
