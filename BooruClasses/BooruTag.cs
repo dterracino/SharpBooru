@@ -13,7 +13,7 @@ namespace TA.SharpBooru
         {
             this.Type = Type;
             this.Description = Description;
-            this.Color = Color;
+            this.Color = Color.ToArgb();
         }
 
         [ProtoMember(1)]
@@ -26,6 +26,6 @@ namespace TA.SharpBooru
         [ProtoMember(4)]
         public string Description = "Temporary tags";
         [ProtoMember(5)]
-        public Color Color = Color.Black;
+        public int Color = unchecked((int)0xFF000000); //Black
     }
 }

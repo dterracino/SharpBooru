@@ -11,7 +11,8 @@
     <RootNamespace>TA.SharpBooru.Server</RootNamespace>
     <AssemblyName>SharpBooruServer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -28,15 +29,17 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+    <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BooruClasses\BooruInfo.cs" />
@@ -126,7 +129,6 @@
     <Compile Include="protobuf-net\ServiceModel\XmlProtoSerializer.cs" />
     <Compile Include="protobuf-net\SubItemToken.cs" />
     <Compile Include="protobuf-net\WireType.cs" />
-    <Compile Include="ServerBooru.cs" />
     <Compile Include="ClientCrap\BooruImage.cs" />
     <Compile Include="BooruClasses\BooruPost.cs" />
     <Compile Include="BooruProtocol.cs" />
@@ -134,6 +136,7 @@
     <Compile Include="Helper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="SmartThreadPool\CallerThreadContext.cs" />
     <Compile Include="SmartThreadPool\CanceledWorkItemsGroup.cs" />
     <Compile Include="SmartThreadPool\EventWaitHandle.cs" />
@@ -158,9 +161,6 @@
     <Compile Include="SmartThreadPool\WorkItemsGroup.cs" />
     <Compile Include="SmartThreadPool\WorkItemsGroupBase.cs" />
     <Compile Include="SmartThreadPool\WorkItemsQueue.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="protobuf-net\protobuf-net.csproj" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

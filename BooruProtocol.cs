@@ -1,14 +1,15 @@
 ﻿using System;
 using System.IO;
+using ProtoBuf;
 
 namespace TA.SharpBooru
 {
-    public class BooruProtocol
+    public static class BooruProtocol
     {
-        //Command - TargetObject - Payload
         public enum Command : byte
         {
-            AddPost = 0, //null - BooruPost
+            Login = 0,
+            AddPost, //null - BooruPost
             EditPost, //PostID - BooruPost w. images set to null
             RemovePost, //PostID - null
             GetPost, //PostID - null
@@ -19,5 +20,41 @@ namespace TA.SharpBooru
             AddAlias, //AliasString - BooruTag
             RemoveAlias //AliasString
         }
+
+        public enum ErrorCode : byte
+        {
+            Success = 0,
+            AccessDenied,
+            NoPermission,
+            UnknownError
+        }
+
+        [ProtoContract]
+        public class Request<TPayload>
+        {
+            [ProtoMember(1)]
+            public Command Command;
+            [ProtoMember(2)]
+            public ulong Target;
+            [ProtoMember(3)]
+            public TPayload Payload;
+        }
+
+        [ProtoContract]
+        public class Response<TPayload>
+        {
+            [ProtoMember(1)]
+            public ErrorCode ErrorCode;
+            [ProtoMember(2)]
+            public TPayload Payload;
+        }
+
+        public static void SendRequest<T>(Stream Stream, Request<T> Packet) { Serializer.Serialize<Request<T>>(Stream, Packet); }
+
+        public static Request<T> ReceiveRequest<T>(Stream Stream) { return Serializer.Deserialize<Request<T>>(Stream); }
+
+        public static void SendResponse<T>(Stream Stream, Response<T> Packet) { Serializer.Serialize<Response<T>>(Stream, Packet); }
+
+        public static Response<T> ReceiveResponse<T>(Stream Stream) { return Serializer.Deserialize<Response<T>>(Stream); }
     }
 }

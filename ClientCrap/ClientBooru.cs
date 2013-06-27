@@ -6,7 +6,7 @@ using System.Net.Security;
 
 namespace TA.SharpBooru.Server
 {
-    public class ClientBooru : IDisposable
+    public class ClientBooru
     {
         private byte[] _SessionID;
 
