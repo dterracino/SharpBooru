@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientHandler.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="BooruServer.cs" />
@@ -73,7 +74,7 @@
     <Compile Include="SmartThreadPool\WorkItemsQueue.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\libSharpBooruClient\libSharpBooru.csproj">
+    <ProjectReference Include="..\libSharpBooru\libSharpBooru.csproj">
       <Project>{0B2579ED-EC4D-455B-9468-1AFCC51A241B}</Project>
       <Name>libSharpBooru</Name>
     </ProjectReference>
