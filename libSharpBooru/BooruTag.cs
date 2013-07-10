@@ -23,7 +23,14 @@ namespace TA.SharpBooru
             this.Color = Color.ToArgb();
         }
 
-        public static bool operator ==(BooruTag Tag1, BooruTag Tag2) { return Tag1.ID == Tag2.ID; }
+        public static bool operator ==(BooruTag Tag1, BooruTag Tag2)
+        {
+            if ((object)Tag1 == null && (object)Tag2 == null)
+                return true;
+            else if ((object)Tag1 == null || (object)Tag2 == null)
+                return false;
+            else return Tag1.ID == Tag2.ID; 
+        }
 
         public static bool operator !=(BooruTag Tag1, BooruTag Tag2) { return !(Tag1 == Tag2); }
 
@@ -79,7 +86,7 @@ namespace TA.SharpBooru
             return false;
         }
 
-        public void Remove(ulong ID) { this.RemoveAll(x => { return x.ID == ID; }); }
+        public int Remove(ulong ID) { return this.RemoveAll(x => { return x.ID == ID; }); }
 
         public void ToWriter(BinaryWriter Writer)
         {

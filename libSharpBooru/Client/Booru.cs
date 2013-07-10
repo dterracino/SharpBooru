@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace TA.SharpBooru.Client
 {
-    public class Booru
+    public class Booru : IDisposable
     {
         public static readonly uint ClientVersion = 1;
 
@@ -54,81 +54,132 @@ namespace TA.SharpBooru.Client
         {
             if (!_Client.Connected)
             {
-                try
-                {
-                    _Reader.Close();
-                    _Writer.Close();
-                    _SSLStream.Close();
-                    _Client.Close();
-                    _Client = new TcpClient();
-                }
-                catch { }
+                Disconnect();
                 _Client.Connect(_EndPoint);
                 _SSLStream = new SslStream(_Client.GetStream(), true, delegate { return true; });
                 _SSLStream.AuthenticateAsClient("SharpBooruServer");
                 _Reader = new BinaryReader(_SSLStream, Encoding.Unicode);
                 _Writer = new BinaryWriter(_SSLStream, Encoding.Unicode);
                 _Writer.Write(ClientVersion);
-                if (_Reader.ReadBoolean())
-                    throw new ProtocolViolationException("Server version mismatch");
+                if (!_Reader.ReadBoolean())
+                    throw new BooruProtocol.BooruException("Server version mismatch");
                 _Writer.Write(_Username);
                 _Writer.Write(_Password);
-                if (_Reader.ReadBoolean())
-                    throw new SecurityException("Login failed");
+                if (!_Reader.ReadBoolean())
+                    throw new BooruProtocol.BooruException("Login failed");
             }
         }
 
-        public TOut Communicate<TOut, TIn>(BooruProtocol.Command Command, TIn Payload) { return (TOut)Communicate(Command, Payload); }
-        public object Communicate(BooruProtocol.Command Command, object Payload)
+        private void BeginCommunication(BooruProtocol.Command Command)
         {
             Connect();
             _Writer.Write((byte)Command);
-            switch (Command)
+        }
+
+        private void EndCommunication()
+        {
+            var errorCode = (BooruProtocol.ErrorCode)_Reader.ReadByte();
+            if (errorCode != BooruProtocol.ErrorCode.Success)
+                throw new BooruProtocol.BooruException(errorCode);
+        }
+
+        public BooruPost GetPost(ulong ID)
+        {
+            BeginCommunication(BooruProtocol.Command.GetPost);
+            _Writer.Write(ID);
+            EndCommunication();
+            return BooruPost.FromReader(_Reader);
+        }
+
+        public BooruImage GetImage(ulong ID)
+        {
+            BeginCommunication(BooruProtocol.Command.GetImage);
+            _Writer.Write(ID);
+            EndCommunication();
+            int byteCount = (int)_Reader.ReadUInt32();
+            return new BooruImage(_Reader.ReadBytes(byteCount));
+        }
+
+        public void DeletePost(ulong ID)
+        {
+            BeginCommunication(BooruProtocol.Command.DeletePost);
+            _Writer.Write(ID);
+            EndCommunication();
+        }
+
+        public void SaveServerBooru() 
+        {
+            BeginCommunication(BooruProtocol.Command.SaveBooru);
+            EndCommunication();
+        }
+
+        public List<ulong> Search(string Pattern)
+        {
+            BeginCommunication(BooruProtocol.Command.Search);
+            _Writer.Write(Pattern);
+            EndCommunication();
+                uint count = _Reader.ReadUInt32();
+                List<ulong> IDs = new List<ulong>();
+                for (uint i = 0; i < count; i++)
+                    IDs.Add(_Reader.ReadUInt64());
+                return IDs;
+        }
+
+        public void DeleteTag(ulong ID)
+        {
+            BeginCommunication(BooruProtocol.Command.DeleteTag);
+            _Writer.Write(ID);
+            EndCommunication();
+        }
+
+        public ulong EditTag(ulong ID, BooruTag NewTag)
+        {
+            BeginCommunication(BooruProtocol.Command.EditTag);
+            _Writer.Write(ID);
+            NewTag.ToWriter(_Writer);
+            EndCommunication();
+            return _Reader.ReadUInt64();
+        }
+
+        public ulong AddPost(BooruPost NewPost, BooruImage Image)
+        {
+            BeginCommunication(BooruProtocol.Command.AddPost);
+            NewPost.ToWriter(_Writer);
+            Image.ToWriter(_Writer);
+            EndCommunication();
+            return _Reader.ReadUInt64();
+        }
+
+        public ulong AddPost(BooruAPIs.BooruAPIPost NewAPIPost)
+        {
+            NewAPIPost.DownloadImage();
+            BeginCommunication(BooruProtocol.Command.AddPost);
+            NewAPIPost.ToWriter(_Writer);
+            NewAPIPost.Image.ToWriter(_Writer);
+            EndCommunication();
+            return _Reader.ReadUInt64();
+        }
+
+        public void ForceKillServer() { BeginCommunication(BooruProtocol.Command.ForceKillServer); }
+
+        public void Disconnect() { Dispose(); }
+        public void Dispose()
+        {
+            try
             {
-                case BooruProtocol.Command.GetPost:
-                    {
-                        _Writer.Write((ulong)Payload);
-                        var errorCode = (BooruProtocol.ErrorCode)_Reader.ReadByte();
-                        if (errorCode == BooruProtocol.ErrorCode.Success)
-                            return BooruPost.FromReader(_Reader);
-                        else return null;
-                    }
-                case BooruProtocol.Command.GetImage:
-                    {
-                        _Writer.Write((ulong)Payload);
-                        var errorCode = (BooruProtocol.ErrorCode)_Reader.ReadByte();
-                        if (errorCode == BooruProtocol.ErrorCode.Success)
-                        {
-                            int byteCount = (int)_Reader.ReadUInt32();
-                            return _Reader.ReadBytes(byteCount);
-                        }
-                        else return null;
-                    }
-                case BooruProtocol.Command.SaveBooru:
-                    _Reader.ReadByte();
-                    return true;
-                case BooruProtocol.Command.Search:
-                    {
-                        _Writer.Write((string)Payload);
-                        var errorCode = (BooruProtocol.ErrorCode)_Reader.ReadByte();
-                        if (errorCode == BooruProtocol.ErrorCode.Success)
-                        {
-                            uint count = _Reader.ReadUInt32();
-                            List<ulong> IDs = new List<ulong>();
-                            for (uint i = 0; i < count; i++)
-                                IDs.Add(_Reader.ReadUInt64());
-                            return IDs;
-                        }
-                        else return null;
-                    }
-                //case BooruProtocol.Command.AddPost: //TODO
-                //case BooruProtocol.Command.EditPost: _Server.Booru.EditPost(_Reader); break;
-                //case BooruProtocol.Command.RemovePost: _Server.Booru.RemovePost(_Reader); break;
-                //case BooruProtocol.Command.EditImage: _Server.Booru.EditImage(_Reader, _Writer); break;
-                //case BooruProtocol.Command.EditTag: _Server.Booru.EditTag(_Reader, _Writer); break;
-                //case BooruProtocol.Command.RemoveTag: _Server.Booru.RemoveTag(_Reader); break;
-                default: throw new NotImplementedException();
+                if (_Client.Connected)
+                    BeginCommunication(BooruProtocol.Command.Disconnect);
             }
+            catch { }
+            try
+            {
+                _Reader.Close();
+                _Writer.Close();
+                _SSLStream.Close();
+                _Client.Close();
+            }
+            catch { }
+            finally { _Client = new TcpClient(); }
         }
     }
 }

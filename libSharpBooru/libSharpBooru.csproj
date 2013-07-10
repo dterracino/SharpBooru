@@ -21,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -33,8 +34,23 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BooruAPIs\BooruAPI.cs" />
+    <Compile Include="BooruAPIs\BooruAPIPost.cs" />
+    <Compile Include="BooruAPIs\GelbooruAPI.cs" />
+    <Compile Include="BooruAPIs\KonachanAPI.cs" />
+    <Compile Include="BooruAPIs\SafebooruAPI.cs" />
+    <Compile Include="BooruImage.cs" />
+    <Compile Include="LitJSON\IJsonWrapper.cs" />
+    <Compile Include="LitJSON\JsonData.cs" />
+    <Compile Include="LitJSON\JsonException.cs" />
+    <Compile Include="LitJSON\JsonMapper.cs" />
+    <Compile Include="LitJSON\JsonReader.cs" />
+    <Compile Include="LitJSON\JsonWriter.cs" />
+    <Compile Include="LitJSON\Lexer.cs" />
+    <Compile Include="LitJSON\ParserToken.cs" />
     <Compile Include="Server\BooruUser.cs" />
     <Compile Include="Client\Booru.cs" />
     <Compile Include="BooruPost.cs" />

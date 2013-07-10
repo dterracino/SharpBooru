@@ -3,12 +3,10 @@ using System.IO;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Security.Cryptography;
-using System.Runtime.Serialization;
 
 namespace TA.SharpBooru
 {
-    [Serializable]
-    public class BooruImage : IDisposable, ICloneable, ISerializable
+    public class BooruImage : IDisposable, ICloneable
     {
         private Bitmap _Bitmap;
         private byte[] _Bytes;
@@ -200,8 +198,16 @@ namespace TA.SharpBooru
             return false;
         }
 
-        public void GetObjectData(SerializationInfo info, StreamingContext context) { info.AddValue("bytes", _Bytes); }
+        public void ToWriter(BinaryWriter Writer)
+        {
+            Writer.Write(Bytes.Length);
+            Writer.Write(Bytes); 
+        }
 
-        protected BooruImage(SerializationInfo info, StreamingContext context) : base() { _Bytes = (byte[])info.GetValue("bytes", typeof(byte[])); }
+        public static BooruImage FromReader(BinaryReader Reader)
+        {
+            int length = Reader.ReadInt32();
+            return new BooruImage(Reader.ReadBytes(length));
+        }
     }
 }

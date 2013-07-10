@@ -11,13 +11,14 @@ namespace TA.SharpBooru.Server
     {
         static void Main(string[] args)
         {
-            Booru booru = Booru.ReadFromDisk("D:\\___BOORU");
-
-            X509Certificate cert = new X509Certificate("C:\\server.pfx", "sharpbooru");
-            BooruServer server = new BooruServer(booru, cert);
+            if (args.Length != 1)
+                throw new ArgumentException("Server needs one argument");
+            Booru sBooru = Booru.ReadFromDisk(args[0]);
+            Logger sLogger = new Logger(Console.Out, Helper.IsPOSIX());
+            X509Certificate sCertificate = new X509Certificate("C:\\server.pfx", "sharpbooru");
+            BooruServer server = new BooruServer(sBooru, sLogger, sCertificate);
 
             server.Start();
-            Console.WriteLine("Server running...");
             Console.ReadKey();
             server.Booru.SaveToDisk();
             server.Stop();

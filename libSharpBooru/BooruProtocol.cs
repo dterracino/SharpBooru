@@ -11,37 +11,41 @@ namespace TA.SharpBooru
             // IDs(ulong[]), SearchPattern(string)
             Search,
 
+            // void, void
+            SaveBooru,
+
+            // void, void
+            ForceKillServer,
+
+            // void, void
+            Disconnect,
+
             // Post(BooruPost), PostID(ulong)
             GetPost,
 
-            // ImageBytes(byte[]), PostID(ulong)
+            // Image(BooruImage), PostID(ulong)
             GetImage,
 
-            // void, void
-            SaveBooru
-
-            /*
-
-            // Private(bool), Rating(byte), Source(string), Comment(string),
-            // Width(uint), Height(uint), TagCount(uint), Tags(string)...,
-            // ThumbLength(uint), Thumbnail(byte[]), ImageLength(uint), Image(byte[])
-            AddPost = 0, 
-
-            // PostID(ulong), Rating(byte), ... no images
-            EditPost,
-
             // PostID(ulong)
-            RemovePost,
+            DeletePost,
 
-            // PostID(ulong), ImageLength(uint), Image(byte[])
-            EditImage,
+            // void, TagID(ulong)
+            DeleteTag,
 
-            // TagID(ulong), Tag(string), Type(string), Description(string), Color(int)
+            // NewTagID(ulong), TagID(ulong), NewTag(BooruTag)
             EditTag,
 
-            // TagID(ulong)
-            RemoveTag,
+            // NewPostID(ulong), Post(BooruPost), Image(BooruImage)
+            AddPost,
 
+            // NewPostID(ulong), PostID(ulong), NewPost(BooruPost)
+            EditPost,
+
+            // PostID(ulong), Image(BooruImage)
+            //EditImage
+
+            /*
+            
             //TODO Implement Aliases
             AddAlias, //AliasString - BooruTag
             RemoveAlias //AliasString
@@ -52,9 +56,18 @@ namespace TA.SharpBooru
         public enum ErrorCode : byte
         {
             Success = 0,
-            NotFound,
-            AccessDenied,
+            ResourceNotFound,
+            NoPermission,
             UnknownError
+        }
+
+        public class BooruException : Exception
+        {
+            public BooruException(string Message)
+                : base(Message) { }
+
+            public BooruException(ErrorCode ErrorCode)
+                : this(string.Format("Server returned ErrorCode {0}: {1}", (byte)ErrorCode, ErrorCode)) { }
         }
     }
 }

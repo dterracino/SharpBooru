@@ -8,10 +8,11 @@
     <ProjectGuid>{E6234399-C5F1-4393-8100-43DA9839A669}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SharpBooruClient_Test</RootNamespace>
-    <AssemblyName>SharpBooruClient_Test</AssemblyName>
+    <RootNamespace>TA.SharpBooru.Client.CLI</RootNamespace>
+    <AssemblyName>SharpBooruCLIClient</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -36,7 +37,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

@@ -8,9 +8,6 @@ namespace TA.SharpBooru.Server
     public class Booru
     {
         public string Folder;
-        public string Name = "Booru";
-        public string Creator = "Anonymous";
-        public string Description = string.Empty;
         public Dictionary<string, string> Configuration = new Dictionary<string, string>();
         public List<BooruUser> Users = new List<BooruUser>();
 
@@ -18,15 +15,18 @@ namespace TA.SharpBooru.Server
         public ulong TagIDCounter = 0;
         public BooruPostList Posts = new BooruPostList();
 
-        public void WriteFile(BinaryReader Reader, string Name)
+        public ulong GetNextPostID() { return PostIDCounter++; }
+
+        public ulong GetNextTagID() { return TagIDCounter++; }
+
+        //Name
+        //Creator
+        //Description
+        //DefaultTagType
+        public T GetConfigEntry<T>(string Key)
         {
-            int length = (int)Reader.ReadUInt32();
-            using (FileStream file = File.Open(Folder + Name, FileMode.Create, FileAccess.Write, FileShare.Read))
-            {
-                for (int i = 0; i < length / 1024; i++)
-                    file.Write(Reader.ReadBytes(1024), 0, 1024);
-                file.Write(Reader.ReadBytes(length % 1024), 0, length % 1024);
-            }
+            string entry = Configuration[Key];
+            return (T)Convert.ChangeType(entry, typeof(T));
         }
 
         public void ReadFile(BinaryWriter Writer, string Name)
@@ -167,9 +167,6 @@ namespace TA.SharpBooru.Server
 
         public void ToWriter(BinaryWriter Writer)
         {
-            Writer.Write(Name);
-            Writer.Write(Creator);
-            Writer.Write(Description);
             Writer.Write(PostIDCounter);
             Writer.Write(TagIDCounter);
             Writer.Write((uint)Configuration.Count);
@@ -187,9 +184,6 @@ namespace TA.SharpBooru.Server
         {
             Booru booru = new Booru()
             {
-                Name = Reader.ReadString(),
-                Creator = Reader.ReadString(),
-                Description = Reader.ReadString(),
                 PostIDCounter = Reader.ReadUInt64(),
                 TagIDCounter = Reader.ReadUInt64()
             };

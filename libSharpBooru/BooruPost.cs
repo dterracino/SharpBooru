@@ -7,20 +7,28 @@ namespace TA.SharpBooru
     public class BooruPost
     {
         public bool Private = false;
+        public string Owner = string.Empty;
         public byte Rating = 0;
         public string Source = string.Empty;
         public string Comment = string.Empty;
         public uint Width = 0;
         public uint Height = 0;
         public BooruTagList Tags = new BooruTagList();
-
+        //TODO Thumbnail
         public ulong ID = 0;
         public DateTime CreationDate = DateTime.Now;
         public ulong ViewCount = 0;
         public ulong EditCount = 0;
         public long Score = 0;
 
-        public static bool operator ==(BooruPost Post1, BooruPost Post2) { return Post1.ID == Post2.ID; }
+        public static bool operator ==(BooruPost Post1, BooruPost Post2)
+        {
+            if ((object)Post1 == null && (object)Post2 == null)
+                return true;
+            else if ((object)Post1 == null || (object)Post2 == null)
+                return false;
+            else return Post1.ID == Post2.ID;
+        }
 
         public static bool operator !=(BooruPost Post1, BooruPost Post2) { return !(Post1 == Post2); }
 
@@ -32,6 +40,7 @@ namespace TA.SharpBooru
         {
             Writer.Write(ID);
             Writer.Write(Private);
+            Writer.Write(Owner);
             Writer.Write(Rating);
             Writer.Write(Source);
             Writer.Write(Comment);
@@ -50,6 +59,7 @@ namespace TA.SharpBooru
             {
                 ID = Reader.ReadUInt64(),
                 Private = Reader.ReadBoolean(),
+                Owner = Reader.ReadString(),
                 Rating = Reader.ReadByte(),
                 Source = Reader.ReadString(),
                 Comment = Reader.ReadString(),
@@ -79,7 +89,7 @@ namespace TA.SharpBooru
 
         public bool Contains(ulong ID) { return this[ID] != null; }
 
-        public void Remove(ulong ID) { this.RemoveAll(x => { return x.ID == ID; }); }
+        public int Remove(ulong ID) { return this.RemoveAll(x => { return x.ID == ID; }); }
 
         public void ToWriter(BinaryWriter Writer)
         {

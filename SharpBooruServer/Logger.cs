@@ -87,6 +87,8 @@ namespace TA.SharpBooru.Server
             }
         }
 
+        public void LogFAILAndException(Exception Exception) { LogFAILAndLine("{0}", Exception.Message); }
+
         public int LogFAILAndLineAndReturn(int ReturnCode, string Format, params object[] Args)
         {
             LogFAILAndLine(Format, Args);
