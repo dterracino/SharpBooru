@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -36,25 +37,89 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Form1.cs">
-      <SubType>Form</SubType>
+    <Compile Include="Controls\ScalablePictureBox\Common.cs" />
+    <Compile Include="Controls\ScalablePictureBox\PictureTracker.cs">
+      <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Form1.Designer.cs">
-      <DependentUpon>Form1.cs</DependentUpon>
+    <Compile Include="Controls\ScalablePictureBox\PictureTracker.designer.cs">
+      <DependentUpon>PictureTracker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\ScalablePictureBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\ScalablePictureBox.designer.cs">
+      <DependentUpon>ScalablePictureBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\ScalablePictureBoxImp.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\ScalablePictureBoxImp.designer.cs">
+      <DependentUpon>ScalablePictureBoxImp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\TransparentButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\TransparentButton.designer.cs">
+      <DependentUpon>TransparentButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\Util.cs" />
+    <Compile Include="Controls\TagList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\TagList.Designer.cs">
+      <DependentUpon>TagList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\TagTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ThumbnailView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ThumbnailView.Designer.cs">
+      <DependentUpon>ThumbnailView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="GUIHelper.cs" />
+    <Compile Include="nControls\AjaxProgressIndicator.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="nControls\SelectablePictureBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="nControls\ThumbnailView.cs">
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="testForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="testForm.Designer.cs">
+      <DependentUpon>testForm.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Controls\ScalablePictureBox\PictureTracker.resx">
+      <DependentUpon>PictureTracker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ScalablePictureBox\ScalablePictureBox.resx">
+      <DependentUpon>ScalablePictureBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ScalablePictureBox\ScalablePictureBoxImp.resx">
+      <DependentUpon>ScalablePictureBoxImp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ScalablePictureBox\TransparentButton.resx">
+      <DependentUpon>TransparentButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\TagList.resx">
+      <DependentUpon>TagList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ThumbnailView.resx">
+      <DependentUpon>ThumbnailView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -65,6 +130,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="testForm.resx">
+      <DependentUpon>testForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -74,6 +142,40 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_arrow_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_arrow_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_ok.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libSharpBooru\libSharpBooru.csproj">
+      <Project>{0B2579ED-EC4D-455B-9468-1AFCC51A241B}</Project>
+      <Name>libSharpBooru</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ajax_loading.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_fullscreen.png" />
+    <None Include="Resources\icon_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\logo_photoshop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_save.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -88,7 +88,9 @@ namespace TA.SharpBooru.Client
             BeginCommunication(BooruProtocol.Command.GetPost);
             _Writer.Write(ID);
             EndCommunication();
-            return BooruPost.FromReader(_Reader);
+            BooruPost post = BooruPost.FromReader(_Reader);
+            post.Thumbnail = BooruImage.FromReader(_Reader);
+            return post;
         }
 
         public BooruImage GetImage(ulong ID)
@@ -98,6 +100,12 @@ namespace TA.SharpBooru.Client
             EndCommunication();
             int byteCount = (int)_Reader.ReadUInt32();
             return new BooruImage(_Reader.ReadBytes(byteCount));
+        }
+
+        public void GetImage(ref BooruPost Post)
+        {
+            if (Post.Image == null)
+                Post.Image = GetImage(Post.ID);
         }
 
         public void DeletePost(ulong ID)

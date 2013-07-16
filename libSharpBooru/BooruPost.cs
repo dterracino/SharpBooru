@@ -14,12 +14,15 @@ namespace TA.SharpBooru
         public uint Width = 0;
         public uint Height = 0;
         public BooruTagList Tags = new BooruTagList();
-        //TODO Thumbnail
+
         public ulong ID = 0;
         public DateTime CreationDate = DateTime.Now;
         public ulong ViewCount = 0;
         public ulong EditCount = 0;
         public long Score = 0;
+
+        public BooruImage Image = null;
+        public BooruImage Thumbnail = null;
 
         public static bool operator ==(BooruPost Post1, BooruPost Post2)
         {
@@ -36,7 +39,7 @@ namespace TA.SharpBooru
 
         public override int GetHashCode() { return ID.GetHashCode(); }
 
-        public void ToWriter(BinaryWriter Writer)
+        public void ToWriter(BinaryWriter Writer, bool IncludeImage = false)
         {
             Writer.Write(ID);
             Writer.Write(Private);
@@ -51,9 +54,11 @@ namespace TA.SharpBooru
             Writer.Write(EditCount);
             Writer.Write(Score);
             Tags.ToWriter(Writer);
+            if (IncludeImage)
+                Image.ToWriter(Writer);
         }
 
-        public static BooruPost FromReader(BinaryReader Reader)
+        public static BooruPost FromReader(BinaryReader Reader, bool IncludeImage = false)
         {
             return new BooruPost()
             {
@@ -69,7 +74,8 @@ namespace TA.SharpBooru
                 ViewCount = Reader.ReadUInt64(),
                 EditCount = Reader.ReadUInt64(),
                 Score = Reader.ReadInt64(),
-                Tags = BooruTagList.FromReader(Reader)
+                Tags = BooruTagList.FromReader(Reader),
+                Image = IncludeImage ? BooruImage.FromReader(Reader) : null
             };
         }
     }

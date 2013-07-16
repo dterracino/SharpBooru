@@ -100,22 +100,22 @@ namespace TA.SharpBooru
                 return _AttachConsole(0x0ffffffff);
             return false;
         }
+        */
         
         [DllImport("user32.dll", EntryPoint = "SendMessage")]
         private static extern int _SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
-        public static int SetListViewPadding(ListView listview, int leftPadding, int topPadding)
+        public static int SetListViewPadding(IntPtr listViewHandle, int leftPadding, int topPadding)
         {
             if (!IsMono())
             {
                 const int LVM_FIRST = 0x1000;
                 const int LVM_SETICONSPACING = LVM_FIRST + 53;
                 int arg = (int)(((ushort)leftPadding) | (uint)((short)topPadding << 16));
-                return _SendMessage(listview.Handle, LVM_SETICONSPACING, IntPtr.Zero, (IntPtr)arg);
+                return _SendMessage(listViewHandle, LVM_SETICONSPACING, IntPtr.Zero, (IntPtr)arg);
             }
             else return -1;
         }
-        */
 
         public static string DownloadTemporary(string URI)
         {
@@ -174,7 +174,7 @@ namespace TA.SharpBooru
         }
 
         public static Color OppositeColor(Color Color, bool AlsoAlpha = false) { return Color.FromArgb(AlsoAlpha ? 255 - Color.A : 255, 255 - Color.R, 255 - Color.G, 255 - Color.B); }
-
+        
         /*
         public static bool SetWallpaper(string Path, bool DeleteFileOnSuccess = false)
         {
@@ -196,13 +196,6 @@ namespace TA.SharpBooru
                 return SetWallpaper(tempFile, DeleteTempFileOnSuccess);
             }
             else return false;
-        }
-
-        public static ToolTip CreateToolTip(Control Control, string Text)
-        {
-            ToolTip tt = new ToolTip();
-            tt.SetToolTip(Control, Text);
-            return tt;
         }
         */
 
@@ -229,18 +222,6 @@ namespace TA.SharpBooru
                 catch { return false; }
             else return true;
         }
-
-        /*
-        public static EventHandler SetFormCentered(Form Parent, Form Child)
-        {
-            Point childLocation = new Point(
-                Parent.Location.X + (Parent.Width - Child.Width) / 2,
-                Parent.Location.Y + (Parent.Height - Child.Height) / 2);
-            EventHandler handler = (EventHandler)delegate { Child.Location = childLocation; };
-            Child.Load += handler;
-            return handler;
-        }
-        */
 
         public static string GetTempFile()
         {

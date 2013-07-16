@@ -31,7 +31,7 @@ namespace TA.SharpBooru.Server
 
         public void ReadFile(BinaryWriter Writer, string Name)
         {
-            using (FileStream file = File.Open(Folder + Name, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (FileStream file = File.Open(Path.Combine(Folder, Name), FileMode.Open, FileAccess.Read, FileShare.Read))
             {
                 uint length = (uint)file.Length;
                 Writer.Write(length);
@@ -199,32 +199,26 @@ namespace TA.SharpBooru.Server
 
         public void SaveToDisk()
         {
-            if (File.Exists(Folder + "booru"))
+            if (File.Exists(Path.Combine(Folder, "booru")))
             {
-                if (File.Exists(Folder + "booru.bak"))
-                    File.Delete(Folder + "booru.bak");
-                File.Move(Folder + "booru", Folder + "booru.bak");
+                if (File.Exists(Path.Combine(Folder, "booru.bak")))
+                    File.Delete(Path.Combine(Folder, "booru.bak"));
+                File.Move(Path.Combine(Folder, "booru"), Path.Combine(Folder, "booru.bak"));
             }
-            using (FileStream file = File.Open(Folder + "booru", FileMode.Create, FileAccess.Write, FileShare.None))
+            using (FileStream file = File.Open(Path.Combine(Folder, "booru"), FileMode.Create, FileAccess.Write, FileShare.None))
             using (BinaryWriter writer = new BinaryWriter(file, Encoding.Unicode))
                 ToWriter(writer);
         }
 
         public void SaveToDisk(string Folder)
         {
-            Folder = Folder.Trim();
-            if (!Folder.EndsWith(Path.DirectorySeparatorChar.ToString()))
-                Folder += Path.DirectorySeparatorChar;
             this.Folder = Folder;
             SaveToDisk();
         }
 
         public static Booru ReadFromDisk(string Folder)
         {
-            Folder = Folder.Trim();
-            if (!Folder.EndsWith(Path.DirectorySeparatorChar.ToString()))
-                Folder += Path.DirectorySeparatorChar;
-            using (FileStream file = File.Open(Folder + "booru", FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (FileStream file = File.Open(Path.Combine(Folder, "booru"), FileMode.Open, FileAccess.Read, FileShare.Read))
             using (BinaryReader reader = new BinaryReader(file, Encoding.Unicode))
             {
                 Booru booru = Booru.FromReader(reader);
@@ -232,5 +226,7 @@ namespace TA.SharpBooru.Server
                 return booru;
             }
         }
+
+        public static bool Exists(string Folder) { return File.Exists(Path.Combine(Folder, "booru")); }
     }
 }

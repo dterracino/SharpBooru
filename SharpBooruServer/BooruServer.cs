@@ -41,23 +41,27 @@ namespace TA.SharpBooru.Server
                             ClientHandler handler = new ClientHandler(this, client);
                             handler.Queue(_ThreadPool);
                         }
-                        catch (Exception ex) { _Logger.LogFAILAndException(ex); }
+                        catch (Exception ex)
+                        {
+                            if (_ListenerRunning)
+                                _Logger.LogFAILAndException(ex);
+                        }
                 };
             _ListenerThread = new Thread(listenerThreadStart);
         }
 
         public void Start()
         {
-            _Listener.Start();
             _ListenerRunning = true;
+            _Listener.Start();
             _ListenerThread.Start();
             _Logger.LogLine("[c3]Server running...");
         }
 
         public void Stop()
         {
-            _Listener.Stop();
             _ListenerRunning = false;
+            _Listener.Stop();
             _Logger.LogLine("[c3]Server stopped...");
         }
     }

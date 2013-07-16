@@ -98,6 +98,7 @@ namespace TA.SharpBooru.Server
                         {
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                             post.ToWriter(_Writer);
+                            _Server.Booru.ReadFile(_Writer, "thumb" + postID);
                         }
                         else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                         break;
@@ -223,9 +224,10 @@ namespace TA.SharpBooru.Server
                     {
                         ulong postID = _Reader.ReadUInt64();
                         BooruPost newPost = BooruPost.FromReader(_Reader);
-                        newPost.ID = _Server.Booru.GetNextPostID();
                         if (_User.CanEditPosts)
                         {
+                            newPost.ID = _Server.Booru.GetNextPostID();
+                            //TODO Check Tags and replace with existing
                             if (_Server.Booru.Posts.Contains(postID))
                             {
                                 if (!_User.AdvancePostControl)

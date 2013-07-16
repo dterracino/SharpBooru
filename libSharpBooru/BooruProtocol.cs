@@ -20,7 +20,7 @@ namespace TA.SharpBooru
             // void, void
             Disconnect,
 
-            // Post(BooruPost), PostID(ulong)
+            // Post(BooruPost) + Thumbnail(BooruImage), PostID(ulong)
             GetPost,
 
             // Image(BooruImage), PostID(ulong)

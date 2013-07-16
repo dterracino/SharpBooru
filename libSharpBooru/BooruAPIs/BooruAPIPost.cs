@@ -12,17 +12,17 @@ namespace TA.SharpBooru.BooruAPIs
 
         public void DownloadImage()
         {
-            if (_Image != null)
-                _Image = BooruImage.FromURL(ImageURL);
+            if (_DownloadedImage != null)
+                _DownloadedImage = BooruImage.FromURL(ImageURL);
         }
 
-        private BooruImage _Image;
-        public BooruImage Image
+        private BooruImage _DownloadedImage;
+        public BooruImage DownloadedImage
         {
             get
             {
                 DownloadImage();
-                return _Image;
+                return _DownloadedImage;
             }
         }
     }
