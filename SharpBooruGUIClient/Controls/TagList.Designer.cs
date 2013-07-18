@@ -1,4 +1,6 @@
-﻿namespace TA.SharpBooru.Client.GUI.Controls
+﻿using TA.SharpBooru.Client.GUI.nControls;
+
+namespace TA.SharpBooru.Client.GUI.Controls
 {
     partial class TagList
     {
@@ -32,7 +34,7 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.okButton = new System.Windows.Forms.Button();
             this.closeButton = new System.Windows.Forms.Button();
-            this.tagTextBox1 = new TA.SharpBooru.Client.GUI.Controls.TagTextBox();
+            this.tagTextBox1 = new TA.SharpBooru.Client.GUI.nControls.TagTextBox();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 

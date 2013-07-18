@@ -4,11 +4,11 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
 
-namespace TA.SharpBooru.Client.GUI.Controls
+namespace TA.SharpBooru.Client.GUI.nControls
 {
     public class TagTextBox : TextBox
     {
-        private internalTagListBox _listBox;
+        private ListBox _listBox;
         private string _formerValue = string.Empty;
         private List<string> _Tags;
         private char[] ws = new char[4] { ' ', '\r', '\n', '\t' };
@@ -34,8 +34,7 @@ namespace TA.SharpBooru.Client.GUI.Controls
 
         public TagTextBox()
         {
-            _listBox = new internalTagListBox();
-            _listBox.LegacyMode = true; //TODO NI Implement color
+            _listBox = new ListBox();
             _listBox.DoubleClick += new EventHandler(_listBox_DoubleClick);
             _listBox.LostFocus += new EventHandler(_LostFocus);
             _listBox.Sorted = true;
@@ -111,6 +110,10 @@ namespace TA.SharpBooru.Client.GUI.Controls
                 case Keys.Up:
                     if ((_listBox.Visible) && (_listBox.SelectedIndex > 0))
                         _listBox.SelectedIndex--;
+                    break;
+                case Keys.Enter:
+                    if (_listBox.Visible)
+                        ResetListBox();
                     break;
             }
         }
@@ -204,35 +207,6 @@ namespace TA.SharpBooru.Client.GUI.Controls
             {
                 string[] result = Text.Split(ws, StringSplitOptions.RemoveEmptyEntries);
                 return new List<string>(result);
-            }
-        }
-
-        private class internalTagListBox : ListBox
-        {
-            public delegate Color GetItemColorHandler(int Index);
-            public event GetItemColorHandler GetItemColor;
-
-            public bool LegacyMode = false;
-
-            protected override void OnDrawItem(DrawItemEventArgs e)
-            {
-                if (LegacyMode)
-                    base.OnDrawItem(e);
-                else
-                {
-                    Graphics g = e.Graphics;
-                    e.DrawBackground();
-                    SolidBrush sb = new SolidBrush(e.ForeColor);
-                    if (SelectedItem != Items[e.Index])
-                    {
-                        Color c = e.ForeColor;
-                        if (GetItemColor != null)
-                            c = GetItemColor(e.Index);
-                        sb = new SolidBrush(c);
-                    }
-                    g.DrawString((string)Items[e.Index], e.Font, sb, e.Bounds.Location);
-                    e.DrawFocusRectangle();
-                }
             }
         }
     }

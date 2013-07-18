@@ -16,17 +16,20 @@ namespace TA.SharpBooru.Client.GUI
             InitializeComponent();
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void button1_Click_1(object sender, EventArgs e)
         {
             string[] files = System.IO.Directory.GetFiles(@"C:\temp\____thumbs");
-            int i = 1;
+            BooruPostList posts = new BooruPostList();
             foreach (string file in files)
             {
-                thumbnailView1.Add(new Bitmap(file), i);
-                i++;
+                posts.Add(new BooruPost()
+                {
+                    Thumbnail = new BooruImage(file)
+                });
             }
-            thumbnailView1.ImageOpened += (isender, ie, iid) =>
-                MessageBox.Show(string.Format("Image {0} opened", iid));
+            pagedThumbView1.Posts = posts;
+            //pagedThumbView1.ImageOpened += (isender, ie, iid) =>
+            //    MessageBox.Show(string.Format("Image {0} opened", iid));
         }
     }
 }

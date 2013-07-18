@@ -43,6 +43,7 @@ namespace TA.SharpBooru.Client.GUI.nControls
             progressLabel.Parent = pictureBox;
             Value = 0;
             this.Controls.Add(pictureBox);
+            BorderStyle = BorderStyle.FixedSingle;
         }
     }
 }
