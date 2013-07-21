@@ -39,26 +39,29 @@ namespace TA.SharpBooru.Client.GUI.nControls
         {
             SelectablePictureBox pBox = new SelectablePictureBox()
             {
-                Image = Thumbnail,
                 SizeMode = PictureBoxSizeMode.Zoom,
                 Size = new Size(_ThumbnailSize, _ThumbnailSize)
             };
+            if (Thumbnail != null)
+                pBox.Image = (Bitmap)Thumbnail.Clone();
             pBox.ImageOpened += (sender, e) =>
                 {
                     if (ImageOpened != null)
                         ImageOpened(sender, e, aObj);
                 };
-            this.Controls.Add(pBox);
+            MethodInvoker invoker = () => this.Controls.Add(pBox);
+            if (this.InvokeRequired) Invoke(invoker); else invoker();
         }
 
         public void Clear() 
         {
             foreach (Control childControl in this.Controls)
             {
-                this.Controls.Remove(childControl);
-                (childControl as PictureBox).Image.Dispose();
+                if (childControl is PictureBox)
+                    (childControl as PictureBox).Image.Dispose();
                 childControl.Dispose();
             }
+            this.Controls.Clear();
         }
 
         public void RefreshControls()
@@ -66,8 +69,5 @@ namespace TA.SharpBooru.Client.GUI.nControls
             foreach (Control childControl in this.Controls)
                 childControl.Size = new Size(_ThumbnailSize, _ThumbnailSize);
         }
-
-        //TODO Remove method
-        //public void Remove(Bitmap Thumbnail) { _Thumbnails.Remove(Thumbnail); }
     }
 }

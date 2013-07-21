@@ -9,27 +9,16 @@ using System.Windows.Forms;
 
 namespace TA.SharpBooru.Client.GUI
 {
-    public partial class testForm : Form
+    public partial class TestForm : Form
     {
-        public testForm()
+        public TestForm()
         {
             InitializeComponent();
         }
 
-        private void button1_Click_1(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            string[] files = System.IO.Directory.GetFiles(@"C:\temp\____thumbs");
-            BooruPostList posts = new BooruPostList();
-            foreach (string file in files)
-            {
-                posts.Add(new BooruPost()
-                {
-                    Thumbnail = new BooruImage(file)
-                });
-            }
-            pagedThumbView1.Posts = posts;
-            //pagedThumbView1.ImageOpened += (isender, ie, iid) =>
-            //    MessageBox.Show(string.Format("Image {0} opened", iid));
+            scalablePictureBox1.Picture = "C:\\image.jpg";
         }
     }
 }

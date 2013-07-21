@@ -1,6 +1,6 @@
 ﻿namespace TA.SharpBooru.Client.GUI.nControls
 {
-    partial class PagedThumbView
+    partial class BooruThumbView
     {
         /// <summary> 
         /// Erforderliche Designervariable.
@@ -28,25 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.thumbView = new TA.SharpBooru.Client.GUI.nControls.ThumbView();
             this.pageLabel = new System.Windows.Forms.Label();
-            this.pageSwitcher = new TA.SharpBooru.Client.GUI.nControls.PageSwitcher();
             this.ajaxProgressIndicator1 = new TA.SharpBooru.Client.GUI.nControls.AjaxProgressIndicator();
-            this.thumbView.SuspendLayout();
+            this.pageSwitcher = new TA.SharpBooru.Client.GUI.nControls.PageSwitcher();
+            this.thumbView = new TA.SharpBooru.Client.GUI.nControls.ThumbView();
             this.SuspendLayout();
-            // 
-            // thumbView
-            // 
-            this.thumbView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.thumbView.AutoScroll = true;
-            this.thumbView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.thumbView.Controls.Add(this.ajaxProgressIndicator1);
-            this.thumbView.Location = new System.Drawing.Point(3, 3);
-            this.thumbView.Name = "thumbView";
-            this.thumbView.Size = new System.Drawing.Size(294, 200);
-            this.thumbView.TabIndex = 0;
             // 
             // pageLabel
             // 
@@ -61,6 +47,17 @@
             this.pageLabel.Text = "label1";
             this.pageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // ajaxProgressIndicator1
+            // 
+            this.ajaxProgressIndicator1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.ajaxProgressIndicator1.Location = new System.Drawing.Point(112, 206);
+            this.ajaxProgressIndicator1.Name = "ajaxProgressIndicator1";
+            this.ajaxProgressIndicator1.Size = new System.Drawing.Size(35, 25);
+            this.ajaxProgressIndicator1.TabIndex = 0;
+            this.ajaxProgressIndicator1.Text = "ajaxProgressIndicator1";
+            this.ajaxProgressIndicator1.Value = 0D;
+            this.ajaxProgressIndicator1.Visible = false;
+            // 
             // pageSwitcher
             // 
             this.pageSwitcher.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
@@ -72,27 +69,31 @@
             this.pageSwitcher.TabIndex = 2;
             this.pageSwitcher.Text = "pageSwitcher1";
             // 
-            // ajaxProgressIndicator1
+            // thumbView
             // 
-            this.ajaxProgressIndicator1.Location = new System.Drawing.Point(3, 3);
-            this.ajaxProgressIndicator1.Name = "ajaxProgressIndicator1";
-            this.ajaxProgressIndicator1.Size = new System.Drawing.Size(77, 76);
-            this.ajaxProgressIndicator1.TabIndex = 0;
-            this.ajaxProgressIndicator1.Text = "ajaxProgressIndicator1";
-            this.ajaxProgressIndicator1.Value = 0D;
-            this.ajaxProgressIndicator1.Visible = false;
+            this.thumbView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.thumbView.AutoScroll = true;
+            this.thumbView.BackColor = System.Drawing.Color.White;
+            this.thumbView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.thumbView.Location = new System.Drawing.Point(3, 3);
+            this.thumbView.Name = "thumbView";
+            this.thumbView.Size = new System.Drawing.Size(294, 200);
+            this.thumbView.TabIndex = 0;
+            this.thumbView.ThumbnailSize = ((ushort)(192));
             // 
             // PagedThumbView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
+            this.Controls.Add(this.ajaxProgressIndicator1);
             this.Controls.Add(this.pageSwitcher);
             this.Controls.Add(this.pageLabel);
             this.Controls.Add(this.thumbView);
             this.Name = "PagedThumbView";
             this.Size = new System.Drawing.Size(300, 234);
-            this.thumbView.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

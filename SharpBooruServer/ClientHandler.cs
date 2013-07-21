@@ -106,7 +106,7 @@ namespace TA.SharpBooru.Server
                 case BooruProtocol.Command.GetImage: //TODO Advanced permission checks
                     {
                         ulong postID = _Reader.ReadUInt64();
-                        if (_Server.Booru.Posts.Contains(postID) && File.Exists(_Server.Booru.Folder + "image" + postID))
+                        if (_Server.Booru.Posts.Contains(postID) && File.Exists(Path.Combine(_Server.Booru.Folder, "image" + postID)))
                         {
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                             _Server.Booru.ReadFile(_Writer, "image" + postID);
@@ -121,12 +121,9 @@ namespace TA.SharpBooru.Server
                 case BooruProtocol.Command.Search:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                     string searchPattern = _Reader.ReadString().Trim().ToLower();
-                    if (string.IsNullOrEmpty(searchPattern))
-                    {
-                        _Writer.Write((uint)_Server.Booru.Posts.Count);
-                        _Server.Booru.Posts.ForEach(x => _Writer.Write(x.ID));
-                    }
-                    else _Writer.Write((uint)0); //TODO Implement search
+                    BooruPostList postsToSend = BooruSearch.DoSearch(searchPattern, _Server.Booru.Posts);
+                    _Writer.Write((uint)postsToSend.Count);
+                    postsToSend.ForEach(x => _Writer.Write(x.ID));
                     break;
                 case BooruProtocol.Command.Disconnect:
                     return false; //stop handling loop
@@ -217,7 +214,7 @@ namespace TA.SharpBooru.Server
                             _Reader.ReadBytes(length % 1024);
                             _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                         }
-         
+
                         break;
                     }
                 case BooruProtocol.Command.EditPost:
@@ -249,10 +246,19 @@ namespace TA.SharpBooru.Server
                         else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                         break;
                     }
-                case  BooruProtocol.Command.ForceKillServer:
+                case BooruProtocol.Command.ForceKillServer:
                     if (_User.IsAdmin)
-                        System.Diagnostics.Process.GetCurrentProcess().Kill();
+                        System.Diagnostics.Process.GetCurrentProcess().Kill(); //YOLO
                     else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
+                    break;
+                case BooruProtocol.Command.GetAllTags:
+                    _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                    BooruTagList allTags = new BooruTagList();
+                    foreach (BooruPost post in _Server.Booru.Posts)
+                        foreach (BooruTag tag in post.Tags)
+                            if (!allTags.Contains(tag.Tag))
+                                allTags.Add(tag);
+                    allTags.ToWriter(_Writer);
                     break;
                 default:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.UnknownError);

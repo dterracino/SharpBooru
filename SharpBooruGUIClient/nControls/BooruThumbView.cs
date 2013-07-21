@@ -2,16 +2,21 @@
 using System.Threading;
 using System.Windows.Forms;
 using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace TA.SharpBooru.Client.GUI.nControls
 {
-    public partial class PagedThumbView : UserControl
+    public partial class BooruThumbView : UserControl
     {
-        private BooruPostList _Posts;
+        public delegate void ImageOpenedHandler(object sender, EventArgs e, object aObj);
+        public event ImageOpenedHandler ImageOpened;
+
+        private Booru _Booru = null;
+        private List<ulong> _Posts = new List<ulong>();
         private ushort _ThumbsPerPage = 30;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public BooruPostList Posts
+        public List<ulong> Posts
         {
             get { return _Posts; }
             set
@@ -27,19 +32,29 @@ namespace TA.SharpBooru.Client.GUI.nControls
             }
         }
 
-        public PagedThumbView()
+        public BooruThumbView()
         {
             InitializeComponent();
             pageSwitcher.PageChanged += new EventHandler(pageSwitcher_PageChanged);
             ajaxProgressIndicator1.Location = thumbView.Location;
             ajaxProgressIndicator1.Size = thumbView.Size;
             ajaxProgressIndicator1.Anchor = thumbView.Anchor;
+            thumbView.ImageOpened += (sender, e, aObj) =>
+                {
+                    if (ImageOpened != null)
+                        ImageOpened(sender, e, aObj);
+                };
         }
+
+        public void SetBooru(Booru Booru) { _Booru = Booru; }
 
         private void pageSwitcher_PageChanged(object sender, EventArgs e)
         {
-                Thread loadThread = new Thread(pageSwitcher_PageChangedThreadMethod);
-                loadThread.Start();
+            //TODO Multithreading
+            //Thread loadThread = new Thread(pageSwitcher_PageChangedThreadMethod);
+            //loadThread.Start();
+            pageSwitcher_PageChangedThreadMethod();
+            RefreshLabel();
         }
 
         private object _loadThreadLock = new object();
@@ -53,8 +68,16 @@ namespace TA.SharpBooru.Client.GUI.nControls
                 if (postCount > _ThumbsPerPage)
                     postCount = _ThumbsPerPage;
                 thumbView.Clear();
-                for (int i = postIndex; i < postCount; i++)
-                    thumbView.Add(_Posts[i].Thumbnail.Bitmap, _Posts[i]);
+                for (int i = 0; i < postCount; i++)
+                {
+                    ulong postID = _Posts[i+postIndex];
+                    if (_Booru != null)
+                    {
+                        BooruPost postToAdd = _Booru.GetPost(postID);
+                        thumbView.Add(postToAdd.Thumbnail.Bitmap, postToAdd);
+                    }
+                    else thumbView.Add(null, postID);
+                }
                 SetLoadingMode(false);
             }
         }
@@ -75,9 +98,12 @@ namespace TA.SharpBooru.Client.GUI.nControls
         public void RefreshPages()
         {
             pageSwitcher.Pages = (int)((_Posts.Count - 1f) / _ThumbsPerPage) + 1;
-            pageSwitcher.CurrentPage = 1;
+            bool refreshManually = pageSwitcher.CurrentPage == 0;
+            pageSwitcher.CurrentPage = 0;
+            if (refreshManually)
+                pageSwitcher_PageChanged(this, null);
         }
 
-        public void RefreshLabel() { pageLabel.Text = string.Format("Page {0} of {1}", pageSwitcher.CurrentPage, pageSwitcher.Pages); }
+        public void RefreshLabel() { pageLabel.Text = string.Format("Page {0} of {1}", pageSwitcher.CurrentPage + 1, pageSwitcher.Pages); }
     }
 }

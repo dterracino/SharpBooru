@@ -50,7 +50,11 @@ namespace TA.SharpBooru.Client.GUI.nControls
             _RightButton.Click += (sender, e) => { CurrentPage++; };
             _TextBox.Click += (sender, e) => { _TextBox.SelectAll(); };
             _TextBox.KeyDown += new KeyEventHandler(_TextBox_KeyDown);
-            _TextBox.MouseWheel += (sender, e) => { CurrentPage += e.Delta > 0 ? 1 : -1; };
+            _TextBox.MouseWheel += (sender, e) =>
+                {
+                    CurrentPage += e.Delta > 0 ? 1 : -1;
+                    _TextBox.Focus();
+                };
             EventHandler resizeHandler = (sender, e) => { _TextBox.Top = (int)(0.5d * (this.Height - _TextBox.Height) + 0.5d); };
             Resize += resizeHandler;
             resizeHandler(this, null);
@@ -61,7 +65,11 @@ namespace TA.SharpBooru.Client.GUI.nControls
 
         private void _TextBox_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Up)
+                CurrentPage++;
+            else if (e.KeyCode == Keys.Down)
+                CurrentPage--;
+            else if (e.KeyCode == Keys.Enter)
             {
                 int? page = GetTextBoxValue();
                 if (page.HasValue)

@@ -127,11 +127,16 @@ namespace TA.SharpBooru
 
         public object Clone() { return new BooruImage() { _Bytes = this._Bytes }; }
 
-        public void Save(string File) { Save(File, ImageFormat); }
-        public void Save(string File, ImageFormat Format) { Bitmap.Save(File, Format); }
-
-        public void Save(Stream Stream) { Save(Stream, ImageFormat); }
-        public void Save(Stream Stream, ImageFormat Format) { Bitmap.Save(Stream, Format); }
+        public void Save(string File, ImageFormat Format = null) { Bitmap.Save(File, Format ?? ImageFormat); }
+        public void Save(Stream Stream, ImageFormat Format = null) { Bitmap.Save(Stream, Format ?? ImageFormat); }
+        public void Save(ref string File, bool AppendExtension = true, ImageFormat Format = null)
+        {
+            ImageFormat imgFormat = Format ?? ImageFormat;
+            if (AppendExtension) //TODO Optimize
+                File += string.Format(".{0}", (new ImageFormatConverter()).ConvertToString(imgFormat).ToLower());
+            using (FileStream fs = System.IO.File.Open(File, FileMode.Create, FileAccess.Write, FileShare.Read))
+                Bitmap.Save(fs, imgFormat);
+        }
 
         public string MimeType
         {
@@ -196,6 +201,21 @@ namespace TA.SharpBooru
                 }
             }
             return false;
+        }
+
+        public BooruImage CreateThumbnail(int SideLength)
+        {
+            Size size = Bitmap.Size, th_size = new Size(SideLength, SideLength);
+            float num = Math.Min((float)th_size.Width / (float)size.Width, (float)th_size.Height / (float)size.Height);
+            Rectangle result = new Rectangle();
+            result.Width = (int)((float)size.Width * num);
+            result.Height = (int)((float)size.Height * num);
+            result.X = (th_size.Width - result.Width) / 2;
+            result.Y = (th_size.Height - result.Height) / 2;
+            Bitmap th = new Bitmap(th_size.Width, th_size.Height);
+            using (Graphics g = Graphics.FromImage(th))
+                g.DrawImage(Bitmap, result);
+            return new BooruImage(th);
         }
 
         public void ToWriter(BinaryWriter Writer)

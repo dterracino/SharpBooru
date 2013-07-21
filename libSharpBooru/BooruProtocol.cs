@@ -11,13 +11,13 @@ namespace TA.SharpBooru
             // IDs(ulong[]), SearchPattern(string)
             Search,
 
-            // void, void
+            // void
             SaveBooru,
 
-            // void, void
+            // void
             ForceKillServer,
 
-            // void, void
+            // void
             Disconnect,
 
             // Post(BooruPost) + Thumbnail(BooruImage), PostID(ulong)
@@ -26,7 +26,7 @@ namespace TA.SharpBooru
             // Image(BooruImage), PostID(ulong)
             GetImage,
 
-            // PostID(ulong)
+            // void, PostID(ulong)
             DeletePost,
 
             // void, TagID(ulong)
@@ -40,6 +40,9 @@ namespace TA.SharpBooru
 
             // NewPostID(ulong), PostID(ulong), NewPost(BooruPost)
             EditPost,
+
+            // Tags(BooruTagList)
+            GetAllTags
 
             // PostID(ulong), Image(BooruImage)
             //EditImage

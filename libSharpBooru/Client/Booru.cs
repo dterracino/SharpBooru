@@ -168,6 +168,23 @@ namespace TA.SharpBooru.Client
             return _Reader.ReadUInt64();
         }
 
+        public BooruPostList GetPosts(List<ulong> IDs)
+        {
+            if (IDs == null)
+                return new BooruPostList();
+            BooruPostList list = new BooruPostList();
+            foreach (ulong id in IDs)
+                list.Add(GetPost(id));
+            return list;
+        }
+
+        public BooruTagList GetAllTags()
+        {
+            BeginCommunication(BooruProtocol.Command.GetAllTags);
+            EndCommunication();
+            return BooruTagList.FromReader(_Reader);
+        }
+
         public void ForceKillServer() { BeginCommunication(BooruProtocol.Command.ForceKillServer); }
 
         public void Disconnect() { Dispose(); }

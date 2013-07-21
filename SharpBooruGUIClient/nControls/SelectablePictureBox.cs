@@ -15,6 +15,7 @@ namespace TA.SharpBooru.Client.GUI.nControls
         {
             this.SetStyle(ControlStyles.Selectable, true);
             this.TabStop = true;
+            this.Image = this.ErrorImage;
         }
         
         protected override void OnMouseDown(MouseEventArgs e)
@@ -34,13 +35,13 @@ namespace TA.SharpBooru.Client.GUI.nControls
             this.Invalidate();
             base.OnLeave(e);
         }
- 
+
         protected override void OnPaint(PaintEventArgs e)
         {
             base.OnPaint(e);
             if (this.Focused)
             {
-                Brush activeBrush = new SolidBrush(Color.FromArgb(100, this.BackColor));
+                Brush activeBrush = new SolidBrush(Color.FromArgb(150, this.BackColor));
                 e.Graphics.FillRectangle(activeBrush, this.ClientRectangle);
             }
         }

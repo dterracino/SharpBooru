@@ -20,8 +20,7 @@ namespace TA.SharpBooru.Client.GUI
             Point childLocation = new Point(
                 Parent.Location.X + (Parent.Width - Child.Width) / 2,
                 Parent.Location.Y + (Parent.Height - Child.Height) / 2);
-            EventHandler handler = (sender, e) => { Child.Location = childLocation; };
-            Child.Load += handler;
+            Child.Load += (sender, e) => { Child.Location = childLocation; };
         }
     }
 }

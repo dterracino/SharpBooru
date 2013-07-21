@@ -8,6 +8,8 @@ namespace TA.SharpBooru.Client.GUI.nControls
 {
     public class TagTextBox : TextBox
     {
+        public event EventHandler EnterPressed;
+
         private ListBox _listBox;
         private string _formerValue = string.Empty;
         private List<string> _Tags;
@@ -81,7 +83,7 @@ namespace TA.SharpBooru.Client.GUI.nControls
 
         private void this_KeyUp(object sender, KeyEventArgs e) { UpdateListBox(); }
 
-        private void handleTab()
+        private void handleInsert()
         {
             if (_listBox.Visible)
             {
@@ -101,7 +103,7 @@ namespace TA.SharpBooru.Client.GUI.nControls
             {
                 case Keys.Tab:
                     if (!Multiline)
-                        handleTab();
+                        handleInsert();
                     break;
                 case Keys.Down:
                     if ((_listBox.Visible) && (_listBox.SelectedIndex < _listBox.Items.Count - 1))
@@ -112,8 +114,12 @@ namespace TA.SharpBooru.Client.GUI.nControls
                         _listBox.SelectedIndex--;
                     break;
                 case Keys.Enter:
+                    if (!Multiline)
+                        handleInsert();
                     if (_listBox.Visible)
                         ResetListBox();
+                    if (EnterPressed != null)
+                        EnterPressed(this, e);
                     break;
             }
         }
@@ -122,7 +128,7 @@ namespace TA.SharpBooru.Client.GUI.nControls
         {
             if (keyData == Keys.Tab && Multiline)
             {
-                handleTab();
+                handleInsert();
                 return true;
             }
             else return false;
