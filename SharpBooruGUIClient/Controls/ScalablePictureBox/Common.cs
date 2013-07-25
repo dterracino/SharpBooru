@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections;
-using System.Text;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Runtime.Serialization;
@@ -9,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
 using System.Drawing;
 
-namespace TEAM_ALPHA.Controls
+namespace TA.SharpBooru.Client.GUI.Controls
 {
     [StructLayout(LayoutKind.Explicit)]
     internal struct Overlay

@@ -1,7 +1,7 @@
 using System.Windows.Forms;
 using System.ComponentModel;
 
-namespace TEAM_ALPHA.Controls
+namespace TA.SharpBooru.Client.GUI.Controls
 {
     partial class ScalablePictureBoxImp
     {

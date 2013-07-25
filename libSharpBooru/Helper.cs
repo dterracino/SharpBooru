@@ -149,10 +149,15 @@ namespace TA.SharpBooru
             return _IsMono.Value;
         }
 
+        private static bool? _IsPOSIX = null;
         public static bool IsPOSIX()
         {
-            PlatformID pfid = Environment.OSVersion.Platform;
-            return pfid == PlatformID.Unix || pfid == PlatformID.MacOSX;
+            if (!_IsPOSIX.HasValue)
+            {
+                PlatformID pfid = Environment.OSVersion.Platform;
+                _IsPOSIX = pfid == PlatformID.Unix || pfid == PlatformID.MacOSX;
+            }
+            return _IsPOSIX.Value;
         }
 
         public static bool IsConsole()

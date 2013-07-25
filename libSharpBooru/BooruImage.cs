@@ -132,8 +132,8 @@ namespace TA.SharpBooru
         public void Save(ref string File, bool AppendExtension = true, ImageFormat Format = null)
         {
             ImageFormat imgFormat = Format ?? ImageFormat;
-            if (AppendExtension) //TODO Optimize
-                File += string.Format(".{0}", (new ImageFormatConverter()).ConvertToString(imgFormat).ToLower());
+            if (AppendExtension)
+                File += "." + (new ImageFormatConverter()).ConvertToString(imgFormat).ToLower();
             using (FileStream fs = System.IO.File.Open(File, FileMode.Create, FileAccess.Write, FileShare.Read))
                 Bitmap.Save(fs, imgFormat);
         }

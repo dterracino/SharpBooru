@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace TA.SharpBooru.Client.GUI.nControls
+namespace TA.SharpBooru.Client.GUI.Controls
 {
     public class PageSwitcher : Control
     {
@@ -25,18 +25,18 @@ namespace TA.SharpBooru.Client.GUI.nControls
                 Top = 0,
                 Left = 0,
                 Image = Properties.Resources.icon_arrow_left,
-                Enabled = false
+                Enabled = false,
+                BackColor = SystemColors.Control
             };
             _RightButton = new Button()
             {
-                AutoSize = false,
                 Size = elementSize,
                 Anchor = AnchorStyles.Right | AnchorStyles.Top | AnchorStyles.Bottom,
                 Top = 0,
                 Left = 2 * (elementSize.Width + elementSpacing),
                 Image = Properties.Resources.icon_arrow_right,
                 Enabled = false,
-                TextAlign = ContentAlignment.MiddleCenter
+                BackColor = SystemColors.Control
             };
             _TextBox = new TextBox()
             {
@@ -102,6 +102,16 @@ namespace TA.SharpBooru.Client.GUI.nControls
                     CheckControls();
                     FirePageChangedEvent();
                 }
+            }
+        }
+
+        public int CurrentPageHuman
+        {
+            get
+            {
+                if (_Pages > 0)
+                    return _CurrentPage + 1;
+                else return 0;
             }
         }
 

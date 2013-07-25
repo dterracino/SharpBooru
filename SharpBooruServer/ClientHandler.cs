@@ -18,6 +18,7 @@ namespace TA.SharpBooru.Server
         private BooruUser _User;
         private BinaryReader _Reader;
         private BinaryWriter _Writer;
+        private IPAddress _Address;
 
         public ClientHandler(BooruServer Server, TcpClient Client)
         {
@@ -31,7 +32,7 @@ namespace TA.SharpBooru.Server
         {
             //TODO Moar log output
             try { HandlerStage2(); }
-            catch (Exception ex) { _Server.Logger.LogFAILAndException(ex); }
+            catch (Exception ex) { _Server.Logger.LogException(ex); }
             finally
             {
                 _Reader.Close();
@@ -44,11 +45,16 @@ namespace TA.SharpBooru.Server
 
         private void HandlerStage2()
         {
+            _Address = (_Client.Client.RemoteEndPoint as IPEndPoint).Address;
+            _Server.Logger.LogLine("{0} is connecting...", _Address);
             PrepareConnection(_Server.Certificate);
             if (!CheckVersion())
                 throw new BooruProtocol.BooruException("Client version mismatch");
+            _Server.Logger.LogLine("{0} connected", _Address);
             _User = TryLogin();
+            _Server.Logger.LogLine("{0} successfully logged in as {1}", _Address, _User.Username);
             while (HandlerStage3()) ;
+            _Server.Logger.LogLine("{0} ({1}) disconnected", _User.Username, _Address);
         }
 
         private void PrepareConnection(X509Certificate Certificate)
@@ -88,6 +94,7 @@ namespace TA.SharpBooru.Server
         private bool HandlerStage3()
         {
             var command = (BooruProtocol.Command)_Reader.ReadByte();
+            _Server.Logger.LogLine("{0} ({1}) executes command {2}", _User.Username, _Address, command.ToString());
             switch (command)
             {
                 case BooruProtocol.Command.GetPost: //TODO Advanced permission checks
@@ -199,10 +206,12 @@ namespace TA.SharpBooru.Server
                             }
                             using (FileStream file = File.Open(_Server.Booru.Folder + "image" + newPost.ID, FileMode.Create, FileAccess.Write, FileShare.Read))
                             {
+                                //TODO Implement bandwidth limit
                                 for (int i = 0; i < length / 1024; i++)
                                     file.Write(_Reader.ReadBytes(1024), 0, 1024);
                                 file.Write(_Reader.ReadBytes(length % 1024), 0, length % 1024);
                             }
+                            //TODO Create Thumbnail
                             _Server.Booru.Posts.Add(newPost);
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                             _Writer.Write(newPost.ID);
@@ -259,6 +268,10 @@ namespace TA.SharpBooru.Server
                             if (!allTags.Contains(tag.Tag))
                                 allTags.Add(tag);
                     allTags.ToWriter(_Writer);
+                    break;
+                case BooruProtocol.Command.EditImage:
+                    //TODO Implement bandwidth limit
+                    //TODO Implement EditImage server-side
                     break;
                 default:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.UnknownError);

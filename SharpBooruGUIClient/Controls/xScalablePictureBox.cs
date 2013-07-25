@@ -3,9 +3,9 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.ComponentModel;
 
-namespace TA.SharpBooru.Client.GUI.nControls
+namespace TA.SharpBooru.Client.GUI.Controls
 {
-    public class ScalablePictureBox : UserControl
+    public class xScalablePictureBox : UserControl
     {
         #region Members
 
@@ -64,7 +64,7 @@ namespace TA.SharpBooru.Client.GUI.nControls
 
         #region Constructors
 
-        public ScalablePictureBox()
+        public xScalablePictureBox()
         {
             InitializeComponent();
             InitCtrl();	// my special settings for the ctrl

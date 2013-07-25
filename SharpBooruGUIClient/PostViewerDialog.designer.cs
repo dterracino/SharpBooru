@@ -1,4 +1,6 @@
-﻿namespace TA.SharpBooru.Client.GUI
+﻿using TA.SharpBooru.Client.GUI.Controls;
+
+namespace TA.SharpBooru.Client.GUI
 {
     partial class PostViewerDialog
     {
@@ -37,10 +39,9 @@
             this.nextPostButton = new System.Windows.Forms.Button();
             this.postScoreNumericUpDown = new System.Windows.Forms.NumericUpDown();
             this.postScoreLabel = new System.Windows.Forms.Label();
-            this.postRatingComboBox = new System.Windows.Forms.ComboBox();
             this.editImageButton = new System.Windows.Forms.Button();
-            this.scalablePictureBox = new TEAM_ALPHA.Controls.ScalablePictureBox();
-            this.tagList = new Controls.TagList();
+            this.scalablePictureBox = new TA.SharpBooru.Client.GUI.Controls.ScalablePictureBox();
+            this.tagList = new TA.SharpBooru.Client.GUI.Controls.xTagList();
             ((System.ComponentModel.ISupportInitialize)(this.postScoreNumericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
@@ -59,7 +60,7 @@
             // 
             this.deletePostButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.deletePostButton.Enabled = false;
-            this.deletePostButton.Image = Properties.Resources.icon_delete;
+            this.deletePostButton.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_delete;
             this.deletePostButton.Location = new System.Drawing.Point(48, 284);
             this.deletePostButton.Name = "deletePostButton";
             this.deletePostButton.Size = new System.Drawing.Size(30, 30);
@@ -71,7 +72,7 @@
             // 
             this.saveImageButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.saveImageButton.Enabled = false;
-            this.saveImageButton.Image = Properties.Resources.icon_save;
+            this.saveImageButton.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_save;
             this.saveImageButton.Location = new System.Drawing.Point(12, 248);
             this.saveImageButton.Name = "saveImageButton";
             this.saveImageButton.Size = new System.Drawing.Size(30, 30);
@@ -83,7 +84,7 @@
             // 
             this.toggleFullscreenButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.toggleFullscreenButton.Enabled = false;
-            this.toggleFullscreenButton.Image = Properties.Resources.icon_fullscreen;
+            this.toggleFullscreenButton.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_fullscreen;
             this.toggleFullscreenButton.Location = new System.Drawing.Point(120, 248);
             this.toggleFullscreenButton.Name = "toggleFullscreenButton";
             this.toggleFullscreenButton.Size = new System.Drawing.Size(30, 30);
@@ -95,7 +96,7 @@
             // 
             this.setWallpaperButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.setWallpaperButton.Enabled = false;
-            this.setWallpaperButton.Image = Properties.Resources.icon_image;
+            this.setWallpaperButton.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_image;
             this.setWallpaperButton.Location = new System.Drawing.Point(48, 248);
             this.setWallpaperButton.Name = "setWallpaperButton";
             this.setWallpaperButton.Size = new System.Drawing.Size(30, 30);
@@ -107,7 +108,7 @@
             // 
             this.previosPostButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.previosPostButton.Enabled = false;
-            this.previosPostButton.Image = Properties.Resources.icon_arrow_left;
+            this.previosPostButton.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_arrow_left;
             this.previosPostButton.Location = new System.Drawing.Point(84, 284);
             this.previosPostButton.Name = "previosPostButton";
             this.previosPostButton.Size = new System.Drawing.Size(30, 30);
@@ -119,7 +120,7 @@
             // 
             this.nextPostButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.nextPostButton.Enabled = false;
-            this.nextPostButton.Image = Properties.Resources.icon_arrow_right;
+            this.nextPostButton.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_arrow_right;
             this.nextPostButton.Location = new System.Drawing.Point(120, 284);
             this.nextPostButton.Name = "nextPostButton";
             this.nextPostButton.Size = new System.Drawing.Size(30, 30);
@@ -148,22 +149,11 @@
             this.postScoreLabel.TabIndex = 12;
             this.postScoreLabel.Text = "Score";
             // 
-            // postRatingComboBox
-            // 
-            this.postRatingComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.postRatingComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.postRatingComboBox.Enabled = false;
-            this.postRatingComboBox.FormattingEnabled = true;
-            this.postRatingComboBox.Location = new System.Drawing.Point(15, 195);
-            this.postRatingComboBox.Name = "postRatingComboBox";
-            this.postRatingComboBox.Size = new System.Drawing.Size(134, 21);
-            this.postRatingComboBox.TabIndex = 13;
-            // 
             // editImageButton
             // 
             this.editImageButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.editImageButton.Enabled = false;
-            this.editImageButton.Image = Properties.Resources.logo_photoshop;
+            this.editImageButton.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.logo_photoshop;
             this.editImageButton.Location = new System.Drawing.Point(84, 248);
             this.editImageButton.Name = "editImageButton";
             this.editImageButton.Size = new System.Drawing.Size(30, 30);
@@ -197,7 +187,6 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(520, 326);
             this.Controls.Add(this.editImageButton);
-            this.Controls.Add(this.postRatingComboBox);
             this.Controls.Add(this.postScoreLabel);
             this.Controls.Add(this.postScoreNumericUpDown);
             this.Controls.Add(this.scalablePictureBox);
@@ -221,8 +210,8 @@
 
         #endregion
 
-        private TEAM_ALPHA.Controls.ScalablePictureBox scalablePictureBox;
-        private Controls.TagList tagList;
+        private ScalablePictureBox scalablePictureBox;
+        private xTagList tagList;
         private System.Windows.Forms.Button editPostButton;
         private System.Windows.Forms.Button deletePostButton;
         private System.Windows.Forms.Button saveImageButton;
@@ -232,7 +221,6 @@
         private System.Windows.Forms.Button nextPostButton;
         private System.Windows.Forms.NumericUpDown postScoreNumericUpDown;
         private System.Windows.Forms.Label postScoreLabel;
-        private System.Windows.Forms.ComboBox postRatingComboBox;
         private System.Windows.Forms.Button editImageButton;
     }
 }

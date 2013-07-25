@@ -1,4 +1,4 @@
-﻿namespace TA.SharpBooru.Client.GUI.nControls
+﻿namespace TA.SharpBooru.Client.GUI.Controls
 {
     partial class BooruThumbView
     {
@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             this.pageLabel = new System.Windows.Forms.Label();
-            this.ajaxProgressIndicator1 = new TA.SharpBooru.Client.GUI.nControls.AjaxProgressIndicator();
-            this.pageSwitcher = new TA.SharpBooru.Client.GUI.nControls.PageSwitcher();
-            this.thumbView = new TA.SharpBooru.Client.GUI.nControls.ThumbView();
+            this.ajaxLoading1 = new TA.SharpBooru.Client.GUI.Controls.AjaxLoading();
+            this.pageSwitcher = new TA.SharpBooru.Client.GUI.Controls.PageSwitcher();
+            this.thumbView = new TA.SharpBooru.Client.GUI.Controls.ThumbView();
             this.SuspendLayout();
             // 
             // pageLabel
@@ -42,21 +42,21 @@
             this.pageLabel.Font = new System.Drawing.Font("Arial Black", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.pageLabel.Location = new System.Drawing.Point(109, 206);
             this.pageLabel.Name = "pageLabel";
-            this.pageLabel.Size = new System.Drawing.Size(188, 25);
+            this.pageLabel.Size = new System.Drawing.Size(186, 25);
             this.pageLabel.TabIndex = 1;
             this.pageLabel.Text = "label1";
             this.pageLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // ajaxProgressIndicator1
+            // ajaxLoading1
             // 
-            this.ajaxProgressIndicator1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ajaxProgressIndicator1.Location = new System.Drawing.Point(112, 206);
-            this.ajaxProgressIndicator1.Name = "ajaxProgressIndicator1";
-            this.ajaxProgressIndicator1.Size = new System.Drawing.Size(35, 25);
-            this.ajaxProgressIndicator1.TabIndex = 0;
-            this.ajaxProgressIndicator1.Text = "ajaxProgressIndicator1";
-            this.ajaxProgressIndicator1.Value = 0D;
-            this.ajaxProgressIndicator1.Visible = false;
+            this.ajaxLoading1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.ajaxLoading1.Location = new System.Drawing.Point(112, 206);
+            this.ajaxLoading1.Name = "ajaxLoading1";
+            this.ajaxLoading1.Size = new System.Drawing.Size(35, 25);
+            this.ajaxLoading1.TabIndex = 0;
+            this.ajaxLoading1.Text = "ajaxProgressIndicator1";
+            this.ajaxLoading1.Value = 0D;
+            this.ajaxLoading1.Visible = false;
             // 
             // pageSwitcher
             // 
@@ -83,16 +83,16 @@
             this.thumbView.TabIndex = 0;
             this.thumbView.ThumbnailSize = ((ushort)(192));
             // 
-            // PagedThumbView
+            // BooruThumbView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.Controls.Add(this.ajaxProgressIndicator1);
+            this.Controls.Add(this.ajaxLoading1);
             this.Controls.Add(this.pageSwitcher);
             this.Controls.Add(this.pageLabel);
             this.Controls.Add(this.thumbView);
-            this.Name = "PagedThumbView";
+            this.Name = "BooruThumbView";
             this.Size = new System.Drawing.Size(300, 234);
             this.ResumeLayout(false);
 
@@ -100,9 +100,9 @@
 
         #endregion
 
-        private TA.SharpBooru.Client.GUI.nControls.ThumbView thumbView;
+        private TA.SharpBooru.Client.GUI.Controls.ThumbView thumbView;
         private System.Windows.Forms.Label pageLabel;
         private PageSwitcher pageSwitcher;
-        private AjaxProgressIndicator ajaxProgressIndicator1;
+        private AjaxLoading ajaxLoading1;
     }
 }

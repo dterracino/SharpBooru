@@ -53,11 +53,13 @@ namespace TA.SharpBooru.Client.GUI
             postScoreNumericUpDown.Minimum = int.MinValue;
             //TODO GetAllRatings
             //BooruHelper.GetAllRatings(_Booru.wrapper).ForEach(x => postRatingComboBox.Items.Add(x));
+            /*
             postRatingComboBox.SelectedIndexChanged += new EventHandler((sender, e) =>
                 {
                     _Post.Rating = (byte)(postRatingComboBox.SelectedIndex + 1);
                     _Post.EditCount++;
                 });
+            */
             index = StartIndex;
             GUIHelper.CreateToolTip(editPostButton, "Edit post");
             GUIHelper.CreateToolTip(deletePostButton, "Delete post");
@@ -92,54 +94,54 @@ namespace TA.SharpBooru.Client.GUI
                 {
                     lock (_loadLock)
                     {
-                        MethodInvoker invoker = (MethodInvoker)delegate
-                        {
-                            editPostButton.Enabled = false;
-                            deletePostButton.Enabled = false;
-                            saveImageButton.Enabled = false;
-                            setWallpaperButton.Enabled = false;
-                            previosPostButton.Enabled = false;
-                            nextPostButton.Enabled = false;
-                            toggleFullscreenButton.Enabled = false;
-                            tagList.Enabled = false;
-                            editImageButton.Enabled = false;
-                            postRatingComboBox.Enabled = false;
-                            postScoreLabel.Enabled = false;
-                            postScoreNumericUpDown.Enabled = false;
-                        };
-                        if (IsHandleCreated) Invoke(invoker);
+                        SetLoadingMode(true);
                         Bitmap image = _Post.Image.Bitmap;
                         try
                         {
-                            invoker = (MethodInvoker)delegate { scalablePictureBox.Picture = image; };
+                            MethodInvoker invoker = () => { scalablePictureBox.Picture = image; };
                             if (scalablePictureBox.InvokeRequired) scalablePictureBox.Invoke(invoker); else invoker();
-                            invoker = (MethodInvoker)delegate
+                            invoker = () =>
                             {
                                 tagList.Post = _Post;
                                 _Post.ViewCount++;
                                 postScoreNumericUpDown.Value = _Post.Score;
-                                postRatingComboBox.SelectedIndex = _Post.Rating - 1;
                                 Text = string.Format("{0} - {1}x{2} - Views {4} - Added {3}", _Post.ID, _Post.Width, _Post.Height, _Post.CreationDate, _Post.ViewCount);
-                                editPostButton.Enabled = true;
-                                deletePostButton.Enabled = true;
-                                saveImageButton.Enabled = true;
-                                setWallpaperButton.Enabled = true;
-                                previosPostButton.Enabled = index > 0;
-                                nextPostButton.Enabled = index < _Posts.Count - 1;
-                                //toggleFullscreenButton.Enabled = true; //TODO Fix fullscreen
-                                tagList.Enabled = true;
-                                editImageButton.Enabled = true;
-                                postRatingComboBox.Enabled = true;
-                                postScoreLabel.Enabled = true;
-                                postScoreNumericUpDown.Enabled = true;
                             };
                             if (InvokeRequired) Invoke(invoker); else invoker();
                         }
                         catch (ObjectDisposedException) { }
-                        catch { throw; }
+                        SetLoadingMode(false);
                     }
                 }));
             loadThread.Start();
+        }
+
+        private void SetLoadingMode(bool LoadingMode)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<bool>(SetLoadingMode), LoadingMode);
+                return;
+            }
+            editPostButton.Enabled = !LoadingMode;
+            deletePostButton.Enabled = !LoadingMode;
+            saveImageButton.Enabled = !LoadingMode;
+            setWallpaperButton.Enabled = !LoadingMode;
+            if (LoadingMode)
+            {
+                previosPostButton.Enabled = false;
+                nextPostButton.Enabled = false;
+            }
+            else
+            {
+                previosPostButton.Enabled = index > 0;
+                nextPostButton.Enabled = index < _Posts.Count - 1;
+            }
+            //toggleFullscreenButton.Enabled = !LoadingMode; TODO Fix fullscreen
+            tagList.Enabled = !LoadingMode;
+            editImageButton.Enabled = !LoadingMode;
+            postScoreLabel.Enabled = !LoadingMode;
+            postScoreNumericUpDown.Enabled = !LoadingMode;
         }
 
         private object[] saveState = null;
@@ -163,9 +165,11 @@ namespace TA.SharpBooru.Client.GUI
 
         private void button1_Click(object sender, EventArgs e)
         {
+            /*
             EditPostDialog edp = new EditPostDialog(_Booru, _Post);
             if (edp.ShowDialog() == DialogResult.OK)
                 ChangePost(_Post);
+            */
         }
 
         private void button2_Click(object sender, EventArgs e)

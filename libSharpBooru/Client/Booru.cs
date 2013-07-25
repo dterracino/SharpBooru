@@ -6,6 +6,7 @@ using System.Security;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Collections.Generic;
+using TA.SharpBooru.BooruAPIs;
 
 namespace TA.SharpBooru.Client
 {
@@ -20,6 +21,7 @@ namespace TA.SharpBooru.Client
         private SslStream _SSLStream;
         private BinaryReader _Reader;
         private BinaryWriter _Writer;
+        private object _Lock = new object();
 
         public Booru(string Server, ushort Port, string Username, string Password)
         {
@@ -56,7 +58,7 @@ namespace TA.SharpBooru.Client
             {
                 Disconnect();
                 _Client.Connect(_EndPoint);
-                _SSLStream = new SslStream(_Client.GetStream(), true, delegate { return true; });
+                _SSLStream = new SslStream(_Client.GetStream(), true, delegate { return true; }); //TODO Client config
                 _SSLStream.AuthenticateAsClient("SharpBooruServer");
                 _Reader = new BinaryReader(_SSLStream, Encoding.Unicode);
                 _Writer = new BinaryWriter(_SSLStream, Encoding.Unicode);
@@ -85,21 +87,15 @@ namespace TA.SharpBooru.Client
 
         public BooruPost GetPost(ulong ID)
         {
-            BeginCommunication(BooruProtocol.Command.GetPost);
-            _Writer.Write(ID);
-            EndCommunication();
-            BooruPost post = BooruPost.FromReader(_Reader);
-            post.Thumbnail = BooruImage.FromReader(_Reader);
-            return post;
-        }
-
-        public BooruImage GetImage(ulong ID)
-        {
-            BeginCommunication(BooruProtocol.Command.GetImage);
-            _Writer.Write(ID);
-            EndCommunication();
-            int byteCount = (int)_Reader.ReadUInt32();
-            return new BooruImage(_Reader.ReadBytes(byteCount));
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.GetPost);
+                _Writer.Write(ID);
+                EndCommunication();
+                BooruPost post = BooruPost.FromReader(_Reader);
+                post.Thumbnail = BooruImage.FromReader(_Reader);
+                return post;
+            }
         }
 
         public void GetImage(ref BooruPost Post)
@@ -107,65 +103,100 @@ namespace TA.SharpBooru.Client
             if (Post.Image == null)
                 Post.Image = GetImage(Post.ID);
         }
+        public BooruImage GetImage(ulong ID)
+        {
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.GetImage);
+                _Writer.Write(ID);
+                EndCommunication();
+                int byteCount = (int)_Reader.ReadUInt32();
+                return new BooruImage(_Reader.ReadBytes(byteCount));
+            }
+        }
 
         public void DeletePost(ulong ID)
         {
-            BeginCommunication(BooruProtocol.Command.DeletePost);
-            _Writer.Write(ID);
-            EndCommunication();
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.DeletePost);
+                _Writer.Write(ID);
+                EndCommunication();
+            }
         }
 
-        public void SaveServerBooru() 
+        public void SaveServerBooru()
         {
-            BeginCommunication(BooruProtocol.Command.SaveBooru);
-            EndCommunication();
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.SaveBooru);
+                EndCommunication();
+            }
         }
 
         public List<ulong> Search(string Pattern)
         {
-            BeginCommunication(BooruProtocol.Command.Search);
-            _Writer.Write(Pattern);
-            EndCommunication();
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.Search);
+                _Writer.Write(Pattern);
+                EndCommunication();
                 uint count = _Reader.ReadUInt32();
                 List<ulong> IDs = new List<ulong>();
                 for (uint i = 0; i < count; i++)
                     IDs.Add(_Reader.ReadUInt64());
                 return IDs;
+            }
         }
 
         public void DeleteTag(ulong ID)
         {
-            BeginCommunication(BooruProtocol.Command.DeleteTag);
-            _Writer.Write(ID);
-            EndCommunication();
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.DeleteTag);
+                _Writer.Write(ID);
+                EndCommunication();
+            }
         }
+
+        //TODO Implement EditTag
+        //public ulong SaveTag(BooruTag Tag) { return EditTag(Tag.ID, Tag); }
 
         public ulong EditTag(ulong ID, BooruTag NewTag)
         {
-            BeginCommunication(BooruProtocol.Command.EditTag);
-            _Writer.Write(ID);
-            NewTag.ToWriter(_Writer);
-            EndCommunication();
-            return _Reader.ReadUInt64();
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.EditTag);
+                _Writer.Write(ID);
+                NewTag.ToWriter(_Writer);
+                EndCommunication();
+                return _Reader.ReadUInt64();
+            }
         }
 
-        public ulong AddPost(BooruPost NewPost, BooruImage Image)
+        public ulong AddPost(BooruPost NewPost)
         {
-            BeginCommunication(BooruProtocol.Command.AddPost);
-            NewPost.ToWriter(_Writer);
-            Image.ToWriter(_Writer);
-            EndCommunication();
-            return _Reader.ReadUInt64();
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.AddPost);
+                NewPost.ToWriter(_Writer);
+                NewPost.Image.ToWriter(_Writer);
+                EndCommunication();
+                return _Reader.ReadUInt64();
+            }
         }
 
-        public ulong AddPost(BooruAPIs.BooruAPIPost NewAPIPost)
+        public ulong AddPost(BooruAPIPost NewAPIPost)
         {
-            NewAPIPost.DownloadImage();
-            BeginCommunication(BooruProtocol.Command.AddPost);
-            NewAPIPost.ToWriter(_Writer);
-            NewAPIPost.Image.ToWriter(_Writer);
-            EndCommunication();
-            return _Reader.ReadUInt64();
+            lock (_Lock)
+            {
+                NewAPIPost.DownloadImage();
+                BeginCommunication(BooruProtocol.Command.AddPost);
+                NewAPIPost.ToWriter(_Writer);
+                NewAPIPost.Image.ToWriter(_Writer);
+                EndCommunication();
+                return _Reader.ReadUInt64();
+            }
         }
 
         public BooruPostList GetPosts(List<ulong> IDs)
@@ -180,12 +211,32 @@ namespace TA.SharpBooru.Client
 
         public BooruTagList GetAllTags()
         {
-            BeginCommunication(BooruProtocol.Command.GetAllTags);
-            EndCommunication();
-            return BooruTagList.FromReader(_Reader);
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.GetAllTags);
+                EndCommunication();
+                return BooruTagList.FromReader(_Reader);
+            }
         }
 
-        public void ForceKillServer() { BeginCommunication(BooruProtocol.Command.ForceKillServer); }
+        public void ForceKillServer()
+        {
+            lock (_Lock)
+                BeginCommunication(BooruProtocol.Command.ForceKillServer);
+        }
+
+        public void SaveImage(BooruPost Post) { EditImage(Post.ID, Post.Image); }
+
+        public void EditImage(ulong ID, BooruImage Image)
+        {
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.EditImage);
+                _Writer.Write(ID);
+                Image.ToWriter(_Writer);
+                EndCommunication();
+            }
+        }
 
         public void Disconnect() { Dispose(); }
         public void Dispose()
@@ -193,7 +244,8 @@ namespace TA.SharpBooru.Client
             try
             {
                 if (_Client.Connected)
-                    BeginCommunication(BooruProtocol.Command.Disconnect);
+                    lock (_Lock)
+                        BeginCommunication(BooruProtocol.Command.Disconnect);
             }
             catch { }
             try

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace TA.SharpBooru.Client.GUI.Controls
 {
-    public partial class TagList : UserControl
+    public partial class xTagList : UserControl
     {
         private Booru _Booru = null;
         private BooruPost _Post = null;
@@ -62,7 +62,7 @@ namespace TA.SharpBooru.Client.GUI.Controls
         */
 
         /// <summary>Creates a new TagList</summary>
-        public TagList()
+        public xTagList()
         {
             InitializeComponent();
             base.BackColor = Color.Transparent;

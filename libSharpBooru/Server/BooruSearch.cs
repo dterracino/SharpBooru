@@ -45,7 +45,7 @@ namespace TA.SharpBooru.Server
 
         private static bool IsSpecialPattern(string Pattern)
         {
-            return false; //TODO Implement special patterns
+            return false; //TODO Implement special pattern RegEx
         }
 
         private static string[] SplitString(string String)

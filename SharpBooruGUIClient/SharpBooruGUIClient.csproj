@@ -43,36 +43,68 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controls\TagList.cs">
+    <Compile Include="Controls\xTagList.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\TagList.Designer.cs">
-      <DependentUpon>TagList.cs</DependentUpon>
+    <Compile Include="Controls\xTagList.Designer.cs">
+      <DependentUpon>xTagList.cs</DependentUpon>
     </Compile>
-    <Compile Include="nControls\BooruThumbView.cs">
+    <Compile Include="Controls\BooruThumbView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="nControls\BooruThumbView.Designer.cs">
+    <Compile Include="Controls\BooruThumbView.Designer.cs">
       <DependentUpon>BooruThumbView.cs</DependentUpon>
     </Compile>
-    <Compile Include="nControls\ScalablePictureBox.cs">
+    <Compile Include="Controls\xScalablePictureBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="nControls\TagTextBox.cs">
+    <Compile Include="Controls\ScalablePictureBox\Common.cs" />
+    <Compile Include="Controls\ScalablePictureBox\PictureTracker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\PictureTracker.designer.cs">
+      <DependentUpon>PictureTracker.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\ScalablePictureBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\ScalablePictureBox.designer.cs">
+      <DependentUpon>ScalablePictureBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\ScalablePictureBoxImp.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\ScalablePictureBoxImp.designer.cs">
+      <DependentUpon>ScalablePictureBoxImp.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\TransparentButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\TransparentButton.designer.cs">
+      <DependentUpon>TransparentButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ScalablePictureBox\Util.cs" />
+    <Compile Include="Controls\TagTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="GUIHelper.cs" />
-    <Compile Include="nControls\AjaxProgressIndicator.cs">
+    <Compile Include="Controls\AjaxLoading.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="nControls\PageSwitcher.cs">
+    <Compile Include="Controls\PageSwitcher.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="nControls\SelectablePictureBox.cs">
+    <Compile Include="Controls\SelectablePictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="nControls\ThumbView.cs">
+    <Compile Include="Controls\ThumbView.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PostViewerDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PostViewerDialog.designer.cs">
+      <DependentUpon>PostViewerDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -88,8 +120,23 @@
     <Compile Include="TestForm.Designer.cs">
       <DependentUpon>TestForm.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Controls\TagList.resx">
-      <DependentUpon>TagList.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\BooruThumbView.resx">
+      <DependentUpon>BooruThumbView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ScalablePictureBox\PictureTracker.resx">
+      <DependentUpon>PictureTracker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ScalablePictureBox\ScalablePictureBox.resx">
+      <DependentUpon>ScalablePictureBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ScalablePictureBox\ScalablePictureBoxImp.resx">
+      <DependentUpon>ScalablePictureBoxImp.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\ScalablePictureBox\TransparentButton.resx">
+      <DependentUpon>TransparentButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PostViewerDialog.resx">
+      <DependentUpon>PostViewerDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -2,9 +2,9 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace TA.SharpBooru.Client.GUI.nControls
+namespace TA.SharpBooru.Client.GUI.Controls
 {
-    public class AjaxProgressIndicator : Panel
+    public class AjaxLoading : Panel
     {
         private double _Value;
         public double Value
@@ -26,7 +26,7 @@ namespace TA.SharpBooru.Client.GUI.nControls
 
         private Label progressLabel;
 
-        public AjaxProgressIndicator()
+        public AjaxLoading()
         {
             PictureBox pictureBox = new PictureBox()
             {

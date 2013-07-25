@@ -42,10 +42,10 @@ namespace TA.SharpBooru
             EditPost,
 
             // Tags(BooruTagList)
-            GetAllTags
+            GetAllTags,
 
-            // PostID(ulong), Image(BooruImage)
-            //EditImage
+            // void, PostID(ulong), Image(BooruImage)
+            EditImage
 
             /*
             

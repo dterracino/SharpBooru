@@ -11,14 +11,6 @@ namespace TA.SharpBooru.Client.GUI
 {
     public partial class TestForm : Form
     {
-        public TestForm()
-        {
-            InitializeComponent();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            scalablePictureBox1.Picture = "C:\\image.jpg";
-        }
+        public TestForm() { InitializeComponent(); }
     }
 }

@@ -43,14 +43,33 @@
     <Compile Include="BooruAPIs\KonachanAPI.cs" />
     <Compile Include="BooruAPIs\SafebooruAPI.cs" />
     <Compile Include="BooruImage.cs" />
-    <Compile Include="LitJSON\IJsonWrapper.cs" />
-    <Compile Include="LitJSON\JsonData.cs" />
-    <Compile Include="LitJSON\JsonException.cs" />
-    <Compile Include="LitJSON\JsonMapper.cs" />
-    <Compile Include="LitJSON\JsonReader.cs" />
-    <Compile Include="LitJSON\JsonWriter.cs" />
-    <Compile Include="LitJSON\Lexer.cs" />
-    <Compile Include="LitJSON\ParserToken.cs" />
+    <Compile Include="LitJSON\IJsonWrapper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LitJSON\JsonData.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LitJSON\JsonException.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LitJSON\JsonMapper.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LitJSON\JsonReader.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LitJSON\JsonWriter.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LitJSON\Lexer.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LitJSON\ParserToken.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Logger.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="Server\BooruUser.cs" />
     <Compile Include="Client\Booru.cs" />
     <Compile Include="BooruPost.cs" />

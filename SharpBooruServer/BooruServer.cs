@@ -14,7 +14,6 @@ namespace TA.SharpBooru.Server
 
         private TcpListener _Listener;
         private SmartThreadPool _ThreadPool;
-        private Thread _ListenerThread;
         private X509Certificate _Certificate;
         private Booru _Booru;
         private Logger _Logger;
@@ -24,7 +23,7 @@ namespace TA.SharpBooru.Server
         public Logger Logger { get { return _Logger; } }
         public X509Certificate Certificate { get { return _Certificate; } }
 
-        public BooruServer(Booru Booru,Logger Logger, X509Certificate Certificate, int Port = 2400)
+        public BooruServer(Booru Booru, Logger Logger, X509Certificate Certificate, int Port = 2400)
         {
             _Booru = Booru;
             _Logger = Logger;
@@ -32,37 +31,45 @@ namespace TA.SharpBooru.Server
             _Listener = new TcpListener(IPAddress.Any, 2400);
             _ThreadPool = new SmartThreadPool();
             _ThreadPool.MaxThreads = int.MaxValue;
-            ThreadStart listenerThreadStart = () =>
-                {
-                    while (_ListenerRunning)
-                        try
-                        {
-                            TcpClient client = _Listener.AcceptTcpClient();
-                            ClientHandler handler = new ClientHandler(this, client);
-                            handler.Queue(_ThreadPool);
-                        }
-                        catch (Exception ex)
-                        {
-                            if (_ListenerRunning)
-                                _Logger.LogFAILAndException(ex);
-                        }
-                };
-            _ListenerThread = new Thread(listenerThreadStart);
         }
 
         public void Start()
         {
             _ListenerRunning = true;
             _Listener.Start();
-            _ListenerThread.Start();
-            _Logger.LogLine("[c3]Server running...");
+            _Logger.LogLine("Server running...");
+            while (_ListenerRunning)
+                try
+                {
+                    TcpClient client = _Listener.AcceptTcpClient();
+                    ClientHandler handler = new ClientHandler(this, client);
+                    handler.Queue(_ThreadPool);
+                }
+                catch (Exception ex)
+                {
+                    if (_ListenerRunning)
+                        _Logger.LogException(ex);
+                }
         }
 
         public void Stop()
         {
             _ListenerRunning = false;
             _Listener.Stop();
-            _Logger.LogLine("[c3]Server stopped...");
+            _Logger.LogLine("Server stopped...");
+        }
+
+        public bool WaitForClients(int Timeout)
+        {
+            if (Timeout == 0)
+                return _ThreadPool.IsIdle;
+            for (int i = 0; i < Timeout * 10 || Timeout < 0; i++)
+            {
+                Thread.Sleep(100);
+                if (_ThreadPool.IsIdle)
+                    return true;
+            }
+            return false;
         }
     }
 }

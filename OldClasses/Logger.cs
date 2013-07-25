@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text.RegularExpressions;
 
-namespace TA.SharpBooru.Server
+namespace TA.SharpBooru
 {
     public class Logger
     {

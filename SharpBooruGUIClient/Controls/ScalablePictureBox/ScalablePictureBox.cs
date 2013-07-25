@@ -12,7 +12,7 @@ using System.IO;
 /// BSD license, or whatever other licence you choose, including proprietary
 /// closed source licenses.  I do ask that you leave this lcHeader in tact.
 
-namespace TEAM_ALPHA.Controls
+namespace TA.SharpBooru.Client.GUI.Controls
 {
     /// <summary>
     /// Front end control of the scrollable, zoomable and scalable picture box.

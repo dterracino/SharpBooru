@@ -11,7 +11,7 @@ using System.Windows.Forms;
 /// BSD license, or whatever other licence you choose, including proprietary
 /// closed source licenses.  I do ask that you leave this lcHeader in tact.
 
-namespace TEAM_ALPHA.Controls
+namespace TA.SharpBooru.Client.GUI.Controls
 {
     /// <summary>
     /// A help button control used as a transparent close button in PictureTracker control

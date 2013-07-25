@@ -5,7 +5,7 @@ using System;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace TA.SharpBooru.Client.GUI.nControls
+namespace TA.SharpBooru.Client.GUI.Controls
 {
     public class SelectablePictureBox : PictureBox
     {

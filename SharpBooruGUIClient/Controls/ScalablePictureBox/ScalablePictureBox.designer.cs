@@ -4,7 +4,7 @@
 /// BSD license, or whatever other licence you choose, including proprietary
 /// closed source licenses.  I do ask that you leave this lcHeader in tact.
 
-namespace TEAM_ALPHA.Controls
+namespace TA.SharpBooru.Client.GUI.Controls
 {
     public partial class ScalablePictureBox
     {
@@ -34,8 +34,8 @@ namespace TEAM_ALPHA.Controls
         /// </summary>
         private void InitializeComponent()
         {
-            this.pictureTracker = new TEAM_ALPHA.Controls.PictureTracker();
-            this.scalablePictureBoxImp = new TEAM_ALPHA.Controls.ScalablePictureBoxImp();
+            this.pictureTracker = new TA.SharpBooru.Client.GUI.Controls.PictureTracker();
+            this.scalablePictureBoxImp = new TA.SharpBooru.Client.GUI.Controls.ScalablePictureBoxImp();
             this.SuspendLayout();
             // 
             // pictureTracker

@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
-using TA.SharpBooru.Client.GUI.nControls;
+using TA.SharpBooru.Client.GUI.Controls;
 
 namespace TA.SharpBooru.Client.GUI
 {
@@ -26,9 +26,13 @@ namespace TA.SharpBooru.Client.GUI
         {
             BooruPost post = aObj as BooruPost;
             _Booru.GetImage(ref post);
+            /*
             string tempFile = Helper.GetTempFile();
             post.Image.Save(ref tempFile);
             Process imgViewerProcess = Process.Start(tempFile);
+            */
+            PostViewerDialog pvd = new PostViewerDialog(_Booru, new List<BooruPost>() { post }, 0);
+            pvd.ShowDialog();
         }
 
         private void tagTextBox1_EnterPressed(object sender, EventArgs e)
@@ -41,6 +45,11 @@ namespace TA.SharpBooru.Client.GUI
         {
             using (TestForm tForm = new TestForm())
                 tForm.ShowDialog();
+        }
+
+        private void buttonImportForm_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

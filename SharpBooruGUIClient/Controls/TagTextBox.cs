@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using System.ComponentModel;
 using System.Collections.Generic;
 
-namespace TA.SharpBooru.Client.GUI.nControls
+namespace TA.SharpBooru.Client.GUI.Controls
 {
     public class TagTextBox : TextBox
     {

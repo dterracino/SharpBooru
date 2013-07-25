@@ -38,6 +38,7 @@ namespace TA.SharpBooru.Server
                 byte[] buffer = new byte[1024];
                 while (true)
                 {
+                    //TODO Implement bandwidth limit
                     int read = file.Read(buffer, 0, 1024);
                     if (read > 0)
                         Writer.Write(buffer, 0, read);
