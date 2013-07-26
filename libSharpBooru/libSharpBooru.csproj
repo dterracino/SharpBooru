@@ -43,6 +43,7 @@
     <Compile Include="BooruAPIs\KonachanAPI.cs" />
     <Compile Include="BooruAPIs\SafebooruAPI.cs" />
     <Compile Include="BooruImage.cs" />
+    <Compile Include="Client\BooruPostBuffer.cs" />
     <Compile Include="LitJSON\IJsonWrapper.cs">
       <SubType>Code</SubType>
     </Compile>

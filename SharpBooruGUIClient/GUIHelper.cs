@@ -1,12 +1,31 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
 
 namespace TA.SharpBooru.Client.GUI
 {
     public static class GUIHelper
     {
-        public static int SetListViewPadding(ListView ListView, int LeftPadding, int TopPadding) { return Helper.SetListViewPadding(ListView.Handle, LeftPadding, TopPadding); }
+        [DllImport("user32.dll", EntryPoint = "SystemParametersInfo")]
+        [return: MarshalAsAttribute(UnmanagedType.Bool)]
+        private static extern bool _SystemParametersInfo(uint uiAction, uint uiParam, string pvParam, uint fWinIni);
+
+        [DllImport("user32.dll", EntryPoint = "SendMessage")]
+        private static extern int _SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+        public static int SetListViewPadding(ListView ListView, int leftPadding, int topPadding)
+        {
+            if (Helper.IsWindows())
+            {
+                const int LVM_FIRST = 0x1000;
+                const int LVM_SETICONSPACING = LVM_FIRST + 53;
+                int arg = (int)(((ushort)leftPadding) | (uint)((short)topPadding << 16));
+                return _SendMessage(ListView.Handle, LVM_SETICONSPACING, IntPtr.Zero, (IntPtr)arg);
+            }
+            else return -1;
+        }
 
         public static ToolTip CreateToolTip(Control Control, string Text)
         {
@@ -21,6 +40,17 @@ namespace TA.SharpBooru.Client.GUI
                 Parent.Location.X + (Parent.Width - Child.Width) / 2,
                 Parent.Location.Y + (Parent.Height - Child.Height) / 2);
             Child.Load += (sender, e) => { Child.Location = childLocation; };
+        }
+
+        public static bool SetWallpaper(BooruImage Bitmap, bool DeleteTempFileOnSuccess = false)
+        {
+            if (Helper.IsWindows())
+            {
+                string tempFile = Helper.GetTempFile();
+                Bitmap.Save(ref tempFile, true, ImageFormat.Bmp);
+                return _SystemParametersInfo(0x14, 0, tempFile, 0x03);
+            }
+            else return false;
         }
     }
 }

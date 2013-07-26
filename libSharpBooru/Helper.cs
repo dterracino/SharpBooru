@@ -36,10 +36,6 @@ namespace TA.SharpBooru
         [DllImport("kernel32.dll", EntryPoint = "FreeConsole")]
         [return: MarshalAsAttribute(UnmanagedType.Bool)]
         private static extern bool _FreeConsole();
-
-        [DllImport("user32.dll", EntryPoint = "SystemParametersInfo")]
-        [return: MarshalAsAttribute(UnmanagedType.Bool)]
-        private static extern bool _SystemParametersInfo(uint uiAction, uint uiParam, string pvParam, uint fWinIni);
         */
 
         [DllImport("user32.dll", EntryPoint = "EnableWindow")]
@@ -101,21 +97,6 @@ namespace TA.SharpBooru
             return false;
         }
         */
-        
-        [DllImport("user32.dll", EntryPoint = "SendMessage")]
-        private static extern int _SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
-
-        public static int SetListViewPadding(IntPtr listViewHandle, int leftPadding, int topPadding)
-        {
-            if (!IsMono())
-            {
-                const int LVM_FIRST = 0x1000;
-                const int LVM_SETICONSPACING = LVM_FIRST + 53;
-                int arg = (int)(((ushort)leftPadding) | (uint)((short)topPadding << 16));
-                return _SendMessage(listViewHandle, LVM_SETICONSPACING, IntPtr.Zero, (IntPtr)arg);
-            }
-            else return -1;
-        }
 
         public static string DownloadTemporary(string URI)
         {
@@ -160,6 +141,12 @@ namespace TA.SharpBooru
             return _IsPOSIX.Value;
         }
 
+        public static bool IsWindows()
+        {
+            PlatformID pfid = Environment.OSVersion.Platform;
+            return pfid == PlatformID.Win32NT;
+        }
+
         public static bool IsConsole()
         {
             Stream stdin = Console.OpenStandardInput(1);
@@ -179,30 +166,6 @@ namespace TA.SharpBooru
         }
 
         public static Color OppositeColor(Color Color, bool AlsoAlpha = false) { return Color.FromArgb(AlsoAlpha ? 255 - Color.A : 255, 255 - Color.R, 255 - Color.G, 255 - Color.B); }
-        
-        /*
-        public static bool SetWallpaper(string Path, bool DeleteFileOnSuccess = false)
-        {
-            if (!IsMono())
-            {
-                bool success = _SystemParametersInfo(0x14, 0, Path, 0x03);
-                if (DeleteFileOnSuccess)
-                    File.Delete(Path);
-                return success;
-            }
-            else return false;
-        }
-
-        public static bool SetWallpaper(BooruImage Bitmap, bool DeleteTempFileOnSuccess = false)
-        {
-            if (!IsMono())
-            {
-                string tempFile = BitmapFactory.SaveBitmap(Bitmap, GetTempFile(), true, System.Drawing.Imaging.ImageFormat.Bmp);
-                return SetWallpaper(tempFile, DeleteTempFileOnSuccess);
-            }
-            else return false;
-        }
-        */
 
         public static bool CheckURL(string URL, bool DeepCheck = false)
         {

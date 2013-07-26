@@ -10,7 +10,9 @@ namespace TA.SharpBooru.Server
     {
         public static int Main(string[] args)
         {
+            Console.Title = "SharpBooru Server";
             Logger sLogger = new Logger(Console.Out);
+
             try
             {
                 (new Program()).Run(args, sLogger);
@@ -64,8 +66,7 @@ namespace TA.SharpBooru.Server
                     using (UnixSignal uSignal = new UnixSignal(Signal))
                         uSignal.WaitOne(Timeout.Infinite);
                     SignalAction();
-                });
-            signalThread.IsBackground = true;
+                }) { IsBackground = true };
             signalThread.Start();
         }
 

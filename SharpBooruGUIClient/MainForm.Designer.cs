@@ -28,23 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.buttonTestForm = new System.Windows.Forms.Button();
             this.labelSearchBox = new System.Windows.Forms.Label();
             this.buttonImportForm = new System.Windows.Forms.Button();
             this.searchBox = new TA.SharpBooru.Client.GUI.Controls.TagTextBox();
             this.booruThumbView = new TA.SharpBooru.Client.GUI.Controls.BooruThumbView();
             this.SuspendLayout();
-            // 
-            // buttonTestForm
-            // 
-            this.buttonTestForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonTestForm.Location = new System.Drawing.Point(12, 312);
-            this.buttonTestForm.Name = "buttonTestForm";
-            this.buttonTestForm.Size = new System.Drawing.Size(100, 23);
-            this.buttonTestForm.TabIndex = 3;
-            this.buttonTestForm.Text = "Test Form";
-            this.buttonTestForm.UseVisualStyleBackColor = true;
-            this.buttonTestForm.Click += new System.EventHandler(this.button1_Click);
             // 
             // labelSearchBox
             // 
@@ -58,7 +46,7 @@
             // buttonImportForm
             // 
             this.buttonImportForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonImportForm.Location = new System.Drawing.Point(12, 283);
+            this.buttonImportForm.Location = new System.Drawing.Point(12, 312);
             this.buttonImportForm.Name = "buttonImportForm";
             this.buttonImportForm.Size = new System.Drawing.Size(100, 23);
             this.buttonImportForm.TabIndex = 15;
@@ -94,7 +82,6 @@
             this.ClientSize = new System.Drawing.Size(589, 347);
             this.Controls.Add(this.buttonImportForm);
             this.Controls.Add(this.labelSearchBox);
-            this.Controls.Add(this.buttonTestForm);
             this.Controls.Add(this.searchBox);
             this.Controls.Add(this.booruThumbView);
             this.Name = "MainForm";
@@ -108,7 +95,6 @@
 
         private Controls.BooruThumbView booruThumbView;
         private Controls.TagTextBox searchBox;
-        private System.Windows.Forms.Button buttonTestForm;
         private System.Windows.Forms.Label labelSearchBox;
         private System.Windows.Forms.Button buttonImportForm;
 

@@ -22,16 +22,12 @@ namespace TA.SharpBooru.Client.GUI
             booruThumbView.ImageOpened += new BooruThumbView.ImageOpenedHandler(booruThumbView_ImageOpened);
         }
 
-        void booruThumbView_ImageOpened(object sender, EventArgs e, object aObj)
+        private void booruThumbView_ImageOpened(object sender, EventArgs e, object aObj)
         {
             BooruPost post = aObj as BooruPost;
             _Booru.GetImage(ref post);
-            /*
-            string tempFile = Helper.GetTempFile();
-            post.Image.Save(ref tempFile);
-            Process imgViewerProcess = Process.Start(tempFile);
-            */
-            PostViewerDialog pvd = new PostViewerDialog(_Booru, new List<BooruPost>() { post }, 0);
+            List<ulong> postIDs = booruThumbView.Posts;
+            PostViewerDialog pvd = new PostViewerDialog(_Booru, postIDs, postIDs.IndexOf(post.ID));
             pvd.ShowDialog();
         }
 
@@ -41,15 +37,9 @@ namespace TA.SharpBooru.Client.GUI
             booruThumbView.Posts = postIDs;
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-            using (TestForm tForm = new TestForm())
-                tForm.ShowDialog();
-        }
-
         private void buttonImportForm_Click(object sender, EventArgs e)
         {
-
+            throw new NotImplementedException();
         }
     }
 }

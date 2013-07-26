@@ -12,76 +12,56 @@ namespace TA.SharpBooru.Client.GUI
     {
         private Booru _Booru;
         private BooruPost _Post;
-        private List<BooruPost> _Posts;
-        private int _index = -1;
+        private List<ulong> _PostIDs;
+        private int _Index = -1;
         private object _loadLock = new object();
 
-        private int index
+        private int Index
         {
-            get { return _index; }
+            get { return _Index; }
             set
             {
                 if (value < 0) value = 0;
-                else if (value > _Posts.Count - 1) value = _Posts.Count - 1;
-                if (value != index)
+                else if (value > _PostIDs.Count - 1) 
+                    value = _PostIDs.Count - 1;
+                if (value != _Index)
                 {
-                    ChangePost(_Posts[value]);
-                    _index = value;
+                    BooruPost postToShow = _Booru.GetPost(_PostIDs[value]);
+                    ChangePost(postToShow);
+                    _Index = value;
                 }
             }
         }
 
-        public PostViewerDialog(Booru Booru, List<BooruPost> Posts, int StartIndex = 0)
+        public PostViewerDialog(Booru Booru, List<ulong> PostIDs, int StartIndex = 0)
         {
             _Booru = Booru;
-            _Posts = Posts;
-            if (Posts == null)
+            if (PostIDs == null)
                 throw new ArgumentNullException("Posts can not be null");
-            else if (Posts.Count < 1)
+            else if (PostIDs.Count < 1)
                 throw new ArgumentException("Posts count must be > 0");
+            else _PostIDs = PostIDs;
             InitializeComponent();
-            tagList.SetBooru(_Booru);
-            //TODO GetAllTags
-            //tagList.SetTagListBoxParams(_Booru.SearchTags(), this);
-            //scalablePictureBox.ScalablePictureBoxImp.PictureBox.DoubleClick += new EventHandler(delegate { Invoke(new MethodInvoker(ToggleFullScreen)); });
-            postScoreNumericUpDown.ValueChanged += new EventHandler((sender, e) =>
-                {
-                    _Post.Score = (int)postScoreNumericUpDown.Value;
-                    _Post.EditCount++;
-                });
-            postScoreNumericUpDown.Maximum = int.MaxValue;
-            postScoreNumericUpDown.Minimum = int.MinValue;
-            //TODO GetAllRatings
-            //BooruHelper.GetAllRatings(_Booru.wrapper).ForEach(x => postRatingComboBox.Items.Add(x));
-            /*
-            postRatingComboBox.SelectedIndexChanged += new EventHandler((sender, e) =>
-                {
-                    _Post.Rating = (byte)(postRatingComboBox.SelectedIndex + 1);
-                    _Post.EditCount++;
-                });
-            */
-            index = StartIndex;
-            GUIHelper.CreateToolTip(editPostButton, "Edit post");
-            GUIHelper.CreateToolTip(deletePostButton, "Delete post");
-            GUIHelper.CreateToolTip(saveImageButton, "Save image");
-            GUIHelper.CreateToolTip(toggleFullscreenButton, "Toggle fap mode");
-            GUIHelper.CreateToolTip(setWallpaperButton, "Set image as desktop wallpaper");
-            GUIHelper.CreateToolTip(nextPostButton, "Next post");
-            GUIHelper.CreateToolTip(previosPostButton, "Previous post");
-            GUIHelper.CreateToolTip(editImageButton, "Edit image");
+            Index = StartIndex;
+            GUIHelper.CreateToolTip(buttonDeletePost, "Delete post");
+            GUIHelper.CreateToolTip(buttonSaveImage, "Save image");
+            GUIHelper.CreateToolTip(buttonSetWallpaper, "Set image as desktop wallpaper");
+            GUIHelper.CreateToolTip(buttonNextPost, "Next post");
+            GUIHelper.CreateToolTip(buttonPreviousPost, "Previous post");
+            GUIHelper.CreateToolTip(buttonEditImage, "Edit image");
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
             if (!tagList.Focused)
-                if (keyData == Keys.Left && previosPostButton.Enabled)
+                if (keyData == Keys.Left && buttonPreviousPost.Enabled)
                 {
-                    index--;
+                    _Index--;
                     return true;
                 }
-                else if (keyData == Keys.Right && nextPostButton.Enabled)
+                else if (keyData == Keys.Right && buttonNextPost.Enabled)
                 {
-                    index++;
+                    _Index++;
                     return true;
                 }
             return base.ProcessCmdKey(ref msg, keyData);
@@ -95,24 +75,29 @@ namespace TA.SharpBooru.Client.GUI
                     lock (_loadLock)
                     {
                         SetLoadingMode(true);
+                        if (_Post.Image == null)
+                            _Booru.GetImage(ref _Post);
                         Bitmap image = _Post.Image.Bitmap;
                         try
                         {
                             MethodInvoker invoker = () => { scalablePictureBox.Picture = image; };
-                            if (scalablePictureBox.InvokeRequired) scalablePictureBox.Invoke(invoker); else invoker();
+                            if (scalablePictureBox.InvokeRequired)
+                                scalablePictureBox.Invoke(invoker);
+                            else invoker();
                             invoker = () =>
                             {
-                                tagList.Post = _Post;
-                                _Post.ViewCount++;
-                                postScoreNumericUpDown.Value = _Post.Score;
+                                tagList.Tags = _Post.Tags;
+                                //TODO Window title
                                 Text = string.Format("{0} - {1}x{2} - Views {4} - Added {3}", _Post.ID, _Post.Width, _Post.Height, _Post.CreationDate, _Post.ViewCount);
                             };
-                            if (InvokeRequired) Invoke(invoker); else invoker();
+                            if (InvokeRequired)
+                                Invoke(invoker);
+                            else invoker();
                         }
                         catch (ObjectDisposedException) { }
                         SetLoadingMode(false);
                     }
-                }));
+                })) { IsBackground = true };
             loadThread.Start();
         }
 
@@ -123,71 +108,40 @@ namespace TA.SharpBooru.Client.GUI
                 Invoke(new Action<bool>(SetLoadingMode), LoadingMode);
                 return;
             }
-            editPostButton.Enabled = !LoadingMode;
-            deletePostButton.Enabled = !LoadingMode;
-            saveImageButton.Enabled = !LoadingMode;
-            setWallpaperButton.Enabled = !LoadingMode;
+            buttonDeletePost.Enabled = !LoadingMode;
+            buttonSaveImage.Enabled = !LoadingMode;
+            buttonSetWallpaper.Enabled = !LoadingMode;
             if (LoadingMode)
             {
-                previosPostButton.Enabled = false;
-                nextPostButton.Enabled = false;
+                buttonPreviousPost.Enabled = false;
+                buttonNextPost.Enabled = false;
             }
             else
             {
-                previosPostButton.Enabled = index > 0;
-                nextPostButton.Enabled = index < _Posts.Count - 1;
+                buttonPreviousPost.Enabled = Index > 0;
+                buttonNextPost.Enabled = Index < _PostIDs.Count - 1;
             }
-            //toggleFullscreenButton.Enabled = !LoadingMode; TODO Fix fullscreen
             tagList.Enabled = !LoadingMode;
-            editImageButton.Enabled = !LoadingMode;
-            postScoreLabel.Enabled = !LoadingMode;
-            postScoreNumericUpDown.Enabled = !LoadingMode;
+            buttonEditImage.Enabled = !LoadingMode;
         }
 
-        private object[] saveState = null;
-        private void ToggleFullScreen()
-        {
-            SuspendLayout();
-            if (saveState != null)
-            {
-                scalablePictureBox.Dock = DockStyle.None;
-                scalablePictureBox.Anchor = (AnchorStyles)saveState[0];
-                saveState = null;
-            }
-            else
-            {
-                saveState = new object[2];
-                saveState[0] = scalablePictureBox.Anchor;
-                scalablePictureBox.Dock = DockStyle.Fill;
-            }
-            ResumeLayout();
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            /*
-            EditPostDialog edp = new EditPostDialog(_Booru, _Post);
-            if (edp.ShowDialog() == DialogResult.OK)
-                ChangePost(_Post);
-            */
-        }
-
-        private void button2_Click(object sender, EventArgs e)
+        private void buttonDeletePost_Click(object sender, EventArgs e)
         {
             DialogResult result = MessageBox.Show("Do you really wan't to delete this post?", "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (result == DialogResult.Yes)
             {
                 _Booru.DeletePost(_Post.ID);
-                if (nextPostButton.Enabled)
-                    index++;
-                else if (previosPostButton.Enabled)
-                    index--;
+                if (buttonNextPost.Enabled)
+                    Index++;
+                else if (buttonPreviousPost.Enabled)
+                    Index--;
                 else Close();
             }
         }
 
-        private void button3_Click(object sender, EventArgs e)
+        private void buttonSaveImage_Click(object sender, EventArgs e)
         {
+            //TODO Better filter = rename file after saving
             SaveFileDialog sfd = new SaveFileDialog();
             sfd.Filter = "All files|*.*";
             if (sfd.ShowDialog() == DialogResult.OK)
@@ -197,23 +151,19 @@ namespace TA.SharpBooru.Client.GUI
             }
         }
 
-        private void button4_Click(object sender, EventArgs e) { Invoke(new MethodInvoker(ToggleFullScreen)); }
-
-        private void button5_Click(object sender, EventArgs e)
+        private void buttonSetWallpaper_Click(object sender, EventArgs e)
         {
-            /* TODO SetWallpaper
-            if (Helper.SetWallpaper(_Post.Image, true))
+            if (GUIHelper.SetWallpaper(_Post.Image, true))
                 MessageBox.Show("Wallpaper changed", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
                 MessageBox.Show("An error occured. Wallpaper not changed.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            */
         }
 
-        private void previosPostButton_Click(object sender, EventArgs e) { index--; }
+        private void buttonPreviousPost_Click(object sender, EventArgs e) { Index--; }
 
-        private void nextPostButton_Click(object sender, EventArgs e) { index++; }
+        private void buttonNextPost_Click(object sender, EventArgs e) { Index++; }
 
-        private void editImageButton_Click(object sender, EventArgs e)
+        private void buttonEditImage_Click(object sender, EventArgs e)
         {
             /* TODO Photoshop edit function
             string editorEXE = "C:\\Program Files\\Adobe\\Adobe Photoshop CS5 (64 Bit)\\Photoshop.exe";
