@@ -80,19 +80,13 @@ namespace TA.SharpBooru.Client.GUI
                         Bitmap image = _Post.Image.Bitmap;
                         try
                         {
-                            MethodInvoker invoker = () => { scalablePictureBox.Picture = image; };
-                            if (scalablePictureBox.InvokeRequired)
-                                scalablePictureBox.Invoke(invoker);
-                            else invoker();
-                            invoker = () =>
-                            {
-                                tagList.Tags = _Post.Tags;
-                                //TODO Window title
-                                Text = string.Format("{0} - {1}x{2} - Views {4} - Added {3}", _Post.ID, _Post.Width, _Post.Height, _Post.CreationDate, _Post.ViewCount);
-                            };
-                            if (InvokeRequired)
-                                Invoke(invoker);
-                            else invoker();
+                            GUIHelper.Invoke(scalablePictureBox, () => { scalablePictureBox.Picture = image; });
+                            GUIHelper.Invoke(this, () =>
+                                {
+                                    tagList.Tags = _Post.Tags;
+                                    //TODO Window title
+                                    Text = string.Format("{0} - {1}x{2} - Views {4} - Added {3}", _Post.ID, _Post.Width, _Post.Height, _Post.CreationDate, _Post.ViewCount);
+                                });
                         }
                         catch (ObjectDisposedException) { }
                         SetLoadingMode(false);

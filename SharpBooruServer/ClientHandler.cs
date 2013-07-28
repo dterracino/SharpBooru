@@ -20,6 +20,8 @@ namespace TA.SharpBooru.Server
         private BinaryWriter _Writer;
         private IPAddress _Address;
 
+        private object _GenerateThumbnailLock = new object();
+
         public ClientHandler(BooruServer Server, TcpClient Client)
         {
             _Server = Server;
@@ -105,6 +107,11 @@ namespace TA.SharpBooru.Server
                         {
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                             post.ToWriter(_Writer);
+                            lock (_GenerateThumbnailLock)
+                            {
+                                //TODO Create Thumbnail
+                                //check if not exists -> create
+                            }
                             _Server.Booru.ReadFile(_Writer, "thumb" + postID);
                         }
                         else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
@@ -180,10 +187,7 @@ namespace TA.SharpBooru.Server
                                         editedCount++;
                                     }
                             if (editedCount > 0)
-                            {
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                                _Writer.Write(newTag.ID);
-                            }
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                         }
                         else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
@@ -204,14 +208,13 @@ namespace TA.SharpBooru.Server
                                 newPost.Owner = _User.Username;
                                 newPost.ViewCount = 0;
                             }
-                            using (FileStream file = File.Open(_Server.Booru.Folder + "image" + newPost.ID, FileMode.Create, FileAccess.Write, FileShare.Read))
+                            //TODO Implement bandwidth limit (check length variable)
+                            using (BooruImage bigImage = new BooruImage(_Reader.ReadBytes(length)))
                             {
-                                //TODO Implement bandwidth limit
-                                for (int i = 0; i < length / 1024; i++)
-                                    file.Write(_Reader.ReadBytes(1024), 0, 1024);
-                                file.Write(_Reader.ReadBytes(length % 1024), 0, length % 1024);
+                                bigImage.Save(Path.Combine(_Server.Booru.Folder, "image" + newPost.ID));
+                                using (BooruImage thumbImage = bigImage.CreateThumbnail(256)) //TODO ThumbSize 
+                                    thumbImage.Save(Path.Combine(_Server.Booru.Folder, "thumb" + newPost.ID));
                             }
-                            //TODO Create Thumbnail
                             _Server.Booru.Posts.Add(newPost);
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                             _Writer.Write(newPost.ID);
@@ -232,7 +235,6 @@ namespace TA.SharpBooru.Server
                         BooruPost newPost = BooruPost.FromReader(_Reader);
                         if (_User.CanEditPosts)
                         {
-                            newPost.ID = _Server.Booru.GetNextPostID();
                             //TODO Check Tags and replace with existing
                             if (_Server.Booru.Posts.Contains(postID))
                             {
@@ -248,7 +250,6 @@ namespace TA.SharpBooru.Server
                                     if (_Server.Booru.Posts[i].ID == postID)
                                         _Server.Booru.Posts[i] = newPost;
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                                _Writer.Write(newPost.ID);
                             }
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                         }

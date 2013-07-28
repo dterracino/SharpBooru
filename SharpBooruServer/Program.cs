@@ -53,7 +53,10 @@ namespace TA.SharpBooru.Server
 
             Console.CancelKeyPress += (sender, e) => cancelHandler();
             if (Helper.IsPOSIX())
+            {
+                SetupSignal(Signum.SIGUSR1, server.Booru.SaveToDisk);
                 SetupSignal(Signum.SIGTERM, cancelHandler);
+            }
 
             server.Start(); //TODO SetUID
             waitEvent.WaitOne(); //Wait for cancelHandler to finish

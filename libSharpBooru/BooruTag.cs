@@ -76,8 +76,8 @@ namespace TA.SharpBooru
             }
         }
 
+        public new bool Contains(BooruTag Tag) { return Contains(Tag.Tag); }
         public bool Contains(ulong ID) { return this[ID] != null; }
-
         public bool Contains(string Tag)
         {
             foreach (BooruTag tag in this)
@@ -85,6 +85,7 @@ namespace TA.SharpBooru
                     return true;
             return false;
         }
+
 
         public int Remove(ulong ID) { return this.RemoveAll(x => { return x.ID == ID; }); }
 
@@ -102,5 +103,26 @@ namespace TA.SharpBooru
                 bTagList.Add(BooruTag.FromReader(Reader));
             return bTagList;
         }
+
+        public static BooruTagList FromString(string Tags)
+        {
+            BooruTagList bTagList = new BooruTagList();
+            if (!string.IsNullOrWhiteSpace(Tags))
+            {
+                string[] parts = Tags.Split(new char[4] { ' ', '\r', '\n', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (string part in parts)
+                    bTagList.Add(new BooruTag(part.ToLower()));
+            }
+            return bTagList;
+        }
+
+        public List<string> ToStringList()
+        {
+            var strTags = new List<string>();
+            ForEach(x => strTags.Add(x.Tag));
+            return strTags;
+        }
+
+        public override string ToString() { return string.Join(" ", ToStringList()); }
     }
 }

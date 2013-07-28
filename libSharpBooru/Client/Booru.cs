@@ -162,7 +162,7 @@ namespace TA.SharpBooru.Client
         //TODO Implement EditTag
         //public ulong SaveTag(BooruTag Tag) { return EditTag(Tag.ID, Tag); }
 
-        public ulong EditTag(ulong ID, BooruTag NewTag)
+        public void EditTag(ulong ID, BooruTag NewTag)
         {
             lock (_Lock)
             {
@@ -170,7 +170,6 @@ namespace TA.SharpBooru.Client
                 _Writer.Write(ID);
                 NewTag.ToWriter(_Writer);
                 EndCommunication();
-                return _Reader.ReadUInt64();
             }
         }
 

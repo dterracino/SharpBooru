@@ -93,6 +93,7 @@ namespace TA.SharpBooru
             }
         }
 
+        public new bool Contains(BooruPost Post) { return Contains(Post.ID); }
         public bool Contains(ulong ID) { return this[ID] != null; }
 
         public int Remove(ulong ID) { return this.RemoveAll(x => { return x.ID == ID; }); }

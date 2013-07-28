@@ -39,7 +39,8 @@ namespace TA.SharpBooru.Client.GUI
 
         private void buttonImportForm_Click(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            ImportDialog iDialog = new ImportDialog(_Booru);
+            iDialog.ShowDialog();
         }
     }
 }

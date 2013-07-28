@@ -1,6 +1,6 @@
 ﻿namespace TA.SharpBooru.Client.GUI
 {
-    partial class MultiEditPostDialog
+    partial class ImportDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@
         {
             this.okButton = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.sharedTagsTagTextBox = new TEAM_ALPHA.SQLBooru.Controls.TagTextBox();
+            this.sharedTagsTagTextBox = new TA.SharpBooru.Client.GUI.Controls.TagTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.allowedTagsCheckedListBox = new System.Windows.Forms.CheckedListBox();
             this.dataGridView = new System.Windows.Forms.DataGridView();
@@ -40,8 +40,6 @@
             this.comment = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.rating = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.image = new System.Windows.Forms.DataGridViewImageColumn();
-            this.button1 = new System.Windows.Forms.Button();
-            this.monitorClipboardCheckBox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -56,7 +54,7 @@
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.Image = Properties.Resources.icon_ok;
+            this.okButton.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_ok;
             this.okButton.Location = new System.Drawing.Point(782, 513);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(30, 30);
@@ -179,42 +177,18 @@
             this.image.ReadOnly = true;
             this.image.Width = 256;
             // 
-            // button1
-            // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.button1.Location = new System.Drawing.Point(12, 513);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(120, 30);
-            this.button1.TabIndex = 5;
-            this.button1.Text = "Add new tags now...";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // monitorClipboardCheckBox
-            // 
-            this.monitorClipboardCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.monitorClipboardCheckBox.AutoSize = true;
-            this.monitorClipboardCheckBox.Location = new System.Drawing.Point(138, 521);
-            this.monitorClipboardCheckBox.Name = "monitorClipboardCheckBox";
-            this.monitorClipboardCheckBox.Size = new System.Drawing.Size(110, 17);
-            this.monitorClipboardCheckBox.TabIndex = 13;
-            this.monitorClipboardCheckBox.Text = "Monitor  clipboard";
-            this.monitorClipboardCheckBox.UseVisualStyleBackColor = true;
-            // 
             // MultiEditPostDialog
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(824, 552);
-            this.Controls.Add(this.monitorClipboardCheckBox);
-            this.Controls.Add(this.button1);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.okButton);
             this.MinimumSize = new System.Drawing.Size(580, 400);
             this.Name = "MultiEditPostDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Edit multiple posts...";
+            this.Text = "Import";
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MultiEditPostDialog_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MultiEditPostDialog_DragEnter);
             this.splitContainer1.Panel1.ResumeLayout(false);
@@ -228,7 +202,6 @@
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -246,7 +219,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn comment;
         private System.Windows.Forms.DataGridViewTextBoxColumn rating;
         private System.Windows.Forms.DataGridViewImageColumn image;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.CheckBox monitorClipboardCheckBox;
     }
 }

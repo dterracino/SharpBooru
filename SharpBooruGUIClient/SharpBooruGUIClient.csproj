@@ -25,6 +25,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -101,6 +102,18 @@
     <Compile Include="Controls\ThumbView.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="ImportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ImportDialog.designer.cs">
+      <DependentUpon>ImportDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PleaseWaitDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="PleaseWaitDialog.Designer.cs">
+      <DependentUpon>PleaseWaitDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="PostViewerDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -126,6 +139,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\ScalablePictureBox\TransparentButton.resx">
       <DependentUpon>TransparentButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImportDialog.resx">
+      <DependentUpon>ImportDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PostViewerDialog.resx">
       <DependentUpon>PostViewerDialog.cs</DependentUpon>

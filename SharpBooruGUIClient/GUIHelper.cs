@@ -9,11 +9,15 @@ namespace TA.SharpBooru.Client.GUI
     public static class GUIHelper
     {
         [DllImport("user32.dll", EntryPoint = "SystemParametersInfo")]
-        [return: MarshalAsAttribute(UnmanagedType.Bool)]
+        [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool _SystemParametersInfo(uint uiAction, uint uiParam, string pvParam, uint fWinIni);
 
         [DllImport("user32.dll", EntryPoint = "SendMessage")]
         private static extern int _SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", EntryPoint = "EnableWindow")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool _EnableWindow(IntPtr hWnd, bool bEnable);
 
         public static int SetListViewPadding(ListView ListView, int leftPadding, int topPadding)
         {
@@ -51,6 +55,27 @@ namespace TA.SharpBooru.Client.GUI
                 return _SystemParametersInfo(0x14, 0, tempFile, 0x03);
             }
             else return false;
+        }
+
+        public static bool EnableWindow(Form Form, bool Enable)
+        {
+            if (Helper.IsWindows())
+            {
+                IntPtr handle = IntPtr.Zero;
+                MethodInvoker getHandleInvoker =() => { handle = Form.Handle; };
+                if (Form.InvokeRequired)
+                    Form.Invoke(getHandleInvoker); 
+                else getHandleInvoker();
+                return _EnableWindow(handle, Enable);
+            }
+            else return false;
+        }
+
+        public static void Invoke(Control Control, Action Action)
+        {
+            if (Control.InvokeRequired)
+                Control.Invoke(Action);
+            else Action();
         }
     }
 }

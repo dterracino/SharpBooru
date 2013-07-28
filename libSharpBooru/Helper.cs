@@ -14,17 +14,13 @@ namespace TA.SharpBooru
         private static readonly DateTime UNIX_TIME = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         /*
-        [DllImportAttribute("kernel32.dll", EntryPoint = "AllocConsole")]
+        [DllImport("kernel32.dll", EntryPoint = "AllocConsole")]
         [return: MarshalAsAttribute(UnmanagedType.Bool)]
         private static extern bool _AllocConsole();
 
         [DllImport("kernel32.dll", SetLastError = true, EntryPoint = "GetStdHandle")]
         private static extern IntPtr GetStdHandle(int nStdHandle);
         private const int STD_OUTPUT_HANDLE = -11;
-
-        [DllImportAttribute("kernel32.dll", EntryPoint = "FreeConsole")]
-        [return: MarshalAsAttribute(UnmanagedType.Bool)]
-        public static extern bool FreeConsole();
 
         [DllImport("kernel32.dll", EntryPoint = "SetStdHandle")]
         private static extern void _SetStdHandle(UInt32 nStdHandle, IntPtr handle);
@@ -60,18 +56,6 @@ namespace TA.SharpBooru
         }
 
         /*
-        public static bool EnableWindow(Form Form, bool Enable)
-        {
-            if (!IsMono())
-            {
-                IntPtr handle = IntPtr.Zero;
-                MethodInvoker getHandleInvoker = new MethodInvoker(delegate { handle = Form.Handle; });
-                if (Form.InvokeRequired) Form.Invoke(getHandleInvoker); else getHandleInvoker();
-                return _EnableWindow(handle, Enable);
-            }
-            else return false;
-        }
-
         public static bool AllocConsole()
         {
             if (!IsMono())
