@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Drawing;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
 
@@ -125,6 +126,7 @@ namespace TA.SharpBooru
             return _IsPOSIX.Value;
         }
 
+        //Check if the operating system is windows
         public static bool IsWindows()
         {
             PlatformID pfid = Environment.OSVersion.Platform;
