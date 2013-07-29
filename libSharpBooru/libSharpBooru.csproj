@@ -71,9 +71,10 @@
     <Compile Include="Logger.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Server\BooruPost.cs" />
     <Compile Include="Server\BooruUser.cs" />
     <Compile Include="Client\Booru.cs" />
-    <Compile Include="BooruPost.cs" />
+    <Compile Include="Client\BooruPost.cs" />
     <Compile Include="BooruProtocol.cs" />
     <Compile Include="BooruTag.cs" />
     <Compile Include="Server\Booru.cs" />

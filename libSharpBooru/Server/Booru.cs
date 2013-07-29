@@ -14,6 +14,7 @@ namespace TA.SharpBooru.Server
         public ulong PostIDCounter = 0;
         public ulong TagIDCounter = 0;
         public BooruPostList Posts = new BooruPostList();
+        public BooruTagList Tags = new BooruTagList();
 
         public ulong GetNextPostID() { return PostIDCounter++; }
 
@@ -166,7 +167,7 @@ namespace TA.SharpBooru.Server
         
         */
 
-        public void ToWriter(BinaryWriter Writer)
+        public void ToDiskWriter(BinaryWriter Writer)
         {
             Writer.Write(PostIDCounter);
             Writer.Write(TagIDCounter);
@@ -178,10 +179,11 @@ namespace TA.SharpBooru.Server
             }
             Writer.Write((uint)Users.Count);
             Users.ForEach(x => x.ToWriter(Writer));
-            Posts.ToWriter(Writer);
+            Posts.ToDiskWriter(Writer);
+            Tags.ToWriter(Writer);
         }
 
-        public static Booru FromReader(BinaryReader Reader)
+        public static Booru FromDiskReader(BinaryReader Reader)
         {
             Booru booru = new Booru()
             {
@@ -194,7 +196,8 @@ namespace TA.SharpBooru.Server
             uint userCount = Reader.ReadUInt32();
             for (uint i = 0; i < userCount; i++)
                 booru.Users.Add(BooruUser.FromReader(Reader));
-            booru.Posts = BooruPostList.FromReader(Reader);
+            booru.Posts = BooruPostList.FromDiskReader(Reader);
+            booru.Tags = BooruTagList.FromReader(Reader);
             return booru;
         }
 
@@ -208,7 +211,7 @@ namespace TA.SharpBooru.Server
             }
             using (FileStream file = File.Open(Path.Combine(Folder, "booru"), FileMode.Create, FileAccess.Write, FileShare.None))
             using (BinaryWriter writer = new BinaryWriter(file, Encoding.Unicode))
-                ToWriter(writer);
+                ToDiskWriter(writer);
         }
 
         public void SaveToDisk(string Folder)
@@ -222,7 +225,7 @@ namespace TA.SharpBooru.Server
             using (FileStream file = File.Open(Path.Combine(Folder, "booru"), FileMode.Open, FileAccess.Read, FileShare.Read))
             using (BinaryReader reader = new BinaryReader(file, Encoding.Unicode))
             {
-                Booru booru = Booru.FromReader(reader);
+                Booru booru = Booru.FromDiskReader(reader);
                 booru.Folder = Folder;
                 return booru;
             }

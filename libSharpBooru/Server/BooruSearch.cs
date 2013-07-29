@@ -42,7 +42,7 @@ namespace TA.SharpBooru.Server
             }
         }
 
-        public static BooruPostList DoSearch(string Pattern, BooruPostList Posts)
+        public static BooruPostList DoSearch(string Pattern, BooruPostList Posts, BooruTagList Tags)
         {
             string[] parts = SplitString(Pattern);
             if (parts.Length < 1)
@@ -63,9 +63,16 @@ namespace TA.SharpBooru.Server
                                 newPosts.Add(post);
                     }
                     catch { }
-                else foreach (BooruPost post in Posts)
-                        if (negate ^ post.Tags.Contains(part))
-                            newPosts.Add(post);
+                else
+                {
+                    BooruTag tag = Tags[part];
+                    if (tag != null)
+                    {
+                        foreach (BooruPost post in Posts)
+                            if (negate ^ post.TagIDs.Contains(tag.ID))
+                                newPosts.Add(post);
+                    }
+                }
 
                 Posts = newPosts;
             }

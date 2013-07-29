@@ -106,7 +106,7 @@ namespace TA.SharpBooru.Server
                         if (post != null)
                         {
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                            post.ToWriter(_Writer);
+                            post.ToClientWriter(_Writer, _Server.Booru.Tags);
                             lock (_GenerateThumbnailLock)
                             {
                                 //TODO Create Thumbnail
@@ -135,7 +135,8 @@ namespace TA.SharpBooru.Server
                 case BooruProtocol.Command.Search:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                     string searchPattern = _Reader.ReadString().Trim().ToLower();
-                    BooruPostList postsToSend = BooruSearch.DoSearch(searchPattern, _Server.Booru.Posts);
+                    BooruPostList postsToSend = BooruSearch.DoSearch(searchPattern, _Server.Booru.Posts, _Server.Booru.Tags);
+                    postsToSend.Sort((b1, b2) => DateTime.Compare(b1.CreationDate, b2.CreationDate));
                     _Writer.Write((uint)postsToSend.Count);
                     postsToSend.ForEach(x => _Writer.Write(x.ID));
                     break;
@@ -161,32 +162,24 @@ namespace TA.SharpBooru.Server
                         ulong tagID = _Reader.ReadUInt64();
                         if (_User.CanDeleteTags)
                         {
-                            long deletedCount = 0;
-                            foreach (BooruPost post in _Server.Booru.Posts)
-                                deletedCount += post.Tags.Remove(tagID);
-                            if (deletedCount < 1)
-                                _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
-                            else _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                            if (_Server.Booru.Tags.Remove(tagID) > 0)
+                            {
+                                foreach (BooruPost post in _Server.Booru.Posts)
+                                    post.TagIDs.Remove(tagID);
+                                _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                            }
+                            else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                         }
                         else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                         break;
                     }
                 case BooruProtocol.Command.EditTag:
                     {
-                        ulong tagID = _Reader.ReadUInt64();
+                        throw new Exception("TODO");
                         if (_User.CanEditTags)
                         {
                             BooruTag newTag = BooruTag.FromReader(_Reader);
-                            newTag.ID = _Server.Booru.GetNextTagID();
-                            long editedCount = 0;
-                            foreach (BooruPost post in _Server.Booru.Posts)
-                                for (int i = 0; i < post.Tags.Count; i++)
-                                    if (post.Tags[i].ID == tagID)
-                                    {
-                                        post.Tags[i] = newTag;
-                                        editedCount++;
-                                    }
-                            if (editedCount > 0)
+                            if (true) //check if exists -> then replace
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                         }
@@ -195,7 +188,7 @@ namespace TA.SharpBooru.Server
                     }
                 case BooruProtocol.Command.AddPost:
                     {
-                        BooruPost newPost = BooruPost.FromReader(_Reader);
+                        BooruPost newPost = BooruPost.FromClientReader(_Reader, ref _Server.Booru.Tags);
                         int length = (int)_Reader.ReadUInt32();
                         if (_User.CanAddPosts)
                         {
@@ -231,8 +224,9 @@ namespace TA.SharpBooru.Server
                     }
                 case BooruProtocol.Command.EditPost:
                     {
+                        throw new Exception("TODO");
                         ulong postID = _Reader.ReadUInt64();
-                        BooruPost newPost = BooruPost.FromReader(_Reader);
+                        BooruPost newPost = BooruPost.FromClientReader(_Reader, ref _Server.Booru.Tags);
                         if (_User.CanEditPosts)
                         {
                             //TODO Check Tags and replace with existing
@@ -263,12 +257,7 @@ namespace TA.SharpBooru.Server
                     break;
                 case BooruProtocol.Command.GetAllTags:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                    BooruTagList allTags = new BooruTagList();
-                    foreach (BooruPost post in _Server.Booru.Posts)
-                        foreach (BooruTag tag in post.Tags)
-                            if (!allTags.Contains(tag.Tag))
-                                allTags.Add(tag);
-                    allTags.ToWriter(_Writer);
+                    _Server.Booru.Tags.ToWriter(_Writer);
                     break;
                 case BooruProtocol.Command.EditImage:
                     //TODO Implement bandwidth limit

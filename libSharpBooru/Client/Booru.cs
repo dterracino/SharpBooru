@@ -92,7 +92,7 @@ namespace TA.SharpBooru.Client
                 BeginCommunication(BooruProtocol.Command.GetPost);
                 _Writer.Write(ID);
                 EndCommunication();
-                BooruPost post = BooruPost.FromReader(_Reader);
+                BooruPost post = BooruPost.FromServerReader(_Reader);
                 post.Thumbnail = BooruImage.FromReader(_Reader);
                 return post;
             }
@@ -178,7 +178,7 @@ namespace TA.SharpBooru.Client
             lock (_Lock)
             {
                 BeginCommunication(BooruProtocol.Command.AddPost);
-                NewPost.ToWriter(_Writer);
+                NewPost.ToServerWriter(_Writer);
                 NewPost.Image.ToWriter(_Writer);
                 EndCommunication();
                 return _Reader.ReadUInt64();
@@ -187,15 +187,8 @@ namespace TA.SharpBooru.Client
 
         public ulong AddPost(BooruAPIPost NewAPIPost)
         {
-            lock (_Lock)
-            {
-                NewAPIPost.DownloadImage();
-                BeginCommunication(BooruProtocol.Command.AddPost);
-                NewAPIPost.ToWriter(_Writer);
-                NewAPIPost.Image.ToWriter(_Writer);
-                EndCommunication();
-                return _Reader.ReadUInt64();
-            }
+            NewAPIPost.DownloadImage();
+            return AddPost((BooruPost)NewAPIPost);
         }
 
         public BooruPostList GetPosts(List<ulong> IDs)

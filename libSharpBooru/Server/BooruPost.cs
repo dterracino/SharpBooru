@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
+using System.Drawing;
 using System.Collections.Generic;
 
-namespace TA.SharpBooru
+namespace TA.SharpBooru.Server
 {
     public class BooruPost
     {
@@ -13,7 +14,7 @@ namespace TA.SharpBooru
         public string Comment = string.Empty;
         public uint Width = 0;
         public uint Height = 0;
-        public BooruTagList Tags = new BooruTagList();
+        public List<ulong> TagIDs = new List<ulong>();
 
         public ulong ID = 0;
         public DateTime CreationDate = DateTime.Now;
@@ -39,7 +40,7 @@ namespace TA.SharpBooru
 
         public override int GetHashCode() { return ID.GetHashCode(); }
 
-        public void ToWriter(BinaryWriter Writer, bool IncludeImage = false)
+        private void internalToWriter(BinaryWriter Writer)
         {
             Writer.Write(ID);
             Writer.Write(Private);
@@ -53,12 +54,24 @@ namespace TA.SharpBooru
             Writer.Write(ViewCount);
             Writer.Write(EditCount);
             Writer.Write(Score);
-            Tags.ToWriter(Writer);
-            if (IncludeImage)
-                Image.ToWriter(Writer);
         }
 
-        public static BooruPost FromReader(BinaryReader Reader, bool IncludeImage = false)
+        public void ToDiskWriter(BinaryWriter Writer)
+        {
+            internalToWriter(Writer);
+            Writer.Write((uint)TagIDs.Count);
+            TagIDs.ForEach(x => Writer.Write(x));
+        }
+
+        public void ToClientWriter(BinaryWriter Writer, BooruTagList Tags)
+        {
+            internalToWriter(Writer);
+            BooruTagList tagList = new BooruTagList();
+            TagIDs.ForEach(x => tagList.Add(Tags[x]));
+            tagList.ToWriter(Writer);
+        }
+
+        private static BooruPost internalFromReader(BinaryReader Reader)
         {
             return new BooruPost()
             {
@@ -73,10 +86,36 @@ namespace TA.SharpBooru
                 CreationDate = Helper.UnixTimeToDateTime(Reader.ReadUInt32()),
                 ViewCount = Reader.ReadUInt64(),
                 EditCount = Reader.ReadUInt64(),
-                Score = Reader.ReadInt64(),
-                Tags = BooruTagList.FromReader(Reader),
-                Image = IncludeImage ? BooruImage.FromReader(Reader) : null
+                Score = Reader.ReadInt64()
             };
+        }
+
+        public static BooruPost FromClientReader(BinaryReader Reader, ref BooruTagList Tags)
+        {
+            BooruPost post = internalFromReader(Reader);
+            uint count = Reader.ReadUInt32();
+            for (uint i = 0; i < count; i++)
+            {
+                string cTag = Reader.ReadString();
+                BooruTag sTag = Tags[cTag];
+                if (sTag == null)
+                {
+                    sTag = new BooruTag(cTag, "Undefined", "Undefined tags", Color.Black);
+                    Tags.Add(sTag);
+                }
+                post.TagIDs.Add(sTag.ID);
+            }
+            return post;
+        }
+
+        private static uint c = 0;
+        public static BooruPost FromDiskReader(BinaryReader Reader)
+        {
+            BooruPost post = internalFromReader(Reader);
+            uint count = Reader.ReadUInt32();
+            for (uint i = 0; i < count; i++)
+                post.TagIDs.Add(Reader.ReadUInt64());
+            return post;
         }
     }
 
@@ -98,18 +137,33 @@ namespace TA.SharpBooru
 
         public int Remove(ulong ID) { return this.RemoveAll(x => { return x.ID == ID; }); }
 
-        public void ToWriter(BinaryWriter Writer)
+        public void ToClientWriter(BinaryWriter Writer, BooruTagList Tags)
         {
             Writer.Write((uint)this.Count);
-            this.ForEach(x => x.ToWriter(Writer));
+            this.ForEach(x => x.ToClientWriter(Writer, Tags));
         }
 
-        public static BooruPostList FromReader(BinaryReader Reader)
+        public static BooruPostList FromClientReader(BinaryReader Reader, ref BooruTagList Tags)
         {
             uint count = Reader.ReadUInt32();
             BooruPostList bTagList = new BooruPostList();
             for (uint i = 0; i < count; i++)
-                bTagList.Add(BooruPost.FromReader(Reader));
+                bTagList.Add(BooruPost.FromClientReader(Reader, ref Tags));
+            return bTagList;
+        }
+
+        public void ToDiskWriter(BinaryWriter Writer)
+        {
+            Writer.Write((uint)this.Count);
+            this.ForEach(x => x.ToDiskWriter(Writer));
+        }
+
+        public static BooruPostList FromDiskReader(BinaryReader Reader)
+        {
+            uint count = Reader.ReadUInt32();
+            BooruPostList bTagList = new BooruPostList();
+            for (uint i = 0; i < count; i++)
+                bTagList.Add(BooruPost.FromDiskReader(Reader));
             return bTagList;
         }
     }

@@ -34,7 +34,7 @@ namespace TA.SharpBooru
 
         public static bool operator !=(BooruTag Tag1, BooruTag Tag2) { return !(Tag1 == Tag2); }
 
-        public override bool Equals(object obj) { return this.ID == (obj as BooruTag).ID; }
+        public override bool Equals(object obj) { return this == obj as BooruTag; }
 
         public override int GetHashCode() { return ID.GetHashCode(); }
 
@@ -71,6 +71,17 @@ namespace TA.SharpBooru
             {
                 foreach (BooruTag tag in this)
                     if (tag.ID == ID)
+                        return tag;
+                return null;
+            }
+        }
+
+        public BooruTag this[string Tag]
+        {
+            get
+            {
+                foreach (BooruTag tag in this)
+                    if (tag.Tag == Tag)
                         return tag;
                 return null;
             }
