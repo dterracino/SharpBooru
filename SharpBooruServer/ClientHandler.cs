@@ -143,11 +143,14 @@ namespace TA.SharpBooru.Server
                 case BooruProtocol.Command.Search:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                     string searchPattern = _Reader.ReadString().Trim().ToLower();
-                    BooruPostList postsToSend = BooruSearch.DoSearch(searchPattern, _Server.Booru.Posts, _Server.Booru.Tags);
-                    for (int i = postsToSend.Count - 1; !(i < 0); i--)
-                        if (postsToSend[i].Rating > _User.MaxRating)
-                            postsToSend.RemoveAt(i);
-                    postsToSend.Sort((b1, b2) => DateTime.Compare(b1.CreationDate, b2.CreationDate));
+                    BooruPostList searchedPosts = BooruSearch.DoSearch(searchPattern, _Server.Booru.Posts, _Server.Booru.Tags);
+                    BooruPostList postsToSend = new BooruPostList();
+                    searchedPosts.ForEach(x =>
+                        {
+                            if (x.Rating <= _User.MaxRating)
+                                postsToSend.Add(x);
+                        });
+                    postsToSend.Sort((b1, b2) => DateTime.Compare(b2.CreationDate, b1.CreationDate));
                     _Writer.Write((uint)postsToSend.Count);
                     postsToSend.ForEach(x => _Writer.Write(x.ID));
                     break;
