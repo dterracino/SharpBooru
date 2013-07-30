@@ -59,7 +59,7 @@ namespace TA.SharpBooru.Server
                 Writer.Write(configEntry.Value);
             }
             Writer.Write((uint)Users.Count);
-            Users.ForEach(x => x.ToWriter(Writer));
+            Users.ForEach(x => x.ToWriter(Writer, true));
             Posts.ToDiskWriter(Writer);
             Tags.ToWriter(Writer);
         }
@@ -76,7 +76,7 @@ namespace TA.SharpBooru.Server
                 booru.Configuration.Add(Reader.ReadString(), Reader.ReadString());
             uint userCount = Reader.ReadUInt32();
             for (uint i = 0; i < userCount; i++)
-                booru.Users.Add(BooruUser.FromReader(Reader));
+                booru.Users.Add(BooruUser.FromReader(Reader, true));
             booru.Posts = BooruPostList.FromDiskReader(Reader);
             booru.Tags = BooruTagList.FromReader(Reader);
             return booru;

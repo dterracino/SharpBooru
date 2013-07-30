@@ -83,14 +83,18 @@ namespace TA.SharpBooru.Server
             string password = _Reader.ReadString();
             password = Helper.MD5(password);
             foreach (BooruUser user in _Server.Booru.Users)
-                if (user.Username.Equals(username))
-                    if (user.MD5Password.Equals(password))
+                if (user.Username == username)
+                    if (user.MD5Password == password)
                         if (user.CanLoginDirect)
                         {
                             _Writer.Write(true);
                             return user;
                         }
-                        else throw new BooruProtocol.BooruException("User can't login directly");
+                        else
+                        {
+                            _Writer.Write(false);
+                            throw new BooruProtocol.BooruException("User can't login directly");
+                        }
             _Writer.Write(false);
             throw new BooruProtocol.BooruException("Authentication failed");
         }
@@ -271,6 +275,22 @@ namespace TA.SharpBooru.Server
                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                     _User.ToWriter(_Writer, false);
                     break;
+                case BooruProtocol.Command.ChangeUser:
+                    string username = _Reader.ReadString();
+                    string password = _Reader.ReadString();
+                    password = Helper.MD5(password);
+                    foreach (BooruUser user in _Server.Booru.Users)
+                        if (user.Username == username)
+                            if (user.MD5Password == password)
+                                if (user.CanLoginDirect)
+                                {
+                                    username = null; //Just a flag to see if it worked
+                                    break;
+                                }
+                                else throw new BooruProtocol.BooruException("User can't login directly");
+                    if (username != null)
+                        throw new BooruProtocol.BooruException("Authentication failed");
+                    else break;
                 default:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.UnknownError);
                     throw new NotImplementedException();

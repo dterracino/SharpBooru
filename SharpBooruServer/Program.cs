@@ -33,9 +33,7 @@ namespace TA.SharpBooru.Server
                 throw new ArgumentException("Server needs one argument (Booru path)");
 
             sLogger.LogLine("Loading booru from disk...");
-            Booru sBooru = Booru.Exists(args[0]) ?
-                Booru.ReadFromDisk(args[0])
-                : new Booru() { Folder = args[0] };
+            Booru sBooru = Booru.ReadFromDisk(args[0]);
             sLogger.LogLine("Finished loading booru with {0} posts and {1} tags", sBooru.Posts.Count, sBooru.Tags.Count);
 
             BooruServer server = new BooruServer(sBooru, sLogger, sCertificate);

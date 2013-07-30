@@ -23,6 +23,18 @@ namespace TA.SharpBooru.Client
         private BinaryWriter _Writer;
         private object _Lock = new object();
 
+        private BooruUser _CurrentUser = null;
+        public BooruUser CurrentUser
+        {
+            get
+            {
+                if (_CurrentUser == null)
+                    _CurrentUser = GetCurrentUser();
+                return _CurrentUser;
+            }
+            set { _CurrentUser = value; }
+        }
+
         public Booru(string Server, ushort Port, string Username, string Password)
         {
             if (string.IsNullOrWhiteSpace(Username))
@@ -237,6 +249,20 @@ namespace TA.SharpBooru.Client
                 _Writer.Write(ID);
                 Image.ToWriter(_Writer);
                 EndCommunication();
+            }
+        }
+
+        public void ChangeUser(string Username, string Password)
+        {
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.ChangeUser);
+                _Writer.Write(Username);
+                _Writer.Write(Password);
+                EndCommunication();
+                _CurrentUser = null;
+                _Username = Username;
+                _Password = Password;
             }
         }
 
