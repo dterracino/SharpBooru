@@ -62,10 +62,7 @@ namespace TA.SharpBooru.Client.GUI
             if (Helper.IsWindows())
             {
                 IntPtr handle = IntPtr.Zero;
-                MethodInvoker getHandleInvoker =() => { handle = Form.Handle; };
-                if (Form.InvokeRequired)
-                    Form.Invoke(getHandleInvoker); 
-                else getHandleInvoker();
+                Invoke(Form, () => { handle = Form.Handle; });
                 return _EnableWindow(handle, Enable);
             }
             else return false;

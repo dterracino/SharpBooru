@@ -108,7 +108,6 @@ namespace TA.SharpBooru.Server
             return post;
         }
 
-        private static uint c = 0;
         public static BooruPost FromDiskReader(BinaryReader Reader)
         {
             BooruPost post = internalFromReader(Reader);
