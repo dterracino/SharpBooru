@@ -105,25 +105,33 @@ namespace TA.SharpBooru.Server
                         BooruPost post = _Server.Booru.Posts[postID];
                         if (post != null)
                         {
-                            _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                            post.ToClientWriter(_Writer, _Server.Booru.Tags);
-                            lock (_GenerateThumbnailLock)
+                            if (post.Rating <= _User.MaxRating)
                             {
-                                //TODO Create Thumbnail
-                                //check if not exists -> create
+                                _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                                post.ToClientWriter(_Writer, _Server.Booru.Tags);
+                                lock (_GenerateThumbnailLock)
+                                {
+                                    //TODO Create Thumbnail
+                                    //check if not exists -> create
+                                }
+                                _Server.Booru.ReadFile(_Writer, "thumb" + postID);
                             }
-                            _Server.Booru.ReadFile(_Writer, "thumb" + postID);
+                            else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                         }
                         else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                         break;
                     }
-                case BooruProtocol.Command.GetImage: //TODO Advanced permission checks
+                case BooruProtocol.Command.GetImage:
                     {
                         ulong postID = _Reader.ReadUInt64();
                         if (_Server.Booru.Posts.Contains(postID) && File.Exists(Path.Combine(_Server.Booru.Folder, "image" + postID)))
                         {
-                            _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                            _Server.Booru.ReadFile(_Writer, "image" + postID);
+                            if (_Server.Booru.Posts[postID].Rating <= _User.MaxRating)
+                            {
+                                _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                                _Server.Booru.ReadFile(_Writer, "image" + postID);
+                            }
+                            else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                         }
                         else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                         break;
@@ -136,6 +144,9 @@ namespace TA.SharpBooru.Server
                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                     string searchPattern = _Reader.ReadString().Trim().ToLower();
                     BooruPostList postsToSend = BooruSearch.DoSearch(searchPattern, _Server.Booru.Posts, _Server.Booru.Tags);
+                    for (int i = postsToSend.Count - 1; !(i < 0); i--)
+                        if (postsToSend[i].Rating > _User.MaxRating)
+                            postsToSend.RemoveAt(i);
                     postsToSend.Sort((b1, b2) => DateTime.Compare(b1.CreationDate, b2.CreationDate));
                     _Writer.Write((uint)postsToSend.Count);
                     postsToSend.ForEach(x => _Writer.Write(x.ID));

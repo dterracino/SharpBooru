@@ -17,6 +17,8 @@ namespace TA.SharpBooru.Server
         //TODO Permissions for Aliases
         //TODO Permissions for Pools
 
+        public ushort MaxRating;
+
         public string Username;
         public string MD5Password;
 
@@ -36,6 +38,8 @@ namespace TA.SharpBooru.Server
             Writer.Write(CanEditPosts);
             Writer.Write(CanEditTags);
             Writer.Write(CanDeleteTags);
+
+            Writer.Write(MaxRating);
         }
 
         public static BooruUser FromReader(BinaryReader Reader)
@@ -53,7 +57,9 @@ namespace TA.SharpBooru.Server
                 CanDeletePosts = Reader.ReadBoolean(),
                 CanEditPosts = Reader.ReadBoolean(),
                 CanEditTags = Reader.ReadBoolean(),
-                CanDeleteTags = Reader.ReadBoolean()
+                CanDeleteTags = Reader.ReadBoolean(),
+
+                MaxRating = Reader.ReadUInt16()
             };
         }
     }
