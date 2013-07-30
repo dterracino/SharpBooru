@@ -108,6 +108,12 @@
     <Compile Include="ImportDialog.designer.cs">
       <DependentUpon>ImportDialog.cs</DependentUpon>
     </Compile>
+    <Compile Include="LoginDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LoginDialog.Designer.cs">
+      <DependentUpon>LoginDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="PleaseWaitDialog.cs">
       <SubType>Form</SubType>
     </Compile>
