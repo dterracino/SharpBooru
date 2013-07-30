@@ -3,8 +3,10 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Security;
+using System.Diagnostics;
 using System.Net.Sockets;
 using System.Net.Security;
+using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 using Amib.Threading;
 
@@ -62,7 +64,7 @@ namespace TA.SharpBooru.Server
         private void PrepareConnection(X509Certificate Certificate)
         {
             _SSLStream = new SslStream(_Client.GetStream(), true);
-            _SSLStream.AuthenticateAsServer(Certificate, false, System.Security.Authentication.SslProtocols.Tls, false);
+            _SSLStream.AuthenticateAsServer(Certificate, false, SslProtocols.Tls, false);
             _Reader = new BinaryReader(_SSLStream, Encoding.Unicode);
             _Writer = new BinaryWriter(_SSLStream, Encoding.Unicode);
         }
@@ -109,11 +111,6 @@ namespace TA.SharpBooru.Server
                             {
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                 post.ToClientWriter(_Writer, _Server.Booru.Tags);
-                                lock (_GenerateThumbnailLock)
-                                {
-                                    //TODO Create Thumbnail
-                                    //check if not exists -> create
-                                }
                                 _Server.Booru.ReadFile(_Writer, "thumb" + postID);
                             }
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
@@ -154,8 +151,7 @@ namespace TA.SharpBooru.Server
                     _Writer.Write((uint)postsToSend.Count);
                     postsToSend.ForEach(x => _Writer.Write(x.ID));
                     break;
-                case BooruProtocol.Command.Disconnect:
-                    return false; //stop handling loop
+                case BooruProtocol.Command.Disconnect: return false; //stop handling loop
                 case BooruProtocol.Command.DeletePost:
                     {
                         ulong postID = _Reader.ReadUInt64();
@@ -264,7 +260,7 @@ namespace TA.SharpBooru.Server
                     }
                 case BooruProtocol.Command.ForceKillServer:
                     if (_User.IsAdmin)
-                        System.Diagnostics.Process.GetCurrentProcess().Kill(); //YOLO
+                        Process.GetCurrentProcess().Kill(); //YOLO
                     else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                     break;
                 case BooruProtocol.Command.GetAllTags:
