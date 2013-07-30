@@ -29,23 +29,23 @@ namespace TA.SharpBooru
             // void, PostID(ulong)
             DeletePost,
 
+            // ----- Maybe remove DeleteTag -----
             // void, TagID(ulong)
             DeleteTag,
 
-            //TODO !!!!!
             // NewTagID(ulong), NewTag(BooruTag) with old ID
             EditTag,
 
             // NewPostID(ulong), Post(BooruPost), Image(BooruImage)
             AddPost,
 
-            //TODO !!!!!
             // NewPostID(ulong), NewPost(BooruPost) with old ID
             EditPost,
 
             // Tags(BooruTagList)
             GetAllTags,
 
+            // ----- TODO Implement EditImage -----
             // void, PostID(ulong), Image(BooruImage)
             EditImage
 

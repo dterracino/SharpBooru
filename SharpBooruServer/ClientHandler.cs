@@ -99,7 +99,7 @@ namespace TA.SharpBooru.Server
             _Server.Logger.LogLine("{0} ({1}) executes command {2}", _User.Username, _Address, command.ToString());
             switch (command)
             {
-                case BooruProtocol.Command.GetPost: //TODO Advanced permission checks
+                case BooruProtocol.Command.GetPost:
                     {
                         ulong postID = _Reader.ReadUInt64();
                         BooruPost post = _Server.Booru.Posts[postID];
@@ -186,12 +186,15 @@ namespace TA.SharpBooru.Server
                     }
                 case BooruProtocol.Command.EditTag:
                     {
-                        throw new Exception("TODO");
                         if (_User.CanEditTags)
                         {
                             BooruTag newTag = BooruTag.FromReader(_Reader);
-                            if (true) //check if exists -> then replace
+                            if (_Server.Booru.Tags.Contains(newTag.ID))
+                            {
+                                _Server.Booru.Tags.Remove(newTag.ID);
+                                _Server.Booru.Tags.Add(newTag);
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                            }
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                         }
                         else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
@@ -204,7 +207,6 @@ namespace TA.SharpBooru.Server
                         if (_User.CanAddPosts)
                         {
                             newPost.ID = _Server.Booru.GetNextPostID();
-                            //TODO Check Tags and replace with existing
                             if (!_User.AdvancePostControl)
                             {
                                 newPost.EditCount = 0;
@@ -235,25 +237,21 @@ namespace TA.SharpBooru.Server
                     }
                 case BooruProtocol.Command.EditPost:
                     {
-                        throw new Exception("TODO");
-                        ulong postID = _Reader.ReadUInt64();
                         BooruPost newPost = BooruPost.FromClientReader(_Reader, ref _Server.Booru.Tags);
                         if (_User.CanEditPosts)
                         {
-                            //TODO Check Tags and replace with existing
-                            if (_Server.Booru.Posts.Contains(postID))
+                            if (_Server.Booru.Posts.Contains(newPost.ID))
                             {
                                 if (!_User.AdvancePostControl)
                                 {
-                                    BooruPost oldPost = _Server.Booru.Posts[postID];
+                                    BooruPost oldPost = _Server.Booru.Posts[newPost.ID];
                                     newPost.EditCount = oldPost.EditCount + 1;
                                     newPost.CreationDate = oldPost.CreationDate;
                                     newPost.Owner = oldPost.Owner;
                                     newPost.ViewCount = oldPost.ViewCount;
                                 }
-                                for (int i = 0; i < _Server.Booru.Posts.Count; i++)
-                                    if (_Server.Booru.Posts[i].ID == postID)
-                                        _Server.Booru.Posts[i] = newPost;
+                                _Server.Booru.Posts.Remove(newPost.ID);
+                                _Server.Booru.Posts.Add(newPost);
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                             }
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
@@ -269,10 +267,6 @@ namespace TA.SharpBooru.Server
                 case BooruProtocol.Command.GetAllTags:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                     _Server.Booru.Tags.ToWriter(_Writer);
-                    break;
-                case BooruProtocol.Command.EditImage:
-                    //TODO Implement bandwidth limit
-                    //TODO Implement EditImage server-side
                     break;
                 default:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.UnknownError);
