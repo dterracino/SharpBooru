@@ -271,6 +271,10 @@ namespace TA.SharpBooru.Server
                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                     _Server.Booru.Tags.ToWriter(_Writer);
                     break;
+                case BooruProtocol.Command.GetCurrentUser:
+                    _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                    _User.ToWriter(_Writer, false);
+                    break;
                 default:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.UnknownError);
                     throw new NotImplementedException();

@@ -173,6 +173,16 @@ namespace TA.SharpBooru.Client
             }
         }
 
+        public BooruUser GetCurrentUser()
+        {
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.GetCurrentUser);
+                EndCommunication();
+                return BooruUser.FromReader(_Reader, false);
+            }
+        }
+
         public ulong AddPost(BooruPost NewPost)
         {
             lock (_Lock)

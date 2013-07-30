@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace TA.SharpBooru.Server
+namespace TA.SharpBooru
 {
     public class BooruUser
     {
@@ -24,10 +24,11 @@ namespace TA.SharpBooru.Server
 
         public string Password { set { MD5Password = Helper.MD5(value); } }
 
-        public void ToWriter(BinaryWriter Writer)
+        public void ToWriter(BinaryWriter Writer, bool IncludePassword)
         {
             Writer.Write(Username);
-            Writer.Write(MD5Password);
+            if (IncludePassword)
+                Writer.Write(MD5Password);
 
             Writer.Write(IsAdmin);
             Writer.Write(CanLoginDirect);
@@ -42,12 +43,12 @@ namespace TA.SharpBooru.Server
             Writer.Write(MaxRating);
         }
 
-        public static BooruUser FromReader(BinaryReader Reader)
+        public static BooruUser FromReader(BinaryReader Reader, bool IncludePassword)
         {
             return new BooruUser()
             {
                 Username = Reader.ReadString(),
-                MD5Password = Reader.ReadString(),
+                MD5Password = IncludePassword ? Reader.ReadString() : null,
 
                 IsAdmin = Reader.ReadBoolean(),
                 CanLoginDirect = Reader.ReadBoolean(),

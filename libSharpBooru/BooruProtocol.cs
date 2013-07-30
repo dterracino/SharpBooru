@@ -45,6 +45,9 @@ namespace TA.SharpBooru
             // Tags(BooruTagList)
             GetAllTags,
 
+            // User(BooruUser), void
+            GetCurrentUser,
+
             // ----- TODO Implement EditImage -----
             // void, PostID(ulong), Image(BooruImage)
             EditImage
