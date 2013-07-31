@@ -143,6 +143,8 @@ namespace TA.SharpBooru.BooruAPIs
         {
             if (Helper.CheckURL(URL))
             {
+                //TODO Add pool detection
+                //TODO Gelbooru/Safebooru failing when &pool_id= is appended to URL
                 URL = URL.Trim().ToLower();
                 if (Regex.IsMatch(URL, "http://(www.|)gelbooru.com/index.php\\?page=post&s=view&id=[0-9]*"))
                     return (new GelbooruAPI()).GetSinglePost(URL.Substring(URL.LastIndexOf("=") + 1));
@@ -156,7 +158,10 @@ namespace TA.SharpBooru.BooruAPIs
                     return (new KonachanAPI(false)).GetSinglePost(Regex.Match(URL, "show/[0-9]{1,}").Value.Substring(5));
                 else if (Regex.IsMatch(URL, "http://(www.|)konachan.net/post.*"))
                     return (new KonachanAPI(false)).SearchPosts(ExtractParameterFromURLQuery(URL, "tags").Split('+'));
-                //TODO Safebooru URL RegEx
+                if (Regex.IsMatch(URL, "http://(www.|)safebooru.org/index.php\\?page=post&s=view&id=[0-9]*"))
+                    return (new SafebooruAPI()).GetSinglePost(URL.Substring(URL.LastIndexOf("=") + 1));
+                else if (Regex.IsMatch(URL, "http://(www.|)safebooru.org/index.php\\?page=post&s=list"))
+                    return (new SafebooruAPI()).SearchPosts(ExtractParameterFromURLQuery(URL, "tags").Split('+'));
             }
             return null;
         }
