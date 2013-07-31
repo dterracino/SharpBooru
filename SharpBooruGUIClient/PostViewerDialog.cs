@@ -163,10 +163,13 @@ namespace TA.SharpBooru.Client.GUI
             string editorEXE = "C:\\Program Files\\Adobe\\Adobe Photoshop CS5 (64 Bit)\\Photoshop.exe";
             string tempFile = Helper.GetTempFile();
             _Post.Image.Save(ref tempFile, true);
+            byte[] md5 = Helper.MD5OfFile(tempFile);
             Process editor = Process.Start(editorEXE, tempFile);
             editor.WaitForExit();
             _Post.Image = new BooruImage(tempFile);
-            _Booru.SaveImage(_Post);
+            byte[] nmd5 = Helper.MD5OfFile(tempFile);
+            if (!Helper.MD5Compare(md5, nmd5))
+                _Booru.SaveImage(_Post);
         }
     }
 }
