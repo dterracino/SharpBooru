@@ -6,14 +6,8 @@ SharpBooru
 Server Installation
 -------------------
 
-Build the project and run the server:
-
-$ mono SharpBooruServer.exe /srv/booru
-
-The Booru will be saved in /srv/booru.
-Please make sure the folder already exists.
-
-To force-save the booru to disk, send SIGUSR1 to the process.
+It's not possible to create a booru at this time.
+A booru creation tool will be implemented soon.
 
 
 
