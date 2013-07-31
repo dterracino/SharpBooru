@@ -51,7 +51,7 @@
             this.buttonImportDialog.Location = new System.Drawing.Point(12, 312);
             this.buttonImportDialog.Name = "buttonImportDialog";
             this.buttonImportDialog.Size = new System.Drawing.Size(100, 23);
-            this.buttonImportDialog.TabIndex = 15;
+            this.buttonImportDialog.TabIndex = 3;
             this.buttonImportDialog.Text = "Import";
             this.buttonImportDialog.UseVisualStyleBackColor = true;
             this.buttonImportDialog.Click += new System.EventHandler(this.buttonImportDialog_Click);
@@ -62,7 +62,7 @@
             this.searchBox.Name = "searchBox";
             this.searchBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.searchBox.Size = new System.Drawing.Size(100, 20);
-            this.searchBox.TabIndex = 1;
+            this.searchBox.TabIndex = 0;
             // 
             // booruThumbView
             // 
@@ -74,7 +74,7 @@
             this.booruThumbView.Location = new System.Drawing.Point(118, 12);
             this.booruThumbView.Name = "booruThumbView";
             this.booruThumbView.Size = new System.Drawing.Size(459, 323);
-            this.booruThumbView.TabIndex = 0;
+            this.booruThumbView.TabIndex = 4;
             this.booruThumbView.ThumbViewBackColor = System.Drawing.Color.White;
             // 
             // buttonChangeUser
@@ -83,7 +83,7 @@
             this.buttonChangeUser.Location = new System.Drawing.Point(12, 283);
             this.buttonChangeUser.Name = "buttonChangeUser";
             this.buttonChangeUser.Size = new System.Drawing.Size(100, 23);
-            this.buttonChangeUser.TabIndex = 16;
+            this.buttonChangeUser.TabIndex = 2;
             this.buttonChangeUser.Text = "Change User";
             this.buttonChangeUser.UseVisualStyleBackColor = true;
             this.buttonChangeUser.Click += new System.EventHandler(this.buttonChangeUser_Click);
