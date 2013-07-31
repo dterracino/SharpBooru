@@ -27,8 +27,8 @@ namespace TA.SharpBooru.Client.GUI
             BooruPost post = aObj as BooruPost;
             _Booru.GetImage(ref post);
             List<ulong> postIDs = booruThumbView.Posts;
-            PostViewerDialog pvd = new PostViewerDialog(_Booru, postIDs, postIDs.IndexOf(post.ID));
-            pvd.ShowDialog();
+            using (PostViewerDialog pvd = new PostViewerDialog(_Booru, postIDs, postIDs.IndexOf(post.ID)))
+                pvd.ShowDialog();
         }
 
         private void tagTextBox1_EnterPressed(object sender, EventArgs e)
@@ -39,8 +39,9 @@ namespace TA.SharpBooru.Client.GUI
 
         private void buttonImportDialog_Click(object sender, EventArgs e)
         {
-            ImportDialog iDialog = new ImportDialog(_Booru);
-            iDialog.ShowDialog();
+            using (ImportDialog iDialog = new ImportDialog(_Booru))
+                if (iDialog.ShowDialog() == DialogResult.OK)
+                    Refresh();
         }
 
         private void buttonChangeUser_Click(object sender, EventArgs e)
