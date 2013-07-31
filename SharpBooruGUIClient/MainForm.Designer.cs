@@ -78,6 +78,7 @@
             // 
             // buttonChangeUser
             // 
+            this.buttonChangeUser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonChangeUser.Location = new System.Drawing.Point(12, 283);
             this.buttonChangeUser.Name = "buttonChangeUser";
             this.buttonChangeUser.Size = new System.Drawing.Size(100, 23);
