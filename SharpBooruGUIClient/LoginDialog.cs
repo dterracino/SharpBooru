@@ -5,7 +5,18 @@ namespace TA.SharpBooru.Client.GUI
 {
     public partial class LoginDialog : Form
     {
-        public LoginDialog() { InitializeComponent(); }
+        public LoginDialog()
+        {
+            InitializeComponent();
+            textBoxUsername.KeyDown += new KeyEventHandler(textBox_KeyDown);
+            textBoxPassword.KeyDown += new KeyEventHandler(textBox_KeyDown);
+        }
+
+        void textBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+                buttonOK_Click(sender, e);
+        }
 
         public string Username
         {
