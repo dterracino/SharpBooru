@@ -127,8 +127,13 @@ namespace TA.SharpBooru
 
         public object Clone() { return new BooruImage() { _Bytes = this._Bytes }; }
 
-        public void Save(Stream Stream, ImageFormat Format = null) { Bitmap.Save(Stream, Format ?? ImageFormat); }
-        public void Save(string File, ImageFormat Format = null) 
+        public void Save(Stream Stream, ImageFormat Format = null)
+        {
+            if (Format == null)
+                Stream.Write(_Bytes, 0, _Bytes.Length);
+            else Bitmap.Save(Stream, Format ?? ImageFormat);
+        }
+        public void Save(string File, ImageFormat Format = null)
         {
             using (FileStream fStream = new FileStream(File, FileMode.Create, FileAccess.Write, FileShare.Read))
                 Save(fStream, Format);
