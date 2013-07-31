@@ -25,7 +25,6 @@ namespace TA.SharpBooru.Client.GUI
         private void booruThumbView_ImageOpened(object sender, EventArgs e, object aObj)
         {
             BooruPost post = aObj as BooruPost;
-            _Booru.GetImage(ref post);
             List<ulong> postIDs = booruThumbView.Posts;
             using (PostViewerDialog pvd = new PostViewerDialog(_Booru, postIDs, postIDs.IndexOf(post.ID)))
                 pvd.ShowDialog();
