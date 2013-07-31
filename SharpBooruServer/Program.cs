@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using Mono.Unix;
 using Mono.Unix.Native;
@@ -39,25 +40,31 @@ namespace TA.SharpBooru.Server
             BooruServer server = new BooruServer(sBooru, sLogger, sCertificate);
 
             EventWaitHandle waitEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
-            Action cancelHandler = () => //TODO Make threadsafe
-                {
-                    sLogger.LogLine("Stopping server and waiting for clients to finish...");
-                    server.Stop();
-                    server.WaitForClients(10);
-                    sLogger.LogLine("Saving booru to disk...");
-                    server.Booru.SaveToDisk();
-                    waitEvent.Set();
-                };
-
-            Console.CancelKeyPress += (sender, e) => cancelHandler();
+            Console.CancelKeyPress += (sender, e) => Cancel(server, sLogger, waitEvent);
             if (Helper.IsPOSIX())
             {
                 SetupSignal(Signum.SIGUSR1, server.Booru.SaveToDisk);
-                SetupSignal(Signum.SIGTERM, cancelHandler);
+                SetupSignal(Signum.SIGTERM, () => Cancel(server, sLogger, waitEvent));
             }
 
             server.Start(); //TODO SetUID
-            waitEvent.WaitOne(); //Wait for cancelHandler to finish
+            waitEvent.WaitOne(); //Wait for Cancel to finish
+        }
+
+        private bool _CancelRunned = false;
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public void Cancel(BooruServer Server, Logger Logger, EventWaitHandle WaitEvent)
+        {
+            if (!_CancelRunned)
+            {
+                Logger.LogLine("Stopping server and waiting for clients to finish...");
+                Server.Stop();
+                Server.WaitForClients(10);
+                Logger.LogLine("Saving booru to disk...");
+                Server.Booru.SaveToDisk();
+                WaitEvent.Set();
+                _CancelRunned = true;
+            }
         }
 
         public static void SetupSignal(Signum Signal, Action SignalAction)
