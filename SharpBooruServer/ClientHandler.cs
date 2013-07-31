@@ -279,18 +279,19 @@ namespace TA.SharpBooru.Server
                     string username = _Reader.ReadString();
                     string password = _Reader.ReadString();
                     password = Helper.MD5(password);
+                    bool newUserLoggedIn = false;
                     foreach (BooruUser user in _Server.Booru.Users)
                         if (user.Username == username)
                             if (user.MD5Password == password)
                                 if (user.CanLoginDirect)
                                 {
-                                    username = null; //Just a flag to see if it worked
-                                    break;
+                                    _User = user;
+                                    newUserLoggedIn = true;
                                 }
-                                else throw new BooruProtocol.BooruException("User can't login directly");
-                    if (username != null)
-                        throw new BooruProtocol.BooruException("Authentication failed");
-                    else break;
+                    if (newUserLoggedIn)
+                        _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                    else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
+                    break;
                 default:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.UnknownError);
                     throw new NotImplementedException();
