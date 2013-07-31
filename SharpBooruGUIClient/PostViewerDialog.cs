@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Threading;
+using System.Diagnostics;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
@@ -158,19 +159,14 @@ namespace TA.SharpBooru.Client.GUI
 
         private void buttonEditImage_Click(object sender, EventArgs e)
         {
-            /* TODO Photoshop edit function
+            //TODO Photoshop configurable path
             string editorEXE = "C:\\Program Files\\Adobe\\Adobe Photoshop CS5 (64 Bit)\\Photoshop.exe";
-            if (string.IsNullOrWhiteSpace(editorEXE))
-                MessageBox.Show("No image editor defined in settings", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            else
-            {
-                string tempFile = Helper.GetTempFile();
-                tempFile = BitmapFactory.SaveBitmap(_Post.Image, tempFile);
-                Process editor = Process.Start(editorEXE, tempFile);
-                editor.WaitForExit();
-                _Post.Image = new BooruImage(tempFile);
-            }
-            */
+            string tempFile = Helper.GetTempFile();
+            _Post.Image.Save(ref tempFile, true);
+            Process editor = Process.Start(editorEXE, tempFile);
+            editor.WaitForExit();
+            _Post.Image = new BooruImage(tempFile);
+            _Booru.SaveImage(_Post);
         }
     }
 }

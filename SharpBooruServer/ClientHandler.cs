@@ -234,7 +234,6 @@ namespace TA.SharpBooru.Server
                             _Reader.ReadBytes(length % 1024);
                             _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                         }
-
                         break;
                     }
                 case BooruProtocol.Command.EditPost:
@@ -290,6 +289,36 @@ namespace TA.SharpBooru.Server
                     if (newUserLoggedIn)
                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                     else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
+                    break;
+                case BooruProtocol.Command.EditImage:
+                    {
+                        ulong postID = _Reader.ReadUInt64();
+                        int length = (int)_Reader.ReadUInt32();
+                        BooruProtocol.ErrorCode? error = null;
+                        if (_User.CanEditPosts)
+                        {
+                            if (_Server.Booru.Posts.Contains(postID))
+                            {
+                                //TODO Implement bandwidth limit (check length variable)
+                                using (BooruImage bigImage = new BooruImage(_Reader.ReadBytes(length)))
+                                {
+                                    bigImage.Save(Path.Combine(_Server.Booru.Folder, "image" + postID));
+                                    using (BooruImage thumbImage = bigImage.CreateThumbnail(256)) //TODO ThumbSize 
+                                        thumbImage.Save(Path.Combine(_Server.Booru.Folder, "thumb" + postID));
+                                }
+                                _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                            }
+                            else error = BooruProtocol.ErrorCode.ResourceNotFound;
+                        }
+                        else error = BooruProtocol.ErrorCode.NoPermission;
+                        if (error.HasValue)
+                        {
+                            for (int i = 0; i < length / 1024; i++)
+                                _Reader.ReadBytes(1024);
+                            _Reader.ReadBytes(length % 1024);
+                            _Writer.Write((byte)error.Value);
+                        }
+                    } 
                     break;
                 default:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.UnknownError);

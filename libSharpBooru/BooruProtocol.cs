@@ -51,7 +51,6 @@ namespace TA.SharpBooru
             // void, Username(string), Password(string)
             ChangeUser,
 
-            // ----- TODO Implement EditImage -----
             // void, PostID(ulong), Image(BooruImage)
             EditImage
 
