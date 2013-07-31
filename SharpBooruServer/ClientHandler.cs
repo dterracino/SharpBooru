@@ -113,7 +113,7 @@ namespace TA.SharpBooru.Server
                             if (post.Rating <= _User.MaxRating)
                             {
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                                post.ToClientWriter(_Writer, _Server.Booru.Tags);
+                                post.ToClientWriter(_Writer, _Server.Booru);
                                 _Server.Booru.ReadFile(_Writer, "thumb" + postID);
                             }
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
@@ -204,7 +204,7 @@ namespace TA.SharpBooru.Server
                     }
                 case BooruProtocol.Command.AddPost:
                     {
-                        BooruPost newPost = BooruPost.FromClientReader(_Reader, ref _Server.Booru.Tags);
+                        BooruPost newPost = BooruPost.FromClientReader(_Reader, _Server.Booru);
                         int length = (int)_Reader.ReadUInt32();
                         if (_User.CanAddPosts)
                         {
@@ -238,7 +238,7 @@ namespace TA.SharpBooru.Server
                     }
                 case BooruProtocol.Command.EditPost:
                     {
-                        BooruPost newPost = BooruPost.FromClientReader(_Reader, ref _Server.Booru.Tags);
+                        BooruPost newPost = BooruPost.FromClientReader(_Reader, _Server.Booru);
                         if (_User.CanEditPosts)
                         {
                             if (_Server.Booru.Posts.Contains(newPost.ID))

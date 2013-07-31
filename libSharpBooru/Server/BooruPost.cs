@@ -63,11 +63,11 @@ namespace TA.SharpBooru.Server
             TagIDs.ForEach(x => Writer.Write(x));
         }
 
-        public void ToClientWriter(BinaryWriter Writer, BooruTagList Tags)
+        public void ToClientWriter(BinaryWriter Writer, Booru Booru)
         {
             internalToWriter(Writer);
             BooruTagList tagList = new BooruTagList();
-            TagIDs.ForEach(x => tagList.Add(Tags[x]));
+            TagIDs.ForEach(x => tagList.Add(Booru.Tags[x]));
             tagList.ToWriter(Writer);
         }
 
@@ -90,18 +90,19 @@ namespace TA.SharpBooru.Server
             };
         }
 
-        public static BooruPost FromClientReader(BinaryReader Reader, ref BooruTagList Tags)
+        public static BooruPost FromClientReader(BinaryReader Reader, Booru Booru)
         {
             BooruPost post = internalFromReader(Reader);
             uint count = Reader.ReadUInt32();
             for (uint i = 0; i < count; i++)
             {
                 string cTag = Reader.ReadString();
-                BooruTag sTag = Tags[cTag];
+                BooruTag sTag = Booru.Tags[cTag];
                 if (sTag == null)
                 {
                     sTag = new BooruTag(cTag, "Undefined", "Undefined tags", Color.Black);
-                    Tags.Add(sTag);
+                    sTag.ID = Booru.GetNextTagID();
+                    Booru.Tags.Add(sTag);
                 }
                 post.TagIDs.Add(sTag.ID);
             }
@@ -136,18 +137,18 @@ namespace TA.SharpBooru.Server
 
         public int Remove(ulong ID) { return this.RemoveAll(x => { return x.ID == ID; }); }
 
-        public void ToClientWriter(BinaryWriter Writer, BooruTagList Tags)
+        public void ToClientWriter(BinaryWriter Writer, Booru Booru)
         {
             Writer.Write((uint)this.Count);
-            this.ForEach(x => x.ToClientWriter(Writer, Tags));
+            this.ForEach(x => x.ToClientWriter(Writer, Booru));
         }
 
-        public static BooruPostList FromClientReader(BinaryReader Reader, ref BooruTagList Tags)
+        public static BooruPostList FromClientReader(BinaryReader Reader, Booru Booru)
         {
             uint count = Reader.ReadUInt32();
             BooruPostList bTagList = new BooruPostList();
             for (uint i = 0; i < count; i++)
-                bTagList.Add(BooruPost.FromClientReader(Reader, ref Tags));
+                bTagList.Add(BooruPost.FromClientReader(Reader, Booru));
             return bTagList;
         }
 
