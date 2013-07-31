@@ -23,16 +23,33 @@ namespace TA.SharpBooru.Client.GUI.Controls
         public List<ulong> Posts
         {
             get { return _Posts; }
-            set
+            set { SetPosts(value); }
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        public void SetPosts(List<ulong> PostIDs)
+        {
+            if (PostIDs != null)
             {
-                if (value != null)
-                {
-                    int oldCount = _Posts.Count;
-                    _Posts = value;
-                    RefreshPages();
-                    if (_Posts.Count != oldCount)
-                        RefreshLabel();
-                }
+                int oldCount = _Posts.Count;
+                ulong? firstPostInPage = null;
+                if (_Posts.Count > 0)
+                    firstPostInPage = _Posts[_ThumbsPerPage * pageSwitcher.CurrentPage];
+                _Posts = PostIDs;
+                int newPageIndex = 0;
+                if (firstPostInPage.HasValue && _Posts.Count > 0)
+                    if (_Posts.Contains(firstPostInPage.Value))
+                    {
+                        int newIndexInList = _Posts.IndexOf(firstPostInPage.Value);
+                        newPageIndex = newIndexInList / _ThumbsPerPage;
+                    }
+                pageSwitcher.Pages = (int)((_Posts.Count - 1f) / _ThumbsPerPage) + 1;
+                bool refreshManually = newPageIndex == pageSwitcher.CurrentPage;
+                pageSwitcher.CurrentPage = newPageIndex;
+                if (refreshManually)
+                    pageSwitcher_PageChanged(this, null);
+                if (_Posts.Count != oldCount)
+                    RefreshLabel();
             }
         }
 
@@ -108,15 +125,6 @@ namespace TA.SharpBooru.Client.GUI.Controls
                 ajaxLoading1.Enabled = LoadingMode;
             }
             else Invoke(new Action<bool>(SetLoadingMode), LoadingMode);
-        }
-
-        public void RefreshPages()
-        {
-            pageSwitcher.Pages = (int)((_Posts.Count - 1f) / _ThumbsPerPage) + 1;
-            bool refreshManually = pageSwitcher.CurrentPage == 0;
-            pageSwitcher.CurrentPage = 0;
-            if (refreshManually)
-                pageSwitcher_PageChanged(this, null);
         }
 
         public void RefreshLabel() 
