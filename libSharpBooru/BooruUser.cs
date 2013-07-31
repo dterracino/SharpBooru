@@ -22,7 +22,7 @@ namespace TA.SharpBooru
         public string Username;
         public string MD5Password;
 
-        public string Password { set { MD5Password = Helper.MD5(value); } }
+        public string Password { set { MD5Password = Helper.ByteToString(Helper.MD5OfString(value)); } }
 
         public void ToWriter(BinaryWriter Writer, bool IncludePassword)
         {

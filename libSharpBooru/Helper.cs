@@ -214,14 +214,39 @@ namespace TA.SharpBooru
             else return 0;
         }
 
-        public static string MD5(string UnicodeString)
+        public static byte[] MD5OfString(string UnicodeString)
         {
-            MD5CryptoServiceProvider md5Provider = new MD5CryptoServiceProvider();
-            byte[] stringBytes = Encoding.Unicode.GetBytes(UnicodeString);
-            byte[] md5Bytes = md5Provider.ComputeHash(stringBytes);
+            byte[] data = Encoding.Unicode.GetBytes(UnicodeString);
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            return md5.ComputeHash(data);
+        }
+
+        public static byte[] MD5OfData(byte[] Data)
+        {
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            return md5.ComputeHash(Data);
+        }
+
+        public static byte[] MD5OfFile(string Path)
+        {
+            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            using (FileStream file = File.Open(Path, FileMode.Open, FileAccess.Read, FileShare.Read))
+                return md5.ComputeHash(file);
+        }
+
+        public static string ByteToString(byte[] Data)
+        {
             StringBuilder sb = new StringBuilder();
-            Array.ForEach<byte>(md5Bytes, x => sb.Append(x.ToString("X2")));
+            Array.ForEach<byte>(Data, x => sb.Append(x.ToString("X2")));
             return sb.ToString();
+        }
+
+        public static bool MD5Compare(byte[] MD5_1, byte[] MD5_2)
+        {
+            for (int i = 0; i < 16; i++)
+                if (MD5_1[i] != MD5_2[i])
+                    return false;
+            return true;
         }
 
         public static DateTime UnixTimeToDateTime(uint UnixTime) { return UNIX_TIME.AddSeconds(UnixTime).ToLocalTime(); }

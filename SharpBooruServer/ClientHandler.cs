@@ -80,7 +80,7 @@ namespace TA.SharpBooru.Server
         {
             string username = _Reader.ReadString();
             string password = _Reader.ReadString();
-            password = Helper.MD5(password);
+            password = Helper.ByteToString(Helper.MD5OfString(password));
             foreach (BooruUser user in _Server.Booru.Users)
                 if (user.Username == username)
                     if (user.MD5Password == password)
@@ -276,7 +276,7 @@ namespace TA.SharpBooru.Server
                 case BooruProtocol.Command.ChangeUser:
                     string username = _Reader.ReadString();
                     string password = _Reader.ReadString();
-                    password = Helper.MD5(password);
+                    password = Helper.ByteToString(Helper.MD5OfString(password));
                     bool newUserLoggedIn = false;
                     foreach (BooruUser user in _Server.Booru.Users)
                         if (user.Username == username)
