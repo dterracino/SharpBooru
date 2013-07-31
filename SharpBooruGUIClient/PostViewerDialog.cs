@@ -1,8 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Drawing;
 using System.Threading;
-using System.Diagnostics;
 using System.Windows.Forms;
 using System.Collections.Generic;
 

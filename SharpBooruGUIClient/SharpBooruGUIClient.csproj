@@ -57,9 +57,6 @@
     <Compile Include="Controls\BooruThumbView.Designer.cs">
       <DependentUpon>BooruThumbView.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\xScalablePictureBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="Controls\ScalablePictureBox\Common.cs" />
     <Compile Include="Controls\ScalablePictureBox\PictureTracker.cs">
       <SubType>UserControl</SubType>
