@@ -37,10 +37,24 @@ namespace TA.SharpBooru.Client.GUI
             booruThumbView.Posts = postIDs;
         }
 
-        private void buttonImportForm_Click(object sender, EventArgs e)
+        private void buttonImportDialog_Click(object sender, EventArgs e)
         {
             ImportDialog iDialog = new ImportDialog(_Booru);
             iDialog.ShowDialog();
+        }
+
+        private void buttonChangeUser_Click(object sender, EventArgs e)
+        {
+            using (LoginDialog ld = new LoginDialog())
+                if (ld.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        _Booru.ChangeUser(ld.Username, ld.Password);
+                        MessageBox.Show("User successfully changed", "Change User", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (BooruProtocol.BooruException bEx) { MessageBox.Show(bEx.Message, "ERROR: Change User", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+                }
         }
     }
 }

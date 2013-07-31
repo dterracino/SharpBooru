@@ -29,9 +29,10 @@
         private void InitializeComponent()
         {
             this.labelSearchBox = new System.Windows.Forms.Label();
-            this.buttonImportForm = new System.Windows.Forms.Button();
+            this.buttonImportDialog = new System.Windows.Forms.Button();
             this.searchBox = new TA.SharpBooru.Client.GUI.Controls.TagTextBox();
             this.booruThumbView = new TA.SharpBooru.Client.GUI.Controls.BooruThumbView();
+            this.buttonChangeUser = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // labelSearchBox
@@ -43,16 +44,16 @@
             this.labelSearchBox.Text = "Tag search";
             this.labelSearchBox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // buttonImportForm
+            // buttonImportDialog
             // 
-            this.buttonImportForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonImportForm.Location = new System.Drawing.Point(12, 312);
-            this.buttonImportForm.Name = "buttonImportForm";
-            this.buttonImportForm.Size = new System.Drawing.Size(100, 23);
-            this.buttonImportForm.TabIndex = 15;
-            this.buttonImportForm.Text = "Import";
-            this.buttonImportForm.UseVisualStyleBackColor = true;
-            this.buttonImportForm.Click += new System.EventHandler(this.buttonImportForm_Click);
+            this.buttonImportDialog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonImportDialog.Location = new System.Drawing.Point(12, 312);
+            this.buttonImportDialog.Name = "buttonImportDialog";
+            this.buttonImportDialog.Size = new System.Drawing.Size(100, 23);
+            this.buttonImportDialog.TabIndex = 15;
+            this.buttonImportDialog.Text = "Import";
+            this.buttonImportDialog.UseVisualStyleBackColor = true;
+            this.buttonImportDialog.Click += new System.EventHandler(this.buttonImportDialog_Click);
             // 
             // searchBox
             // 
@@ -75,12 +76,23 @@
             this.booruThumbView.TabIndex = 0;
             this.booruThumbView.ThumbViewBackColor = System.Drawing.Color.White;
             // 
+            // buttonChangeUser
+            // 
+            this.buttonChangeUser.Location = new System.Drawing.Point(12, 283);
+            this.buttonChangeUser.Name = "buttonChangeUser";
+            this.buttonChangeUser.Size = new System.Drawing.Size(100, 23);
+            this.buttonChangeUser.TabIndex = 16;
+            this.buttonChangeUser.Text = "Change User";
+            this.buttonChangeUser.UseVisualStyleBackColor = true;
+            this.buttonChangeUser.Click += new System.EventHandler(this.buttonChangeUser_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(589, 347);
-            this.Controls.Add(this.buttonImportForm);
+            this.Controls.Add(this.buttonChangeUser);
+            this.Controls.Add(this.buttonImportDialog);
             this.Controls.Add(this.labelSearchBox);
             this.Controls.Add(this.searchBox);
             this.Controls.Add(this.booruThumbView);
@@ -96,7 +108,8 @@
         private Controls.BooruThumbView booruThumbView;
         private Controls.TagTextBox searchBox;
         private System.Windows.Forms.Label labelSearchBox;
-        private System.Windows.Forms.Button buttonImportForm;
+        private System.Windows.Forms.Button buttonImportDialog;
+        private System.Windows.Forms.Button buttonChangeUser;
 
     }
 }
