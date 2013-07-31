@@ -64,5 +64,12 @@ namespace TA.SharpBooru.Client.GUI
             BooruUser cUser = _Booru.CurrentUser;
             buttonImportDialog.Enabled = cUser.CanAddPosts;
         }
+
+        private void buttonRefresh_Click(object sender, EventArgs e)
+        {
+            CheckPermissions();
+            searchBox.SetTags(_Booru.GetAllTags());
+            booruThumbView.Posts = _Booru.Search(_LastSearch);
+        }
     }
 }

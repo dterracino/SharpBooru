@@ -33,6 +33,7 @@
             this.searchBox = new TA.SharpBooru.Client.GUI.Controls.TagTextBox();
             this.booruThumbView = new TA.SharpBooru.Client.GUI.Controls.BooruThumbView();
             this.buttonChangeUser = new System.Windows.Forms.Button();
+            this.buttonRefresh = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // labelSearchBox
@@ -87,11 +88,23 @@
             this.buttonChangeUser.UseVisualStyleBackColor = true;
             this.buttonChangeUser.Click += new System.EventHandler(this.buttonChangeUser_Click);
             // 
+            // buttonRefresh
+            // 
+            this.buttonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonRefresh.Location = new System.Drawing.Point(12, 254);
+            this.buttonRefresh.Name = "buttonRefresh";
+            this.buttonRefresh.Size = new System.Drawing.Size(100, 23);
+            this.buttonRefresh.TabIndex = 1;
+            this.buttonRefresh.Text = "Refresh";
+            this.buttonRefresh.UseVisualStyleBackColor = true;
+            this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(589, 347);
+            this.Controls.Add(this.buttonRefresh);
             this.Controls.Add(this.buttonChangeUser);
             this.Controls.Add(this.buttonImportDialog);
             this.Controls.Add(this.labelSearchBox);
@@ -111,6 +124,7 @@
         private System.Windows.Forms.Label labelSearchBox;
         private System.Windows.Forms.Button buttonImportDialog;
         private System.Windows.Forms.Button buttonChangeUser;
+        private System.Windows.Forms.Button buttonRefresh;
 
     }
 }
