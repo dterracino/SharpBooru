@@ -29,6 +29,11 @@ namespace TA.SharpBooru.Client.GUI.Controls
         [MethodImpl(MethodImplOptions.Synchronized)]
         public void SetPosts(List<ulong> PostIDs)
         {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<List<ulong>>(SetPosts), PostIDs);
+                return;
+            }
             if (PostIDs != null)
             {
                 int oldCount = _Posts.Count;
