@@ -40,6 +40,7 @@
             this.comment = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.rating = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.image = new System.Windows.Forms.DataGridViewImageColumn();
+            this.buttonPasteClipboard = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -177,16 +178,28 @@
             this.image.ReadOnly = true;
             this.image.Width = 256;
             // 
-            // MultiEditPostDialog
+            // buttonPasteClipboard
+            // 
+            this.buttonPasteClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonPasteClipboard.Location = new System.Drawing.Point(12, 517);
+            this.buttonPasteClipboard.Name = "buttonPasteClipboard";
+            this.buttonPasteClipboard.Size = new System.Drawing.Size(164, 23);
+            this.buttonPasteClipboard.TabIndex = 13;
+            this.buttonPasteClipboard.Text = "Import URL from Clipboard";
+            this.buttonPasteClipboard.UseVisualStyleBackColor = true;
+            this.buttonPasteClipboard.Click += new System.EventHandler(this.buttonPasteClipboard_Click);
+            // 
+            // ImportDialog
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(824, 552);
+            this.Controls.Add(this.buttonPasteClipboard);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.okButton);
             this.MinimumSize = new System.Drawing.Size(580, 400);
-            this.Name = "MultiEditPostDialog";
+            this.Name = "ImportDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Import";
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MultiEditPostDialog_DragDrop);
@@ -219,5 +232,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn comment;
         private System.Windows.Forms.DataGridViewTextBoxColumn rating;
         private System.Windows.Forms.DataGridViewImageColumn image;
+        private System.Windows.Forms.Button buttonPasteClipboard;
     }
 }

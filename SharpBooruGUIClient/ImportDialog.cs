@@ -235,8 +235,7 @@ namespace TA.SharpBooru.Client.GUI
                     if (api_posts != null)
                         foreach (BooruAPIPost api_post in api_posts)
                             AddRowAPIPost(api_post);
-                    else
-                        AddRowURL(str);
+                    else AddRowURL(str);
                 }
             }
             else if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -257,6 +256,20 @@ namespace TA.SharpBooru.Client.GUI
                 else if (Helper.CheckURL(data))
                     AddRowURL(data);
             }
+        }
+
+        private void buttonPasteClipboard_Click(object sender, EventArgs e)
+        {
+            string cbText = Clipboard.GetText();
+            if (Helper.CheckURL(cbText))
+            {
+                List<BooruAPIPost> api_posts = BooruAPI.SearchPostsPerURL(cbText);
+                if (api_posts != null)
+                    foreach (BooruAPIPost api_post in api_posts)
+                        AddRowAPIPost(api_post);
+                else AddRowURL(cbText);
+            }
+            else MessageBox.Show("No URL found", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
     }
 }
