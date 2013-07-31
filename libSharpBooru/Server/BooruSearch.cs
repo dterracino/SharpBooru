@@ -90,11 +90,7 @@ namespace TA.SharpBooru.Server
             else return false;
         }
 
-        private static bool IsSpecialPattern(string Pattern)
-        {
-            //TODO Make IsSpecialPattern better
-            return operatorRegex.IsMatch(Pattern);
-        }
+        private static bool IsSpecialPattern(string Pattern) { return operatorRegex.IsMatch(Pattern); }
 
         private static SpecialPattern ExtractSpecialPattern(string Pattern)
         {

@@ -8,8 +8,6 @@ namespace TA.SharpBooru.BooruAPIs
     {
         private const int MAX_TAGS = 10;
 
-        //TODO NI Safebooru supports &id={ID} syntax for API, maybe override the GetSinglePost method?
-
         protected override string GetBaseURI() { return "http://safebooru.org/index.php?page=dapi&s=post&q=index"; }
 
         public override List<BooruAPIPost> SearchPosts(string[] Tags)

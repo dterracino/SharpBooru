@@ -34,7 +34,6 @@ namespace TA.SharpBooru.Server
 
         private object HandlerStage1(object obj)
         {
-            //TODO Moar log output
             try { HandlerStage2(); }
             catch (Exception ex) { _Server.Logger.LogException(ex); }
             finally
