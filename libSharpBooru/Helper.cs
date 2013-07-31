@@ -50,9 +50,9 @@ namespace TA.SharpBooru
                 if (Ptr1 != IntPtr.Zero && Ptr2 != IntPtr.Zero)
                     if (Ptr1 == Ptr2)
                         return true;
-                    else if (IsMono())
-                        return _MemoryCompareMono(Ptr1, Ptr2, Count) == 0;
-                    else return _MemoryCompareWindows(Ptr1, Ptr2, Count) == 0;
+                    else if (IsWindows())
+                        return _MemoryCompareWindows(Ptr1, Ptr2, Count) == 0;
+                    else return _MemoryCompareMono(Ptr1, Ptr2, Count) == 0;
             return false;
         }
 
