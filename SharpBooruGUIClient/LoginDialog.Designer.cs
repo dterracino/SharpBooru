@@ -42,7 +42,7 @@
             this.textBoxUsername.Name = "textBoxUsername";
             this.textBoxUsername.Size = new System.Drawing.Size(157, 20);
             this.textBoxUsername.TabIndex = 0;
-            this.textBoxUsername.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBoxUsername.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // textBoxPassword
             // 
@@ -51,7 +51,7 @@
             this.textBoxPassword.Name = "textBoxPassword";
             this.textBoxPassword.Size = new System.Drawing.Size(157, 20);
             this.textBoxPassword.TabIndex = 1;
-            this.textBoxPassword.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+            this.textBoxPassword.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.textBoxPassword.UseSystemPasswordChar = true;
             // 
             // labelUsername
