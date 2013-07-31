@@ -47,6 +47,7 @@ namespace TA.SharpBooru.Client.GUI
             GUIHelper.CreateToolTip(buttonNextPost, "Next post");
             GUIHelper.CreateToolTip(buttonPreviousPost, "Previous post");
             GUIHelper.CreateToolTip(buttonEditImage, "Edit image");
+            SetLoadingMode(false);
         }
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
@@ -100,7 +101,8 @@ namespace TA.SharpBooru.Client.GUI
                 Invoke(new Action<bool>(SetLoadingMode), LoadingMode);
                 return;
             }
-            buttonDeletePost.Enabled = !LoadingMode;
+            BooruUser cUser = _Booru.CurrentUser;
+            buttonDeletePost.Enabled = !LoadingMode && cUser.CanDeletePosts;
             buttonSaveImage.Enabled = !LoadingMode;
             buttonSetWallpaper.Enabled = !LoadingMode;
             if (LoadingMode)
@@ -114,7 +116,7 @@ namespace TA.SharpBooru.Client.GUI
                 buttonNextPost.Enabled = Index < _PostIDs.Count - 1;
             }
             tagList.Enabled = !LoadingMode;
-            buttonEditImage.Enabled = !LoadingMode;
+            buttonEditImage.Enabled = !LoadingMode && cUser.CanEditPosts;
         }
 
         private void buttonDeletePost_Click(object sender, EventArgs e)

@@ -12,12 +12,14 @@ namespace TA.SharpBooru.Client.GUI
 
         public MainForm(Booru Booru)
         {
-            InitializeComponent();
             _Booru = Booru;
+            InitializeComponent();
             searchBox.SetTags(_Booru.GetAllTags());
             searchBox.EnterPressed += tagTextBox1_EnterPressed;
             booruThumbView.SetBooru(_Booru);
-            booruThumbView.ImageOpened += new BooruThumbView.ImageOpenedHandler(booruThumbView_ImageOpened);
+            booruThumbView.ImageOpened += booruThumbView_ImageOpened;
+            this.Shown += tagTextBox1_EnterPressed;
+            CheckPermissions();
         }
 
         private void booruThumbView_ImageOpened(object sender, EventArgs e, object aObj)
@@ -50,10 +52,17 @@ namespace TA.SharpBooru.Client.GUI
                     {
                         _Booru.ChangeUser(ld.Username, ld.Password);
                         MessageBox.Show("User successfully changed", "Change User", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        CheckPermissions();
                         booruThumbView.Posts = _Booru.Search(_LastSearch);
                     }
                     catch (BooruProtocol.BooruException bEx) { MessageBox.Show(bEx.Message, "ERROR: Change User", MessageBoxButtons.OK, MessageBoxIcon.Error); }
                 }
+        }
+
+        private void CheckPermissions()
+        {
+            BooruUser cUser = _Booru.CurrentUser;
+            buttonImportDialog.Enabled = cUser.CanAddPosts;
         }
     }
 }
