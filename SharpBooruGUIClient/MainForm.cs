@@ -7,7 +7,8 @@ namespace TA.SharpBooru.Client.GUI
 {
     public partial class MainForm : Form
     {
-        private Booru _Booru;
+        private Booru _Booru = null;
+        private string _LastSearch = null;
 
         public MainForm(Booru Booru)
         {
@@ -30,8 +31,8 @@ namespace TA.SharpBooru.Client.GUI
 
         private void tagTextBox1_EnterPressed(object sender, EventArgs e)
         {
-            List<ulong> postIDs = _Booru.Search(searchBox.Text);
-            booruThumbView.Posts = postIDs;
+            booruThumbView.Posts = _Booru.Search(searchBox.Text);
+            _LastSearch = searchBox.Text;
         }
 
         private void buttonImportDialog_Click(object sender, EventArgs e)
@@ -49,6 +50,7 @@ namespace TA.SharpBooru.Client.GUI
                     {
                         _Booru.ChangeUser(ld.Username, ld.Password);
                         MessageBox.Show("User successfully changed", "Change User", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        booruThumbView.Posts = _Booru.Search(_LastSearch);
                     }
                     catch (BooruProtocol.BooruException bEx) { MessageBox.Show(bEx.Message, "ERROR: Change User", MessageBoxButtons.OK, MessageBoxIcon.Error); }
                 }
