@@ -30,40 +30,29 @@
         {
             this.textBoxUsername = new System.Windows.Forms.TextBox();
             this.textBoxPassword = new System.Windows.Forms.TextBox();
-            this.buttonOK = new System.Windows.Forms.Button();
             this.labelUsername = new System.Windows.Forms.Label();
             this.labelPassword = new System.Windows.Forms.Label();
+            this.buttonOK = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBoxUsername
             // 
             this.textBoxUsername.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxUsername.Location = new System.Drawing.Point(81, 12);
+            this.textBoxUsername.Location = new System.Drawing.Point(75, 12);
             this.textBoxUsername.Name = "textBoxUsername";
-            this.textBoxUsername.Size = new System.Drawing.Size(196, 20);
+            this.textBoxUsername.Size = new System.Drawing.Size(157, 20);
             this.textBoxUsername.TabIndex = 0;
             this.textBoxUsername.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             // 
             // textBoxPassword
             // 
             this.textBoxPassword.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxPassword.Location = new System.Drawing.Point(81, 38);
+            this.textBoxPassword.Location = new System.Drawing.Point(75, 38);
             this.textBoxPassword.Name = "textBoxPassword";
-            this.textBoxPassword.Size = new System.Drawing.Size(196, 20);
+            this.textBoxPassword.Size = new System.Drawing.Size(157, 20);
             this.textBoxPassword.TabIndex = 1;
             this.textBoxPassword.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
             this.textBoxPassword.UseSystemPasswordChar = true;
-            // 
-            // buttonOK
-            // 
-            this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOK.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_ok;
-            this.buttonOK.Location = new System.Drawing.Point(247, 64);
-            this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(30, 30);
-            this.buttonOK.TabIndex = 2;
-            this.buttonOK.UseVisualStyleBackColor = true;
-            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // labelUsername
             // 
@@ -83,17 +72,28 @@
             this.labelPassword.TabIndex = 4;
             this.labelPassword.Text = "Password";
             // 
+            // buttonOK
+            // 
+            this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonOK.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_ok;
+            this.buttonOK.Location = new System.Drawing.Point(202, 64);
+            this.buttonOK.Name = "buttonOK";
+            this.buttonOK.Size = new System.Drawing.Size(30, 30);
+            this.buttonOK.TabIndex = 2;
+            this.buttonOK.UseVisualStyleBackColor = true;
+            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
+            // 
             // LoginDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(289, 101);
+            this.ClientSize = new System.Drawing.Size(244, 102);
             this.Controls.Add(this.labelPassword);
             this.Controls.Add(this.labelUsername);
             this.Controls.Add(this.buttonOK);
             this.Controls.Add(this.textBoxPassword);
             this.Controls.Add(this.textBoxUsername);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "LoginDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Login";

@@ -23,12 +23,12 @@ namespace TA.SharpBooru.Server
         public Logger Logger { get { return _Logger; } }
         public X509Certificate Certificate { get { return _Certificate; } }
 
-        public BooruServer(Booru Booru, Logger Logger, X509Certificate Certificate, int Port = 2400)
+        public BooruServer(Booru Booru, Logger Logger, X509Certificate Certificate, ushort Port = 2400)
         {
             _Booru = Booru;
             _Logger = Logger;
             _Certificate = Certificate;
-            _Listener = new TcpListener(IPAddress.Any, 2400);
+            _Listener = new TcpListener(IPAddress.Any, Port);
             _ThreadPool = new SmartThreadPool();
             _ThreadPool.MaxThreads = int.MaxValue;
         }

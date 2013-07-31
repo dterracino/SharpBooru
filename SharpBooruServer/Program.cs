@@ -30,14 +30,15 @@ namespace TA.SharpBooru.Server
         {
             X509Certificate sCertificate = new X509Certificate("ServerCertificate.pfx", "sharpbooru");
 
-            if (args.Length != 1)
-                throw new ArgumentException("Server needs one argument (Booru path)");
+            if (args.Length != 2)
+                throw new ArgumentException("Server needs two argument, Port and Booru path");
 
             sLogger.LogLine("Loading booru from disk...");
-            Booru sBooru = Booru.ReadFromDisk(args[0]);
+            Booru sBooru = Booru.ReadFromDisk(args[1]);
             sLogger.LogLine("Finished loading booru with {0} posts and {1} tags", sBooru.Posts.Count, sBooru.Tags.Count);
 
-            BooruServer server = new BooruServer(sBooru, sLogger, sCertificate);
+            ushort serverPort = Convert.ToUInt16(args[0]);
+            BooruServer server = new BooruServer(sBooru, sLogger, sCertificate, serverPort);
 
             EventWaitHandle waitEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
             Console.CancelKeyPress += (sender, e) => Cancel(server, sLogger, waitEvent);

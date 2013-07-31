@@ -146,6 +146,9 @@
     <EmbeddedResource Include="ImportDialog.resx">
       <DependentUpon>ImportDialog.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="LoginDialog.resx">
+      <DependentUpon>LoginDialog.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PostViewerDialog.resx">
       <DependentUpon>PostViewerDialog.cs</DependentUpon>
     </EmbeddedResource>
