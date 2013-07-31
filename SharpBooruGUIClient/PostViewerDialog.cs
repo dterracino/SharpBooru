@@ -20,7 +20,7 @@ namespace TA.SharpBooru.Client.GUI
             set
             {
                 if (value < 0) value = 0;
-                else if (value > _PostIDs.Count - 1) 
+                else if (value > _PostIDs.Count - 1)
                     value = _PostIDs.Count - 1;
                 if (value != _Index)
                 {
@@ -55,12 +55,12 @@ namespace TA.SharpBooru.Client.GUI
             if (!tagList.Focused)
                 if (keyData == Keys.Left && buttonPreviousPost.Enabled)
                 {
-                    _Index--;
+                    Index--;
                     return true;
                 }
                 else if (keyData == Keys.Right && buttonNextPost.Enabled)
                 {
-                    _Index++;
+                    Index++;
                     return true;
                 }
             return base.ProcessCmdKey(ref msg, keyData);
