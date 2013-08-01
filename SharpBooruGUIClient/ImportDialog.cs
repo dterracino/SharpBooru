@@ -83,6 +83,7 @@ namespace TA.SharpBooru.Client.GUI
                             post.Source = (string)row.Cells["source"].Value;
                             post.Comment = (string)row.Cells["comment"].Value;
                             post.Rating = Convert.ToByte(row.Cells["rating"].Value);
+                            post.Private = Convert.ToBoolean(row.Cells["privat"].Value);
                             string tag_string = Convert.ToString(row.Cells["tags"].Value) + " " + sharedTagsTagTextBox.Text;
                             post.Tags = BooruTagList.FromString(tag_string);
                             RemoveUncheckedTagsFromBooruTagList(ref post.Tags);
@@ -173,6 +174,7 @@ namespace TA.SharpBooru.Client.GUI
             row.Cells.Add(ratingCell);
             */ //TODO RatingCell
             row.Cells.Add(new DataGridViewTextBoxCell() { Value = rating });
+            row.Cells.Add(new DataGridViewCheckBoxCell() { Value = false });
             if (thumbBitmap != null)
                 row.Cells.Add(new DataGridViewImageCell() { Value = thumbBitmap });
             else row.Cells.Add(new DataGridViewTextBoxCell() { Value = "ERROR" });

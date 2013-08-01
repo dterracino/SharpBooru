@@ -34,13 +34,14 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.allowedTagsCheckedListBox = new System.Windows.Forms.CheckedListBox();
             this.dataGridView = new System.Windows.Forms.DataGridView();
+            this.buttonPasteClipboard = new System.Windows.Forms.Button();
             this.image_file = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tags = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.source = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.comment = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.rating = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.privat = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.image = new System.Windows.Forms.DataGridViewImageColumn();
-            this.buttonPasteClipboard = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -56,7 +57,7 @@
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.okButton.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_ok;
-            this.okButton.Location = new System.Drawing.Point(782, 513);
+            this.okButton.Location = new System.Drawing.Point(862, 563);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(30, 30);
             this.okButton.TabIndex = 2;
@@ -79,8 +80,8 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(800, 495);
-            this.splitContainer1.SplitterDistance = 53;
+            this.splitContainer1.Size = new System.Drawing.Size(880, 545);
+            this.splitContainer1.SplitterDistance = 58;
             this.splitContainer1.TabIndex = 12;
             // 
             // sharedTagsTagTextBox
@@ -92,7 +93,7 @@
             this.sharedTagsTagTextBox.Multiline = true;
             this.sharedTagsTagTextBox.Name = "sharedTagsTagTextBox";
             this.sharedTagsTagTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.sharedTagsTagTextBox.Size = new System.Drawing.Size(794, 47);
+            this.sharedTagsTagTextBox.Size = new System.Drawing.Size(874, 52);
             this.sharedTagsTagTextBox.TabIndex = 1;
             // 
             // splitContainer2
@@ -110,8 +111,8 @@
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.dataGridView);
-            this.splitContainer2.Size = new System.Drawing.Size(795, 432);
-            this.splitContainer2.SplitterDistance = 124;
+            this.splitContainer2.Size = new System.Drawing.Size(875, 477);
+            this.splitContainer2.SplitterDistance = 136;
             this.splitContainer2.TabIndex = 5;
             // 
             // allowedTagsCheckedListBox
@@ -123,7 +124,7 @@
             this.allowedTagsCheckedListBox.IntegralHeight = false;
             this.allowedTagsCheckedListBox.Location = new System.Drawing.Point(3, 3);
             this.allowedTagsCheckedListBox.Name = "allowedTagsCheckedListBox";
-            this.allowedTagsCheckedListBox.Size = new System.Drawing.Size(118, 426);
+            this.allowedTagsCheckedListBox.Size = new System.Drawing.Size(130, 471);
             this.allowedTagsCheckedListBox.TabIndex = 4;
             // 
             // dataGridView
@@ -139,49 +140,17 @@
             this.source,
             this.comment,
             this.rating,
+            this.privat,
             this.image});
             this.dataGridView.Location = new System.Drawing.Point(3, 3);
             this.dataGridView.Name = "dataGridView";
-            this.dataGridView.Size = new System.Drawing.Size(661, 426);
+            this.dataGridView.Size = new System.Drawing.Size(729, 471);
             this.dataGridView.TabIndex = 3;
-            // 
-            // image_file
-            // 
-            this.image_file.HeaderText = "image_file";
-            this.image_file.Name = "image_file";
-            this.image_file.ReadOnly = true;
-            // 
-            // tags
-            // 
-            this.tags.HeaderText = "tags";
-            this.tags.Name = "tags";
-            // 
-            // source
-            // 
-            this.source.HeaderText = "source";
-            this.source.Name = "source";
-            // 
-            // comment
-            // 
-            this.comment.HeaderText = "comment";
-            this.comment.Name = "comment";
-            // 
-            // rating
-            // 
-            this.rating.HeaderText = "rating";
-            this.rating.Name = "rating";
-            // 
-            // image
-            // 
-            this.image.HeaderText = "image";
-            this.image.Name = "image";
-            this.image.ReadOnly = true;
-            this.image.Width = 256;
             // 
             // buttonPasteClipboard
             // 
             this.buttonPasteClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonPasteClipboard.Location = new System.Drawing.Point(12, 517);
+            this.buttonPasteClipboard.Location = new System.Drawing.Point(12, 567);
             this.buttonPasteClipboard.Name = "buttonPasteClipboard";
             this.buttonPasteClipboard.Size = new System.Drawing.Size(164, 23);
             this.buttonPasteClipboard.TabIndex = 13;
@@ -189,12 +158,56 @@
             this.buttonPasteClipboard.UseVisualStyleBackColor = true;
             this.buttonPasteClipboard.Click += new System.EventHandler(this.buttonPasteClipboard_Click);
             // 
+            // image_file
+            // 
+            this.image_file.HeaderText = "Image File";
+            this.image_file.Name = "image_file";
+            this.image_file.ReadOnly = true;
+            this.image_file.Width = 80;
+            // 
+            // tags
+            // 
+            this.tags.HeaderText = "Tags";
+            this.tags.Name = "tags";
+            this.tags.Width = 150;
+            // 
+            // source
+            // 
+            this.source.HeaderText = "Source";
+            this.source.Name = "source";
+            this.source.Width = 80;
+            // 
+            // comment
+            // 
+            this.comment.HeaderText = "Comment";
+            this.comment.Name = "comment";
+            this.comment.Width = 80;
+            // 
+            // rating
+            // 
+            this.rating.HeaderText = "Rating";
+            this.rating.Name = "rating";
+            this.rating.Width = 45;
+            // 
+            // privat
+            // 
+            this.privat.HeaderText = "Private";
+            this.privat.Name = "privat";
+            this.privat.Width = 45;
+            // 
+            // image
+            // 
+            this.image.HeaderText = "Image";
+            this.image.Name = "image";
+            this.image.ReadOnly = true;
+            this.image.Width = 256;
+            // 
             // ImportDialog
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(824, 552);
+            this.ClientSize = new System.Drawing.Size(904, 602);
             this.Controls.Add(this.buttonPasteClipboard);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.okButton);
@@ -226,12 +239,13 @@
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.CheckedListBox allowedTagsCheckedListBox;
         private System.Windows.Forms.DataGridView dataGridView;
+        private System.Windows.Forms.Button buttonPasteClipboard;
         private System.Windows.Forms.DataGridViewTextBoxColumn image_file;
         private System.Windows.Forms.DataGridViewTextBoxColumn tags;
         private System.Windows.Forms.DataGridViewTextBoxColumn source;
         private System.Windows.Forms.DataGridViewTextBoxColumn comment;
         private System.Windows.Forms.DataGridViewTextBoxColumn rating;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn privat;
         private System.Windows.Forms.DataGridViewImageColumn image;
-        private System.Windows.Forms.Button buttonPasteClipboard;
     }
 }
