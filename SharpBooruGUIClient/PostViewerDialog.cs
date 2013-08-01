@@ -75,6 +75,7 @@ namespace TA.SharpBooru.Client.GUI
                     lock (_loadLock)
                     {
                         SetLoadingMode(true);
+                        editPanel1.CancelEdit();
                         if (_Post.Image == null)
                             _Booru.GetImage(ref _Post);
                         Bitmap image = _Post.Image.Bitmap;
@@ -105,6 +106,7 @@ namespace TA.SharpBooru.Client.GUI
             buttonDeletePost.Enabled = !LoadingMode && cUser.CanDeletePosts;
             buttonSaveImage.Enabled = !LoadingMode;
             buttonSetWallpaper.Enabled = !LoadingMode;
+            buttonEditPost.Enabled = !LoadingMode && cUser.CanEditPosts;
             if (LoadingMode)
             {
                 buttonPreviousPost.Enabled = false;
@@ -171,5 +173,7 @@ namespace TA.SharpBooru.Client.GUI
             if (!Helper.MD5Compare(md5, nmd5))
                 _Booru.SaveImage(_Post);
         }
+
+        private void buttonEditPost_Click(object sender, EventArgs e) { editPanel1.SetPost(_Booru, _Post); }
     }
 }
