@@ -62,7 +62,7 @@ namespace TA.SharpBooru.Client.GUI
                         imgPath = imgPath.Trim();
                         if (Helper.CheckURL(imgPath))
                         {
-                            imgPath = Helper.DownloadTemporary(imgPath);
+                            imgPath = Helper.DownloadTemporary(imgPath); //TODO ProgressCallback
                             row.Cells["image_file"].Value = imgPath;
                         }
                         pwd.Value++;
@@ -86,7 +86,7 @@ namespace TA.SharpBooru.Client.GUI
                             string tag_string = Convert.ToString(row.Cells["tags"].Value) + " " + sharedTagsTagTextBox.Text;
                             post.Tags = BooruTagList.FromString(tag_string);
                             RemoveUncheckedTagsFromBooruTagList(ref post.Tags);
-                            _Booru.AddPost(post);
+                            _Booru.AddPost(post); //TODO ProgressCallback
                         }
                         catch { skippedRows.Add(row); }
                         pwd.Value++;

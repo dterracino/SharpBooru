@@ -226,10 +226,22 @@ namespace TA.SharpBooru
             return new BooruImage(th);
         }
 
-        public void ToWriter(BinaryWriter Writer)
+        public void ToWriter(BinaryWriter Writer, Action<float> ProgressCallback = null)
         {
             Writer.Write(Bytes.Length);
-            Writer.Write(Bytes); 
+            if (ProgressCallback != null)
+            {
+                int chunkSize = 1024 * 5;
+                int chunkCount = Bytes.Length / chunkSize;
+                for (int i = 0; i < chunkCount; i++)
+                {
+                    Writer.Write(Bytes, i * chunkSize, chunkSize);
+                    ProgressCallback(i * (float)chunkSize / Bytes.Length);
+                }
+                Writer.Write(Bytes, chunkCount * chunkSize, Bytes.Length % chunkSize);
+                ProgressCallback(1f);
+            }
+            else Writer.Write(Bytes);
         }
 
         public static BooruImage FromReader(BinaryReader Reader)

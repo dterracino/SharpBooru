@@ -195,22 +195,24 @@ namespace TA.SharpBooru.Client
             }
         }
 
-        public ulong AddPost(BooruPost NewPost)
+        public ulong AddPost(BooruPost NewPost) { return AddPost(NewPost, null); }
+        public ulong AddPost(BooruPost NewPost, Action<float> ProgressCallback)
         {
             lock (_Lock)
             {
                 BeginCommunication(BooruProtocol.Command.AddPost);
                 NewPost.ToServerWriter(_Writer);
-                NewPost.Image.ToWriter(_Writer);
+                NewPost.Image.ToWriter(_Writer, ProgressCallback);
                 EndCommunication();
                 return _Reader.ReadUInt64();
             }
         }
 
-        public ulong AddPost(BooruAPIPost NewAPIPost)
+        public ulong AddPost(BooruAPIPost NewAPIPost) { return AddPost(NewAPIPost, null); }
+        public ulong AddPost(BooruAPIPost NewAPIPost,Action<float> ProgressCallback)
         {
             NewAPIPost.DownloadImage();
-            return AddPost((BooruPost)NewAPIPost);
+            return AddPost((BooruPost)NewAPIPost, ProgressCallback);
         }
 
         public BooruPostList GetPosts(List<ulong> IDs)
