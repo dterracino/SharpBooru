@@ -110,7 +110,7 @@ namespace TA.SharpBooru.Server
                         BooruPost post = _Server.Booru.Posts[postID];
                         if (post != null)
                         {
-                            if (post.Rating <= _User.MaxRating)
+                            if (post.Rating <= _User.MaxRating && IsPrivacyAllowed(post, _User))
                             {
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                 post.ToClientWriter(_Writer, _Server.Booru);
@@ -126,7 +126,8 @@ namespace TA.SharpBooru.Server
                         ulong postID = _Reader.ReadUInt64();
                         if (_Server.Booru.Posts.Contains(postID) && File.Exists(Path.Combine(_Server.Booru.Folder, "image" + postID)))
                         {
-                            if (_Server.Booru.Posts[postID].Rating <= _User.MaxRating)
+                            BooruPost post = _Server.Booru.Posts[postID];
+                            if (post.Rating <= _User.MaxRating && IsPrivacyAllowed(post, _User))
                             {
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                 _Server.Booru.ReadFile(_Writer, "image" + postID);
@@ -147,7 +148,7 @@ namespace TA.SharpBooru.Server
                     BooruPostList postsToSend = new BooruPostList();
                     searchedPosts.ForEach(x =>
                         {
-                            if (x.Rating <= _User.MaxRating)
+                            if (x.Rating <= _User.MaxRating && IsPrivacyAllowed(x, _User))
                                 postsToSend.Add(x);
                         });
                     postsToSend.Sort((b1, b2) => DateTime.Compare(b2.CreationDate, b1.CreationDate));
@@ -188,9 +189,9 @@ namespace TA.SharpBooru.Server
                     }
                 case BooruProtocol.Command.EditTag:
                     {
+                        BooruTag newTag = BooruTag.FromReader(_Reader);
                         if (_User.CanEditTags)
                         {
-                            BooruTag newTag = BooruTag.FromReader(_Reader);
                             if (_Server.Booru.Tags.Contains(newTag.ID))
                             {
                                 _Server.Booru.Tags.Remove(newTag.ID);
@@ -213,9 +214,11 @@ namespace TA.SharpBooru.Server
                             {
                                 newPost.EditCount = 0;
                                 newPost.CreationDate = DateTime.Now;
-                                newPost.Owner = _User.Username;
                                 newPost.ViewCount = 0;
+                                newPost.Owner = _User.Username;
                             }
+                            else if (string.IsNullOrWhiteSpace(newPost.Owner))
+                                newPost.Owner = _User.Username;
                             //TODO Implement bandwidth limit (check length variable)
                             using (BooruImage bigImage = new BooruImage(_Reader.ReadBytes(length)))
                             {
@@ -318,13 +321,20 @@ namespace TA.SharpBooru.Server
                             _Reader.ReadBytes(length % 1024);
                             _Writer.Write((byte)error.Value);
                         }
-                    } 
+                    }
                     break;
                 default:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.UnknownError);
                     throw new NotImplementedException();
             }
             return true;
+        }
+
+        private bool IsPrivacyAllowed(BooruPost Post, BooruUser User)
+        {
+            if (Post.Private && !User.IsAdmin)
+                return Post.Owner == User.Username;
+            else return true;
         }
     }
 }
