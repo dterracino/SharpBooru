@@ -85,7 +85,7 @@ namespace TA.SharpBooru.Client.GUI
                             GUIHelper.Invoke(this, () =>
                                 {
                                     tagList.Tags = _Post.Tags;
-                                    Text = string.Format("{0} - {1}x{2} - Views {4} - Added {3} by {4}", _Post.ID, _Post.Width, _Post.Height, _Post.CreationDate, _Post.ViewCount, _Post.Owner);
+                                    Text = string.Format("{0} - {1}x{2} - Views {3} - Added {4} by {5}", _Post.ID, _Post.Width, _Post.Height, _Post.ViewCount, _Post.CreationDate, _Post.Owner);
                                 });
                         }
                         catch (ObjectDisposedException) { }
