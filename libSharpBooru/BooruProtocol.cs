@@ -33,13 +33,13 @@ namespace TA.SharpBooru
             // void, TagID(ulong)
             DeleteTag,
 
-            // NewTagID(ulong), NewTag(BooruTag) with old ID
+            // void, NewTag(BooruTag) with old ID
             EditTag,
 
             // NewPostID(ulong), Post(BooruPost), Image(BooruImage)
             AddPost,
 
-            // NewPostID(ulong), NewPost(BooruPost) with old ID
+            // void, NewPost(BooruPost) with old ID
             EditPost,
 
             // Tags(BooruTagList)

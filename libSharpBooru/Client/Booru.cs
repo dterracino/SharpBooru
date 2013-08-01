@@ -171,16 +171,18 @@ namespace TA.SharpBooru.Client
             }
         }
 
-        //TODO Implement EditTag
-        //public ulong SaveTag(BooruTag Tag) { return EditTag(Tag.ID, Tag); }
+        public void EditTag(ulong ID, BooruTag Tag)
+        {
+            Tag.ID = ID;
+            SaveTag(Tag);
+        }
 
-        public void EditTag(ulong ID, BooruTag NewTag)
+        public void SaveTag(BooruTag Tag)
         {
             lock (_Lock)
             {
                 BeginCommunication(BooruProtocol.Command.EditTag);
-                _Writer.Write(ID);
-                NewTag.ToWriter(_Writer);
+                Tag.ToWriter(_Writer);
                 EndCommunication();
             }
         }
@@ -250,6 +252,22 @@ namespace TA.SharpBooru.Client
                 BeginCommunication(BooruProtocol.Command.EditImage);
                 _Writer.Write(ID);
                 Image.ToWriter(_Writer);
+                EndCommunication();
+            }
+        }
+
+        public void EditPost(ulong ID, BooruPost Post)
+        {
+            Post.ID = ID;
+            SavePost(Post);
+        }
+
+        public void SavePost(BooruPost Post)
+        {
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.EditPost);
+                Post.ToServerWriter(_Writer);
                 EndCommunication();
             }
         }
