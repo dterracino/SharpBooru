@@ -45,7 +45,7 @@ namespace TA.SharpBooru
             // Tags(BooruTagList)
             GetAllTags,
 
-            // User(BooruUser), void
+            // User(BooruUser)
             GetCurrentUser,
 
             // void, Username(string), Password(string)
@@ -54,8 +54,8 @@ namespace TA.SharpBooru
             // void, PostID(ulong), Image(BooruImage)
             EditImage,
 
-            // void, void //Always return ErrorCode.Success
-            Test
+            // void //Always return ErrorCode.Success
+            TestConnection
 
             /*
             

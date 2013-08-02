@@ -94,7 +94,7 @@ namespace TA.SharpBooru.Client
 
         public void Test()
         {
-            _Writer.Write((byte)BooruProtocol.Command.Test);
+            _Writer.Write((byte)BooruProtocol.Command.TestConnection);
             EndCommunication();
         }
 
@@ -245,11 +245,7 @@ namespace TA.SharpBooru.Client
             }
         }
 
-        public void ForceKillServer()
-        {
-            lock (_Lock)
-                BeginCommunication(BooruProtocol.Command.ForceKillServer);
-        }
+        public void ForceKillServer() { BeginCommunication(BooruProtocol.Command.ForceKillServer); }
 
         public void SaveImage(BooruPost Post) { EditImage(Post.ID, Post.Image); }
 

@@ -203,7 +203,7 @@ namespace TA.SharpBooru.Server
                         else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                         break;
                     }
-                case BooruProtocol.Command.Test: _Writer.Write((byte)BooruProtocol.ErrorCode.Success); break;
+                case BooruProtocol.Command.TestConnection: _Writer.Write((byte)BooruProtocol.ErrorCode.Success); break;
                 case BooruProtocol.Command.AddPost:
                     {
                         BooruPost newPost = BooruPost.FromClientReader(_Reader, _Server.Booru);
