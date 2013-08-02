@@ -17,6 +17,10 @@ namespace TA.SharpBooru
             // void
             ForceKillServer,
 
+            //TODO Implement StopServerGracefully
+            //void
+            StopServerGracefully,
+
             // void
             Disconnect,
 
