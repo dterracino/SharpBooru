@@ -52,7 +52,10 @@ namespace TA.SharpBooru
             ChangeUser,
 
             // void, PostID(ulong), Image(BooruImage)
-            EditImage
+            EditImage,
+
+            // void, void //Always return ErrorCode.Success
+            Test
 
             /*
             

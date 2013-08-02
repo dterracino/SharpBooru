@@ -66,6 +66,8 @@ namespace TA.SharpBooru.Client
 
         public void Connect()
         {
+            try { Test(); } //Test connection (disconnects on fail)
+            catch { }
             if (!_Client.Connected)
             {
                 Disconnect();
@@ -88,6 +90,12 @@ namespace TA.SharpBooru.Client
         {
             Connect();
             _Writer.Write((byte)Command);
+        }
+
+        public void Test()
+        {
+            _Writer.Write((byte)BooruProtocol.Command.Test);
+            EndCommunication();
         }
 
         private void EndCommunication()
