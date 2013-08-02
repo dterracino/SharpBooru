@@ -96,28 +96,27 @@ namespace TA.SharpBooru.Client.GUI
 
         private void SetLoadingMode(bool LoadingMode)
         {
-            if (InvokeRequired)
+            if (!InvokeRequired)
             {
-                Invoke(new Action<bool>(SetLoadingMode), LoadingMode);
-                return;
+                BooruUser cUser = _Booru.CurrentUser;
+                buttonDeletePost.Enabled = !LoadingMode && cUser.CanDeletePosts;
+                buttonSaveImage.Enabled = !LoadingMode;
+                buttonSetWallpaper.Enabled = !LoadingMode;
+                buttonEditPost.Enabled = !LoadingMode && cUser.CanEditPosts;
+                if (LoadingMode)
+                {
+                    buttonPreviousPost.Enabled = false;
+                    buttonNextPost.Enabled = false;
+                }
+                else
+                {
+                    buttonPreviousPost.Enabled = Index > 0;
+                    buttonNextPost.Enabled = Index < _PostIDs.Count - 1;
+                }
+                tagList.Enabled = !LoadingMode;
+                buttonEditImage.Enabled = !LoadingMode && cUser.CanEditPosts;
             }
-            BooruUser cUser = _Booru.CurrentUser;
-            buttonDeletePost.Enabled = !LoadingMode && cUser.CanDeletePosts;
-            buttonSaveImage.Enabled = !LoadingMode;
-            buttonSetWallpaper.Enabled = !LoadingMode;
-            buttonEditPost.Enabled = !LoadingMode && cUser.CanEditPosts;
-            if (LoadingMode)
-            {
-                buttonPreviousPost.Enabled = false;
-                buttonNextPost.Enabled = false;
-            }
-            else
-            {
-                buttonPreviousPost.Enabled = Index > 0;
-                buttonNextPost.Enabled = Index < _PostIDs.Count - 1;
-            }
-            tagList.Enabled = !LoadingMode;
-            buttonEditImage.Enabled = !LoadingMode && cUser.CanEditPosts;
+            else Invoke(new Action<bool>(SetLoadingMode), LoadingMode);
         }
 
         private void buttonDeletePost_Click(object sender, EventArgs e)
@@ -150,8 +149,7 @@ namespace TA.SharpBooru.Client.GUI
         {
             if (GUIHelper.SetWallpaper(_Post.Image, true))
                 MessageBox.Show("Wallpaper changed", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            else
-                MessageBox.Show("An error occured. Wallpaper not changed.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            else MessageBox.Show("An error occured. Wallpaper not changed.", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void buttonPreviousPost_Click(object sender, EventArgs e) { Index--; }

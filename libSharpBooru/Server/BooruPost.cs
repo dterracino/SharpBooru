@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Drawing;
 using System.Collections.Generic;
 
@@ -105,6 +106,7 @@ namespace TA.SharpBooru.Server
                     Booru.Tags.Add(sTag);
                 }
                 post.TagIDs.Add(sTag.ID);
+                post.TagIDs = post.TagIDs.Distinct().ToList();
             }
             return post;
         }

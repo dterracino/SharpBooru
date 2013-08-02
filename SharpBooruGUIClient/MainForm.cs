@@ -51,7 +51,6 @@ namespace TA.SharpBooru.Client.GUI
                     try
                     {
                         _Booru.ChangeUser(ld.Username, ld.Password);
-                        MessageBox.Show("User successfully changed", "Change User", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         CheckPermissions();
                         booruThumbView.Posts = _Booru.Search(_LastSearch);
                     }
