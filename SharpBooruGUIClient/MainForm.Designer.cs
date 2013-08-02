@@ -28,12 +28,18 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.labelSearchBox = new System.Windows.Forms.Label();
             this.buttonImportDialog = new System.Windows.Forms.Button();
             this.searchBox = new TA.SharpBooru.Client.GUI.Controls.TagTextBox();
             this.booruThumbView = new TA.SharpBooru.Client.GUI.Controls.BooruThumbView();
             this.buttonChangeUser = new System.Windows.Forms.Button();
             this.buttonRefresh = new System.Windows.Forms.Button();
+            this.buttonAdminTools = new System.Windows.Forms.Button();
+            this.adminContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.saveBooruToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.killServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.adminContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // labelSearchBox
@@ -99,11 +105,41 @@
             this.buttonRefresh.UseVisualStyleBackColor = true;
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
             // 
+            // buttonAdminTools
+            // 
+            this.buttonAdminTools.Location = new System.Drawing.Point(12, 225);
+            this.buttonAdminTools.Name = "buttonAdminTools";
+            this.buttonAdminTools.Size = new System.Drawing.Size(100, 23);
+            this.buttonAdminTools.TabIndex = 5;
+            this.buttonAdminTools.Text = "Admin Tools";
+            this.buttonAdminTools.UseVisualStyleBackColor = true;
+            // 
+            // adminContextMenuStrip
+            // 
+            this.adminContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.saveBooruToolStripMenuItem,
+            this.killServerToolStripMenuItem});
+            this.adminContextMenuStrip.Name = "adminContextMenuStrip";
+            this.adminContextMenuStrip.Size = new System.Drawing.Size(134, 48);
+            // 
+            // saveBooruToolStripMenuItem
+            // 
+            this.saveBooruToolStripMenuItem.Name = "saveBooruToolStripMenuItem";
+            this.saveBooruToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.saveBooruToolStripMenuItem.Text = "Save Booru";
+            // 
+            // killServerToolStripMenuItem
+            // 
+            this.killServerToolStripMenuItem.Name = "killServerToolStripMenuItem";
+            this.killServerToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.killServerToolStripMenuItem.Text = "Kill Server";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(589, 347);
+            this.Controls.Add(this.buttonAdminTools);
             this.Controls.Add(this.buttonRefresh);
             this.Controls.Add(this.buttonChangeUser);
             this.Controls.Add(this.buttonImportDialog);
@@ -112,6 +148,7 @@
             this.Controls.Add(this.booruThumbView);
             this.Name = "MainForm";
             this.Text = "SharpBooru GUI Client";
+            this.adminContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -125,6 +162,10 @@
         private System.Windows.Forms.Button buttonImportDialog;
         private System.Windows.Forms.Button buttonChangeUser;
         private System.Windows.Forms.Button buttonRefresh;
+        private System.Windows.Forms.Button buttonAdminTools;
+        private System.Windows.Forms.ContextMenuStrip adminContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem saveBooruToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem killServerToolStripMenuItem;
 
     }
 }

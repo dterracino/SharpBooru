@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using TA.SharpBooru.Client.GUI.Controls;
@@ -19,7 +20,26 @@ namespace TA.SharpBooru.Client.GUI
             booruThumbView.SetBooru(_Booru);
             booruThumbView.ImageOpened += booruThumbView_ImageOpened;
             this.Shown += tagTextBox1_EnterPressed;
+            this.buttonAdminTools.Click += (sender, e) => adminContextMenuStrip.Show(buttonAdminTools, new Point(buttonAdminTools.Width, 0));
+            this.killServerToolStripMenuItem.Click += killServerToolStripMenuItem_Click;
+            this.saveBooruToolStripMenuItem.Click += saveBooruToolStripMenuItem_Click;
             CheckPermissions();
+        }
+
+        private void saveBooruToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _Booru.SaveServerBooru();
+            MessageBox.Show("Booru saved", "SaveServerBooru", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void killServerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Are you sure?", "ForceKillServer", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            {
+                _Booru.ForceKillServer();
+                MessageBox.Show("Server killed", "ForceKillServer", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                Close();
+            }
         }
 
         private void booruThumbView_ImageOpened(object sender, EventArgs e, object aObj)
@@ -62,6 +82,7 @@ namespace TA.SharpBooru.Client.GUI
         {
             BooruUser cUser = _Booru.CurrentUser;
             buttonImportDialog.Enabled = cUser.CanAddPosts;
+            buttonAdminTools.Visible = cUser.IsAdmin;
         }
 
         private void buttonRefresh_Click(object sender, EventArgs e)
