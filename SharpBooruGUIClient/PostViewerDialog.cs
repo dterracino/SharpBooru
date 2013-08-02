@@ -70,7 +70,7 @@ namespace TA.SharpBooru.Client.GUI
         public void ChangePost(BooruPost Post)
         {
             _Post = Post;
-            Thread loadThread = new Thread(new ThreadStart(delegate
+            Thread loadThread = new Thread(() =>
                 {
                     lock (_loadLock)
                     {
@@ -90,7 +90,7 @@ namespace TA.SharpBooru.Client.GUI
                         catch (ObjectDisposedException) { }
                         SetLoadingMode(false);
                     }
-                })) { IsBackground = true };
+                }) { IsBackground = true };
             loadThread.Start();
         }
 
