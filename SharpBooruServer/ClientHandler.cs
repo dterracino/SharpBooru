@@ -56,7 +56,8 @@ namespace TA.SharpBooru.Server
             _Server.Logger.LogLine("{0} connected", _Address);
             _User = TryLogin();
             _Server.Logger.LogLine("{0} successfully logged in as {1}", _Address, _User.Username);
-            while (HandlerStage3()) ;
+            while (HandlerStage3()) 
+                _Writer.Flush();
             _Server.Logger.LogLine("{0} ({1}) disconnected", _User.Username, _Address);
         }
 

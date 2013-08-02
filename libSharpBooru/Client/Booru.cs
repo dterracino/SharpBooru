@@ -100,6 +100,7 @@ namespace TA.SharpBooru.Client
 
         private void EndCommunication()
         {
+            _Writer.Flush();
             var errorCode = (BooruProtocol.ErrorCode)_Reader.ReadByte();
             if (errorCode != BooruProtocol.ErrorCode.Success)
                 throw new BooruProtocol.BooruException(errorCode);
