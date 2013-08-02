@@ -81,7 +81,7 @@ namespace TA.SharpBooru.Client.GUI
                         Bitmap image = _Post.Image.Bitmap;
                         try
                         {
-                            GUIHelper.Invoke(scalablePictureBox, () => { scalablePictureBox.Picture = image; });
+                            GUIHelper.Invoke(pictureBox, () => { pictureBox.Image = image; });
                             GUIHelper.Invoke(this, () =>
                                 {
                                     tagList.Tags = _Post.Tags;
@@ -171,7 +171,10 @@ namespace TA.SharpBooru.Client.GUI
             _Post.Image = new BooruImage(tempFile);
             byte[] nmd5 = Helper.MD5OfFile(tempFile);
             if (!Helper.MD5Compare(md5, nmd5))
+            {
                 _Booru.SaveImage(_Post);
+                GUIHelper.Invoke(pictureBox, () => { pictureBox.Image = _Post.Image.Bitmap; });
+            }
         }
 
         private void buttonEditPost_Click(object sender, EventArgs e) { editPanel1.SetPost(_Booru, _Post); }
