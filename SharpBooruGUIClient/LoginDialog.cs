@@ -8,14 +8,21 @@ namespace TA.SharpBooru.Client.GUI
         public LoginDialog()
         {
             InitializeComponent();
-            textBoxUsername.KeyDown += new KeyEventHandler(textBox_KeyDown);
-            textBoxPassword.KeyDown += new KeyEventHandler(textBox_KeyDown);
+            textBoxUsername.KeyDown += keyDown;
+            textBoxPassword.KeyDown += keyDown;
+            buttonOK.KeyDown += (sender, e) =>
+                {
+                    if (e.KeyCode == Keys.Escape)
+                        Close();
+                };
         }
 
-        void textBox_KeyDown(object sender, KeyEventArgs e)
+        private void keyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
                 buttonOK_Click(sender, e);
+            else if (e.KeyCode == Keys.Escape)
+                Close();
         }
 
         public string Username
