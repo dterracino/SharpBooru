@@ -30,17 +30,39 @@ namespace TA.SharpBooru.Client.GUI
         /// </summary>
         private void InitializeComponent()
         {
+            this.buttonEditPost = new System.Windows.Forms.Button();
+            this.tagList = new TA.SharpBooru.Client.GUI.Controls.TagList();
             this.buttonEditImage = new System.Windows.Forms.Button();
             this.buttonNextPost = new System.Windows.Forms.Button();
             this.buttonPreviousPost = new System.Windows.Forms.Button();
             this.buttonSetWallpaper = new System.Windows.Forms.Button();
             this.buttonSaveImage = new System.Windows.Forms.Button();
             this.buttonDeletePost = new System.Windows.Forms.Button();
-            this.buttonEditPost = new System.Windows.Forms.Button();
-            this.editPanel1 = new TA.SharpBooru.Client.GUI.Controls.EditPanel();
-            this.scalablePictureBox = new TA.SharpBooru.Client.GUI.Controls.ScalablePictureBox();
-            this.tagList = new TA.SharpBooru.Client.GUI.Controls.xTagList();
+            this.pictureBox = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).BeginInit();
             this.SuspendLayout();
+            // 
+            // buttonEditPost
+            // 
+            this.buttonEditPost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonEditPost.Enabled = false;
+            this.buttonEditPost.Location = new System.Drawing.Point(12, 284);
+            this.buttonEditPost.Name = "buttonEditPost";
+            this.buttonEditPost.Size = new System.Drawing.Size(66, 30);
+            this.buttonEditPost.TabIndex = 9;
+            this.buttonEditPost.Text = "Edit Post";
+            this.buttonEditPost.UseVisualStyleBackColor = true;
+            this.buttonEditPost.Click += new System.EventHandler(this.buttonEditPost_Click);
+            // 
+            // tagList
+            // 
+            this.tagList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.tagList.BackColor = System.Drawing.SystemColors.Control;
+            this.tagList.Location = new System.Drawing.Point(11, 12);
+            this.tagList.Name = "tagList";
+            this.tagList.Size = new System.Drawing.Size(138, 230);
+            this.tagList.TabIndex = 0;
             // 
             // buttonEditImage
             // 
@@ -114,57 +136,26 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonDeletePost.UseVisualStyleBackColor = true;
             this.buttonDeletePost.Click += new System.EventHandler(this.buttonDeletePost_Click);
             // 
-            // buttonEditPost
+            // pictureBox
             // 
-            this.buttonEditPost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonEditPost.Enabled = false;
-            this.buttonEditPost.Location = new System.Drawing.Point(12, 284);
-            this.buttonEditPost.Name = "buttonEditPost";
-            this.buttonEditPost.Size = new System.Drawing.Size(66, 30);
-            this.buttonEditPost.TabIndex = 9;
-            this.buttonEditPost.Text = "Edit Post";
-            this.buttonEditPost.UseVisualStyleBackColor = true;
-            this.buttonEditPost.Click += new System.EventHandler(this.buttonEditPost_Click);
-            // 
-            // editPanel1
-            // 
-            this.editPanel1.BackColor = System.Drawing.SystemColors.Control;
-            this.editPanel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.editPanel1.Location = new System.Drawing.Point(12, 12);
-            this.editPanel1.Name = "editPanel1";
-            this.editPanel1.Size = new System.Drawing.Size(400, 200);
-            this.editPanel1.TabIndex = 8;
-            this.editPanel1.Visible = false;
-            // 
-            // scalablePictureBox
-            // 
-            this.scalablePictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this.pictureBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.scalablePictureBox.Location = new System.Drawing.Point(162, 12);
-            this.scalablePictureBox.Name = "scalablePictureBox";
-            this.scalablePictureBox.Size = new System.Drawing.Size(346, 302);
-            this.scalablePictureBox.TabIndex = 7;
-            // 
-            // tagList
-            // 
-            this.tagList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
-            this.tagList.BackColor = System.Drawing.SystemColors.Control;
-            this.tagList.Location = new System.Drawing.Point(11, 12);
-            this.tagList.Name = "tagList";
-            this.tagList.Size = new System.Drawing.Size(138, 230);
-            this.tagList.TabIndex = 0;
+            this.pictureBox.Location = new System.Drawing.Point(162, 12);
+            this.pictureBox.Name = "pictureBox";
+            this.pictureBox.Size = new System.Drawing.Size(346, 302);
+            this.pictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox.TabIndex = 7;
+            this.pictureBox.TabStop = false;
             // 
             // PostViewerDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(520, 326);
-            this.Controls.Add(this.editPanel1);
+            this.Controls.Add(this.pictureBox);
             this.Controls.Add(this.buttonEditPost);
             this.Controls.Add(this.buttonEditImage);
-            this.Controls.Add(this.scalablePictureBox);
             this.Controls.Add(this.buttonNextPost);
             this.Controls.Add(this.buttonPreviousPost);
             this.Controls.Add(this.buttonSetWallpaper);
@@ -175,21 +166,21 @@ namespace TA.SharpBooru.Client.GUI
             this.Name = "PostViewerDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Post Viewer";
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox)).EndInit();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private ScalablePictureBox scalablePictureBox;
-        private xTagList tagList;
+        private TagList tagList;
         private System.Windows.Forms.Button buttonDeletePost;
         private System.Windows.Forms.Button buttonSaveImage;
         private System.Windows.Forms.Button buttonSetWallpaper;
         private System.Windows.Forms.Button buttonPreviousPost;
         private System.Windows.Forms.Button buttonNextPost;
         private System.Windows.Forms.Button buttonEditImage;
-        private EditPanel editPanel1;
         private System.Windows.Forms.Button buttonEditPost;
+        private System.Windows.Forms.PictureBox pictureBox;
     }
 }

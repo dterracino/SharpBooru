@@ -75,7 +75,6 @@ namespace TA.SharpBooru.Client.GUI
                     lock (_loadLock)
                     {
                         SetLoadingMode(true);
-                        editPanel1.CancelEdit();
                         if (_Post.Image == null)
                             _Booru.GetImage(ref _Post);
                         Bitmap image = _Post.Image.Bitmap;
@@ -177,6 +176,17 @@ namespace TA.SharpBooru.Client.GUI
             }
         }
 
-        private void buttonEditPost_Click(object sender, EventArgs e) { editPanel1.SetPost(_Booru, _Post); }
+        private void buttonEditPost_Click(object sender, EventArgs e)
+        {
+            using (EditDialog eDialog = new EditDialog())
+            {
+                GUIHelper.SetFormCentered(this, eDialog);
+                if (eDialog.ShowDialog(_Booru, ref _Post) == DialogResult.OK)
+                {
+                    _Booru.SavePost(_Post);
+                    ChangePost(_Booru.GetPost(_Post.ID));
+                }
+            }
+        }
     }
 }

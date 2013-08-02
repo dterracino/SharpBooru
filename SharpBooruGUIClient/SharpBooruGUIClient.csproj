@@ -66,6 +66,12 @@
     <Compile Include="Controls\TagTextBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="EditDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="EditDialog.Designer.cs">
+      <DependentUpon>EditDialog.cs</DependentUpon>
+    </Compile>
     <Compile Include="GUIHelper.cs" />
     <Compile Include="Controls\AjaxLoading.cs">
       <SubType>Component</SubType>
