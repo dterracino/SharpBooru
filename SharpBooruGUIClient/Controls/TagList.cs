@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace TA.SharpBooru.Client.GUI.Controls
 {
-    public partial class xTagList : UserControl
+    public partial class TagList : UserControl
     {
         private BooruTagList _Tags;
 
@@ -47,7 +47,7 @@ namespace TA.SharpBooru.Client.GUI.Controls
         }
 
         /// <summary>Creates a new TagList</summary>
-        public xTagList()
+        public TagList()
         {
             InitializeComponent();
             base.BackColor = Color.Transparent;

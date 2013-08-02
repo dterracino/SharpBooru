@@ -2,7 +2,7 @@
 
 namespace TA.SharpBooru.Client.GUI.Controls
 {
-    partial class xTagList
+    partial class TagList
     {
         /// <summary> 
         /// Erforderliche Designervariable.
