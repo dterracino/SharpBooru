@@ -241,7 +241,11 @@ namespace TA.SharpBooru.Client
             {
                 BeginCommunication(BooruProtocol.Command.GetAllTags);
                 EndCommunication();
-                return BooruTagList.FromReader(_Reader);
+                uint count = _Reader.ReadUInt32();
+                BooruTagList bTagList = new BooruTagList();
+                for (uint i = 0; i < count; i++)
+                    bTagList.Add(new BooruTag(_Reader.ReadString()));
+                return bTagList;
             }
         }
 

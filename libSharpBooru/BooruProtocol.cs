@@ -42,7 +42,7 @@ namespace TA.SharpBooru
             // void, NewPost(BooruPost) with old ID
             EditPost,
 
-            // Tags(BooruTagList)
+            // Tags(List<string>
             GetAllTags,
 
             // User(BooruUser)

@@ -271,7 +271,9 @@ namespace TA.SharpBooru.Server
                     break;
                 case BooruProtocol.Command.GetAllTags:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                    _Server.Booru.Tags.ToWriter(_Writer);
+                    _Writer.Write((uint)_Server.Booru.Tags.Count);
+                    foreach (BooruTag bTag in _Server.Booru.Tags)
+                        _Writer.Write(bTag.Tag);
                     break;
                 case BooruProtocol.Command.GetCurrentUser:
                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
