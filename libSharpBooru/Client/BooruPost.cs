@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace TA.SharpBooru.Client
 {
-    public class BooruPost
+    public class BooruPost : ICloneable
     {
         public bool Private = false;
         public string Owner = string.Empty;
@@ -76,9 +76,20 @@ namespace TA.SharpBooru.Client
                 Tags = BooruTagList.FromReader(Reader)
             };
         }
+
+        public object Clone()
+        {
+            BooruPost post = MemberwiseClone() as BooruPost;
+            if (Image != null)
+                post.Image = Image.Clone() as BooruImage;
+            if (Thumbnail != null)
+                post.Thumbnail = Thumbnail.Clone() as BooruImage;
+            post.Tags = Tags.Clone() as BooruTagList;
+            return post;
+        }
     }
 
-    public class BooruPostList : List<BooruPost>
+    public class BooruPostList : List<BooruPost>, ICloneable
     {
         public BooruPost this[ulong ID]
         {
@@ -109,6 +120,13 @@ namespace TA.SharpBooru.Client
             for (uint i = 0; i < count; i++)
                 bTagList.Add(BooruPost.FromServerReader(Reader));
             return bTagList;
+        }
+
+        public object Clone()
+        {
+            BooruPostList cList = new BooruPostList();
+            this.ForEach(x => cList.Add(x.Clone() as BooruPost));
+            return cList;
         }
     }
 }

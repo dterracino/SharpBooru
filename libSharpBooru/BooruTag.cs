@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace TA.SharpBooru
 {
-    public class BooruTag
+    public class BooruTag : ICloneable
     {
         public ulong ID;
 
@@ -61,9 +61,11 @@ namespace TA.SharpBooru
                 Color = Reader.ReadInt32()
             };
         }
+
+        public object Clone() { return MemberwiseClone(); }
     }
 
-    public class BooruTagList : List<BooruTag>
+    public class BooruTagList : List<BooruTag>, ICloneable
     {
         public BooruTag this[ulong ID]
         {
@@ -96,7 +98,6 @@ namespace TA.SharpBooru
                     return true;
             return false;
         }
-
 
         public int Remove(ulong ID) { return this.RemoveAll(x => { return x.ID == ID; }); }
 
@@ -135,5 +136,12 @@ namespace TA.SharpBooru
         }
 
         public override string ToString() { return string.Join(" ", ToStringList()); }
+
+        public object Clone()
+        {
+            BooruTagList cList = new BooruTagList();
+            this.ForEach(x => cList.Add(x.Clone() as BooruTag));
+            return cList;
+        }
     }
 }
