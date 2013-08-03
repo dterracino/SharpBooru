@@ -125,7 +125,7 @@ namespace TA.SharpBooru
                 catch { }
         }
 
-        public object Clone() { return new BooruImage() { _Bytes = this._Bytes }; }
+        public object Clone() { return new BooruImage(_Bytes.Clone() as byte[]); }
 
         public void Save(Stream Stream, ImageFormat Format = null)
         {
