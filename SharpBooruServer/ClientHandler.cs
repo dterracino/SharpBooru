@@ -35,7 +35,7 @@ namespace TA.SharpBooru.Server
         private object HandlerStage1(object obj)
         {
             try { HandlerStage2(); }
-            catch (Exception ex) { _Server.Logger.LogException(ex); }
+            catch (Exception ex) { _Server.Logger.LogException("HandlerStage1", ex); }
             finally
             {
                 _Reader.Close();

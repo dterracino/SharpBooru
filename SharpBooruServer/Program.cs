@@ -20,7 +20,7 @@ namespace TA.SharpBooru.Server
             }
             catch (Exception ex)
             {
-                sLogger.LogException(ex);
+                sLogger.LogException("Main", ex);
                 return 1;
             }
         }

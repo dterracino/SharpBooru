@@ -55,7 +55,7 @@ namespace TA.SharpBooru.Server
                 catch (Exception ex)
                 {
                     if (_ListenerRunning)
-                        _Logger.LogException(ex);
+                        _Logger.LogException("AcceptClient", ex);
                 }
         }
 
