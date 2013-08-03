@@ -15,7 +15,7 @@ namespace TA.SharpBooru.Server
             Logger sLogger = new Logger(Console.Out);
             try
             {
-                (new Program()).Run(args, sLogger);
+                (new Program(sLogger)).Run(args);
                 return 0;
             }
             catch (Exception ex)
@@ -25,43 +25,64 @@ namespace TA.SharpBooru.Server
             }
         }
 
-        public void Run(string[] args, Logger sLogger)
+        public Program(Logger Logger) { _Logger = Logger; }
+
+        private Logger _Logger;
+        private Booru _Booru;
+        private Thread _AutoSaveThread;
+        private bool _AutoSaveRunning = true;
+        private BooruServer _BooruServer;
+
+        public void Run(string[] args)
         {
             X509Certificate sCertificate = new X509Certificate("ServerCertificate.pfx", "sharpbooru");
 
             if (args.Length != 2)
                 throw new ArgumentException("Server needs two argument, Port and Booru path");
 
-            sLogger.LogLine("Loading booru from disk...");
-            Booru sBooru = Booru.ReadFromDisk(args[1]);
-            sLogger.LogLine("Finished loading booru with {0} posts and {1} tags", sBooru.Posts.Count, sBooru.Tags.Count);
+            _Logger.LogLine("Loading booru from disk...");
+            _Booru = Booru.ReadFromDisk(args[1]);
+            _Logger.LogLine("Finished loading booru - {0} posts / {1} tags", _Booru.Posts.Count, _Booru.Tags.Count);
+
+            _AutoSaveThread = new Thread(() =>
+                {
+                    while (true)
+                    {
+                        Thread.Sleep(5 * 60 * 1000);
+                        if (_AutoSaveRunning)
+                            _Booru.SaveToDisk();
+                        else break;
+                    }
+                }) { IsBackground = true };
+            _AutoSaveThread.Start();
 
             ushort serverPort = Convert.ToUInt16(args[0]);
-            BooruServer server = new BooruServer(sBooru, sLogger, sCertificate, serverPort);
+            _BooruServer = new BooruServer(_Booru, _Logger, sCertificate, serverPort);
 
             EventWaitHandle waitEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
-            Console.CancelKeyPress += (sender, e) => Cancel(server, sLogger, waitEvent);
+            Console.CancelKeyPress += (sender, e) => Cancel(waitEvent);
             if (Helper.IsUnix())
             {
-                ServerHelper.SetupSignal(Signum.SIGUSR1, server.Booru.SaveToDisk);
-                ServerHelper.SetupSignal(Signum.SIGTERM, () => Cancel(server, sLogger, waitEvent));
+                ServerHelper.SetupSignal(Signum.SIGUSR1, _Booru.SaveToDisk);
+                ServerHelper.SetupSignal(Signum.SIGTERM, () => Cancel(waitEvent));
             }
 
-            server.Start("nobody");
+            _BooruServer.Start("nobody");
             waitEvent.WaitOne(); //Wait for Cancel to finish
         }
 
         private bool _CancelRunned = false;
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void Cancel(BooruServer Server, Logger Logger, EventWaitHandle WaitEvent)
+        public void Cancel(EventWaitHandle WaitEvent)
         {
             if (!_CancelRunned)
             {
-                Logger.LogLine("Stopping server and waiting for clients to finish...");
-                Server.Stop();
-                Server.WaitForClients(10);
-                Logger.LogLine("Saving booru to disk...");
-                Server.Booru.SaveToDisk();
+                _Logger.LogLine("Stopping server and waiting for clients to finish...");
+                _AutoSaveRunning = false;
+                _BooruServer.Stop();
+                _BooruServer.WaitForClients(10);
+                _Logger.LogLine("Saving booru to disk...");
+                _Booru.SaveToDisk();
                 WaitEvent.Set();
                 _CancelRunned = true;
             }
