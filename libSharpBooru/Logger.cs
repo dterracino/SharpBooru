@@ -14,7 +14,7 @@ namespace TA.SharpBooru
 
         private void WriteANSI(params int[] Code)
         {
-            if (Helper.IsPOSIX())
+            if (Helper.IsUnix())
                 foreach (int code in Code)
                     _Writer.Write("\x1b[{0}m", code);
         }

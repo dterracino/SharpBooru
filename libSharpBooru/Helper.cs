@@ -115,15 +115,15 @@ namespace TA.SharpBooru
             return _IsMono.Value;
         }
 
-        private static bool? _IsPOSIX = null;
-        public static bool IsPOSIX()
+        private static bool? _IsUnix = null;
+        public static bool IsUnix()
         {
-            if (!_IsPOSIX.HasValue)
+            if (!_IsUnix.HasValue)
             {
                 PlatformID pfid = Environment.OSVersion.Platform;
-                _IsPOSIX = pfid == PlatformID.Unix || pfid == PlatformID.MacOSX;
+                _IsUnix = pfid == PlatformID.Unix || pfid == PlatformID.MacOSX;
             }
-            return _IsPOSIX.Value;
+            return _IsUnix.Value;
         }
 
         //Check if the operating system is windows
