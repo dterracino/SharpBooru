@@ -41,13 +41,13 @@ namespace TA.SharpBooru.Server
 
             EventWaitHandle waitEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
             Console.CancelKeyPress += (sender, e) => Cancel(server, sLogger, waitEvent);
-            if (Helper.IsPOSIX())
+            if (Helper.IsUnix())
             {
-                SetupSignal(Signum.SIGUSR1, server.Booru.SaveToDisk);
-                SetupSignal(Signum.SIGTERM, () => Cancel(server, sLogger, waitEvent));
+                ServerHelper.SetupSignal(Signum.SIGUSR1, server.Booru.SaveToDisk);
+                ServerHelper.SetupSignal(Signum.SIGTERM, () => Cancel(server, sLogger, waitEvent));
             }
 
-            server.Start(); //TODO SetUID
+            server.Start("nobody");
             waitEvent.WaitOne(); //Wait for Cancel to finish
         }
 
@@ -65,28 +65,6 @@ namespace TA.SharpBooru.Server
                 WaitEvent.Set();
                 _CancelRunned = true;
             }
-        }
-
-        public static void SetupSignal(Signum Signal, Action SignalAction)
-        {
-            Thread signalThread = new Thread(() =>
-                {
-                    using (UnixSignal uSignal = new UnixSignal(Signal))
-                        uSignal.WaitOne(Timeout.Infinite);
-                    SignalAction();
-                }) { IsBackground = true };
-            signalThread.Start();
-        }
-
-        public static bool SetUID(string UserName)
-        {
-            if (!string.IsNullOrWhiteSpace(UserName))
-            {
-                Passwd passwordStruct = Syscall.getpwnam(UserName);
-                if (passwordStruct != null)
-                    return Syscall.setuid(passwordStruct.pw_uid) == 0;
-            }
-            return false;
         }
     }
 }
