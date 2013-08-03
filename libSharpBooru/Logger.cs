@@ -31,7 +31,9 @@ namespace TA.SharpBooru
             }
         }
 
+        [Obsolete("Please use LogException(string, Eception)")]
         public void LogException(Exception Ex) { LogException(null, Ex); }
+
         public void LogException(string JobName, Exception Ex)
         {
             lock (_Lock)
