@@ -116,6 +116,7 @@ namespace TA.SharpBooru.Server
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                 post.ToClientWriter(_Writer, _Server.Booru);
                                 _Server.Booru.ReadFile(_Writer, "thumb" + postID);
+                                post.ViewCount++;
                             }
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                         }
