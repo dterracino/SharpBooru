@@ -33,10 +33,17 @@ namespace TA.SharpBooru.Server
             _ThreadPool.MaxThreads = int.MaxValue;
         }
 
-        public void Start()
+        public void Start(string SetUIDUser = null)
         {
             _ListenerRunning = true;
             _Listener.Start();
+            if (!string.IsNullOrWhiteSpace(SetUIDUser))
+                try
+                {
+                    ServerHelper.SetUID(SetUIDUser);
+                    _Logger.LogLine("SetUID successfull");
+                }
+                catch (Exception ex) { _Logger.LogException("SetUID", ex); }
             _Logger.LogLine("Server running...");
             while (_ListenerRunning)
                 try
