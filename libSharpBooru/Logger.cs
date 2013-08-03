@@ -31,14 +31,17 @@ namespace TA.SharpBooru
             }
         }
 
-        public void LogException(Exception Ex)
+        public void LogException(Exception Ex) { LogException(null, Ex); }
+        public void LogException(string JobName, Exception Ex)
         {
             lock (_Lock)
             {
                 WriteANSI(0);
                 WriteDate();
+                if (!string.IsNullOrWhiteSpace(JobName))
+                    _Writer.Write(JobName + " failed: ");
                 WriteANSI(1, 31);
-                _Writer.WriteLine(Ex.GetType().Name);
+                _Writer.Write(Ex.GetType().Name + ": ");
                 _Writer.WriteLine(Ex.Message);
                 _Writer.Flush();
             }
