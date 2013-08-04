@@ -50,7 +50,10 @@ namespace TA.SharpBooru.Server
                     {
                         Thread.Sleep(5 * 60 * 1000);
                         if (_AutoSaveRunning)
+                        {
                             _Booru.SaveToDisk();
+                            _Logger.LogLine("AutoSave: Booru saved");
+                        }
                         else break;
                     }
                 }) { IsBackground = true };
