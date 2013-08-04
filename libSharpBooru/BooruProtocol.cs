@@ -58,8 +58,8 @@ namespace TA.SharpBooru
             // void, PostID(ulong), Image(BooruImage)
             EditImage,
 
-            // void //Always return ErrorCode.Success
-            TestConnection
+            // Don't react to this byte
+            TestConnection,
 
             /*
             
