@@ -66,8 +66,13 @@ namespace TA.SharpBooru.Client
 
         public void Connect()
         {
-            try { Test(); } //Test connection (disconnects on fail)
-            catch { }
+            if (_Client.Connected)
+                try 
+                {
+                    _Writer.Write((byte)BooruProtocol.Command.TestConnection); //Test connection (disconnects on fail)
+                    _Writer.Flush();
+                } 
+                catch { }
             if (!_Client.Connected)
             {
                 Disconnect();
@@ -77,10 +82,12 @@ namespace TA.SharpBooru.Client
                 _Reader = new BinaryReader(_SSLStream, Encoding.Unicode);
                 _Writer = new BinaryWriter(_SSLStream, Encoding.Unicode);
                 _Writer.Write(ClientVersion);
+                _Writer.Flush();
                 if (!_Reader.ReadBoolean())
                     throw new BooruProtocol.BooruException("Server version mismatch");
                 _Writer.Write(_Username);
                 _Writer.Write(_Password);
+                _Writer.Flush();
                 if (!_Reader.ReadBoolean())
                     throw new BooruProtocol.BooruException("Login failed");
             }
@@ -90,12 +97,6 @@ namespace TA.SharpBooru.Client
         {
             Connect();
             _Writer.Write((byte)Command);
-        }
-
-        public void Test()
-        {
-            _Writer.Write((byte)BooruProtocol.Command.TestConnection);
-            EndCommunication();
         }
 
         private void EndCommunication()
@@ -206,6 +207,7 @@ namespace TA.SharpBooru.Client
             }
         }
 
+        public void AddPost(ref BooruPost NewPost) { NewPost.ID = AddPost(NewPost); }
         public ulong AddPost(BooruPost NewPost) { return AddPost(NewPost, null); }
         public ulong AddPost(BooruPost NewPost, Action<float> ProgressCallback)
         {
@@ -220,7 +222,7 @@ namespace TA.SharpBooru.Client
         }
 
         public ulong AddPost(BooruAPIPost NewAPIPost) { return AddPost(NewAPIPost, null); }
-        public ulong AddPost(BooruAPIPost NewAPIPost,Action<float> ProgressCallback)
+        public ulong AddPost(BooruAPIPost NewAPIPost, Action<float> ProgressCallback)
         {
             NewAPIPost.DownloadImage();
             return AddPost((BooruPost)NewAPIPost, ProgressCallback);

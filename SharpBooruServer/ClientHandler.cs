@@ -54,9 +54,10 @@ namespace TA.SharpBooru.Server
             if (!CheckVersion())
                 throw new BooruProtocol.BooruException("Client version mismatch");
             _Server.Logger.LogLine("{0} connected", _Address);
-            _User = TryLogin();
+            try { _User = TryLogin(); }
+            finally { _Writer.Flush(); }
             _Server.Logger.LogLine("{0} successfully logged in as {1}", _Address, _User.Username);
-            while (HandlerStage3()) 
+            while (HandlerStage3())
                 _Writer.Flush();
             _Server.Logger.LogLine("{0} ({1}) disconnected", _User.Username, _Address);
         }
@@ -74,6 +75,7 @@ namespace TA.SharpBooru.Server
             uint clientVersion = _Reader.ReadUInt32();
             bool isCorrectVersion = clientVersion == BooruServer.ServerVersion;
             _Writer.Write(isCorrectVersion);
+            _Writer.Flush();
             return isCorrectVersion;
         }
 
