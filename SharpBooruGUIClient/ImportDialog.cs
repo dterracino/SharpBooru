@@ -73,23 +73,23 @@ namespace TA.SharpBooru.Client.GUI
                     foreach (DataGridViewRow row in rows)
                     {
                         string imgPath = (string)row.Cells["image_file"].Value;
-                        BooruPost post = new BooruPost();
-                        try
-                        {
-                            BooruImage bImg = BooruImage.FromFileOrURL(imgPath);
-                            if (bImg != null)
-                                post.Image = bImg;
-                            else throw new FileNotFoundException("Image");
-                            post.Source = (string)row.Cells["source"].Value;
-                            post.Comment = (string)row.Cells["comment"].Value;
-                            post.Rating = Convert.ToByte(row.Cells["rating"].Value);
-                            post.Private = Convert.ToBoolean(row.Cells["privat"].Value);
-                            string tag_string = Convert.ToString(row.Cells["tags"].Value) + " " + sharedTagsTagTextBox.Text;
-                            post.Tags = BooruTagList.FromString(tag_string);
-                            RemoveUncheckedTagsFromBooruTagList(ref post.Tags);
-                            _Booru.AddPost(post); //TODO ProgressCallback
-                        }
-                        catch { skippedRows.Add(row); }
+                        using (BooruPost post = new BooruPost())
+                            try
+                            {
+                                BooruImage bImg = BooruImage.FromFileOrURL(imgPath);
+                                if (bImg != null)
+                                    post.Image = bImg;
+                                else throw new FileNotFoundException("Image");
+                                post.Source = (string)row.Cells["source"].Value;
+                                post.Comment = (string)row.Cells["comment"].Value;
+                                post.Rating = Convert.ToByte(row.Cells["rating"].Value);
+                                post.Private = Convert.ToBoolean(row.Cells["privat"].Value);
+                                string tag_string = Convert.ToString(row.Cells["tags"].Value) + " " + sharedTagsTagTextBox.Text;
+                                post.Tags = BooruTagList.FromString(tag_string);
+                                RemoveUncheckedTagsFromBooruTagList(ref post.Tags);
+                                _Booru.AddPost(post); //TODO ProgressCallback
+                            }
+                            catch { skippedRows.Add(row); }
                         pwd.Value++;
                     }
                     pwd.Description = "Cleaning up the importer window...";

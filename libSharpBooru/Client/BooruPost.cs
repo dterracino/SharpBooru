@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace TA.SharpBooru.Client
 {
-    public class BooruPost : ICloneable
+    public class BooruPost : ICloneable, IDisposable
     {
         public bool Private = false;
         public string Owner = string.Empty;
@@ -86,6 +86,21 @@ namespace TA.SharpBooru.Client
                 post.Thumbnail = Thumbnail.Clone() as BooruImage;
             post.Tags = Tags.Clone() as BooruTagList;
             return post;
+        }
+
+        public void Dispose()
+        {
+            if (Image != null)
+            {
+                Image.Dispose();
+                Image = null;
+            }
+            if (Thumbnail != null)
+            {
+                Thumbnail.Dispose();
+                Thumbnail = null;
+            }
+            Tags.Clear();
         }
     }
 
