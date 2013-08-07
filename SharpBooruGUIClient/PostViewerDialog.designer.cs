@@ -30,8 +30,6 @@ namespace TA.SharpBooru.Client.GUI
         /// </summary>
         private void InitializeComponent()
         {
-            this.imageBox = new Cyotek.Windows.Forms.ImageBox();
-            this.tagList = new TA.SharpBooru.Client.GUI.Controls.TagList();
             this.buttonClone = new System.Windows.Forms.Button();
             this.buttonEditPost = new System.Windows.Forms.Button();
             this.buttonEditImage = new System.Windows.Forms.Button();
@@ -40,32 +38,9 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonSetWallpaper = new System.Windows.Forms.Button();
             this.buttonSaveImage = new System.Windows.Forms.Button();
             this.buttonDeletePost = new System.Windows.Forms.Button();
+            this.imageBox = new Cyotek.Windows.Forms.ImageBox();
+            this.tagList = new TA.SharpBooru.Client.GUI.Controls.TagList();
             this.SuspendLayout();
-            // 
-            // imageBox
-            // 
-            this.imageBox.AllowClickZoom = true;
-            this.imageBox.AlwaysShowHScroll = true;
-            this.imageBox.AlwaysShowVScroll = true;
-            this.imageBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.imageBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.imageBox.Location = new System.Drawing.Point(191, 12);
-            this.imageBox.Name = "imageBox";
-            this.imageBox.ShowPixelGrid = true;
-            this.imageBox.Size = new System.Drawing.Size(361, 308);
-            this.imageBox.TabIndex = 11;
-            // 
-            // tagList
-            // 
-            this.tagList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
-            this.tagList.BackColor = System.Drawing.SystemColors.Control;
-            this.tagList.Location = new System.Drawing.Point(11, 12);
-            this.tagList.Name = "tagList";
-            this.tagList.Size = new System.Drawing.Size(174, 236);
-            this.tagList.TabIndex = 0;
             // 
             // buttonClone
             // 
@@ -162,6 +137,28 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonDeletePost.TabIndex = 3;
             this.buttonDeletePost.UseVisualStyleBackColor = true;
             this.buttonDeletePost.Click += new System.EventHandler(this.buttonDeletePost_Click);
+            // 
+            // imageBox
+            // 
+            this.imageBox.AllowClickZoom = true;
+            this.imageBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.imageBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.imageBox.Location = new System.Drawing.Point(191, 12);
+            this.imageBox.Name = "imageBox";
+            this.imageBox.Size = new System.Drawing.Size(361, 308);
+            this.imageBox.TabIndex = 11;
+            // 
+            // tagList
+            // 
+            this.tagList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.tagList.BackColor = System.Drawing.SystemColors.Control;
+            this.tagList.Location = new System.Drawing.Point(11, 12);
+            this.tagList.Name = "tagList";
+            this.tagList.Size = new System.Drawing.Size(174, 236);
+            this.tagList.TabIndex = 0;
             // 
             // PostViewerDialog
             // 

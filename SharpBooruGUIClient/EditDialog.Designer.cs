@@ -77,9 +77,9 @@
             this.checkBoxPrivate.AutoSize = true;
             this.checkBoxPrivate.Location = new System.Drawing.Point(108, 171);
             this.checkBoxPrivate.Name = "checkBoxPrivate";
-            this.checkBoxPrivate.Size = new System.Drawing.Size(194, 17);
+            this.checkBoxPrivate.Size = new System.Drawing.Size(196, 17);
             this.checkBoxPrivate.TabIndex = 28;
-            this.checkBoxPrivate.Text = "Private (ony Owner/Admin can see)";
+            this.checkBoxPrivate.Text = "Private (only Owner/Admin can see)";
             this.checkBoxPrivate.UseVisualStyleBackColor = true;
             // 
             // labelComment
