@@ -80,7 +80,7 @@ namespace TA.SharpBooru.Client.GUI
                         Bitmap image = _Post.Image.Bitmap;
                         try
                         {
-                            GUIHelper.Invoke(pictureBox, () => { pictureBox.Image = image; });
+                            GUIHelper.Invoke(imageBox, () => { imageBox.Image = image; });
                             GUIHelper.Invoke(this, () =>
                                 {
                                     tagList.Tags = _Post.Tags;
@@ -115,6 +115,7 @@ namespace TA.SharpBooru.Client.GUI
                 }
                 tagList.Enabled = !LoadingMode;
                 buttonEditImage.Enabled = !LoadingMode && cUser.CanEditPosts;
+                buttonClone.Enabled = !LoadingMode && cUser.CanAddPosts;
             }
             else Invoke(new Action<bool>(SetLoadingMode), LoadingMode);
         }
@@ -125,6 +126,7 @@ namespace TA.SharpBooru.Client.GUI
             if (result == DialogResult.Yes)
             {
                 _Booru.DeletePost(_Post.ID);
+                _PostIDs.Remove(_Post.ID);
                 if (buttonNextPost.Enabled)
                     Index++;
                 else if (buttonPreviousPost.Enabled)
@@ -156,7 +158,31 @@ namespace TA.SharpBooru.Client.GUI
 
         private void buttonNextPost_Click(object sender, EventArgs e) { Index++; }
 
+
+        private void buttonClone_Click(object sender, EventArgs e)
+        {
+            BooruPost cPost = _Post.Clone() as BooruPost;
+            if (_Booru.CurrentUser.AdvancePostControl)
+            {
+                cPost.CreationDate = DateTime.Now;
+                cPost.EditCount = 0;
+                cPost.ViewCount = 0;
+            }
+            _Booru.AddPost(ref cPost);
+            _PostIDs.Insert(0, cPost.ID);
+            Index = 0;
+        }
+
         private void buttonEditImage_Click(object sender, EventArgs e)
+        {
+            if (EditImage(ref _Post))
+            {
+                _Booru.SaveImage(_Post);
+                GUIHelper.Invoke(imageBox, () => { imageBox.Image = _Post.Image.Bitmap; });
+            }
+        }
+
+        private bool EditImage(ref BooruPost Post)
         {
             //TODO Photoshop configurable path
             string editorEXE = "C:\\Program Files\\Adobe\\Adobe Photoshop CS5 (64 Bit)\\Photoshop.exe";
@@ -165,13 +191,13 @@ namespace TA.SharpBooru.Client.GUI
             byte[] md5 = Helper.MD5OfFile(tempFile);
             Process editor = Process.Start(editorEXE, tempFile);
             editor.WaitForExit();
-            _Post.Image = new BooruImage(tempFile);
             byte[] nmd5 = Helper.MD5OfFile(tempFile);
             if (!Helper.MD5Compare(md5, nmd5))
             {
-                _Booru.SaveImage(_Post);
-                GUIHelper.Invoke(pictureBox, () => { pictureBox.Image = _Post.Image.Bitmap; });
+                Post.Image = new BooruImage(tempFile);
+                return true;
             }
+            else return false;
         }
 
         private void buttonEditPost_Click(object sender, EventArgs e)

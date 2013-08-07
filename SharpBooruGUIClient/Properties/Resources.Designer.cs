@@ -93,6 +93,16 @@ namespace TA.SharpBooru.Client.GUI.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icon_clone {
+            get {
+                object obj = ResourceManager.GetObject("icon_clone", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icon_close {
             get {
                 object obj = ResourceManager.GetObject("icon_close", resourceCulture);
@@ -143,9 +153,9 @@ namespace TA.SharpBooru.Client.GUI.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap icon_save {
+        internal static System.Drawing.Bitmap icon_photoshop {
             get {
-                object obj = ResourceManager.GetObject("icon_save", resourceCulture);
+                object obj = ResourceManager.GetObject("icon_photoshop", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -153,9 +163,9 @@ namespace TA.SharpBooru.Client.GUI.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap logo_photoshop {
+        internal static System.Drawing.Bitmap icon_save {
             get {
-                object obj = ResourceManager.GetObject("logo_photoshop", resourceCulture);
+                object obj = ResourceManager.GetObject("icon_save", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

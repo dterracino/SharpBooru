@@ -192,13 +192,13 @@
     <None Include="Resources\icon_delete.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\logo_photoshop.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\icon_image.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\icon_save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_photoshop.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
