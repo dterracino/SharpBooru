@@ -4,6 +4,7 @@ using System.Threading;
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace TA.SharpBooru.Client.GUI
 {
@@ -80,7 +81,7 @@ namespace TA.SharpBooru.Client.GUI
                         Bitmap image = _Post.Image.Bitmap;
                         try
                         {
-                            GUIHelper.Invoke(imageBox, () => { imageBox.Image = image; });
+                            SetImage(_Post.Image.Bitmap);
                             GUIHelper.Invoke(this, () =>
                                 {
                                     tagList.Tags = _Post.Tags;
@@ -178,7 +179,7 @@ namespace TA.SharpBooru.Client.GUI
             if (EditImage(ref _Post))
             {
                 _Booru.SaveImage(_Post);
-                GUIHelper.Invoke(imageBox, () => { imageBox.Image = _Post.Image.Bitmap; });
+                SetImage(_Post.Image.Bitmap);
             }
         }
 
@@ -211,6 +212,16 @@ namespace TA.SharpBooru.Client.GUI
                     ChangePost(_Booru.GetPost(_Post.ID));
                 }
             }
+        }
+
+        [MethodImpl(MethodImplOptions.Synchronized)]
+        private void SetImage(Bitmap Bitmap)
+        {
+            GUIHelper.Invoke(imageBox, () =>
+                {
+                    imageBox.Image = Bitmap;
+                    imageBox.ZoomToFit();
+                });
         }
     }
 }
