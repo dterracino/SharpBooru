@@ -42,5 +42,24 @@ namespace TA.SharpBooru.Client.GUI
             DialogResult = DialogResult.OK;
             Close();
         }
+
+
+        public static bool ShowDialog(ref string Username, ref string Password)
+        {
+            using (LoginDialog lDialog = new LoginDialog())
+            {
+                if (Username != null)
+                    lDialog.Username = Username;
+                if (Password != null)
+                    lDialog.Password = Password;
+                if (lDialog.ShowDialog() == DialogResult.OK)
+                {
+                    Username = lDialog.Username;
+                    Password = lDialog.Password;
+                    return true;
+                }
+                else return false;
+            }
+        }
     }
 }

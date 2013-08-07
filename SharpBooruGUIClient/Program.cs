@@ -14,36 +14,21 @@ namespace TA.SharpBooru.Client.GUI
             string server = args.Length > 0 ? args[0] : "127.0.01";
             ushort port = args.Length > 1 ? Convert.ToUInt16(args[1]) : (ushort)2400;
 
-            string username, password;
+            string username = null, password = null;
             if (args.Length == 4)
             {
                 username = args[2];
                 password = args[3];
             }
-            else ShowLoginDialog(out username, out password);
+            else if (!LoginDialog.ShowDialog(ref username, ref password))
+                return 1;
 
             if (username != null)
                 using (Booru booru = new Booru(server, port, username, password))
-                    Application.Run(new MainForm(booru));
+                using (MainForm form = new MainForm(booru))
+                    Application.Run(form);
 
             return 0;
-        }
-
-        private static bool ShowLoginDialog(out string Username, out string Password)
-        {
-            using (LoginDialog lDialog = new LoginDialog())
-                if (lDialog.ShowDialog() == DialogResult.OK)
-                {
-                    Username = lDialog.Username;
-                    Password = lDialog.Password;
-                    return true;
-                }
-                else
-                {
-                    Username = null;
-                    Password = null;
-                    return false;
-                }
         }
     }
 }
