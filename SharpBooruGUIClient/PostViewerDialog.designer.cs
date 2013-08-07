@@ -31,6 +31,8 @@ namespace TA.SharpBooru.Client.GUI
         private void InitializeComponent()
         {
             this.buttonEditPost = new System.Windows.Forms.Button();
+            this.imageBox = new Cyotek.Windows.Forms.ImageBox();
+            this.tagList = new TA.SharpBooru.Client.GUI.Controls.TagList();
             this.buttonClone = new System.Windows.Forms.Button();
             this.buttonEditImage = new System.Windows.Forms.Button();
             this.buttonNextPost = new System.Windows.Forms.Button();
@@ -38,28 +40,51 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonSetWallpaper = new System.Windows.Forms.Button();
             this.buttonSaveImage = new System.Windows.Forms.Button();
             this.buttonDeletePost = new System.Windows.Forms.Button();
-            this.imageBox = new Cyotek.Windows.Forms.ImageBox();
-            this.tagList = new TA.SharpBooru.Client.GUI.Controls.TagList();
             this.SuspendLayout();
             // 
             // buttonEditPost
             // 
             this.buttonEditPost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonEditPost.Enabled = false;
-            this.buttonEditPost.Location = new System.Drawing.Point(12, 248);
+            this.buttonEditPost.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_edit;
+            this.buttonEditPost.Location = new System.Drawing.Point(12, 343);
             this.buttonEditPost.Name = "buttonEditPost";
-            this.buttonEditPost.Size = new System.Drawing.Size(66, 30);
+            this.buttonEditPost.Size = new System.Drawing.Size(30, 30);
             this.buttonEditPost.TabIndex = 9;
-            this.buttonEditPost.Text = "Edit Post";
             this.buttonEditPost.UseVisualStyleBackColor = true;
             this.buttonEditPost.Click += new System.EventHandler(this.buttonEditPost_Click);
+            // 
+            // imageBox
+            // 
+            this.imageBox.AllowClickZoom = true;
+            this.imageBox.AlwaysShowHScroll = true;
+            this.imageBox.AlwaysShowVScroll = true;
+            this.imageBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.imageBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.imageBox.Location = new System.Drawing.Point(191, 12);
+            this.imageBox.Name = "imageBox";
+            this.imageBox.ShowPixelGrid = true;
+            this.imageBox.Size = new System.Drawing.Size(317, 361);
+            this.imageBox.TabIndex = 11;
+            // 
+            // tagList
+            // 
+            this.tagList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.tagList.BackColor = System.Drawing.SystemColors.Control;
+            this.tagList.Location = new System.Drawing.Point(11, 12);
+            this.tagList.Name = "tagList";
+            this.tagList.Size = new System.Drawing.Size(174, 289);
+            this.tagList.TabIndex = 0;
             // 
             // buttonClone
             // 
             this.buttonClone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonClone.Enabled = false;
             this.buttonClone.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_clone;
-            this.buttonClone.Location = new System.Drawing.Point(120, 248);
+            this.buttonClone.Location = new System.Drawing.Point(84, 343);
             this.buttonClone.Name = "buttonClone";
             this.buttonClone.Size = new System.Drawing.Size(30, 30);
             this.buttonClone.TabIndex = 10;
@@ -71,7 +96,7 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonEditImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonEditImage.Enabled = false;
             this.buttonEditImage.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_photoshop;
-            this.buttonEditImage.Location = new System.Drawing.Point(84, 248);
+            this.buttonEditImage.Location = new System.Drawing.Point(48, 343);
             this.buttonEditImage.Name = "buttonEditImage";
             this.buttonEditImage.Size = new System.Drawing.Size(30, 30);
             this.buttonEditImage.TabIndex = 4;
@@ -83,7 +108,7 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonNextPost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonNextPost.Enabled = false;
             this.buttonNextPost.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_arrow_right;
-            this.buttonNextPost.Location = new System.Drawing.Point(120, 284);
+            this.buttonNextPost.Location = new System.Drawing.Point(155, 343);
             this.buttonNextPost.Name = "buttonNextPost";
             this.buttonNextPost.Size = new System.Drawing.Size(30, 30);
             this.buttonNextPost.TabIndex = 6;
@@ -95,7 +120,7 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonPreviousPost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonPreviousPost.Enabled = false;
             this.buttonPreviousPost.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_arrow_left;
-            this.buttonPreviousPost.Location = new System.Drawing.Point(84, 284);
+            this.buttonPreviousPost.Location = new System.Drawing.Point(119, 343);
             this.buttonPreviousPost.Name = "buttonPreviousPost";
             this.buttonPreviousPost.Size = new System.Drawing.Size(30, 30);
             this.buttonPreviousPost.TabIndex = 5;
@@ -107,7 +132,7 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonSetWallpaper.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonSetWallpaper.Enabled = false;
             this.buttonSetWallpaper.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_image;
-            this.buttonSetWallpaper.Location = new System.Drawing.Point(48, 212);
+            this.buttonSetWallpaper.Location = new System.Drawing.Point(48, 307);
             this.buttonSetWallpaper.Name = "buttonSetWallpaper";
             this.buttonSetWallpaper.Size = new System.Drawing.Size(30, 30);
             this.buttonSetWallpaper.TabIndex = 2;
@@ -119,7 +144,7 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonSaveImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonSaveImage.Enabled = false;
             this.buttonSaveImage.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_save;
-            this.buttonSaveImage.Location = new System.Drawing.Point(12, 212);
+            this.buttonSaveImage.Location = new System.Drawing.Point(12, 307);
             this.buttonSaveImage.Name = "buttonSaveImage";
             this.buttonSaveImage.Size = new System.Drawing.Size(30, 30);
             this.buttonSaveImage.TabIndex = 1;
@@ -131,43 +156,18 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonDeletePost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonDeletePost.Enabled = false;
             this.buttonDeletePost.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_delete;
-            this.buttonDeletePost.Location = new System.Drawing.Point(84, 212);
+            this.buttonDeletePost.Location = new System.Drawing.Point(84, 307);
             this.buttonDeletePost.Name = "buttonDeletePost";
             this.buttonDeletePost.Size = new System.Drawing.Size(30, 30);
             this.buttonDeletePost.TabIndex = 3;
             this.buttonDeletePost.UseVisualStyleBackColor = true;
             this.buttonDeletePost.Click += new System.EventHandler(this.buttonDeletePost_Click);
             // 
-            // imageBox
-            // 
-            this.imageBox.AllowClickZoom = true;
-            this.imageBox.AlwaysShowHScroll = true;
-            this.imageBox.AlwaysShowVScroll = true;
-            this.imageBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.imageBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.imageBox.Location = new System.Drawing.Point(156, 12);
-            this.imageBox.Name = "imageBox";
-            this.imageBox.ShowPixelGrid = true;
-            this.imageBox.Size = new System.Drawing.Size(352, 302);
-            this.imageBox.TabIndex = 11;
-            // 
-            // tagList
-            // 
-            this.tagList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
-            this.tagList.BackColor = System.Drawing.SystemColors.Control;
-            this.tagList.Location = new System.Drawing.Point(11, 12);
-            this.tagList.Name = "tagList";
-            this.tagList.Size = new System.Drawing.Size(138, 194);
-            this.tagList.TabIndex = 0;
-            // 
             // PostViewerDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(520, 326);
+            this.ClientSize = new System.Drawing.Size(520, 385);
             this.Controls.Add(this.imageBox);
             this.Controls.Add(this.buttonClone);
             this.Controls.Add(this.buttonEditPost);
