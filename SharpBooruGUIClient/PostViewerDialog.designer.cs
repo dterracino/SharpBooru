@@ -30,10 +30,10 @@ namespace TA.SharpBooru.Client.GUI
         /// </summary>
         private void InitializeComponent()
         {
-            this.buttonEditPost = new System.Windows.Forms.Button();
             this.imageBox = new Cyotek.Windows.Forms.ImageBox();
             this.tagList = new TA.SharpBooru.Client.GUI.Controls.TagList();
             this.buttonClone = new System.Windows.Forms.Button();
+            this.buttonEditPost = new System.Windows.Forms.Button();
             this.buttonEditImage = new System.Windows.Forms.Button();
             this.buttonNextPost = new System.Windows.Forms.Button();
             this.buttonPreviousPost = new System.Windows.Forms.Button();
@@ -41,18 +41,6 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonSaveImage = new System.Windows.Forms.Button();
             this.buttonDeletePost = new System.Windows.Forms.Button();
             this.SuspendLayout();
-            // 
-            // buttonEditPost
-            // 
-            this.buttonEditPost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonEditPost.Enabled = false;
-            this.buttonEditPost.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_edit;
-            this.buttonEditPost.Location = new System.Drawing.Point(12, 343);
-            this.buttonEditPost.Name = "buttonEditPost";
-            this.buttonEditPost.Size = new System.Drawing.Size(30, 30);
-            this.buttonEditPost.TabIndex = 9;
-            this.buttonEditPost.UseVisualStyleBackColor = true;
-            this.buttonEditPost.Click += new System.EventHandler(this.buttonEditPost_Click);
             // 
             // imageBox
             // 
@@ -66,7 +54,7 @@ namespace TA.SharpBooru.Client.GUI
             this.imageBox.Location = new System.Drawing.Point(191, 12);
             this.imageBox.Name = "imageBox";
             this.imageBox.ShowPixelGrid = true;
-            this.imageBox.Size = new System.Drawing.Size(317, 361);
+            this.imageBox.Size = new System.Drawing.Size(361, 308);
             this.imageBox.TabIndex = 11;
             // 
             // tagList
@@ -76,7 +64,7 @@ namespace TA.SharpBooru.Client.GUI
             this.tagList.BackColor = System.Drawing.SystemColors.Control;
             this.tagList.Location = new System.Drawing.Point(11, 12);
             this.tagList.Name = "tagList";
-            this.tagList.Size = new System.Drawing.Size(174, 289);
+            this.tagList.Size = new System.Drawing.Size(174, 236);
             this.tagList.TabIndex = 0;
             // 
             // buttonClone
@@ -84,19 +72,31 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonClone.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonClone.Enabled = false;
             this.buttonClone.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_clone;
-            this.buttonClone.Location = new System.Drawing.Point(84, 343);
+            this.buttonClone.Location = new System.Drawing.Point(84, 290);
             this.buttonClone.Name = "buttonClone";
             this.buttonClone.Size = new System.Drawing.Size(30, 30);
             this.buttonClone.TabIndex = 10;
             this.buttonClone.UseVisualStyleBackColor = true;
             this.buttonClone.Click += new System.EventHandler(this.buttonClone_Click);
             // 
+            // buttonEditPost
+            // 
+            this.buttonEditPost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonEditPost.Enabled = false;
+            this.buttonEditPost.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_edit;
+            this.buttonEditPost.Location = new System.Drawing.Point(12, 290);
+            this.buttonEditPost.Name = "buttonEditPost";
+            this.buttonEditPost.Size = new System.Drawing.Size(30, 30);
+            this.buttonEditPost.TabIndex = 9;
+            this.buttonEditPost.UseVisualStyleBackColor = true;
+            this.buttonEditPost.Click += new System.EventHandler(this.buttonEditPost_Click);
+            // 
             // buttonEditImage
             // 
             this.buttonEditImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonEditImage.Enabled = false;
             this.buttonEditImage.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_photoshop;
-            this.buttonEditImage.Location = new System.Drawing.Point(48, 343);
+            this.buttonEditImage.Location = new System.Drawing.Point(48, 290);
             this.buttonEditImage.Name = "buttonEditImage";
             this.buttonEditImage.Size = new System.Drawing.Size(30, 30);
             this.buttonEditImage.TabIndex = 4;
@@ -108,7 +108,7 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonNextPost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonNextPost.Enabled = false;
             this.buttonNextPost.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_arrow_right;
-            this.buttonNextPost.Location = new System.Drawing.Point(155, 343);
+            this.buttonNextPost.Location = new System.Drawing.Point(155, 290);
             this.buttonNextPost.Name = "buttonNextPost";
             this.buttonNextPost.Size = new System.Drawing.Size(30, 30);
             this.buttonNextPost.TabIndex = 6;
@@ -120,7 +120,7 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonPreviousPost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonPreviousPost.Enabled = false;
             this.buttonPreviousPost.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_arrow_left;
-            this.buttonPreviousPost.Location = new System.Drawing.Point(119, 343);
+            this.buttonPreviousPost.Location = new System.Drawing.Point(119, 290);
             this.buttonPreviousPost.Name = "buttonPreviousPost";
             this.buttonPreviousPost.Size = new System.Drawing.Size(30, 30);
             this.buttonPreviousPost.TabIndex = 5;
@@ -132,7 +132,7 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonSetWallpaper.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonSetWallpaper.Enabled = false;
             this.buttonSetWallpaper.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_image;
-            this.buttonSetWallpaper.Location = new System.Drawing.Point(48, 307);
+            this.buttonSetWallpaper.Location = new System.Drawing.Point(48, 254);
             this.buttonSetWallpaper.Name = "buttonSetWallpaper";
             this.buttonSetWallpaper.Size = new System.Drawing.Size(30, 30);
             this.buttonSetWallpaper.TabIndex = 2;
@@ -144,7 +144,7 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonSaveImage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonSaveImage.Enabled = false;
             this.buttonSaveImage.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_save;
-            this.buttonSaveImage.Location = new System.Drawing.Point(12, 307);
+            this.buttonSaveImage.Location = new System.Drawing.Point(12, 254);
             this.buttonSaveImage.Name = "buttonSaveImage";
             this.buttonSaveImage.Size = new System.Drawing.Size(30, 30);
             this.buttonSaveImage.TabIndex = 1;
@@ -156,7 +156,7 @@ namespace TA.SharpBooru.Client.GUI
             this.buttonDeletePost.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonDeletePost.Enabled = false;
             this.buttonDeletePost.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_delete;
-            this.buttonDeletePost.Location = new System.Drawing.Point(84, 307);
+            this.buttonDeletePost.Location = new System.Drawing.Point(84, 254);
             this.buttonDeletePost.Name = "buttonDeletePost";
             this.buttonDeletePost.Size = new System.Drawing.Size(30, 30);
             this.buttonDeletePost.TabIndex = 3;
@@ -167,7 +167,7 @@ namespace TA.SharpBooru.Client.GUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(520, 385);
+            this.ClientSize = new System.Drawing.Size(564, 332);
             this.Controls.Add(this.imageBox);
             this.Controls.Add(this.buttonClone);
             this.Controls.Add(this.buttonEditPost);
@@ -178,7 +178,7 @@ namespace TA.SharpBooru.Client.GUI
             this.Controls.Add(this.buttonSaveImage);
             this.Controls.Add(this.buttonDeletePost);
             this.Controls.Add(this.tagList);
-            this.MinimumSize = new System.Drawing.Size(536, 364);
+            this.MinimumSize = new System.Drawing.Size(580, 370);
             this.Name = "PostViewerDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Post Viewer";
