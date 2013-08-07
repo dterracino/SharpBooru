@@ -45,6 +45,26 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\ImageBox\ImageBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ImageBox\ImageBoxBorderStyle.cs" />
+    <Compile Include="Controls\ImageBox\ImageBoxCancelEventArgs.cs" />
+    <Compile Include="Controls\ImageBox\ImageBoxGridDisplayMode.cs" />
+    <Compile Include="Controls\ImageBox\ImageBoxGridScale.cs" />
+    <Compile Include="Controls\ImageBox\ImageBoxNativeMethods.cs" />
+    <Compile Include="Controls\ImageBox\ImageBoxSelectionMode.cs" />
+    <Compile Include="Controls\ImageBox\ScrollControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ImageBox\ScrollProperties.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ImageBox\VirtualScrollableControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\ImageBox\ZoomLevelCollection.cs" />
+    <Compile Include="Controls\ImageBox\ZoomLevelCollectionConverter.cs" />
     <Compile Include="Controls\TagList.cs">
       <SubType>UserControl</SubType>
     </Compile>
