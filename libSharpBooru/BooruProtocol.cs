@@ -24,11 +24,14 @@ namespace TA.SharpBooru
             // void
             Disconnect,
 
-            // Post(BooruPost) + Thumbnail(BooruImage), PostID(ulong)
+            // Post(BooruPost) [ + Thumbnail(BooruImage) ], PostID(ulong), IncludeThumbnail(bool)
             GetPost,
 
             // Image(BooruImage), PostID(ulong)
             GetImage,
+
+            // Thunbmail(BooruImage), PostID(ulong)
+            GetThumbnail,
 
             // void, PostID(ulong)
             DeletePost,
@@ -80,11 +83,24 @@ namespace TA.SharpBooru
 
         public class BooruException : Exception
         {
+            private ErrorCode? _ErrorCode;
+
+            public ErrorCode ErrorCode
+            {
+                get
+                {
+                    if (_ErrorCode.HasValue)
+                        return _ErrorCode.Value;
+                    else return BooruProtocol.ErrorCode.UnknownError;
+                }
+            }
+
             public BooruException(string Message)
                 : base(Message) { }
 
             public BooruException(ErrorCode ErrorCode)
-                : this(string.Format("Server returned ErrorCode {0}: {1}", (byte)ErrorCode, ErrorCode)) { }
+                : base(string.Format("Server returned ErrorCode {0}: {1}", (byte)ErrorCode, ErrorCode))
+            { _ErrorCode = ErrorCode; }
         }
     }
 }

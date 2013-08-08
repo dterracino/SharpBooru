@@ -119,6 +119,23 @@ namespace TA.SharpBooru.Server
                                 {
                                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     post.ToClientWriter(_Writer, _Server.Booru);
+                                    if (_Reader.ReadBoolean())
+                                        _Server.Booru.ReadFile(_Writer, "thumb" + postID);
+                                }
+                                else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
+                            }
+                            else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
+                            break;
+                        }
+                    case BooruProtocol.Command.GetThumbnail:
+                        {
+                            ulong postID = _Reader.ReadUInt64();
+                            if (_Server.Booru.Posts.Contains(postID) && File.Exists(Path.Combine(_Server.Booru.Folder, "thumb" + postID)))
+                            {
+                                BooruPost post = _Server.Booru.Posts[postID];
+                                if (post.Rating <= _User.MaxRating && IsPrivacyAllowed(post, _User))
+                                {
+                                    _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     _Server.Booru.ReadFile(_Writer, "thumb" + postID);
                                     post.ViewCount++;
                                 }
@@ -137,6 +154,7 @@ namespace TA.SharpBooru.Server
                                 {
                                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     _Server.Booru.ReadFile(_Writer, "image" + postID);
+                                    post.ViewCount++;
                                 }
                                 else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                             }

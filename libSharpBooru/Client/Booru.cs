@@ -107,12 +107,13 @@ namespace TA.SharpBooru.Client
                 throw new BooruProtocol.BooruException(errorCode);
         }
 
-        public BooruPost GetPost(ulong ID)
+        public BooruPost GetPost(ulong ID, bool IncludeThumbnail = true)
         {
             lock (_Lock)
             {
                 BeginCommunication(BooruProtocol.Command.GetPost);
                 _Writer.Write(ID);
+                _Writer.Write(IncludeThumbnail);
                 EndCommunication();
                 BooruPost post = BooruPost.FromServerReader(_Reader);
                 post.Thumbnail = BooruImage.FromReader(_Reader);
@@ -132,8 +133,18 @@ namespace TA.SharpBooru.Client
                 BeginCommunication(BooruProtocol.Command.GetImage);
                 _Writer.Write(ID);
                 EndCommunication();
-                int byteCount = (int)_Reader.ReadUInt32();
-                return new BooruImage(_Reader.ReadBytes(byteCount));
+                return BooruImage.FromReader(_Reader);
+            }
+        }
+
+        public BooruImage GetThumbnail(ulong ID)
+        {
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.GetThumbnail);
+                _Writer.Write(ID);
+                EndCommunication();
+                return BooruImage.FromReader(_Reader);
             }
         }
 
