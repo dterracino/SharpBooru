@@ -7,7 +7,6 @@ using System.Text;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Collections.Specialized;
-using System.Text.RegularExpressions;
 using HttpMultipartParser;
 using Mono.Unix.Native;
 
@@ -20,7 +19,7 @@ namespace TA.SharpBooru.Client.WebServer
         public static void WriteMinimalHeader(Context Context, string Title)
         {
             string header = DOCTYPE + @"<html><head><title>{0} - {1}</title><meta http-equiv=""Content-Type"" content=""text/html; charset=UTF-8""></head><body><div>";
-            Context.OutWriter.Write(header, Title, Context.Booru.GetProperty<string>(Booru.Property.ServerBooruName));
+            Context.OutWriter.Write(header, Title, "BOORU"); //TODO Get booru name
         }
 
         public static void WriteHeader(Context Context, string Title, string AdditionalHeadContent)
@@ -37,14 +36,14 @@ namespace TA.SharpBooru.Client.WebServer
             {
                 { "Index", "/" },
                 { "Random", "/post?id=-1" },
-                { "GitHub", "http://www.github.com/teamalpha5441/SQLBooru" },
+                { "GitHub", "http://www.github.com/teamalpha5441/SharpBooru" },
                 { "Info", "/info" }
             };
             if (Context.User.Perm_Upload)
                 links.Add("Upload", "/upload");
             if (Context.User.Perm_Admin)
                 links.Add("Admin", "/admin");
-            string booruName = Context.Booru.GetProperty<string>(Booru.Property.ServerBooruName);
+            string booruName = "BOORU"; //TODO Get booru name
 
             Context.OutWriter.Write("{0}<html><head><title>{1} - {2}</title>", DOCTYPE, Title, booruName);
             Context.OutWriter.Write("<link rel=\"stylesheet\" type=\"text/css\" href=\"style\">");
@@ -73,7 +72,7 @@ namespace TA.SharpBooru.Client.WebServer
                 Context.OutWriter.Write(" <input class=\"login\" type=\"password\" name=\"password\">");
                 Context.OutWriter.Write(" <input style=\"float: left\" type=\"submit\" value=\"Login\"></form>");
             }
-            string serverMOTD = Context.Booru.GetProperty<string>(Booru.Property.ServerMOTD);
+            string serverMOTD = "Project BETA"; //TODO Get server MOTD
             if (!string.IsNullOrWhiteSpace(serverMOTD))
             {
                 Context.OutWriter.Write("</div><div class=\"motd\"><b>Notice: </b>");
@@ -88,8 +87,7 @@ namespace TA.SharpBooru.Client.WebServer
 
         public static string GetStyle(Context Context)
         {
-            return string.Format(Properties.Resources.style_css,
-                Context.Booru.GetProperty<int>(Booru.Property.ServerThumbsSize));
+            return string.Format(Properties.Resources.style_css, 120); //TODO Get server thumbs size
         }
 
         public static void WriteTableHeader(Context Context, string TableClass = null)
