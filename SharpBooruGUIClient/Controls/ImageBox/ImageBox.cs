@@ -17,6 +17,7 @@ namespace Cyotek.Windows.Forms
   ///   Component for displaying images with support for scrolling and zooming.
   /// </summary>
   [DefaultProperty("Image")]
+  [ToolboxBitmap(typeof(ImageBox), "ImageBox.bmp")]
   [ToolboxItem(true)]
   public class ImageBox : VirtualScrollableControl
   {
@@ -101,6 +102,8 @@ namespace Cyotek.Windows.Forms
     private int _zoom;
 
     private ZoomLevelCollection _zoomLevels;
+
+    private bool _isAnimating;
 
     #endregion
 
@@ -1114,6 +1117,14 @@ namespace Cyotek.Windows.Forms
         if (_image != value)
         {
           _image = value;
+
+          if (ImageAnimator.CanAnimate(_image))
+          {
+            ImageAnimator.Animate(_image, new EventHandler(OnFrameChanged));
+            this._isAnimating = true;
+          }
+          else this._isAnimating = false;
+
           this.OnImageChanged(EventArgs.Empty);
         }
       }
@@ -2356,6 +2367,7 @@ namespace Cyotek.Windows.Forms
       // http://stackoverflow.com/questions/14070311/why-is-graphics-drawimage-cropping-part-of-my-image/14070372#14070372
       g.PixelOffsetMode = PixelOffsetMode.HighQuality;
 
+      ImageAnimator.UpdateFrames(this.Image);
       g.DrawImage(this.Image, this.GetImageViewPort(), this.GetSourceImageRegion(), GraphicsUnit.Pixel);
 
       g.PixelOffsetMode = currentPixelOffsetMode;
@@ -2585,6 +2597,11 @@ namespace Cyotek.Windows.Forms
 
       if (handler != null)
         handler(this, e);
+    }
+
+    private void OnFrameChanged(object sender, EventArgs e)
+    {
+        this.Invalidate();
     }
 
     /// <summary>
