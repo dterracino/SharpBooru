@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
@@ -45,28 +46,28 @@
     <Compile Include="BooruImage.cs" />
     <Compile Include="Client\BooruPostBuffer.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="LitJSON\IJsonWrapper.cs">
+    <Compile Include="Server\LitJSON\IJsonWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LitJSON\JsonData.cs">
+    <Compile Include="Server\LitJSON\JsonData.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LitJSON\JsonException.cs">
+    <Compile Include="Server\LitJSON\JsonException.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LitJSON\JsonMapper.cs">
+    <Compile Include="Server\LitJSON\JsonMapper.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LitJSON\JsonReader.cs">
+    <Compile Include="Server\LitJSON\JsonReader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LitJSON\JsonWriter.cs">
+    <Compile Include="Server\LitJSON\JsonWriter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LitJSON\Lexer.cs">
+    <Compile Include="Server\LitJSON\Lexer.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="LitJSON\ParserToken.cs">
+    <Compile Include="Server\LitJSON\ParserToken.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Logger.cs">
@@ -82,6 +83,30 @@
     <Compile Include="Helper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\BooruSearch.cs" />
+    <Compile Include="Server\SmartThreadPool\CallerThreadContext.cs" />
+    <Compile Include="Server\SmartThreadPool\CanceledWorkItemsGroup.cs" />
+    <Compile Include="Server\SmartThreadPool\EventWaitHandle.cs" />
+    <Compile Include="Server\SmartThreadPool\EventWaitHandleFactory.cs" />
+    <Compile Include="Server\SmartThreadPool\Exceptions.cs" />
+    <Compile Include="Server\SmartThreadPool\Interfaces.cs" />
+    <Compile Include="Server\SmartThreadPool\InternalInterfaces.cs" />
+    <Compile Include="Server\SmartThreadPool\PriorityQueue.cs" />
+    <Compile Include="Server\SmartThreadPool\SLExt.cs" />
+    <Compile Include="Server\SmartThreadPool\SmartThreadPool.cs" />
+    <Compile Include="Server\SmartThreadPool\SmartThreadPool.ThreadEntry.cs" />
+    <Compile Include="Server\SmartThreadPool\STPEventWaitHandle.cs" />
+    <Compile Include="Server\SmartThreadPool\STPPerformanceCounter.cs" />
+    <Compile Include="Server\SmartThreadPool\STPStartInfo.cs" />
+    <Compile Include="Server\SmartThreadPool\SynchronizedDictionary.cs" />
+    <Compile Include="Server\SmartThreadPool\WIGStartInfo.cs" />
+    <Compile Include="Server\SmartThreadPool\WorkItem.cs" />
+    <Compile Include="Server\SmartThreadPool\WorkItem.WorkItemResult.cs" />
+    <Compile Include="Server\SmartThreadPool\WorkItemFactory.cs" />
+    <Compile Include="Server\SmartThreadPool\WorkItemInfo.cs" />
+    <Compile Include="Server\SmartThreadPool\WorkItemResultTWrapper.cs" />
+    <Compile Include="Server\SmartThreadPool\WorkItemsGroup.cs" />
+    <Compile Include="Server\SmartThreadPool\WorkItemsGroupBase.cs" />
+    <Compile Include="Server\SmartThreadPool\WorkItemsQueue.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
