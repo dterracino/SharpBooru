@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Web;
 using System.Drawing;
 using System.Collections.Generic;
 
-namespace TEAM_ALPHA.SQLBooru.Server.VirtualFileSystem
+namespace TA.SharpBooru.Client.WebServer.VFS
 {
     public class VFSBooruPostFile : VFSFile
     {

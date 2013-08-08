@@ -1,7 +1,6 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
-namespace TEAM_ALPHA.SQLBooru.Server.VirtualFileSystem
+namespace TA.SharpBooru.Client.WebServer.VFS
 {
     public class VFSBooruInfoFile : VFSFile
     {

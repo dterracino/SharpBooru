@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Collections.Generic;
 
-namespace TEAM_ALPHA.SQLBooru.Server
+namespace TA.SharpBooru.Client.WebServer
 {
     public class DictionaryEx : Dictionary<string, object>
     {

@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using HttpMultipartParser;
 using Mono.Unix.Native;
 
-namespace TEAM_ALPHA.SQLBooru.Server
+namespace TA.SharpBooru.Client.WebServer
 {
     public class ServerHelper
     {

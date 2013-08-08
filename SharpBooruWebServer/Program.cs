@@ -4,9 +4,10 @@ using System.Net;
 using System.Threading;
 using Mono.Unix;
 using Mono.Unix.Native;
-using TEAM_ALPHA.SQLBooru.Server.VirtualFileSystem;
+using TA.SharpBooru.Client;
+using TA.SharpBooru.Client.WebServer.VFS;
 
-namespace TEAM_ALPHA.SQLBooru.Server
+namespace TA.SharpBooru.Client.WebServer
 {
     public class Program
     {

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace TA.SharpBooru.Client.SharpBooruWebServer.Properties {
+namespace TA.SharpBooru.Client.WebServer.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace TA.SharpBooru.Client.SharpBooruWebServer.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TA.SharpBooru.Client.SharpBooruWebServer.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("TA.SharpBooru.Client.WebServer.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -7,7 +7,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using HttpMultipartParser;
 
-namespace TEAM_ALPHA.SQLBooru.Server
+namespace TA.SharpBooru.Client.WebServer
 {
     public class Context : IDisposable
     {

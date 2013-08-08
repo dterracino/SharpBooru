@@ -7,9 +7,9 @@ using System.Threading;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using Amib.Threading;
-using TEAM_ALPHA.SQLBooru.Server.VirtualFileSystem;
+using TA.SharpBooru.Client.WebServer.VFS;
 
-namespace TEAM_ALPHA.SQLBooru.Server
+namespace TA.SharpBooru.Client.WebServer
 {
     public class BooruServer
     {

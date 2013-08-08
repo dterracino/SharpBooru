@@ -2,7 +2,7 @@
 using System.IO;
 using LitJson;
 
-namespace TEAM_ALPHA.SQLBooru.Server
+namespace TA.SharpBooru.Client.WebServer
 {
     [Serializable]
     public class ServerConfig

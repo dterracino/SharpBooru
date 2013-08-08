@@ -8,7 +8,7 @@
     <ProjectGuid>{9279600A-CB97-4504-B1AB-016C7BE9CC1B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TA.SharpBooru.Client.SharpBooruWebServer</RootNamespace>
+    <RootNamespace>TA.SharpBooru.Client.WebServer</RootNamespace>
     <AssemblyName>SharpBooruWebServer</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>
@@ -39,6 +39,7 @@
       <HintPath>..\Mono.Posix.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BooruServer.cs" />
@@ -53,7 +54,6 @@
     <Compile Include="HttpMultipartDataParser\ParameterPart.cs" />
     <Compile Include="HttpMultipartDataParser\RebufferableBinaryReader.cs" />
     <Compile Include="HttpMultipartDataParser\SubsequenceFinder.cs" />
-    <Compile Include="Logger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -117,6 +117,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\style_css.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\libSharpBooru\libSharpBooru.csproj">
+      <Project>{0B2579ED-EC4D-455B-9468-1AFCC51A241B}</Project>
+      <Name>libSharpBooru</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

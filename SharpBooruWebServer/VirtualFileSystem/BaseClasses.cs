@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-namespace TEAM_ALPHA.SQLBooru.Server.VirtualFileSystem
+namespace TA.SharpBooru.Client.WebServer.VFS
 {
     public abstract class VFSEntry
     {

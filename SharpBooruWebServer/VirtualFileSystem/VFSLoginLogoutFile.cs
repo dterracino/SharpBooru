@@ -2,7 +2,7 @@
 using System.IO;
 using System.Net;
 
-namespace TEAM_ALPHA.SQLBooru.Server.VirtualFileSystem
+namespace TA.SharpBooru.Client.WebServer.VFS
 {
     public class VFSLoginLogoutFile : VFSFile
     {

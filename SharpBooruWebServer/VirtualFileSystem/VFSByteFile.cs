@@ -1,7 +1,6 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
-namespace TEAM_ALPHA.SQLBooru.Server.VirtualFileSystem
+namespace TA.SharpBooru.Client.WebServer.VFS
 {
     public class VFSByteFile : VFSFile
     {

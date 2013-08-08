@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace TEAM_ALPHA.SQLBooru.Server.VirtualFileSystem
+namespace TA.SharpBooru.Client.WebServer.VFS
 {
     public class VFSErrorFile : VFSFile
     {

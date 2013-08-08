@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 
-namespace TEAM_ALPHA.SQLBooru.Server
+namespace TA.SharpBooru.Client.WebServer
 {
     public class BooruUser
     {

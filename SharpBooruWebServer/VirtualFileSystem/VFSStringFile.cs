@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TEAM_ALPHA.SQLBooru.Server.VirtualFileSystem
+namespace TA.SharpBooru.Client.WebServer.VFS
 {
     public class VFSStringFile : VFSFile
     {

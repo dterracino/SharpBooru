@@ -2,7 +2,7 @@
 using System.Net;
 using System.Collections.Generic;
 
-namespace TEAM_ALPHA.SQLBooru.Server
+namespace TA.SharpBooru.Client.WebServer
 {
     public class RequestSecurityManager
     {

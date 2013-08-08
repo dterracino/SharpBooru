@@ -3,7 +3,7 @@ using System.Net;
 using System.Linq;
 using System.Collections.Generic;
 
-namespace TEAM_ALPHA.SQLBooru.Server
+namespace TA.SharpBooru.Client.WebServer
 {
     public class CookieManager
     {
