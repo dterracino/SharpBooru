@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using System.Collections.Generic;
 
 namespace TA.SharpBooru.Client.WebServer.VFS
@@ -27,12 +26,13 @@ namespace TA.SharpBooru.Client.WebServer.VFS
         public override void Execute(Context Context)
         {
             ServerHelper.WriteHeader(Context, Title);
-            int thumbsPerPage = Context.Booru.GetProperty<int>(Booru.Property.ServerThumbsPerPage);
+            int thumbsPerPage = 60; //TODO ThumbsPerPage property
+            //int thumbsPerPage = Context.Booru.GetProperty<int>(Booru.Property.ServerThumbsPerPage);
             string tagSearch = string.Empty;
             if (Context.Params.GET.IsSet<string>("tags"))
                 tagSearch = Context.Params.GET.Get<string>("tags");
-            List<BooruPost> posts = Context.Booru.Search(string.Format("{0} {1}", Context.User.Perm_SearchPrefix, tagSearch));
-            int totalPages = (int)Math.Truncate((posts.Count - 1f) / thumbsPerPage) + 1;
+            List<ulong> postIDs = Context.Booru.Search(tagSearch);
+            int totalPages = (int)Math.Truncate((postIDs.Count - 1f) / thumbsPerPage) + 1;
             int page = 0;
             if (Context.Params.GET.IsSet<int>("page"))
                 page = Context.Params.GET.Get<int>("page") - 1;
@@ -40,12 +40,13 @@ namespace TA.SharpBooru.Client.WebServer.VFS
                 page = totalPages - 1;
             else if (page < 0)
                 page = 0;
-            int count = posts.Count - page * thumbsPerPage;
+            int count = postIDs.Count - page * thumbsPerPage;
             if (count > thumbsPerPage)
                 count = thumbsPerPage;
-            posts = posts.GetRange(page * thumbsPerPage, count);
+            postIDs = postIDs.GetRange(page * thumbsPerPage, count);
             ServerHelper.WriteTableHeader(Context);
             ServerHelper.WriteSearchTextBox(Context, Name, tagSearch);
+            /*
             Context.OutWriter.Write("<br>");
             Dictionary<BooruTag, int> top20dict = BooruHelper.GetTop20Tags(Context.Booru, posts);
             if (top20dict.Count > 0)
@@ -61,14 +62,15 @@ namespace TA.SharpBooru.Client.WebServer.VFS
                 }
                 ServerHelper.WriteSubSectionFooter(Context);
             }
+            */
             ServerHelper.WriteTableMiddle(Context);
-            if (posts.Count > 0)
+            if (postIDs.Count > 0)
             {
                 Context.OutWriter.Write("<div class=\"wrap\">");
-                foreach (BooruPost post in posts)
+                foreach (ulong postID in postIDs)
                 {
-                    Context.OutWriter.Write("<a href=\"post?id={0}&amp;tags={1}\">", post.ID, tagSearch);
-                    Context.OutWriter.Write("<img class=\"thumb\" alt=\"\" src=\"thumb?id={0}\"></a>", post.ID);
+                    Context.OutWriter.Write("<a href=\"post?id={0}&amp;tags={1}\">", postID, tagSearch);
+                    Context.OutWriter.Write("<img class=\"thumb\" alt=\"\" src=\"thumb?id={0}\"></a>", postID);
                 }
                 Context.OutWriter.Write("</div><br><div class=\"page_chooser\">");
                 if (totalPages > 0)

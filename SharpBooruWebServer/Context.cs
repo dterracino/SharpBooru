@@ -3,9 +3,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Reflection;
-using System.Globalization;
 using System.Collections.Generic;
-using HttpMultipartParser;
 
 namespace TA.SharpBooru.Client.WebServer
 {
@@ -125,6 +123,7 @@ namespace TA.SharpBooru.Client.WebServer
             }
         }
 
+        /*
         private BooruUser _User = null;
         private bool _UserRead = false;
         public BooruUser User
@@ -144,6 +143,7 @@ namespace TA.SharpBooru.Client.WebServer
                 _UserRead = true;
             }
         }
+        */
 
         private Parameters _Params;
         public Parameters Params
@@ -156,7 +156,7 @@ namespace TA.SharpBooru.Client.WebServer
             }
         }
 
-        public bool LoggedIn { get { return User != Server.UserManager.GuestUser; } }
+        //public bool LoggedIn { get { return User != Server.UserManager.GuestUser; } }
 
         public Context(BooruServer Server, HttpListenerContext HttpListenerContext)
         {
@@ -164,7 +164,7 @@ namespace TA.SharpBooru.Client.WebServer
             this.InnerContext = HttpListenerContext;
             this.HTTPCode = 200;
             this.MimeType = "text/html";
-            SetHeader("Server", string.Format("SQLBooruServer {0} ", Assembly.GetExecutingAssembly().GetName().Version));
+            SetHeader("Server", string.Format("TA.SharpBooru.Client.WebServer {0} ", Assembly.GetExecutingAssembly().GetName().Version));
             //SetHeader("Expires", (DateTime.Now + TimeSpan.FromSeconds(EXPIRES_SECONDS)).ToUniversalTime().ToString("r"));
             //SetHeader("Cache-Control", string.Format("max-age={0}", EXPIRES_SECONDS));
         }

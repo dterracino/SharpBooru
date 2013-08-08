@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net;
-
-namespace TA.SharpBooru.Client.WebServer.VFS
+﻿namespace TA.SharpBooru.Client.WebServer.VFS
 {
     public class VFSErrorFile : VFSFile
     {

@@ -24,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -45,7 +46,6 @@
   <ItemGroup>
     <Compile Include="BooruServer.cs" />
     <Compile Include="Context.cs" />
-    <Compile Include="CookieManager.cs" />
     <Compile Include="DictionaryEx.cs" />
     <Compile Include="HttpMultipartDataParser\BinaryStreamStack.cs" />
     <Compile Include="HttpMultipartDataParser\FilePart.cs" />
@@ -88,17 +88,13 @@
     <Compile Include="SmartThreadPool\WorkItemsGroupBase.cs" />
     <Compile Include="SmartThreadPool\WorkItemsQueue.cs" />
     <Compile Include="VirtualFileSystem\BaseClasses.cs" />
-    <Compile Include="VirtualFileSystem\VFSAdminPanelFile.cs" />
     <Compile Include="VirtualFileSystem\VFSBooruImageFile.cs" />
-    <Compile Include="VirtualFileSystem\VFSBooruInfoFile.cs" />
     <Compile Include="VirtualFileSystem\VFSBooruPostFile.cs" />
     <Compile Include="VirtualFileSystem\VFSBooruSearchFile.cs" />
-    <Compile Include="VirtualFileSystem\VFSBooruUploadFile.cs" />
     <Compile Include="VirtualFileSystem\VFSByteFile.cs" />
     <Compile Include="VirtualFileSystem\VFSDelegateFile.cs" />
     <Compile Include="VirtualFileSystem\VFSDirectoryListingFile.cs" />
     <Compile Include="VirtualFileSystem\VFSErrorFile.cs" />
-    <Compile Include="VirtualFileSystem\VFSLoginLogoutFile.cs" />
     <Compile Include="VirtualFileSystem\VFSRealFile.cs" />
     <Compile Include="VirtualFileSystem\VFSStringFile.cs" />
   </ItemGroup>

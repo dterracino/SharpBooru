@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TA.SharpBooru.Client.WebServer.VFS
+﻿namespace TA.SharpBooru.Client.WebServer.VFS
 {
     public class VFSDirectoryListingFile : VFSFile
     {

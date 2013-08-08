@@ -39,10 +39,12 @@ namespace TA.SharpBooru.Client.WebServer
                 { "GitHub", "http://www.github.com/teamalpha5441/SharpBooru" },
                 { "Info", "/info" }
             };
+            /*
             if (Context.User.Perm_Upload)
                 links.Add("Upload", "/upload");
             if (Context.User.Perm_Admin)
                 links.Add("Admin", "/admin");
+            */
             string booruName = "BOORU"; //TODO Get booru name
 
             Context.OutWriter.Write("{0}<html><head><title>{1} - {2}</title>", DOCTYPE, Title, booruName);
@@ -59,6 +61,7 @@ namespace TA.SharpBooru.Client.WebServer
                 if (!link.Equals(links.Last()))
                     Context.OutWriter.Write(" | ");
             }
+            /*
             Context.OutWriter.Write("</div><div class=\"login\">");
             if (Context.LoggedIn)
             {
@@ -72,7 +75,8 @@ namespace TA.SharpBooru.Client.WebServer
                 Context.OutWriter.Write(" <input class=\"login\" type=\"password\" name=\"password\">");
                 Context.OutWriter.Write(" <input style=\"float: left\" type=\"submit\" value=\"Login\"></form>");
             }
-            string serverMOTD = "Project BETA"; //TODO Get server MOTD
+            */
+            string serverMOTD = "TA.SharpBooru.Client.WebServer BETA"; //TODO Get server MOTD
             if (!string.IsNullOrWhiteSpace(serverMOTD))
             {
                 Context.OutWriter.Write("</div><div class=\"motd\"><b>Notice: </b>");
