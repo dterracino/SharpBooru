@@ -44,7 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BooruServer.cs" />
-    <Compile Include="BooruUserManager.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="CookieManager.cs" />
     <Compile Include="DictionaryEx.cs" />

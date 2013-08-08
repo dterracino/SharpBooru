@@ -22,30 +22,25 @@ namespace TA.SharpBooru.Client.WebServer
         private RequestSecurityManager _RSM;
         private bool _EnableDirectoryListing;
         private CookieManager _CookieManager;
-        private BooruUserManager _UserManager;
 
         public Booru Booru { get { return _Booru; } }
         public Logger Logger { get { return _Logger; } }
         public VFSDirectory RootDirectory { get { return _RootDirectory; } }
         public RequestSecurityManager RSM { get { return _RSM; } }
         public bool EnableDirectoryListing { get { return _EnableDirectoryListing; } set { _EnableDirectoryListing = value; } }
-        public BooruUserManager UserManager { get { return _UserManager; } }
         public CookieManager CookieManager { get { return _CookieManager; } }
 
         public BooruServer(Booru Booru) : this(Booru, null) { }
-        public BooruServer(Booru Booru, Logger Logger) : this(Booru, Logger, (List<string>)null, true) { }
-        public BooruServer(Booru Booru, Logger Logger, string ListenerPrefix)
-            : this(Booru, Logger, new string[1] { ListenerPrefix }.ToList(), true) { }
-        public BooruServer(Booru Booru, Logger Logger, string ListenerPrefix, bool EnableRSM)
-            : this(Booru, Logger, new string[1] { ListenerPrefix }.ToList(), EnableRSM) { }
-        public BooruServer(Booru Booru, Logger Logger, List<string> ListenerPrefixes, bool EnableRSM)
+        public BooruServer(Booru Booru) : this(Booru, (List<string>)null, true) { }
+        public BooruServer(Booru Booru, string ListenerPrefix)
+            : this(Booru, new string[1] { ListenerPrefix }.ToList(), true) { }
+        public BooruServer(Booru Booru, string ListenerPrefix, bool EnableRSM)
+            : this(Booru, new string[1] { ListenerPrefix }.ToList(), EnableRSM) { }
+        public BooruServer(Booru Booru, List<string> ListenerPrefixes, bool EnableRSM)
         {
             if (Booru == null)
                 throw new ArgumentNullException("Booru");
             else _Booru = Booru;
-            if (Logger == null)
-                Logger = new Logger();
-            else _Logger = Logger;
             _Listener = new HttpListener();
             if (ListenerPrefixes == null)
                 ListenerPrefixes = new List<string>();
@@ -58,7 +53,6 @@ namespace TA.SharpBooru.Client.WebServer
             _RootDirectory = new VFSDirectory(string.Empty);
             _RSM = EnableRSM ? new RequestSecurityManager() : null;
             _CookieManager = new CookieManager();
-            _UserManager = new BooruUserManager(_Booru);
         }
 
         private void InitAcceptConnectionsThread()
@@ -105,7 +99,7 @@ namespace TA.SharpBooru.Client.WebServer
         private void LogException(Exception ex)
         {
             if (ex == null)
-                ex = new ArgumentException("Exception not provided");
+                ex = new ArgumentException("Unknown exception");
             Logger.LogLine("[c1]ERROR[cr]: [c7]{0}", ex.Message);
         }
 

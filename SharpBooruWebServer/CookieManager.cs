@@ -93,7 +93,7 @@ namespace TA.SharpBooru.Client.WebServer
                 return _CookieList.Get(User);
             else
             {
-                Cookie tmpCookie = new Cookie(CookieName, Helper.RandomString(_Random, 128));
+                Cookie tmpCookie = new Cookie(CookieName, Helper.RandomString(_Random, 64));
                 tmpCookie.Expires = DateTime.MinValue;
                 _CookieList.Add(User, tmpCookie);
                 return tmpCookie;
