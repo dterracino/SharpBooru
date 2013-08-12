@@ -75,7 +75,7 @@ namespace TA.SharpBooru.Client
                 catch { }
             if (!_Client.Connected)
             {
-                Disconnect();
+                Disconnect(false);
                 _Client.Connect(_EndPoint);
                 _SSLStream = new SslStream(_Client.GetStream(), true, delegate { return true; }); //TODO Client config
                 _SSLStream.AuthenticateAsClient("SharpBooruServer");
@@ -84,12 +84,18 @@ namespace TA.SharpBooru.Client
                 _Writer.Write(ClientVersion);
                 _Writer.Flush();
                 if (!_Reader.ReadBoolean())
-                    throw new BooruProtocol.BooruException("Server version mismatch");
+                {
+                    Disconnect(false);
+                    throw new BooruProtocol.BooruException(BooruProtocol.ErrorCode.ProtocolVersionMismatch);
+                }
                 _Writer.Write(_Username);
                 _Writer.Write(_Password);
                 _Writer.Flush();
                 if (!_Reader.ReadBoolean())
-                    throw new BooruProtocol.BooruException("Login failed");
+                {
+                    Disconnect(false);
+                    throw new BooruProtocol.BooruException(BooruProtocol.ErrorCode.LoginFailed);
+                }
             }
         }
 
@@ -308,8 +314,8 @@ namespace TA.SharpBooru.Client
             }
         }
 
-        public void Disconnect() { Dispose(); }
-        public void Dispose()
+        public void Dispose() { Disconnect(true); }
+        public void Disconnect(bool SendDisconnectCommand)
         {
             try
             {
