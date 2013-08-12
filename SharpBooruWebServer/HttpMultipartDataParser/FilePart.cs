@@ -25,7 +25,6 @@
 // --------------------------------------------------------------------------------------------------------------------
 namespace HttpMultipartParser
 {
-    using System.IO;
 
     /// <summary>
     ///     Represents a single file extracted from a multipart/form-data

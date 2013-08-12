@@ -2,7 +2,6 @@
 using System.Net;
 using System.Threading;
 using System.Net.Sockets;
-using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 using Amib.Threading;
 

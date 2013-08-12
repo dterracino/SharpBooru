@@ -1,10 +1,5 @@
 ﻿using System;
-using System.IO;
-using System.Net;
 using System.Threading;
-using Mono.Unix;
-using Mono.Unix.Native;
-using TA.SharpBooru.Client;
 using TA.SharpBooru.Client.WebServer.VFS;
 
 namespace TA.SharpBooru.Client.WebServer

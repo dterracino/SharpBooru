@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
-using Mono.Unix;
 using Mono.Unix.Native;
 
 namespace TA.SharpBooru.Server

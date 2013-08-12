@@ -1,5 +1,4 @@
-﻿using System;
-using TA.SharpBooru.Client;
+﻿using TA.SharpBooru.Client;
 
 namespace TA.SharpBooru.BooruAPIs
 {

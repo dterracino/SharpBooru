@@ -1,11 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Net;
-using System.Text;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using Amib.Threading;
 using TA.SharpBooru.Client.WebServer.VFS;
 
