@@ -24,9 +24,19 @@ namespace TA.SharpBooru.Client.GUI
                 return 1;
 
             if (username != null)
-                using (Booru booru = new Booru(server, port, username, password))
-                using (MainForm form = new MainForm(booru))
-                    Application.Run(form);
+                try
+                {
+                    using (Booru booru = new Booru(server, port, username, password))
+                    using (MainForm form = new MainForm(booru))
+                        Application.Run(form);
+                }
+                catch (Exception ex)
+                {
+                    string exName = ex.GetType().Name;
+                    string msg = string.Format("{0}: {1}", exName, ex.Message);
+                    MessageBox.Show(msg, exName, MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return 1;
+                }
 
             return 0;
         }
