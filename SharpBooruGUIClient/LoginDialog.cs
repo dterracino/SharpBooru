@@ -10,16 +10,21 @@ namespace TA.SharpBooru.Client.GUI
             InitializeComponent();
             textBoxUsername.KeyDown += keyDown;
             textBoxPassword.KeyDown += keyDown;
+            textBoxUsername.TextChanged += textChanged;
+            textBoxPassword.TextChanged += textChanged;
             buttonOK.KeyDown += (sender, e) =>
                 {
                     if (e.KeyCode == Keys.Escape)
                         Close();
                 };
+            textChanged(this, EventArgs.Empty);
         }
+
+        private void textChanged(object sender, EventArgs e) { buttonOK.Enabled = !string.IsNullOrWhiteSpace(Username) && !string.IsNullOrEmpty(Password); }
 
         private void keyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter)
+            if (e.KeyCode == Keys.Enter && buttonOK.Enabled)
                 buttonOK_Click(sender, e);
             else if (e.KeyCode == Keys.Escape)
                 Close();
