@@ -78,7 +78,9 @@ namespace TA.SharpBooru
             Success = 0,
             ResourceNotFound,
             NoPermission,
-            UnknownError
+            UnknownError,
+            LoginFailed,
+            ProtocolVersionMismatch
         }
 
         public class BooruException : Exception
@@ -99,7 +101,7 @@ namespace TA.SharpBooru
                 : base(Message) { }
 
             public BooruException(ErrorCode ErrorCode)
-                : base(string.Format("Server returned ErrorCode {0}: {1}", (byte)ErrorCode, ErrorCode))
+                : base(string.Format("ErrorCode {0}: {1}", (byte)ErrorCode, ErrorCode))
             { _ErrorCode = ErrorCode; }
         }
     }
