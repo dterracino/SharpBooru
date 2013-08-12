@@ -38,9 +38,9 @@ namespace TA.SharpBooru.Client
         public Booru(string Server, ushort Port, string Username, string Password)
         {
             if (string.IsNullOrWhiteSpace(Username))
-                throw new ArgumentException("Username");
+                throw new ArgumentException("Username must be non-empty");
             else if (string.IsNullOrEmpty(Password))
-                throw new ArgumentException("Password");
+                throw new ArgumentException("Password must be non-empty");
             IPAddress address = null;
             if (!IPAddress.TryParse(Server, out address))
             {
