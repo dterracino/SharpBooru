@@ -9,6 +9,9 @@ namespace TA.SharpBooru.Client.GUI.Controls
         public delegate void ImageOpenedHandler(object sender, EventArgs e, object aObj);
         public event ImageOpenedHandler ImageOpened;
 
+        public delegate void ImageRightClickHandler(object sender, EventArgs e, object aObj);
+        public event ImageRightClickHandler ImageRightClick;
+
         //public Color? BorderColor = Color.Black;
 
         private ushort _ThumbnailSize = 192;
@@ -51,6 +54,12 @@ namespace TA.SharpBooru.Client.GUI.Controls
                     {
                         if (ImageOpened != null)
                             ImageOpened(sender, e, aObj);
+                    };
+                pBox.MouseClick += (sender, e) =>
+                    {
+                        if (e.Button == MouseButtons.Right)
+                            if (ImageRightClick != null)
+                                ImageRightClick(sender, e, aObj);
                     };
                 this.Controls.Add(pBox);
             }
