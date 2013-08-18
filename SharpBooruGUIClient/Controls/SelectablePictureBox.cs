@@ -4,12 +4,15 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Drawing.Drawing2D;
 
 namespace TA.SharpBooru.Client.GUI.Controls
 {
     public class SelectablePictureBox : PictureBox
     {
         public event EventHandler ImageOpened;
+
+        public Color? Border = null;
 
         public SelectablePictureBox()
         {
@@ -44,6 +47,15 @@ namespace TA.SharpBooru.Client.GUI.Controls
                 Brush activeBrush = new SolidBrush(Color.FromArgb(150, this.BackColor));
                 e.Graphics.FillRectangle(activeBrush, this.ClientRectangle);
             }
+            if (Border.HasValue)
+                if (Border != Color.Transparent)
+                {
+                    Pen borderPen = new Pen(Border.Value, 3f);
+                    Rectangle borderRect = new Rectangle(1, 1, this.ClientSize.Width - 3, this.ClientSize.Height - 3);
+                    if (this.Focused)
+                        borderPen.DashStyle = DashStyle.Dash;
+                    e.Graphics.DrawRectangle(borderPen, borderRect);
+                }
         }
 
         private void FireImageOpenedEvent(EventArgs e)
