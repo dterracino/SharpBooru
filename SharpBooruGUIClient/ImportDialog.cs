@@ -41,9 +41,8 @@ namespace TA.SharpBooru.Client.GUI
         {
             DataGridViewRowCollection rows = dataGridView.Rows;
             PleaseWaitDialog pwd = new PleaseWaitDialog();
-            GUIHelper.SetFormCentered(this, pwd);
-            GUIHelper.EnableWindow(this, false);
-            pwd.Show();
+            //GUIHelper.SetFormCentered(this, pwd);
+            pwd.ShowDialogNonBlocking(this);
             Thread thread = new Thread(() =>
                 {
                     GUIHelper.Invoke(this, () =>
@@ -107,7 +106,6 @@ namespace TA.SharpBooru.Client.GUI
                         });
                     CheckAndEditCheckedListBox();
                     pwd.Close();
-                    GUIHelper.EnableWindow(this, true);
                 });
             thread.Start();
         }
