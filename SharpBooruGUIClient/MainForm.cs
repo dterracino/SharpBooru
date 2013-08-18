@@ -18,12 +18,41 @@ namespace TA.SharpBooru.Client.GUI
             searchBox.SetTags(_Booru.GetAllTags());
             searchBox.EnterPressed += tagTextBox1_EnterPressed;
             booruThumbView.SetBooru(_Booru);
-            booruThumbView.ImageOpened += booruThumbView_ImageOpened;
+            booruThumbView.ImageOpened += (sender, aObj) => openImage(aObj);
+            booruThumbView.ImageRightClick += (sender, e, aObj) => imageContextMenuStrip.Show(sender, e.Location);
             this.Shown += tagTextBox1_EnterPressed;
             this.buttonAdminTools.Click += (sender, e) => adminContextMenuStrip.Show(buttonAdminTools, new Point(buttonAdminTools.Width, 0));
             this.killServerToolStripMenuItem.Click += killServerToolStripMenuItem_Click;
             this.saveBooruToolStripMenuItem.Click += saveBooruToolStripMenuItem_Click;
+            this.openToolStripMenuItem.Click += (sender, e) => openImage(booruThumbView.SelectedPost);
+            this.editToolStripMenuItem.Click += (sender, e) =>
+                {
+                    BooruPost post = booruThumbView.SelectedPost;
+                    using (EditDialog editDialog = new EditDialog())
+                        if (editDialog.ShowDialog(_Booru, ref     post) == DialogResult.OK)
+                            _Booru.SavePost(post);
+                };
+            this.deleteToolStripMenuItem.Click += (sender, e) => _Booru.DeletePost(booruThumbView.SelectedPost);
+            notifyIcon.Click += notifyIcon_Click;
+            GUIHelper.CreateToolTip(buttonAdminTools, "Admin tools");
+            GUIHelper.CreateToolTip(buttonRefresh, "Refresh searched posts");
+            GUIHelper.CreateToolTip(buttonChangeUser, "Change the user");
+            GUIHelper.CreateToolTip(buttonImportDialog, "Import posts into the booru");
             CheckPermissions();
+        }
+
+        private void notifyIcon_Click(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Minimized)
+            {
+                this.Show();
+                this.WindowState = FormWindowState.Normal;
+            }
+            else
+            {
+                this.Hide();
+                this.WindowState = FormWindowState.Minimized;
+            }
         }
 
         private void saveBooruToolStripMenuItem_Click(object sender, EventArgs e)
@@ -42,7 +71,7 @@ namespace TA.SharpBooru.Client.GUI
             }
         }
 
-        private void booruThumbView_ImageOpened(object sender, EventArgs e, object aObj)
+        private void openImage(object aObj)
         {
             BooruPost post = aObj as BooruPost;
             List<ulong> postIDs = booruThumbView.Posts;
@@ -83,6 +112,8 @@ namespace TA.SharpBooru.Client.GUI
             BooruUser cUser = _Booru.CurrentUser;
             buttonImportDialog.Enabled = cUser.CanAddPosts;
             buttonAdminTools.Visible = cUser.IsAdmin;
+            editToolStripMenuItem.Enabled = cUser.CanEditPosts;
+            deleteToolStripMenuItem.Enabled = cUser.CanDeletePosts;
         }
 
         private void buttonRefresh_Click(object sender, EventArgs e)
@@ -90,6 +121,13 @@ namespace TA.SharpBooru.Client.GUI
             CheckPermissions();
             searchBox.SetTags(_Booru.GetAllTags());
             booruThumbView.Posts = _Booru.Search(_LastSearch);
+        }
+
+        protected override void OnResize(EventArgs e)
+        {
+            base.OnResize(e);
+            if (WindowState == FormWindowState.Minimized)
+                this.Hide();
         }
     }
 }
