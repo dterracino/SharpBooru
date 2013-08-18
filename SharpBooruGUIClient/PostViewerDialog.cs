@@ -169,6 +169,10 @@ namespace TA.SharpBooru.Client.GUI
                 cPost.EditCount = 0;
                 cPost.ViewCount = 0;
             }
+            string oldComment = cPost.Comment;
+            cPost.Comment = "Cloned ID " + _Post.ID;
+            if (!string.IsNullOrWhiteSpace(oldComment))
+                cPost.Comment += ", " + oldComment.Trim();
             _Booru.AddPost(ref cPost);
             _PostIDs.Insert(0, cPost.ID);
             Index = 0;
