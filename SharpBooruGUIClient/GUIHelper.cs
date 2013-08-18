@@ -15,9 +15,11 @@ namespace TA.SharpBooru.Client.GUI
         [DllImport("user32.dll", EntryPoint = "SendMessage")]
         private static extern int _SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
+        /*
         [DllImport("user32.dll", EntryPoint = "EnableWindow")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool _EnableWindow(IntPtr hWnd, bool bEnable);
+        */
 
         public static int SetListViewPadding(ListView ListView, int leftPadding, int topPadding)
         {
@@ -31,11 +33,12 @@ namespace TA.SharpBooru.Client.GUI
             else return -1;
         }
 
-        public static ToolTip CreateToolTip(Control Control, string Text)
+        public static void CreateToolTip(Control Control, string Text)
         {
             ToolTip tt = new ToolTip();
             tt.SetToolTip(Control, Text);
-            return tt;
+            Control.Disposed += (sender, e) =>
+                tt.Dispose();
         }
 
         public static void SetFormCentered(Form Parent, Form Child)
@@ -57,6 +60,7 @@ namespace TA.SharpBooru.Client.GUI
             else return false;
         }
 
+        /*
         public static bool EnableWindow(Form Form, bool Enable)
         {
             if (Helper.IsWindows())
@@ -67,6 +71,7 @@ namespace TA.SharpBooru.Client.GUI
             }
             else return false;
         }
+        */
 
         public static void Invoke(Control Control, Action Action)
         {
