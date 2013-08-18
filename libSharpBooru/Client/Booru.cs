@@ -153,6 +153,7 @@ namespace TA.SharpBooru.Client
             }
         }
 
+        public void DeletePost(BooruPost Post) { DeletePost(Post.ID); }
         public void DeletePost(ulong ID)
         {
             lock (_Lock)
@@ -187,6 +188,7 @@ namespace TA.SharpBooru.Client
             }
         }
 
+        public void DeleteTag(BooruTag Tag) { DeleteTag(Tag.ID); }
         public void DeleteTag(ulong ID)
         {
             lock (_Lock)
