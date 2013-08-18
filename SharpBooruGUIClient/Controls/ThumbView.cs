@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections.Generic;
 
 namespace TA.SharpBooru.Client.GUI.Controls
 {
     public class ThumbView : FlowLayoutPanel
     {
-        public delegate void ImageOpenedHandler(object sender, EventArgs e, object aObj);
+        public delegate void ImageOpenedHandler(SelectablePictureBox sender, object aObj);
         public event ImageOpenedHandler ImageOpened;
 
-        public delegate void ImageRightClickHandler(object sender, EventArgs e, object aObj);
+        public delegate void ImageRightClickHandler(SelectablePictureBox sender, MouseEventArgs e, object aObj);
         public event ImageRightClickHandler ImageRightClick;
 
-        //public Color? BorderColor = Color.Black;
-
         private ushort _ThumbnailSize = 192;
+        private ushort? _ColCount = null;
+        private Dictionary<SelectablePictureBox, object> _aObjDict = new Dictionary<SelectablePictureBox, object>();
 
         public ushort ThumbnailSize
         {
@@ -31,6 +32,18 @@ namespace TA.SharpBooru.Client.GUI.Controls
             }
         }
 
+        public object SelectedObject
+        {
+            get
+            {
+                foreach (Control ctrl in this.Controls)
+                    if (ctrl is SelectablePictureBox)
+                        if (ctrl.Focused)
+                            return _aObjDict[ctrl as SelectablePictureBox];
+                throw new KeyNotFoundException("No image selected");
+            }
+        }
+
         public ThumbView()
         {
             this.FlowDirection = FlowDirection.LeftToRight;
@@ -39,7 +52,7 @@ namespace TA.SharpBooru.Client.GUI.Controls
             this.AutoScroll = true;
         }
 
-        public void Add(Bitmap Thumbnail, object aObj)
+        public void Add(Bitmap Thumbnail, object aObj, string ToolTipText = null, Color? Border = null)
         {
             if (!this.InvokeRequired)
             {
@@ -53,17 +66,21 @@ namespace TA.SharpBooru.Client.GUI.Controls
                 pBox.ImageOpened += (sender, e) =>
                     {
                         if (ImageOpened != null)
-                            ImageOpened(sender, e, aObj);
+                            ImageOpened(pBox, aObj);
                     };
                 pBox.MouseClick += (sender, e) =>
                     {
                         if (e.Button == MouseButtons.Right)
                             if (ImageRightClick != null)
-                                ImageRightClick(sender, e, aObj);
+                                ImageRightClick(pBox, e, aObj);
                     };
+                if (!string.IsNullOrWhiteSpace(ToolTipText))
+                    GUIHelper.CreateToolTip(pBox, ToolTipText.Trim());
+                pBox.Border = Border;
+                _aObjDict.Add(pBox, aObj);
                 this.Controls.Add(pBox);
             }
-            else Invoke(new Action<Bitmap, object>(Add), Thumbnail, aObj);
+            else Invoke(new Action<Bitmap, object, string, Color?>(Add), Thumbnail, aObj, ToolTipText, Border);
         }
 
         public void Clear()
@@ -76,6 +93,7 @@ namespace TA.SharpBooru.Client.GUI.Controls
                         (childControl as PictureBox).Image.Dispose();
                     childControl.Dispose();
                 }
+                _aObjDict.Clear();
                 this.Controls.Clear();
             }
             else Invoke(new Action(Clear));
@@ -87,19 +105,38 @@ namespace TA.SharpBooru.Client.GUI.Controls
                 childControl.Size = new Size(_ThumbnailSize, _ThumbnailSize);
         }
 
-        /*
-        protected override void OnPaint(PaintEventArgs e)
+        protected override bool ProcessDialogKey(Keys keyData)
         {
-            base.OnPaint(e);
-            if (this.BorderStyle == BorderStyle.FixedSingle
-                && BorderColor.HasValue)
-            {
-                Rectangle borderRect = e.ClipRectangle;
-                borderRect.Width--; borderRect.Height--;
-                Pen borderPen = new Pen(BorderColor.Value, 1f);
-                e.Graphics.DrawRectangle(borderPen, borderRect);
-            }
+            //TODO Implement arrow key navigation
+            return base.ProcessDialogKey(keyData);
         }
-        */
+
+        private ushort GetRowCount()
+        {
+            int rowCount = this.Controls.Count / GetColumnCount();
+            if (this.Controls.Count % GetColumnCount() > 0)
+                return (ushort)(rowCount + 1);
+            else return (ushort)rowCount;
+        }
+
+        private ushort GetColumnCount()
+        {
+            if (!_ColCount.HasValue)
+            {
+                List<int> xCoords = new List<int>();
+                foreach (Control ctrl in this.Controls)
+                    if (ctrl is PictureBox)
+                        if (!xCoords.Contains(ctrl.Location.X))
+                            xCoords.Add(ctrl.Location.X);
+                _ColCount = (ushort)xCoords.Count;
+            }
+            return _ColCount.Value;
+        }
+
+        protected override void OnResize(EventArgs eventargs)
+        {
+            _ColCount = null;
+            base.OnResize(eventargs);
+        }
     }
 }

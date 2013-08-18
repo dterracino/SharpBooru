@@ -10,8 +10,11 @@ namespace TA.SharpBooru.Client.GUI.Controls
 {
     public partial class BooruThumbView : UserControl
     {
-        public delegate void ImageOpenedHandler(object sender, EventArgs e, object aObj);
+        public delegate void ImageOpenedHandler(SelectablePictureBox sender, object aObj);
         public event ImageOpenedHandler ImageOpened;
+
+        public delegate void ImageRightClickHandler(SelectablePictureBox sender, MouseEventArgs e, object aObj);
+        public event ImageRightClickHandler ImageRightClick;
 
         public bool AsynchronousLoading = false;
 
@@ -70,6 +73,8 @@ namespace TA.SharpBooru.Client.GUI.Controls
             set { thumbView.BackColor = value; }
         }
 
+        public BooruPost SelectedPost { get { return thumbView.SelectedObject as BooruPost; } }
+
         public BooruThumbView()
         {
             InitializeComponent();
@@ -77,12 +82,17 @@ namespace TA.SharpBooru.Client.GUI.Controls
             ajaxLoading1.Location = thumbView.Location;
             ajaxLoading1.Size = thumbView.Size;
             ajaxLoading1.Anchor = thumbView.Anchor;
-            thumbView.ImageOpened += (sender, e, aObj) =>
+            thumbView.ImageOpened += (sender, aObj) =>
                 {
                     if (ImageOpened != null)
-                        ImageOpened(sender, e, aObj);
+                        ImageOpened(sender, aObj);
                 };
             thumbView.ForeColor = Color.Black;
+            thumbView.ImageRightClick += (sender, e, aObj) =>
+                {
+                    if (ImageRightClick != null)
+                        ImageRightClick(sender, e, aObj);
+                };
             RefreshLabel();
         }
 
@@ -113,7 +123,17 @@ namespace TA.SharpBooru.Client.GUI.Controls
                 if (_Booru != null)
                 {
                     BooruPost postToAdd = _Booru.GetPost(postID);
-                    thumbView.Add(postToAdd.Thumbnail.Bitmap, postToAdd);
+                    string toolTipText = string.Format("# {0} - {1}x{2} - Added {3} by {4}", postToAdd.ID, postToAdd.Width, postToAdd.Height, postToAdd.CreationDate, postToAdd.Owner);
+                    Color? borderColor = null;
+                    if (postToAdd.Private)
+                    {
+                        if (postToAdd.Owner == _Booru.CurrentUser.Username)
+                            borderColor = Color.Red;
+                        else borderColor = Color.Orange;
+                    }
+                    else if (postToAdd.Owner == _Booru.CurrentUser.Username)
+                        borderColor = Color.Green;
+                    thumbView.Add(postToAdd.Thumbnail.Bitmap, postToAdd, toolTipText, borderColor);
                 }
                 else thumbView.Add(null, postID);
             }
