@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImportDialog));
             this.okButton = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.sharedTagsTagTextBox = new TA.SharpBooru.Client.GUI.Controls.TagTextBox();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.allowedTagsCheckedListBox = new System.Windows.Forms.CheckedListBox();
             this.dataGridView = new System.Windows.Forms.DataGridView();
-            this.buttonPasteClipboard = new System.Windows.Forms.Button();
             this.image_file = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tags = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.source = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -42,6 +42,7 @@
             this.rating = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.privat = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.image = new System.Windows.Forms.DataGridViewImageColumn();
+            this.buttonPasteClipboard = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -147,17 +148,6 @@
             this.dataGridView.Size = new System.Drawing.Size(729, 471);
             this.dataGridView.TabIndex = 3;
             // 
-            // buttonPasteClipboard
-            // 
-            this.buttonPasteClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonPasteClipboard.Location = new System.Drawing.Point(12, 567);
-            this.buttonPasteClipboard.Name = "buttonPasteClipboard";
-            this.buttonPasteClipboard.Size = new System.Drawing.Size(164, 23);
-            this.buttonPasteClipboard.TabIndex = 13;
-            this.buttonPasteClipboard.Text = "Import URL from Clipboard";
-            this.buttonPasteClipboard.UseVisualStyleBackColor = true;
-            this.buttonPasteClipboard.Click += new System.EventHandler(this.buttonPasteClipboard_Click);
-            // 
             // image_file
             // 
             this.image_file.HeaderText = "Image File";
@@ -202,6 +192,17 @@
             this.image.ReadOnly = true;
             this.image.Width = 256;
             // 
+            // buttonPasteClipboard
+            // 
+            this.buttonPasteClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonPasteClipboard.Location = new System.Drawing.Point(12, 567);
+            this.buttonPasteClipboard.Name = "buttonPasteClipboard";
+            this.buttonPasteClipboard.Size = new System.Drawing.Size(164, 23);
+            this.buttonPasteClipboard.TabIndex = 13;
+            this.buttonPasteClipboard.Text = "Import URL from Clipboard";
+            this.buttonPasteClipboard.UseVisualStyleBackColor = true;
+            this.buttonPasteClipboard.Click += new System.EventHandler(this.buttonPasteClipboard_Click);
+            // 
             // ImportDialog
             // 
             this.AllowDrop = true;
@@ -211,6 +212,7 @@
             this.Controls.Add(this.buttonPasteClipboard);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.okButton);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(580, 400);
             this.Name = "ImportDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;

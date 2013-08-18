@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditDialog));
             this.textBoxRating = new System.Windows.Forms.NumericUpDown();
             this.labelRating = new System.Windows.Forms.Label();
             this.buttonOK = new System.Windows.Forms.Button();
@@ -173,6 +174,7 @@
             this.Controls.Add(this.textBoxSource);
             this.Controls.Add(this.textBoxComment);
             this.Controls.Add(this.textBoxTags);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "EditDialog";
             this.Text = "EditDialog";
             ((System.ComponentModel.ISupportInitialize)(this.textBoxRating)).EndInit();

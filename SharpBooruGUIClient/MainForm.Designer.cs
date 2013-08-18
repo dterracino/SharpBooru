@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.labelSearchBox = new System.Windows.Forms.Label();
             this.buttonImportDialog = new System.Windows.Forms.Button();
             this.buttonChangeUser = new System.Windows.Forms.Button();
@@ -37,9 +38,15 @@
             this.adminContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.saveBooruToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.killServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.imageContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchBox = new TA.SharpBooru.Client.GUI.Controls.TagTextBox();
             this.booruThumbView = new TA.SharpBooru.Client.GUI.Controls.BooruThumbView();
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.adminContextMenuStrip.SuspendLayout();
+            this.imageContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // labelSearchBox
@@ -100,19 +107,48 @@
             this.saveBooruToolStripMenuItem,
             this.killServerToolStripMenuItem});
             this.adminContextMenuStrip.Name = "adminContextMenuStrip";
-            this.adminContextMenuStrip.Size = new System.Drawing.Size(134, 48);
+            this.adminContextMenuStrip.Size = new System.Drawing.Size(139, 48);
             // 
             // saveBooruToolStripMenuItem
             // 
+            this.saveBooruToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.saveBooruToolStripMenuItem.Name = "saveBooruToolStripMenuItem";
-            this.saveBooruToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.saveBooruToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.saveBooruToolStripMenuItem.Text = "Save Booru";
             // 
             // killServerToolStripMenuItem
             // 
             this.killServerToolStripMenuItem.Name = "killServerToolStripMenuItem";
-            this.killServerToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.killServerToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             this.killServerToolStripMenuItem.Text = "Kill Server";
+            // 
+            // imageContextMenuStrip
+            // 
+            this.imageContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.openToolStripMenuItem,
+            this.editToolStripMenuItem,
+            this.deleteToolStripMenuItem});
+            this.imageContextMenuStrip.Name = "imageContextMenuStrip";
+            this.imageContextMenuStrip.Size = new System.Drawing.Size(108, 70);
+            // 
+            // openToolStripMenuItem
+            // 
+            this.openToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.openToolStripMenuItem.Name = "openToolStripMenuItem";
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.openToolStripMenuItem.Text = "Open";
+            // 
+            // editToolStripMenuItem
+            // 
+            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.editToolStripMenuItem.Text = "Edit";
+            // 
+            // deleteToolStripMenuItem
+            // 
+            this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.deleteToolStripMenuItem.Text = "Delete";
             // 
             // searchBox
             // 
@@ -129,11 +165,17 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.booruThumbView.BackColor = System.Drawing.Color.SteelBlue;
             this.booruThumbView.LabelForeColor = System.Drawing.Color.White;
-            this.booruThumbView.Location = new System.Drawing.Point(118, 12);
+            this.booruThumbView.Location = new System.Drawing.Point(123, 12);
             this.booruThumbView.Name = "booruThumbView";
-            this.booruThumbView.Size = new System.Drawing.Size(459, 323);
+            this.booruThumbView.Size = new System.Drawing.Size(454, 323);
             this.booruThumbView.TabIndex = 4;
             this.booruThumbView.ThumbViewBackColor = System.Drawing.Color.White;
+            // 
+            // notifyIcon
+            // 
+            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
+            this.notifyIcon.Text = "SharpBooru";
+            this.notifyIcon.Visible = true;
             // 
             // MainForm
             // 
@@ -147,9 +189,11 @@
             this.Controls.Add(this.labelSearchBox);
             this.Controls.Add(this.searchBox);
             this.Controls.Add(this.booruThumbView);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "SharpBooru GUI Client";
             this.adminContextMenuStrip.ResumeLayout(false);
+            this.imageContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -167,6 +211,11 @@
         private System.Windows.Forms.ContextMenuStrip adminContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem saveBooruToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem killServerToolStripMenuItem;
+        private System.Windows.Forms.ContextMenuStrip imageContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.NotifyIcon notifyIcon;
 
     }
 }

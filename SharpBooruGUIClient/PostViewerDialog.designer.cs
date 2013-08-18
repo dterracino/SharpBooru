@@ -30,6 +30,7 @@ namespace TA.SharpBooru.Client.GUI
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PostViewerDialog));
             this.buttonClone = new System.Windows.Forms.Button();
             this.buttonEditPost = new System.Windows.Forms.Button();
             this.buttonEditImage = new System.Windows.Forms.Button();
@@ -175,6 +176,7 @@ namespace TA.SharpBooru.Client.GUI
             this.Controls.Add(this.buttonSaveImage);
             this.Controls.Add(this.buttonDeletePost);
             this.Controls.Add(this.tagList);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(580, 370);
             this.Name = "PostViewerDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
