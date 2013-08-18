@@ -71,6 +71,7 @@ namespace TA.SharpBooru.Client.GUI
             {
                 if (booru != null)
                     booru.Dispose();
+                Helper.CleanTempFolder();
             }
 
             return 0;
