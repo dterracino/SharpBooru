@@ -88,5 +88,11 @@ namespace TA.SharpBooru.Client.GUI
             GUIHelper.Invoke(this, () => { base.Close(); });
             codeClose = false;
         }
+
+        public void ShowDialogNonBlocking(Control InvokeTarget)
+        {
+            Func<DialogResult> showDialogFunc = this.ShowDialog;
+            InvokeTarget.BeginInvoke(showDialogFunc);
+        }
     }
 }
