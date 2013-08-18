@@ -21,8 +21,7 @@ namespace TA.SharpBooru.BooruAPIs
                     Array.Copy(Tags, tags_for_search, MAX_TAGS);
                     tagstring = string.Join("+", tags_for_search);
                 }
-                else
-                    tagstring = string.Join("+", Tags);
+                else tagstring = string.Join("+", Tags);
             for (int i = 0; true; i++)
             {
                 XmlDocument document = GetXmlDocument(CreateURI("limit", "100", "pid", i.ToString(), "tags", tagstring));
