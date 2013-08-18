@@ -16,7 +16,7 @@ namespace TA.SharpBooru.Client.GUI.Controls
         public delegate void ImageRightClickHandler(SelectablePictureBox sender, MouseEventArgs e, object aObj);
         public event ImageRightClickHandler ImageRightClick;
 
-        public bool AsynchronousLoading = false;
+        public bool AsynchronousLoading = true;
 
         private Booru _Booru = null;
         private List<ulong> _Posts = new List<ulong>();
