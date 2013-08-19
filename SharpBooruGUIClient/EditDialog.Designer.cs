@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(EditDialog));
             this.textBoxRating = new System.Windows.Forms.NumericUpDown();
             this.labelRating = new System.Windows.Forms.Label();
-            this.buttonOK = new System.Windows.Forms.Button();
             this.checkBoxPrivate = new System.Windows.Forms.CheckBox();
             this.labelComment = new System.Windows.Forms.Label();
             this.labelSource = new System.Windows.Forms.Label();
@@ -41,6 +40,7 @@
             this.textBoxTags = new TA.SharpBooru.Client.GUI.Controls.TagTextBox();
             this.textBoxOwner = new System.Windows.Forms.TextBox();
             this.labelOwner = new System.Windows.Forms.Label();
+            this.buttonOK = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxRating)).BeginInit();
             this.SuspendLayout();
             // 
@@ -62,25 +62,14 @@
             this.labelRating.TabIndex = 30;
             this.labelRating.Text = "Rating";
             // 
-            // buttonOK
-            // 
-            this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOK.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_ok;
-            this.buttonOK.Location = new System.Drawing.Point(385, 214);
-            this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(30, 30);
-            this.buttonOK.TabIndex = 29;
-            this.buttonOK.UseVisualStyleBackColor = true;
-            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
-            // 
             // checkBoxPrivate
             // 
             this.checkBoxPrivate.AutoSize = true;
             this.checkBoxPrivate.Location = new System.Drawing.Point(108, 171);
             this.checkBoxPrivate.Name = "checkBoxPrivate";
-            this.checkBoxPrivate.Size = new System.Drawing.Size(196, 17);
+            this.checkBoxPrivate.Size = new System.Drawing.Size(166, 17);
             this.checkBoxPrivate.TabIndex = 28;
-            this.checkBoxPrivate.Text = "Private (only Owner/Admin can see)";
+            this.checkBoxPrivate.Text = "Private (other users can\'t see)";
             this.checkBoxPrivate.UseVisualStyleBackColor = true;
             // 
             // labelComment
@@ -156,6 +145,17 @@
             this.labelOwner.Size = new System.Drawing.Size(38, 13);
             this.labelOwner.TabIndex = 33;
             this.labelOwner.Text = "Owner";
+            // 
+            // buttonOK
+            // 
+            this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonOK.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_ok;
+            this.buttonOK.Location = new System.Drawing.Point(385, 214);
+            this.buttonOK.Name = "buttonOK";
+            this.buttonOK.Size = new System.Drawing.Size(30, 30);
+            this.buttonOK.TabIndex = 29;
+            this.buttonOK.UseVisualStyleBackColor = true;
+            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // EditDialog
             // 
