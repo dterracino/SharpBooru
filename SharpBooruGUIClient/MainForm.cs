@@ -2,7 +2,6 @@
 using System.Drawing;
 using System.Windows.Forms;
 using System.Collections.Generic;
-using TA.SharpBooru.Client.GUI.Controls;
 
 namespace TA.SharpBooru.Client.GUI
 {
@@ -22,6 +21,7 @@ namespace TA.SharpBooru.Client.GUI
             booruThumbView.ImageRightClick += (sender, e, aObj) => imageContextMenuStrip.Show(sender, e.Location);
             this.Shown += tagTextBox1_EnterPressed;
             this.buttonAdminTools.Click += (sender, e) => adminContextMenuStrip.Show(buttonAdminTools, new Point(buttonAdminTools.Width, 0));
+            this.buttonConsole.Click += (sender, e) => (new ConsoleForm(_Booru)).ShowDialog();
             this.killServerToolStripMenuItem.Click += killServerToolStripMenuItem_Click;
             this.saveBooruToolStripMenuItem.Click += saveBooruToolStripMenuItem_Click;
             this.openToolStripMenuItem.Click += (sender, e) => openImage(booruThumbView.SelectedPost);
@@ -33,7 +33,7 @@ namespace TA.SharpBooru.Client.GUI
                             _Booru.SavePost(post);
                 };
             this.deleteToolStripMenuItem.Click += (sender, e) => _Booru.DeletePost(booruThumbView.SelectedPost);
-            notifyIcon.Click += notifyIcon_Click;
+            //notifyIcon.Click += notifyIcon_Click;
             GUIHelper.CreateToolTip(buttonAdminTools, "Admin tools");
             GUIHelper.CreateToolTip(buttonRefresh, "Refresh searched posts");
             GUIHelper.CreateToolTip(buttonChangeUser, "Change the user");
@@ -41,6 +41,7 @@ namespace TA.SharpBooru.Client.GUI
             CheckPermissions();
         }
 
+        /*
         private void notifyIcon_Click(object sender, EventArgs e)
         {
             if (WindowState == FormWindowState.Minimized)
@@ -54,6 +55,7 @@ namespace TA.SharpBooru.Client.GUI
                 this.WindowState = FormWindowState.Minimized;
             }
         }
+        */
 
         private void saveBooruToolStripMenuItem_Click(object sender, EventArgs e)
         {
