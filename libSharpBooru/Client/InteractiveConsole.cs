@@ -9,7 +9,7 @@ namespace TA.SharpBooru.Client
 {
     public partial class InteractiveConsole
     {
-        public abstract class Command
+        public class Command
         {
             private Delegate _Delegate = null;
             private List<string> _CommandParts = null;
@@ -98,7 +98,16 @@ namespace TA.SharpBooru.Client
             string cmdLine = In.ReadLine();
             if (cmdLine != "exit")
             {
-                TryExecute(In.ReadLine());
+                try
+                {
+                    if (!TryExecute(In.ReadLine()))
+                        throw new EntryPointNotFoundException("Command not found");
+                }
+                catch (Exception ex)
+                {
+                    //TODO Make dat better
+                    Out.WriteLine("ERROR: " + ex.Message);
+                }
                 StartInteractiveMode();
             }
         }

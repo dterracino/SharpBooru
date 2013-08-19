@@ -1,15 +1,37 @@
 ﻿using System;
+using System.IO;
+using System.Text;
 using System.Windows.Forms;
 
 namespace TA.SharpBooru.Client.GUI
 {
     public partial class ConsoleForm : Form
     {
-        private Booru _Booru;
+        public class TextBoxWriter : TextWriter
+        {
+            TextBox _output = null;
+
+            public TextBoxWriter(TextBox output) { _output = output; }
+
+            public override void Write(char value)
+            {
+                base.Write(value);
+                _output.AppendText(value.ToString());
+            }
+
+            public override Encoding Encoding { get { return Encoding.UTF8; } }
+        }
+
+        public class TextBoxReader : TextReader
+        {
+            //TODO Override it
+        }
+
+        private BooruConsole _Console;
 
         public ConsoleForm(Booru Booru)
         {
-            _Booru = Booru;
+            _Console = new BooruConsole(Booru, new TextBoxWriter(textBoxLog), new TextBoxReader()); 
             InitializeComponent();
             this.textBoxCmd.KeyDown += textBoxCmd_KeyDown;
         }
