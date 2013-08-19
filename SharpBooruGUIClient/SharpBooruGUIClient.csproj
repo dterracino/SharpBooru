@@ -48,6 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ConsoleForm.Designer.cs">
+      <DependentUpon>ConsoleForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\ImageBox\ImageBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -134,6 +140,9 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="ConsoleForm.resx">
+      <DependentUpon>ConsoleForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Controls\BooruThumbView.resx">
       <DependentUpon>BooruThumbView.cs</DependentUpon>
     </EmbeddedResource>
