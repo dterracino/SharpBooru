@@ -35,7 +35,7 @@ namespace TA.SharpBooru.Client.WebServer
             Dictionary<string, string> links = new Dictionary<string, string>()
             {
                 { "Index", "/" },
-                { "Random", "/post?id=-1" },
+                //{ "Random", "/post?id=-1" },
                 { "GitHub", "http://www.github.com/teamalpha5441/SharpBooru" },
                 { "Info", "/info" }
             };
@@ -76,7 +76,7 @@ namespace TA.SharpBooru.Client.WebServer
                 Context.OutWriter.Write(" <input style=\"float: left\" type=\"submit\" value=\"Login\"></form>");
             }
             */
-            string serverMOTD = "TA.SharpBooru.Client.WebServer BETA"; //TODO Get server MOTD
+            string serverMOTD = "Download the GUI client (better) here: http://sharpbooru.zapto.org/gui.zip"; //TODO Get server MOTD
             if (!string.IsNullOrWhiteSpace(serverMOTD))
             {
                 Context.OutWriter.Write("</div><div class=\"motd\"><b>Notice: </b>");
