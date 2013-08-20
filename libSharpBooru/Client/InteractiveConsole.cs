@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Reflection;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -92,7 +93,14 @@ namespace TA.SharpBooru.Client
             else this.In = Console.In;
         }
 
-        public void StartInteractiveMode()
+        public Thread StartAsync()
+        {
+            Thread consoleThread = new Thread(Start);
+            consoleThread.Start();
+            return consoleThread;
+        }
+
+        public void Start()
         {
             Out.Write(Prompt);
             string cmdLine = In.ReadLine();
@@ -108,7 +116,7 @@ namespace TA.SharpBooru.Client
                     //TODO Make dat better
                     Out.WriteLine("ERROR: " + ex.Message);
                 }
-                StartInteractiveMode();
+                Start();
             }
         }
 
