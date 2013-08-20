@@ -18,6 +18,7 @@ namespace TA.SharpBooru.Client.GUI
                     (new Program()).Run(options);
                     return 0;
                 }
+                else OutputOnGUIandCLI(options.GetUsage(), "Usage", MessageBoxIcon.Information);
             }
             catch (Exception ex) { TryHandleException(ex); }
             return 1;
@@ -27,8 +28,13 @@ namespace TA.SharpBooru.Client.GUI
         {
             string exName = ex.GetType().Name;
             string exMsg = string.Format("{0}: {1}", exName, ex.Message);
-            try { MessageBox.Show(exMsg, exName, MessageBoxButtons.OK, MessageBoxIcon.Error); }
-            catch { Console.WriteLine(exMsg); }
+            OutputOnGUIandCLI(exMsg, exName, MessageBoxIcon.Error);
+        }
+
+        public static void OutputOnGUIandCLI(string Text, string Title, MessageBoxIcon Icon)
+        {
+            try { MessageBox.Show(Text, Title, MessageBoxButtons.OK, Icon); }
+            catch { Console.WriteLine(Text); }
         }
 
         public void Run(Options options)
@@ -41,11 +47,7 @@ namespace TA.SharpBooru.Client.GUI
             bool passwordSpecified = !string.IsNullOrEmpty(options.Password);
 
             Booru booru = null;
-            if (usernameSpecified && passwordSpecified)
-            {
-                booru = new Booru(endPoint, options.Username, options.Password);
-            }
-            else
+            if (!(usernameSpecified && passwordSpecified))
             {
                 string username = options.Username;
                 string password = string.Empty; //Don't fill in password automatically
@@ -53,6 +55,7 @@ namespace TA.SharpBooru.Client.GUI
                     booru = new Booru(endPoint, username, password);
                 else throw new Exception("Login procedure not completed");
             }
+            else booru = new Booru(endPoint, options.Username, options.Password);
 
             try { ShowBooru(booru); }
             finally
