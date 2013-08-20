@@ -81,7 +81,6 @@ namespace TA.SharpBooru.Client
             : this(Commands, null, null) { }
 
         public InteractiveConsole(List<Command> Commands, TextWriter Out, TextReader In)
-            :this(Commands)
         {
             if (Commands != null)
                 this.Commands = Commands;
