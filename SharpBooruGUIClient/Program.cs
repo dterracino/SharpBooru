@@ -1,80 +1,71 @@
 ﻿using System;
+using System.Net;
 using System.Windows.Forms;
+using CommandLine;
 
 namespace TA.SharpBooru.Client.GUI
 {
-    public static class Program
+    public class Program
     {
         [STAThread]
         public static int Main(string[] args)
         {
+            Options options = new Options();
+            try
+            {
+                if (Parser.Default.ParseArguments(args, options))
+                {
+                    (new Program()).Run(options);
+                    return 0;
+                }
+            }
+            catch (Exception ex) { TryHandleException(ex); }
+            return 1;
+        }
+
+        public static void TryHandleException(Exception ex)
+        {
+            string exName = ex.GetType().Name;
+            string exMsg = string.Format("{0}: {1}", exName, ex.Message);
+            try { MessageBox.Show(exMsg, exName, MessageBoxButtons.OK, MessageBoxIcon.Error); }
+            catch { Console.WriteLine(exMsg); }
+        }
+
+        public void Run(Options options)
+        {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            string server = args.Length > 0 ? args[0] : "127.0.01";
-            ushort port = args.Length > 1 ? Convert.ToUInt16(args[1]) : (ushort)2400;
-
-            bool cmdLineCreds = args.Length == 4;
-            string username = null, password = null;
-            if (cmdLineCreds)
-            {
-                username = args[2];
-                password = args[3];
-            }
+            IPEndPoint endPoint = Helper.GetIPEndPointFromString(options.Server);
+            bool usernameSpecified = !string.IsNullOrWhiteSpace(options.Username);
+            bool passwordSpecified = !string.IsNullOrEmpty(options.Password);
 
             Booru booru = null;
-            try
+            if (usernameSpecified && passwordSpecified)
             {
-                if (cmdLineCreds)
-                {
-                    booru = new Booru(server, port, username, password);
-                    booru.Connect();
-                }
-                else for (int tryCount = 0; tryCount < 3; tryCount++)
-                        try
-                        {
-                            if (!LoginDialog.ShowDialog(ref username, ref password))
-                            {
-                                if (booru != null)
-                                    booru.Dispose();
-                                return 1; //maybe return 0?
-                            }
-                            else
-                            {
-                                booru = new Booru(server, port, username, password);
-                                booru.Connect();
-                                break;
-                            }
-                        }
-                        catch (BooruProtocol.BooruException bEx)
-                        {
-                            if (booru != null)
-                                booru.Dispose();
-                            booru = null;
-                            if (bEx.ErrorCode != BooruProtocol.ErrorCode.LoginFailed)
-                                throw;
-                            else MessageBox.Show("Login failed", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                if (booru != null)
-                    using (MainForm form = new MainForm(booru))
-                        Application.Run(form);
-                else throw new BooruProtocol.BooruException(BooruProtocol.ErrorCode.LoginFailed);
+                booru = new Booru(endPoint, options.Username, options.Password);
             }
-            catch (Exception ex)
+            else
             {
-                string exName = ex.GetType().Name;
-                string msg = string.Format("{0}: {1}", exName, ex.Message);
-                MessageBox.Show(msg, exName, MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return 1;
-            }
-            finally
-            {
-                if (booru != null)
-                    booru.Dispose();
-                Helper.CleanTempFolder();
+                string username = options.Username;
+                string password = string.Empty; //Don't fill in password automatically
+                if (LoginDialog.ShowDialog(ref username, ref password))
+                    booru = new Booru(endPoint, username, password);
+                else throw new Exception("Login procedure not completed");
             }
 
-            return 0;
+            try { ShowBooru(booru); }
+            finally
+            {
+                booru.Dispose();
+                Helper.CleanTempFolder();
+            }
+        }
+
+        public void ShowBooru(Booru Booru)
+        {
+            using (MainForm mForm = new MainForm(Booru))
+                Application.Run(mForm);
         }
     }
 }

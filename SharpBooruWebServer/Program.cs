@@ -36,7 +36,7 @@ namespace TA.SharpBooru.Client.WebServer
         public int Run(string[] args)
         {
             Logger _Logger = new Logger(Console.Out);
-            Booru _Booru = new Booru("localhost", 2401, args[0], args[1]);
+            Booru _Booru = new Booru(Helper.GetIPEndPointFromString("localhost:2401"), args[0], args[1]);
             BooruServer _Server = new BooruServer(_Booru, _Logger, "http://*:8080/", false);
 
             InitVFS(_Server, _Booru);

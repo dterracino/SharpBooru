@@ -34,30 +34,13 @@ namespace TA.SharpBooru.Client
             set { _CurrentUser = value; }
         }
 
-        public Booru(string Server, ushort Port, string Username, string Password)
+        public Booru(IPEndPoint EndPoint, string Username, string Password)
         {
             if (string.IsNullOrWhiteSpace(Username))
                 throw new ArgumentException("Username must be non-empty");
             else if (string.IsNullOrEmpty(Password))
                 throw new ArgumentException("Password must be non-empty");
-            IPAddress address = null;
-            if (!IPAddress.TryParse(Server, out address))
-            {
-                IPHostEntry entry = Dns.GetHostEntry(Server);
-                List<IPAddress> validIPs = new List<IPAddress>();
-                foreach (IPAddress IP in entry.AddressList)
-                    if (IP.AddressFamily == AddressFamily.InterNetwork)
-                        validIPs.Add(IP);
-                if (validIPs.Count < 1)
-                    throw new Exception("No IPv4 address");
-                else if (validIPs.Count > 1)
-                {
-                    int randomIndex = (new Random()).Next(0, validIPs.Count);
-                    address = validIPs[randomIndex];
-                }
-                else address = validIPs[0];
-            }
-            _EndPoint = new IPEndPoint(address, Port);
+            _EndPoint = EndPoint;
             _Client = new TcpClient();
             _Username = Username;
             _Password = Password;

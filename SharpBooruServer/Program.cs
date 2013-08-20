@@ -3,6 +3,7 @@ using System.Threading;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using Mono.Unix.Native;
+using CommandLine;
 
 namespace TA.SharpBooru.Server
 {
@@ -12,10 +13,15 @@ namespace TA.SharpBooru.Server
         {
             Console.Title = "SharpBooru Server";
             Logger sLogger = new Logger(Console.Out);
+            Options options = new Options();
             try
             {
-                (new Program(sLogger)).Run(args);
-                return 0;
+                if (Parser.Default.ParseArguments(args, options))
+                {
+                    (new Program(sLogger)).Run(options);
+                    return 0;
+                }
+                else return 1;
             }
             catch (Exception ex)
             {
@@ -32,15 +38,12 @@ namespace TA.SharpBooru.Server
         private bool _AutoSaveRunning = true;
         private BooruServer _BooruServer;
 
-        public void Run(string[] args)
+        public void Run(Options options)
         {
             X509Certificate sCertificate = new X509Certificate("ServerCertificate.pfx", "sharpbooru");
 
-            if (args.Length != 2)
-                throw new ArgumentException("Server needs two argument, Port and Booru path");
-
             _Logger.LogLine("Loading booru from disk...");
-            _Booru = Booru.ReadFromDisk(args[1]);
+            _Booru = Booru.ReadFromDisk(options.Location);
             _Logger.LogLine("Finished loading booru - {0} posts / {1} tags", _Booru.Posts.Count, _Booru.Tags.Count);
 
             _AutoSaveThread = new Thread(() =>
@@ -58,7 +61,7 @@ namespace TA.SharpBooru.Server
                 }) { IsBackground = true };
             _AutoSaveThread.Start();
 
-            ushort serverPort = Convert.ToUInt16(args[0]);
+            ushort serverPort = Convert.ToUInt16(options.Port);
             _BooruServer = new BooruServer(_Booru, _Logger, sCertificate, serverPort);
 
             EventWaitHandle waitEvent = new EventWaitHandle(false, EventResetMode.ManualReset);

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Linq;
 using System.Drawing;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
@@ -251,5 +252,65 @@ namespace TA.SharpBooru
         public static DateTime UnixTimeToDateTime(uint UnixTime) { return UNIX_TIME.AddSeconds(UnixTime).ToLocalTime(); }
 
         public static uint DateTimeToUnixTime(DateTime DateTime) { return (uint)(DateTime.ToUniversalTime() - UNIX_TIME).TotalSeconds; }
+
+        //Based on Mitch's answer
+        //http://stackoverflow.com/questions/2727609
+        public static IPEndPoint GetIPEndPointFromString(string EndPointString, int DefaultPort = 2400)
+        {
+            if (string.IsNullOrWhiteSpace(EndPointString))
+                throw new ArgumentException("Endpoint descriptor may not be empty");
+            if (DefaultPort < IPEndPoint.MinPort || DefaultPort > IPEndPoint.MaxPort)
+                throw new ArgumentException("Invalid default port: " + DefaultPort);
+            string[] values = EndPointString.Split(new char[1] { ':' });
+            IPAddress ipaddy;
+            int port = -1;
+            if (values.Length <= 2) // IPv4 or hostname
+            {
+                if (values.Length == 1)
+                    port = DefaultPort;
+                else port = GetPortFromString(values[1]);
+                if (!IPAddress.TryParse(values[0], out ipaddy))
+                    ipaddy = GetIPAddressFromHostname(values[0]);
+            }
+            else if (values.Length > 2) // IPv6
+            {
+                //could [a:b:c]:d
+                if (values[0].StartsWith("[") && values[values.Length - 2].EndsWith("]"))
+                {
+                    string ipaddressstring = string.Join(":", values.Take(values.Length - 1).ToArray());
+                    ipaddy = IPAddress.Parse(ipaddressstring);
+                    port = GetPortFromString(values[values.Length - 1]);
+                }
+                else //[a:b:c] or a:b:c
+                {
+                    ipaddy = IPAddress.Parse(EndPointString);
+                    port = DefaultPort;
+                }
+            }
+            else throw new FormatException("Invalid endpoint ipaddress: " + EndPointString);
+            if (port < IPEndPoint.MinPort)
+                throw new ArgumentException("No port specified: ", EndPointString);
+            return new IPEndPoint(ipaddy, port);
+        }
+
+        public static int GetPortFromString(string Port)
+        {
+            int port;
+            if (!int.TryParse(Port, out port) || port < IPEndPoint.MinPort || port > IPEndPoint.MaxPort)
+                throw new FormatException("Invalid port: " + Port);
+            return port;
+        }
+
+        public static IPAddress GetIPAddressFromHostname(string Hostname)
+        {
+            var hosts = Dns.GetHostAddresses(Hostname);
+            if (hosts == null)
+                throw new NullReferenceException("Hosts list is null");
+            else if (hosts.Length < 1)
+                throw new ArgumentException("Host not found: " + Hostname);
+            else if (hosts.Length < 2)
+                return hosts[0];
+            else return hosts[(new Random()).Next(0, hosts.Length)];
+        }
     }
 }
