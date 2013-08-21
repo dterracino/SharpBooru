@@ -4,6 +4,8 @@ using System.Net;
 using System.Text;
 using System.Linq;
 using System.Drawing;
+using System.Net.Sockets;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
 
@@ -274,6 +276,8 @@ namespace TA.SharpBooru
             }
             else if (values.Length > 2) // IPv6
             {
+                throw new ProtocolViolationException("IPv6 isn't supported");
+                /*
                 //could [a:b:c]:d
                 if (values[0].StartsWith("[") && values[values.Length - 2].EndsWith("]"))
                 {
@@ -286,6 +290,7 @@ namespace TA.SharpBooru
                     ipaddy = IPAddress.Parse(EndPointString);
                     port = DefaultPort;
                 }
+                */
             }
             else throw new FormatException("Invalid endpoint ipaddress: " + EndPointString);
             if (port < IPEndPoint.MinPort)
@@ -303,14 +308,25 @@ namespace TA.SharpBooru
 
         public static IPAddress GetIPAddressFromHostname(string Hostname)
         {
-            var hosts = Dns.GetHostAddresses(Hostname);
+            IPAddress[] hosts = Dns.GetHostAddresses(Hostname);
             if (hosts == null)
                 throw new NullReferenceException("Hosts list is null");
-            else if (hosts.Length < 1)
-                throw new ArgumentException("Host not found: " + Hostname);
-            else if (hosts.Length < 2)
-                return hosts[0];
-            else return hosts[(new Random()).Next(0, hosts.Length)];
+            else
+            {
+                var validHosts = new List<IPAddress>();
+                foreach (var host in hosts)
+                    if (host.AddressFamily == AddressFamily.InterNetwork)
+                        validHosts.Add(host);
+                if (validHosts.Count < 1)
+                    throw new ArgumentException("Host not found: " + Hostname);
+                else if (validHosts.Count < 2)
+                    return validHosts[0];
+                else
+                {
+                    int randomIndex = (new Random()).Next(0, validHosts.Count);
+                    return validHosts[randomIndex];
+                }
+            }
         }
     }
 }
