@@ -103,6 +103,8 @@ namespace Cyotek.Windows.Forms
 
     private ZoomLevelCollection _zoomLevels;
 
+    private bool _allowAnimatedImages;
+
     private bool _isAnimating;
 
     #endregion
@@ -142,6 +144,7 @@ namespace Cyotek.Windows.Forms
       this.ImageBorderColor = SystemColors.ControlDark;
       this.PixelGridColor = Color.DimGray;
       this.PixelGridThreshold = 5;
+      this.AllowAnimatedImages = true;
       // ReSharper restore DoNotCallOverridableMethodsInConstructor
     }
 
@@ -864,6 +867,29 @@ namespace Cyotek.Windows.Forms
     #region Properties
 
     /// <summary>
+    /// Gets or sets a value indicating whether animated images will be shown animated
+    /// </summary>
+    /// <value><c>true</c> if images should be shown animated; otherwise, <c>false</c>.</value>
+    [Category("Behavior")]
+    [DefaultValue(true)]
+    public virtual bool AllowAnimatedImages
+    {
+        get { return _allowAnimatedImages; }
+        set
+        {
+            if (this._allowAnimatedImages != value)
+            {
+              _allowAnimatedImages = value;
+              if (_isAnimating && _image != null)
+              {
+                  ImageAnimator.StopAnimate(_image, OnFrameChanged);
+                  _isAnimating = false;
+              }
+            }
+        }
+    }
+
+    /// <summary>
     ///   Gets or sets a value indicating whether clicking the control with the mouse will automatically zoom in or out.
     /// </summary>
     /// <value>
@@ -892,16 +918,16 @@ namespace Cyotek.Windows.Forms
     [DefaultValue(false)]
     public virtual bool AllowDoubleClick
     {
-      get { return _allowDoubleClick; }
-      set
-      {
-        if (this.AllowDoubleClick != value)
+        get { return _allowDoubleClick; }
+        set
         {
-          _allowDoubleClick = value;
+            if (this.AllowDoubleClick != value)
+            {
+                _allowDoubleClick = value;
 
-          this.OnAllowDoubleClickChanged(EventArgs.Empty);
+                this.OnAllowDoubleClickChanged(EventArgs.Empty);
+            }
         }
-      }
     }
 
     /// <summary>
@@ -1116,11 +1142,14 @@ namespace Cyotek.Windows.Forms
       {
         if (_image != value)
         {
+          if (this._isAnimating && _image != value)
+            ImageAnimator.StopAnimate(_image, OnFrameChanged);
+
           _image = value;
 
-          if (ImageAnimator.CanAnimate(_image))
+          if (ImageAnimator.CanAnimate(_image) && AllowAnimatedImages)
           {
-            ImageAnimator.Animate(_image, new EventHandler(OnFrameChanged));
+            ImageAnimator.Animate(_image, OnFrameChanged);
             this._isAnimating = true;
           }
           else this._isAnimating = false;
@@ -2601,6 +2630,7 @@ namespace Cyotek.Windows.Forms
 
     private void OnFrameChanged(object sender, EventArgs e)
     {
+      if (AllowAnimatedImages && _isAnimating)
         this.Invalidate();
     }
 
