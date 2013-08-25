@@ -95,6 +95,7 @@
     <Compile Include="CommandLine\Text\HelpText.cs" />
     <Compile Include="CommandLine\Text\_ParsingErrorsHandler.cs" />
     <Compile Include="Config.cs" />
+    <Compile Include="Server\BooruServer.cs" />
     <Compile Include="Server\LitJSON\IJsonWrapper.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -133,7 +134,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\BooruSearch.cs" />
     <Compile Include="Server\Server.cs" />
-    <Compile Include="Server\ServerManager.cs" />
     <Compile Include="Server\SmartThreadPool\CallerThreadContext.cs" />
     <Compile Include="Server\SmartThreadPool\CanceledWorkItemsGroup.cs" />
     <Compile Include="Server\SmartThreadPool\EventWaitHandle.cs" />
