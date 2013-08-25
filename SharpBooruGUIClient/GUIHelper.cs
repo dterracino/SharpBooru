@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Drawing;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
@@ -49,13 +50,25 @@ namespace TA.SharpBooru.Client.GUI
             Child.Load += (sender, e) => { Child.Location = childLocation; };
         }
 
+        private static string GetSpecialFolder(Environment.SpecialFolder SpecialFolder)
+        {
+            string fPath = Environment.GetFolderPath(SpecialFolder);
+            if (!string.IsNullOrWhiteSpace(fPath))
+                return fPath;
+            else return null;
+        }
+
         public static bool SetWallpaper(BooruImage Bitmap, bool DeleteTempFileOnSuccess = false)
         {
             if (Helper.IsWindows())
             {
-                string tempFile = Helper.GetTempFile();
-                Bitmap.Save(ref tempFile, true, ImageFormat.Bmp);
-                return _SystemParametersInfo(0x14, 0, tempFile, 0x03);
+                string bgPath = GetSpecialFolder(Environment.SpecialFolder.MyPictures)
+                                ?? GetSpecialFolder(Environment.SpecialFolder.Personal)
+                                ?? GetSpecialFolder(Environment.SpecialFolder.Windows)
+                                ?? Path.GetTempPath();
+                string bgFile = Path.Combine(bgPath, "SharpBooruWallpaper.bmp");
+                Bitmap.Save(ref bgFile, true, ImageFormat.Bmp);
+                return _SystemParametersInfo(0x14, 0, bgFile, 0x03);
             }
             else return false;
         }
