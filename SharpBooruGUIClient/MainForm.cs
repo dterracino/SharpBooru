@@ -21,7 +21,6 @@ namespace TA.SharpBooru.Client.GUI
             booruThumbView.ImageRightClick += (sender, e, aObj) => imageContextMenuStrip.Show(sender, e.Location);
             this.Shown += tagTextBox1_EnterPressed;
             this.buttonAdminTools.Click += (sender, e) => adminContextMenuStrip.Show(buttonAdminTools, new Point(buttonAdminTools.Width, 0));
-            this.buttonConsole.Click += (sender, e) => (new ConsoleForm(_Booru)).ShowDialog();
             this.killServerToolStripMenuItem.Click += killServerToolStripMenuItem_Click;
             this.saveBooruToolStripMenuItem.Click += saveBooruToolStripMenuItem_Click;
             this.openToolStripMenuItem.Click += (sender, e) => openImage(booruThumbView.SelectedPost);

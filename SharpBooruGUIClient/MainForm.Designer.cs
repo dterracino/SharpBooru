@@ -44,7 +44,6 @@
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchBox = new TA.SharpBooru.Client.GUI.Controls.TagTextBox();
             this.booruThumbView = new TA.SharpBooru.Client.GUI.Controls.BooruThumbView();
-            this.buttonConsole = new System.Windows.Forms.Button();
             this.adminContextMenuStrip.SuspendLayout();
             this.imageContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -94,7 +93,7 @@
             // buttonAdminTools
             // 
             this.buttonAdminTools.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonAdminTools.Location = new System.Drawing.Point(12, 196);
+            this.buttonAdminTools.Location = new System.Drawing.Point(12, 225);
             this.buttonAdminTools.Name = "buttonAdminTools";
             this.buttonAdminTools.Size = new System.Drawing.Size(100, 23);
             this.buttonAdminTools.TabIndex = 5;
@@ -171,22 +170,11 @@
             this.booruThumbView.TabIndex = 4;
             this.booruThumbView.ThumbViewBackColor = System.Drawing.Color.White;
             // 
-            // buttonConsole
-            // 
-            this.buttonConsole.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonConsole.Location = new System.Drawing.Point(12, 225);
-            this.buttonConsole.Name = "buttonConsole";
-            this.buttonConsole.Size = new System.Drawing.Size(100, 23);
-            this.buttonConsole.TabIndex = 6;
-            this.buttonConsole.Text = "Console";
-            this.buttonConsole.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(589, 347);
-            this.Controls.Add(this.buttonConsole);
             this.Controls.Add(this.buttonAdminTools);
             this.Controls.Add(this.buttonRefresh);
             this.Controls.Add(this.buttonChangeUser);
@@ -220,7 +208,6 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
-        private System.Windows.Forms.Button buttonConsole;
 
     }
 }
