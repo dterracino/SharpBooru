@@ -92,13 +92,6 @@ namespace TA.SharpBooru.Client
             else this.In = Console.In;
         }
 
-        public Thread StartAsync()
-        {
-            Thread consoleThread = new Thread(Start);
-            consoleThread.Start();
-            return consoleThread;
-        }
-
         public void Start()
         {
             Out.Write(Prompt);
