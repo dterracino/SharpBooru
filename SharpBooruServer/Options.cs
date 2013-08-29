@@ -11,7 +11,7 @@ namespace TA.SharpBooru.Server
         [Option('p', "port", Required = false, DefaultValue = (ushort)2400, HelpText = "The port of the server")]
         public ushort Port { get; set; }
 
-        [HelpOption('h', "help")]
+        [HelpOption]
         public string GetUsage() { return HelpText.AutoBuild(this); }
     }
 }
