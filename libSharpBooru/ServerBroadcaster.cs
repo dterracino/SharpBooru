@@ -73,20 +73,23 @@ namespace TA.SharpBooru
 
         public static ServerBroadcast SearchForServer(int Duration = 3000)
         {
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, ServerBroadcaster.Port);
-            using (UdpClient client = new UdpClient(endPoint))
+            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, ServerBroadcaster.Port); try
             {
-                client.Client.ReceiveTimeout = Duration;
-                using (MemoryStream datagramStream = new MemoryStream(client.Receive(ref endPoint)))
-                using (BinaryReader reader = new BinaryReader(datagramStream))
-                    return new ServerBroadcast
-                    {
-                        BooruName = reader.ReadString(),
-                        Hostname = reader.ReadString(),
-                        Port = reader.ReadUInt16(),
-                        IPAddress = endPoint.Address
-                    };
+                using (UdpClient client = new UdpClient(endPoint))
+                {
+                    client.Client.ReceiveTimeout = Duration;
+                    using (MemoryStream datagramStream = new MemoryStream(client.Receive(ref endPoint)))
+                    using (BinaryReader reader = new BinaryReader(datagramStream))
+                        return new ServerBroadcast
+                        {
+                            BooruName = reader.ReadString(),
+                            Hostname = reader.ReadString(),
+                            Port = reader.ReadUInt16(),
+                            IPAddress = endPoint.Address
+                        };
+                }
             }
+            catch { return null; }
         }
     }
 }
