@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace TA.SharpBooru.Client
 {
-    public partial class InteractiveConsole
+    public abstract class InteractiveConsole
     {
         public class Command
         {
@@ -69,27 +69,31 @@ namespace TA.SharpBooru.Client
             }
         }
 
-        public List<Command> Commands = new List<Command>();
-        public TextWriter Out = null;
-        public TextReader In = null;
-        public string Prompt = "IC> ";
+        private List<Command> _Commands = new List<Command>();
+
+        public List<Command> Commands { get { return _Commands; } }
+        public readonly TextWriter Out;
+        public readonly TextReader In;
+
+        public abstract string Prompt { get; }
+        protected abstract void PopulateCommandList(List<Command> Commands, TextWriter Out);
 
         public InteractiveConsole()
-            : this(null, null, null) { }
-
-        public InteractiveConsole(List<Command> Commands)
-            : this(Commands, null, null) { }
-
-        public InteractiveConsole(List<Command> Commands, TextWriter Out, TextReader In)
         {
-            if (Commands != null)
-                this.Commands = Commands;
+            this.Out = Console.Out;
+            this.In = Console.In;
+            PopulateCommandList(_Commands, this.Out);
+        }
+
+        public InteractiveConsole(TextWriter Out, TextReader In)
+        {
             if (Out != null)
                 this.Out = Out;
             else this.Out = Console.Out;
             if (In != null)
                 this.In = In;
             else this.In = Console.In;
+            PopulateCommandList(_Commands, this.Out);
         }
 
         public void Start()
@@ -100,11 +104,13 @@ namespace TA.SharpBooru.Client
             {
                 try
                 {
-                    if (!TryExecute(In.ReadLine()))
+                    if (!TryExecute(cmdLine))
                         throw new EntryPointNotFoundException("Command not found");
                 }
                 catch (Exception ex)
                 {
+                    if (ex is TargetInvocationException)
+                        ex = ex.InnerException;
                     //TODO Make dat better
                     Out.WriteLine("ERROR: " + ex.Message);
                 }
@@ -114,16 +120,15 @@ namespace TA.SharpBooru.Client
 
         public bool TryExecute(string CmdLine)
         {
-            if (Commands != null)
-                foreach (Command cmd in Commands)
+            List<string> cmdParts = ParseParts(CmdLine);
+            foreach (Command cmd in _Commands)
+            {
+                if (cmd.IsExecutable(cmdParts))
                 {
-                    List<string> cmdParts = ParseParts(CmdLine);
-                    if (cmd.IsExecutable(cmdParts))
-                    {
-                        cmd.Execute(cmdParts, Out);
-                        return true;
-                    }
+                    cmd.Execute(cmdParts, Out);
+                    return true;
                 }
+            }
             return false;
         }
 

@@ -2,12 +2,13 @@
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Linq;
 using System.Drawing;
 using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
+using Mono.Unix;
+using Mono.Unix.Native;
 
 namespace TA.SharpBooru
 {
@@ -326,6 +327,26 @@ namespace TA.SharpBooru
                     int randomIndex = (new Random()).Next(0, validHosts.Count);
                     return validHosts[randomIndex];
                 }
+            }
+        }
+            
+        public static void SetUID(string UserName)
+        {
+            if (UserName == null)
+                throw new ArgumentNullException("UserName");
+            else if (string.IsNullOrWhiteSpace(UserName))
+                throw new ArgumentException("UserName");
+            else if (!Helper.IsUnix())
+                throw new PlatformNotSupportedException("Not running Unix");
+            else if (Syscall.getuid() != 0)
+                throw new Exception("Not running as root"); //Maybe SecurityException?
+            else
+            {
+                Passwd passwordStruct = Syscall.getpwnam(UserName);
+                if (passwordStruct == null)
+                    throw new UnixIOException(string.Format("User {0} not found", UserName));
+                else if (Syscall.setuid(passwordStruct.pw_uid) != 0)
+                    throw new Exception("SetUID failed");
             }
         }
     }

@@ -5,6 +5,8 @@ namespace TA.SharpBooru
 {
     public class Logger
     {
+        public static Logger Null { get { return new Logger(TextWriter.Null); } }
+
         private TextWriter _Writer;
         private object _Lock = new object();
 

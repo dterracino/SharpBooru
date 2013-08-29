@@ -20,6 +20,14 @@ namespace TA.SharpBooru.Client.GUI
                 }
                 else OutputOnGUIandCLI(options.GetUsage(), "Usage", MessageBoxIcon.Information);
             }
+            catch (BooruProtocol.BooruException bEx)
+            {
+                if (bEx.ErrorCode == BooruProtocol.ErrorCode.ProtocolVersionMismatch)
+                    OutputOnGUIandCLI("Connection to the server was successfull, but the server is using a newer version of the protocol. Please redownload the client and try again.", "Protocol version mismatch", MessageBoxIcon.Error);
+                else if (bEx.ErrorCode == BooruProtocol.ErrorCode.LoginFailed)
+                    OutputOnGUIandCLI("Username and/or password incorrect. Please try again.", "Login failed", MessageBoxIcon.Error);
+                else throw;
+            }
             catch (Exception ex) { TryHandleException(ex); }
             return 1;
         }
@@ -53,22 +61,20 @@ namespace TA.SharpBooru.Client.GUI
                 string password = string.Empty; //Don't fill in password automatically
                 if (LoginDialog.ShowDialog(ref username, ref password))
                     booru = new Booru(endPoint, username, password);
-                else throw new Exception("Login procedure not completed");
+                else return;
             }
             else booru = new Booru(endPoint, options.Username, options.Password);
 
-            try { ShowBooru(booru); }
+            try
+            {
+                using (MainForm mForm = new MainForm(booru))
+                    Application.Run(mForm);
+            }
             finally
             {
                 booru.Dispose();
                 Helper.CleanTempFolder();
             }
-        }
-
-        public void ShowBooru(Booru Booru)
-        {
-            using (MainForm mForm = new MainForm(Booru))
-                Application.Run(mForm);
         }
     }
 }

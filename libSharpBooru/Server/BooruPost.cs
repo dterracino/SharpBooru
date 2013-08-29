@@ -168,5 +168,12 @@ namespace TA.SharpBooru.Server
                 bTagList.Add(BooruPost.FromDiskReader(Reader));
             return bTagList;
         }
+
+        public void Refresh(BooruPost Post)
+        {
+            //TODO Improve (Don't remove and add, but refresh!, maybe not needed since Post is a class)
+            Remove(Post.ID);
+            Add(Post);
+        }
     }
 }

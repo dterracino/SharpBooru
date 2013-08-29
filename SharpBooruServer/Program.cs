@@ -36,7 +36,8 @@ namespace TA.SharpBooru.Server
         private Booru _Booru;
         private Thread _AutoSaveThread;
         private bool _AutoSaveRunning = true;
-        private BooruServer _BooruServer;
+        private ServerBroadcaster _ServerBroadcaster;
+        private Experimental.BooruServer _BooruServer;
 
         public void Run(Options options)
         {
@@ -61,8 +62,10 @@ namespace TA.SharpBooru.Server
                 }) { IsBackground = true };
             _AutoSaveThread.Start();
 
-            ushort serverPort = Convert.ToUInt16(options.Port);
-            _BooruServer = new BooruServer(_Booru, _Logger, sCertificate, serverPort);
+            _BooruServer = new Experimental.BooruServer(_Booru, _Logger, sCertificate, options.Port);
+
+            _ServerBroadcaster = new ServerBroadcaster(_Booru, options.Port);
+            _ServerBroadcaster.Start();
 
             EventWaitHandle waitEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
             Console.CancelKeyPress += (sender, e) => Cancel(waitEvent);
@@ -72,7 +75,8 @@ namespace TA.SharpBooru.Server
                 ServerHelper.SetupSignal(Signum.SIGTERM, () => Cancel(waitEvent));
             }
 
-            _BooruServer.Start("nobody");
+            _BooruServer.Start();
+            //_BooruServer.Start("nobody");
             waitEvent.WaitOne(); //Wait for Cancel to finish
         }
 
@@ -84,8 +88,9 @@ namespace TA.SharpBooru.Server
             {
                 _Logger.LogLine("Stopping server and waiting for clients to finish...");
                 _AutoSaveRunning = false;
+                _ServerBroadcaster.Stop();
                 _BooruServer.Stop();
-                _BooruServer.WaitForClients(10);
+                //_BooruServer.WaitForClients(10);
                 _Logger.LogLine("Saving booru to disk...");
                 _Booru.SaveToDisk();
                 WaitEvent.Set();

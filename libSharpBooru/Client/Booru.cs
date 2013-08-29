@@ -11,8 +11,6 @@ namespace TA.SharpBooru.Client
 {
     public class Booru : IDisposable
     {
-        public static readonly uint ClientVersion = 1;
-
         private IPEndPoint _EndPoint;
         private string _Username, _Password;
 
@@ -63,7 +61,7 @@ namespace TA.SharpBooru.Client
                 _SSLStream.AuthenticateAsClient("SharpBooruServer");
                 _Reader = new BinaryReader(_SSLStream, Encoding.Unicode);
                 _Writer = new BinaryWriter(_SSLStream, Encoding.Unicode);
-                _Writer.Write(ClientVersion);
+                _Writer.Write(BooruProtocol.ProtocolVersion);
                 _Writer.Flush();
                 if (!_Reader.ReadBoolean())
                 {
@@ -104,7 +102,8 @@ namespace TA.SharpBooru.Client
                 _Writer.Write(IncludeThumbnail);
                 EndCommunication();
                 BooruPost post = BooruPost.FromServerReader(_Reader);
-                post.Thumbnail = BooruImage.FromReader(_Reader);
+                if (IncludeThumbnail)
+                    post.Thumbnail = BooruImage.FromReader(_Reader);
                 return post;
             }
         }
@@ -209,12 +208,15 @@ namespace TA.SharpBooru.Client
         }
 
         public void AddPost(ref BooruPost NewPost) { NewPost.ID = AddPost(NewPost); }
+        public void AddPost(ref BooruPost NewPost, Action<float> ProgressCallback) { NewPost.ID = AddPost(NewPost, ProgressCallback); }
         public ulong AddPost(BooruPost NewPost) { return AddPost(NewPost, null); }
         public ulong AddPost(BooruPost NewPost, Action<float> ProgressCallback)
         {
             lock (_Lock)
             {
                 BeginCommunication(BooruProtocol.Command.AddPost);
+                NewPost.Width = (uint)NewPost.Image.Bitmap.Width;
+                NewPost.Height = (uint)NewPost.Image.Bitmap.Height;
                 NewPost.ToServerWriter(_Writer);
                 NewPost.Image.ToWriter(_Writer, ProgressCallback);
                 EndCommunication();
@@ -222,6 +224,7 @@ namespace TA.SharpBooru.Client
             }
         }
 
+        //MORE OVERLOADS!!!
         public ulong AddPost(BooruAPIPost NewAPIPost) { return AddPost(NewAPIPost, null); }
         public ulong AddPost(BooruAPIPost NewAPIPost, Action<float> ProgressCallback)
         {
@@ -255,8 +258,14 @@ namespace TA.SharpBooru.Client
 
         public void ForceKillServer() { BeginCommunication(BooruProtocol.Command.ForceKillServer); }
 
-        public void SaveImage(BooruPost Post) { EditImage(Post.ID, Post.Image); }
+        public void SaveImage(BooruPost Post)
+        {
+            EditImage(Post.ID, Post.Image);
+            Post.Width = (uint)Post.Image.Bitmap.Width;
+            Post.Height = (uint)Post.Image.Bitmap.Height;
+        }
 
+        //MORE OVERLOADS WITH PROGRESSCALLBACK
         public void EditImage(ulong ID, BooruImage Image)
         {
             lock (_Lock)
@@ -264,6 +273,8 @@ namespace TA.SharpBooru.Client
                 BeginCommunication(BooruProtocol.Command.EditImage);
                 _Writer.Write(ID);
                 Image.ToWriter(_Writer);
+                _Writer.Write((uint)Image.Bitmap.Width);
+                _Writer.Write((uint)Image.Bitmap.Height);
                 EndCommunication();
             }
         }
