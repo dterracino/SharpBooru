@@ -50,31 +50,34 @@ namespace TA.SharpBooru.Client.GUI
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            IPEndPoint endPoint = Helper.GetIPEndPointFromString(options.Server);
+            bool serverSpecified = !string.IsNullOrWhiteSpace(options.Server);
             bool usernameSpecified = !string.IsNullOrWhiteSpace(options.Username);
             bool passwordSpecified = !string.IsNullOrEmpty(options.Password);
 
-            Booru booru = null;
+            if (!serverSpecified)
+            {
+                string server = options.Server;
+                if (ConnectDialog.ShowDialog(ref server))
+                    options.Server = server;
+                else return;
+            }
+
             if (!(usernameSpecified && passwordSpecified))
             {
                 string username = options.Username;
                 string password = string.Empty; //Don't fill in password automatically
                 if (LoginDialog.ShowDialog(ref username, ref password))
-                    booru = new Booru(endPoint, username, password);
+                {
+                    options.Username = username;
+                    options.Password = password;
+                }
                 else return;
             }
-            else booru = new Booru(endPoint, options.Username, options.Password);
 
-            try
-            {
-                using (MainForm mForm = new MainForm(booru))
-                    Application.Run(mForm);
-            }
-            finally
-            {
-                booru.Dispose();
-                Helper.CleanTempFolder();
-            }
+            using (Booru booru = new Booru(Helper.GetIPEndPointFromString(options.Server), options.Username, options.Password))
+            using (MainForm mForm = new MainForm(booru))
+                Application.Run(mForm);
+            Helper.CleanTempFolder();
         }
     }
 }
