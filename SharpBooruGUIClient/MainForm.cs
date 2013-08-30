@@ -14,11 +14,13 @@ namespace TA.SharpBooru.Client.GUI
         {
             _Booru = Booru;
             InitializeComponent();
-            searchBox.SetTags(_Booru.GetAllTags());
-            searchBox.EnterPressed += tagTextBox1_EnterPressed;
-            booruThumbView.SetBooru(_Booru);
-            booruThumbView.ImageOpened += (sender, aObj) => openImage(aObj);
-            booruThumbView.ImageRightClick += (sender, e, aObj) => imageContextMenuStrip.Show(sender, e.Location);
+            this.searchBox.SetTags(_Booru.GetAllTags());
+            this.searchBox.EnterPressed += tagTextBox1_EnterPressed;
+            this.booruThumbView.SetBooru(_Booru);
+            this.booruThumbView.ImageOpened += (sender, aObj) => openImage(aObj);
+            this.booruThumbView.ImageRightClick += (sender, e, aObj) => imageContextMenuStrip.Show(sender, e.Location);
+            this.booruThumbView.LoadingStarted += () => SetLoadingMode(true);
+            this.booruThumbView.LoadingFinished += () => SetLoadingMode(false);
             this.Shown += tagTextBox1_EnterPressed;
             this.buttonAdminTools.Click += (sender, e) => adminContextMenuStrip.Show(buttonAdminTools, new Point(buttonAdminTools.Width, 0));
             this.killServerToolStripMenuItem.Click += killServerToolStripMenuItem_Click;
@@ -28,7 +30,7 @@ namespace TA.SharpBooru.Client.GUI
                 {
                     BooruPost post = booruThumbView.SelectedPost;
                     using (EditDialog editDialog = new EditDialog())
-                        if (editDialog.ShowDialog(_Booru, ref     post) == DialogResult.OK)
+                        if (editDialog.ShowDialog(_Booru, ref post) == DialogResult.OK)
                             _Booru.SavePost(post);
                 };
             this.deleteToolStripMenuItem.Click += (sender, e) => _Booru.DeletePost(booruThumbView.SelectedPost);
@@ -55,6 +57,16 @@ namespace TA.SharpBooru.Client.GUI
             }
         }
         */
+
+        public void SetLoadingMode(bool Loading)
+        {
+            if (!this.InvokeRequired)
+            {
+                searchBox.Enabled = !Loading;
+                buttonRefresh.Enabled=!Loading;
+            }
+            else this.Invoke(new Action<bool>(SetLoadingMode), Loading);
+        }
 
         private void saveBooruToolStripMenuItem_Click(object sender, EventArgs e)
         {

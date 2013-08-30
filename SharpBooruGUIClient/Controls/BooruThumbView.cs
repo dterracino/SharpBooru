@@ -16,6 +16,9 @@ namespace TA.SharpBooru.Client.GUI.Controls
         public delegate void ImageRightClickHandler(SelectablePictureBox sender, MouseEventArgs e, object aObj);
         public event ImageRightClickHandler ImageRightClick;
 
+        public event Action LoadingStarted;
+        public event Action LoadingFinished;
+
         public bool AsynchronousLoading = true;
 
         private Booru _Booru = null;
@@ -100,6 +103,8 @@ namespace TA.SharpBooru.Client.GUI.Controls
 
         private void pageSwitcher_PageChanged(object sender, EventArgs e)
         {
+            if (LoadingStarted != null)
+                LoadingStarted();
             if (AsynchronousLoading)
             {
                 Thread loadThread = new Thread(loadPage);
@@ -139,6 +144,8 @@ namespace TA.SharpBooru.Client.GUI.Controls
             }
             RefreshLabel();
             SetLoadingMode(false);
+            if (LoadingFinished != null)
+                LoadingFinished();
         }
 
         private void SetLoadingMode(bool LoadingMode)
