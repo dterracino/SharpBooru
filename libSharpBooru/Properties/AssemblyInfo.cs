@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die mit einer Assembly verknüpft sind.
-[assembly: AssemblyTitle("libSharpBooruClient")]
+[assembly: AssemblyTitle("libSharpBooru")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("TEAM-ALPHA")]
-[assembly: AssemblyProduct("libSharpBooruClient")]
+[assembly: AssemblyProduct("libSharpBooru")]
 [assembly: AssemblyCopyright("© by TEAM-ALPHA 2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
