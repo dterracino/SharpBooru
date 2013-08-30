@@ -101,22 +101,4 @@ namespace TA.SharpBooru.Server
             return null;
         }
     }
-
-    public class ServerList : List<Server>
-    {
-        public void StartAllServers() { StartAllServers(null); }
-        public void StartAllServers(string SetUIDUserName = null)
-        {
-            foreach (Server srv in this)
-                srv.Start();
-            if (!string.IsNullOrWhiteSpace(SetUIDUserName))
-                ServerHelper.SetUID(SetUIDUserName);
-        }
-
-        public void StopAllServers()
-        {
-            foreach (Server srv in this)
-                srv.Stop();
-        }
-    }
 }
