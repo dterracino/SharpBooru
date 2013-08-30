@@ -58,12 +58,9 @@ namespace TA.SharpBooru.Client.GUI
         private void buttonSearchLAN_Click(object sender, EventArgs e)
         {
             ServerBroadcast sb = ServerBroadcast.SearchForServer();
-            if (sb != null)
-            {
-                Server = string.Format("{0}:{1}", sb.IPAddress, sb.Port);
-                MessageBox.Show(string.Format("Server {0} running {1} found", sb.Hostname, sb.BooruName), "Server found", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-            else MessageBox.Show("No LAN server found", "Server not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (sb == null)
+                MessageBox.Show("No LAN server found", "Server not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            else Server = string.Format("{0}:{1}", sb.IPAddress, sb.Port);
         }
     }
 }
