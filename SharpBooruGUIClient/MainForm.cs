@@ -63,7 +63,8 @@ namespace TA.SharpBooru.Client.GUI
             if (!this.InvokeRequired)
             {
                 searchBox.Enabled = !Loading;
-                buttonRefresh.Enabled=!Loading;
+                buttonRefresh.Enabled = !Loading;
+                buttonChangeUser.Enabled = !Loading;
             }
             else this.Invoke(new Action<bool>(SetLoadingMode), Loading);
         }
