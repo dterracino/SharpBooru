@@ -3,9 +3,8 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Net.Sockets;
-using System.Collections.Generic;
 
-namespace TA.SharpBooru
+namespace TA.SharpBooru.Server
 {
     public class ServerBroadcaster
     {
@@ -14,9 +13,9 @@ namespace TA.SharpBooru
         private Socket _Socket;
         private EndPoint _EndPoint;
         private byte[] _Datagram;
-        private bool _bcThreadRunning = false; //
+        private bool _bcThreadRunning = false;
 
-        public ServerBroadcaster(Server.Booru Booru, ushort Port)
+        public ServerBroadcaster(Booru Booru, ushort Port)
         {
             _Socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _Socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.Broadcast, true);
@@ -59,37 +58,6 @@ namespace TA.SharpBooru
             if (_bcThreadRunning)
                 _bcThreadRunning = false;
             else throw new Exception("Not running");
-        }
-    }
-
-    public class ServerBroadcast
-    {
-        public string BooruName;
-        public string Hostname;
-        public IPAddress IPAddress;
-        public ushort Port;
-
-        private ServerBroadcast() { }
-
-        public static ServerBroadcast SearchForServer(int Duration = 3000)
-        {
-            IPEndPoint endPoint = new IPEndPoint(IPAddress.Any, ServerBroadcaster.Port); try
-            {
-                using (UdpClient client = new UdpClient(endPoint))
-                {
-                    client.Client.ReceiveTimeout = Duration;
-                    using (MemoryStream datagramStream = new MemoryStream(client.Receive(ref endPoint)))
-                    using (BinaryReader reader = new BinaryReader(datagramStream))
-                        return new ServerBroadcast
-                        {
-                            BooruName = reader.ReadString(),
-                            Hostname = reader.ReadString(),
-                            Port = reader.ReadUInt16(),
-                            IPAddress = endPoint.Address
-                        };
-                }
-            }
-            catch { return null; }
         }
     }
 }
