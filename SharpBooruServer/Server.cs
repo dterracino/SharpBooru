@@ -110,7 +110,7 @@ namespace TA.SharpBooru.Server
             foreach (Server srv in this)
                 srv.Start();
             if (!string.IsNullOrWhiteSpace(SetUIDUserName))
-                Helper.SetUID(SetUIDUserName);
+                ServerHelper.SetUID(SetUIDUserName);
         }
 
         public void StopAllServers()

@@ -8,7 +8,7 @@ using System.Net.Security;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
-namespace TA.SharpBooru.Server.Experimental
+namespace TA.SharpBooru.Server
 {
     public class BooruServer : Server
     {
@@ -19,7 +19,7 @@ namespace TA.SharpBooru.Server.Experimental
         private Booru _Booru;
 
         public override string ServerName { get { return "BooruServer"; } }
-        public override string ServerInfo { get { return "Port = " + (_Listener.LocalEndpoint as IPEndPoint).Port; } }
+        public override string ServerInfo { get { return "Port " + (_Listener.LocalEndpoint as IPEndPoint).Port; } }
 
         public Booru Booru { get { return _Booru; } }
         public X509Certificate Certificate { get { return _Certificate; } }
@@ -93,8 +93,13 @@ namespace TA.SharpBooru.Server.Experimental
                 try { _User = TryLogin(); }
                 finally { _Writer.Flush(); }
                 _Server.Logger.LogLine("{0} successfully logged in as {1}", _Address, _User.Username);
-                while (HandlerStage3())
+                while (true)
+                {
+                    bool continueHandling = HandlerStage3();
                     _Writer.Flush();
+                    if (!continueHandling)
+                        break;
+                }
                 _Server.Logger.LogLine("{0} ({1}) disconnected", _User.Username, _Address);
             }
 
@@ -148,6 +153,7 @@ namespace TA.SharpBooru.Server.Experimental
                         case BooruProtocol.Command.GetPost:
                             {
                                 ulong postID = _Reader.ReadUInt64();
+                                bool includeThumbnail = _Reader.ReadBoolean();
                                 BooruPost post = _Server.Booru.Posts[postID];
                                 if (post != null)
                                 {
@@ -155,7 +161,7 @@ namespace TA.SharpBooru.Server.Experimental
                                     {
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                         post.ToClientWriter(_Writer, _Server.Booru);
-                                        if (_Reader.ReadBoolean())
+                                        if (includeThumbnail)
                                             _Server.Booru.ReadFile(_Writer, "thumb" + postID);
                                     }
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
