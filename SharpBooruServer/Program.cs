@@ -76,7 +76,10 @@ namespace TA.SharpBooru.Server
             }
 
             _BooruServer.Start();
-            //_BooruServer.Start("nobody");
+
+            try { ServerHelper.SetUID("nobody"); }
+            catch (Exception ex) { _Logger.LogException("SetUID", ex); }
+
             waitEvent.WaitOne(); //Wait for Cancel to finish
         }
 
