@@ -397,6 +397,27 @@ namespace TA.SharpBooru.Server
                                 }
                             }
                             break;
+                        case BooruProtocol.Command.AddUser:
+                            BooruUser userToAdd = BooruUser.FromReader(_Reader, false);
+                            if (_User.IsAdmin)
+                            {
+                                _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                                _Server.Booru.Users.Add(userToAdd);
+                            }
+                            else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
+                            break;
+                        case BooruProtocol.Command.RemoveUser:
+                            string usernameToRemove = _Reader.ReadString();
+                            if (_User.IsAdmin)
+                            {
+                                //TODO Make BooruUserList for this
+                                _Writer.Write((byte)BooruProtocol.ErrorCode.Success); 
+                                for (int i = 0; i < _Server.Booru.Users.Count; i++)
+                                    if (_Server.Booru.Users[i].Username == usernameToRemove)
+                                        _Server.Booru.Users.RemoveAt(i);
+                            }
+                            else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
+                            break;
                         default:
                             _Writer.Write((byte)BooruProtocol.ErrorCode.UnknownError);
                             throw new NotImplementedException();
