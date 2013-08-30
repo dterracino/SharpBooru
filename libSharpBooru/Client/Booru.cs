@@ -295,6 +295,27 @@ namespace TA.SharpBooru.Client
             }
         }
 
+        public void AddUser(BooruUser User)
+        {
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.AddUser);
+                User.ToWriter(_Writer, false);
+                EndCommunication();
+            }
+        }
+
+        public void RemoveUser(BooruUser User) { RemoveUser(User.Username); }
+        public void RemoveUser(string Username)
+        {
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.RemoveUser);
+                _Writer.Write(Username);
+                EndCommunication();
+            }
+        }
+
         public void ChangeUser(string Username, string Password)
         {
             lock (_Lock)

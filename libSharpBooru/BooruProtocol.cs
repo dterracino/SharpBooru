@@ -4,7 +4,7 @@ namespace TA.SharpBooru
 {
     public static class BooruProtocol
     {
-        public const ushort ProtocolVersion = 4;
+        public const ushort ProtocolVersion = 5;
 
         // ReturnParameter(Type), [Argument1(Type)], [Argument2(Type)], ...
         public enum Command : byte
@@ -72,6 +72,12 @@ namespace TA.SharpBooru
             RemoveAlias //AliasString
             
             */
+
+            // void, NewUser(BooruUser)
+            AddUser,
+
+            // void, Username(string)
+            RemoveUser,
         }
 
         public enum ErrorCode : byte
