@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace TA.SharpBooru.Client.CLI
 {
-    public class BooruConsole : InteractiveConsole
+    public class BooruConsole : ConsoleEx
     {
         private Booru _Booru;
 

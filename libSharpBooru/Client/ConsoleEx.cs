@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace TA.SharpBooru.Client
 {
-    public abstract class InteractiveConsole
+    public abstract class ConsoleEx
     {
         public class Command
         {
@@ -78,14 +78,14 @@ namespace TA.SharpBooru.Client
         public abstract string Prompt { get; }
         protected abstract void PopulateCommandList(List<Command> Commands, TextWriter Out);
 
-        public InteractiveConsole()
+        public ConsoleEx()
         {
             this.Out = Console.Out;
             this.In = Console.In;
             PopulateCommandList(_Commands, this.Out);
         }
 
-        public InteractiveConsole(TextWriter Out, TextReader In)
+        public ConsoleEx(TextWriter Out, TextReader In)
         {
             if (Out != null)
                 this.Out = Out;
@@ -96,40 +96,43 @@ namespace TA.SharpBooru.Client
             PopulateCommandList(_Commands, this.Out);
         }
 
-        public void Start()
+        public void StartInteractive()
         {
-            Out.Write(Prompt);
-            string cmdLine = In.ReadLine();
-            if (cmdLine != "exit")
+            while (true)
             {
-                try
+                Out.Write(Prompt);
+                string cmdLine = In.ReadLine();
+                if (cmdLine != "exit")
                 {
-                    if (!TryExecute(cmdLine))
-                        throw new EntryPointNotFoundException("Command not found");
                 }
-                catch (Exception ex)
-                {
-                    if (ex is TargetInvocationException)
-                        ex = ex.InnerException;
-                    //TODO Make dat better
-                    Out.WriteLine("ERROR: " + ex.Message);
-                }
-                Start();
+                else break;
             }
         }
 
-        public bool TryExecute(string CmdLine)
+        public void ExecuteCmdLine(string CmdLine)
         {
-            List<string> cmdParts = ParseParts(CmdLine);
-            foreach (Command cmd in _Commands)
+            try
             {
-                if (cmd.IsExecutable(cmdParts))
+                List<string> cmdParts = ParseParts(CmdLine);
+                foreach (Command cmd in _Commands)
+                    if (cmd.IsExecutable(cmdParts))
+                    {
+                        cmd.Execute(cmdParts, Out);
+                        return;
+                    }
+                throw new EntryPointNotFoundException("Command not found");
+            }
+            catch (Exception ex)
+            {
+                Out.WriteLine("ERROR while executing command:");
+                for (int exN = 0; true; exN++)
                 {
-                    cmd.Execute(cmdParts, Out);
-                    return true;
+                    Out.WriteLine("{0}{1}: {2}", new string(' ', exN * 2), ex.GetType().Name, ex.Message);
+                    if (ex.InnerException != null)
+                        ex = ex.InnerException;
+                    else break;
                 }
             }
-            return false;
         }
 
         private static List<string> ParseParts(string CmdLine)

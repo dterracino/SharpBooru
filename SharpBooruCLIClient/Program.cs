@@ -1,8 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Drawing;
-using System.Collections.Generic;
-using TA.SharpBooru.BooruAPIs;
 using CommandLine;
 
 namespace TA.SharpBooru.Client.CLI
@@ -20,7 +16,9 @@ namespace TA.SharpBooru.Client.CLI
                     {
                         booru.Connect();
                         BooruConsole bConsole = new BooruConsole(booru);
-                        bConsole.Start();
+                        if (!string.IsNullOrWhiteSpace(options.Command))
+                            bConsole.ExecuteCmdLine(options.Command);
+                        else bConsole.StartInteractive();
                     }
                     return 0;
                 }
