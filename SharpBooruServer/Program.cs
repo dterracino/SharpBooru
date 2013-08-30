@@ -37,7 +37,7 @@ namespace TA.SharpBooru.Server
         private Thread _AutoSaveThread;
         private bool _AutoSaveRunning = true;
         private ServerBroadcaster _ServerBroadcaster;
-        private Experimental.BooruServer _BooruServer;
+        private BooruServer _BooruServer;
 
         public void Run(Options options)
         {
@@ -62,7 +62,7 @@ namespace TA.SharpBooru.Server
                 }) { IsBackground = true };
             _AutoSaveThread.Start();
 
-            _BooruServer = new Experimental.BooruServer(_Booru, _Logger, sCertificate, options.Port);
+            _BooruServer = new BooruServer(_Booru, _Logger, sCertificate, options.Port);
 
             _ServerBroadcaster = new ServerBroadcaster(_Booru, options.Port);
             _ServerBroadcaster.Start();
