@@ -12,8 +12,6 @@ namespace TA.SharpBooru.Server
 {
     public class BooruServer : Server
     {
-        public static readonly uint ServerVersion = 4;
-
         private TcpListener _Listener;
         private X509Certificate _Certificate;
         private Booru _Booru;
@@ -114,7 +112,7 @@ namespace TA.SharpBooru.Server
             private bool CheckVersion()
             {
                 uint clientVersion = _Reader.ReadUInt16();
-                bool isCorrectVersion = clientVersion == BooruServer.ServerVersion;
+                bool isCorrectVersion = clientVersion == BooruProtocol.ProtocolVersion;
                 _Writer.Write(isCorrectVersion);
                 _Writer.Flush();
                 return isCorrectVersion;
