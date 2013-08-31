@@ -15,6 +15,7 @@ namespace TA.SharpBooru.Server
         public ulong TagIDCounter = 0;
         public BooruPostList Posts = new BooruPostList();
         public BooruTagList Tags = new BooruTagList();
+        public BooruInfo Info = new BooruInfo();
 
         public ulong GetNextPostID() { return PostIDCounter++; }
 
@@ -50,6 +51,7 @@ namespace TA.SharpBooru.Server
 
         public void ToDiskWriter(BinaryWriter Writer)
         {
+            Info.ToWriter(Writer);
             Writer.Write(PostIDCounter);
             Writer.Write(TagIDCounter);
             Writer.Write((uint)Configuration.Count);
@@ -68,6 +70,7 @@ namespace TA.SharpBooru.Server
         {
             Booru booru = new Booru()
             {
+                Info = BooruInfo.FromReader(Reader),
                 PostIDCounter = Reader.ReadUInt64(),
                 TagIDCounter = Reader.ReadUInt64()
             };

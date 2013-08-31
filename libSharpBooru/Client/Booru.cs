@@ -330,6 +330,16 @@ namespace TA.SharpBooru.Client
             }
         }
 
+        public BooruInfo GetBooruInfo()
+        {
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.GetBooruInfo);
+                EndCommunication();
+                return BooruInfo.FromReader(_Reader);
+            }
+        }
+
         public void Dispose() { Disconnect(true); }
         public void Disconnect(bool SendDisconnectCommand)
         {

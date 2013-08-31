@@ -24,7 +24,7 @@ namespace TA.SharpBooru.Server
             {
                 using (BinaryWriter writer = new BinaryWriter(datagramStream))
                 {
-                    writer.Write("BooruName");
+                    writer.Write(Booru.Info.BooruName);
                     writer.Write(Environment.MachineName);
                     writer.Write(Port);
                 }

@@ -416,6 +416,10 @@ namespace TA.SharpBooru.Server
                             }
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                             break;
+                        case BooruProtocol.Command.GetBooruInfo:
+                            _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                            _Server.Booru.Info.ToWriter(_Writer);
+                            break;
                         default:
                             _Writer.Write((byte)BooruProtocol.ErrorCode.UnknownError);
                             throw new NotImplementedException();
