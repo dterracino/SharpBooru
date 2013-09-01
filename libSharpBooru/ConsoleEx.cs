@@ -1,12 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Reflection;
 using System.ComponentModel;
 using System.Collections.Generic;
 
-namespace TA.SharpBooru.Client
+namespace TA.SharpBooru
 {
     public abstract class ConsoleEx
     {
@@ -15,6 +14,9 @@ namespace TA.SharpBooru.Client
             private Delegate _Delegate = null;
             private List<string> _CommandParts = null;
             private ParameterInfo[] __Parameters = null;
+            private string _HelpText;
+
+            public string HelpText { get { return _HelpText ?? string.Empty; } }
 
             private ParameterInfo[] _Parameters
             {
@@ -29,9 +31,10 @@ namespace TA.SharpBooru.Client
                 }
             }
 
-            public Command(string Command, Delegate Delegate)
+            public Command(string Command, string HelpText, Delegate Delegate)
             {
                 _CommandParts = ParseParts(Command);
+                _HelpText = HelpText;
                 _Delegate = Delegate;
             }
 
@@ -102,9 +105,11 @@ namespace TA.SharpBooru.Client
             {
                 Out.Write(Prompt);
                 string cmdLine = In.ReadLine();
-                if (cmdLine != "exit")
-                {
-                }
+                if (cmdLine == "help")
+                    foreach (var command in _Commands)
+                        Out.WriteLine(command.HelpText);
+                else if (cmdLine != "exit")
+                    ExecuteCmdLine(cmdLine);
                 else break;
             }
         }
@@ -124,7 +129,9 @@ namespace TA.SharpBooru.Client
             }
             catch (Exception ex)
             {
-                Out.WriteLine("ERROR while executing command:");
+                if (ex is TargetInvocationException)
+                    if (ex.InnerException != null)
+                        ex = ex.InnerException;
                 for (int exN = 0; true; exN++)
                 {
                     Out.WriteLine("{0}{1}: {2}", new string(' ', exN * 2), ex.GetType().Name, ex.Message);
@@ -138,11 +145,41 @@ namespace TA.SharpBooru.Client
         private static List<string> ParseParts(string CmdLine)
         {
             if (!string.IsNullOrWhiteSpace(CmdLine))
-            {
-                string[] parts = CmdLine.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                return parts.ToList();
-            }
+                return SplitCommandLine(CmdLine).ToList();
             else return new List<string>();
+        }
+
+        private static IEnumerable<string> SplitCommandLine(string commandLine)
+        {
+            bool inQuotes = false;
+            return SplitEx(commandLine, c =>
+                {
+                    if (c == '\"')
+                        inQuotes = !inQuotes;
+                    return !inQuotes && c == ' ';
+                }).Select(arg => TrimMatchingQuotes(arg.Trim(), '\"'))
+                  .Where(arg => !string.IsNullOrEmpty(arg));
+        }
+
+        private static IEnumerable<string> SplitEx(string str, Func<char, bool> controller)
+        {
+            int nextPiece = 0;
+            for (int c = 0; c < str.Length; c++)
+            {
+                if (controller(str[c]))
+                {
+                    yield return str.Substring(nextPiece, c - nextPiece);
+                    nextPiece = c + 1;
+                }
+            }
+            yield return str.Substring(nextPiece);
+        }
+
+        private static string TrimMatchingQuotes(string input, char quote)
+        {
+            if ((input.Length >= 2) && (input[0] == quote) && (input[input.Length - 1] == quote))
+                return input.Substring(1, input.Length - 2);
+            return input;
         }
     }
 }

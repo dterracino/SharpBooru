@@ -45,7 +45,7 @@
     <Compile Include="BooruAPIs\SafebooruAPI.cs" />
     <Compile Include="BooruImage.cs" />
     <Compile Include="BooruInfo.cs" />
-    <Compile Include="Client\ConsoleEx.cs" />
+    <Compile Include="ConsoleEx.cs" />
     <Compile Include="Client\BooruPostBuffer.cs" />
     <Compile Include="Client\ServerBroadcast.cs" />
     <Compile Include="CommandLine\Attributes\AssemblyLicenseAttribute.cs" />
