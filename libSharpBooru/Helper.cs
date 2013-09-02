@@ -97,6 +97,7 @@ namespace TA.SharpBooru
             catch { return null; }
         }
 
+        /*
         public static byte[] DownloadBytes(string URI)
         {
             try
@@ -107,6 +108,7 @@ namespace TA.SharpBooru
             }
             catch { return null; }
         }
+        */
 
         private static bool? _IsMono = null;
         public static bool IsMono()
@@ -116,23 +118,9 @@ namespace TA.SharpBooru
             return _IsMono.Value;
         }
 
-        private static bool? _IsUnix = null;
-        public static bool IsUnix()
-        {
-            if (!_IsUnix.HasValue)
-            {
-                PlatformID pfid = Environment.OSVersion.Platform;
-                _IsUnix = pfid == PlatformID.Unix || pfid == PlatformID.MacOSX;
-            }
-            return _IsUnix.Value;
-        }
+        public static bool IsUnix() { return Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX; }
 
-        //Check if the operating system is windows
-        public static bool IsWindows()
-        {
-            PlatformID pfid = Environment.OSVersion.Platform;
-            return pfid == PlatformID.Win32NT;
-        }
+        public static bool IsWindows() { return Environment.OSVersion.Platform == PlatformID.Win32NT; }
 
         public static bool IsConsole()
         {
