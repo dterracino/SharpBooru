@@ -14,6 +14,9 @@ namespace TA.SharpBooru.Server
         [Option('u', "user", Required = false, DefaultValue = "nobody", HelpText = "Username used for SetUID")]
         public string User { get; set; }
 
+        [Option('c', "certificate", Required = false, HelpText = "The .pfx server certificate (PFX password = 'sharpbooru')")]
+        public string Certificate { get; set; }
+
         [HelpOption]
         public string GetUsage() { return HelpText.AutoBuild(this); }
     }
