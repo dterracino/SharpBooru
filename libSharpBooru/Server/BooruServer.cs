@@ -329,7 +329,10 @@ namespace TA.SharpBooru.Server
                             }
                         case BooruProtocol.Command.ForceKillServer:
                             if (_User.IsAdmin)
+                            {
+                                _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                 Process.GetCurrentProcess().Kill(); //YOLO
+                            }
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                             break;
                         case BooruProtocol.Command.GetAllTags:
