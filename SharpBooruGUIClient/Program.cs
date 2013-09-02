@@ -64,6 +64,7 @@ namespace TA.SharpBooru.Client.GUI
 
             if (!(usernameSpecified && passwordSpecified))
             {
+                /*
                 string username = options.Username;
                 string password = string.Empty; //Don't fill in password automatically
                 if (LoginDialog.ShowDialog(ref username, ref password))
@@ -72,6 +73,9 @@ namespace TA.SharpBooru.Client.GUI
                     options.Password = password;
                 }
                 else return;
+                */
+                options.Username = "guest";
+                options.Password = "guest";
             }
 
             using (Booru booru = new Booru(Helper.GetIPEndPointFromString(options.Server), options.Username, options.Password))
