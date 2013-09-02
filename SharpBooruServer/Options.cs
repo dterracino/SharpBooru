@@ -11,6 +11,9 @@ namespace TA.SharpBooru.Server
         [Option('p', "port", Required = false, DefaultValue = (ushort)2400, HelpText = "The port of the server")]
         public ushort Port { get; set; }
 
+        [Option('u', "user", Required = false, DefaultValue = "nobody", HelpText = "Username used for SetUID")]
+        public string User { get; set; }
+
         [HelpOption]
         public string GetUsage() { return HelpText.AutoBuild(this); }
     }
