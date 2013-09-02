@@ -207,7 +207,7 @@ namespace TA.SharpBooru.Client
             }
         }
 
-        public void AddPost(ref BooruPost NewPost) { NewPost.ID = AddPost(NewPost); }
+        public void AddPost(ref BooruPost NewPost) { AddPost(ref NewPost, null); }
         public void AddPost(ref BooruPost NewPost, Action<float> ProgressCallback) { NewPost.ID = AddPost(NewPost, ProgressCallback); }
         public ulong AddPost(BooruPost NewPost) { return AddPost(NewPost, null); }
         public ulong AddPost(BooruPost NewPost, Action<float> ProgressCallback)
@@ -215,21 +215,15 @@ namespace TA.SharpBooru.Client
             lock (_Lock)
             {
                 BeginCommunication(BooruProtocol.Command.AddPost);
-                NewPost.Width = (uint)NewPost.Image.Bitmap.Width;
-                NewPost.Height = (uint)NewPost.Image.Bitmap.Height;
+                if (NewPost.Width == 0)
+                    NewPost.Width = (uint)NewPost.Image.Bitmap.Width;
+                if (NewPost.Height == 0)
+                    NewPost.Height = (uint)NewPost.Image.Bitmap.Height;
                 NewPost.ToServerWriter(_Writer);
                 NewPost.Image.ToWriter(_Writer, ProgressCallback);
                 EndCommunication();
                 return _Reader.ReadUInt64();
             }
-        }
-
-        //MORE OVERLOADS!!!
-        public ulong AddPost(BooruAPIPost NewAPIPost) { return AddPost(NewAPIPost, null); }
-        public ulong AddPost(BooruAPIPost NewAPIPost, Action<float> ProgressCallback)
-        {
-            NewAPIPost.DownloadImage();
-            return AddPost((BooruPost)NewAPIPost, ProgressCallback);
         }
 
         public BooruPostList GetPosts(List<ulong> IDs)
@@ -256,7 +250,11 @@ namespace TA.SharpBooru.Client
             }
         }
 
-        public void ForceKillServer() { BeginCommunication(BooruProtocol.Command.ForceKillServer); }
+        public void ForceKillServer()
+        {
+            BeginCommunication(BooruProtocol.Command.ForceKillServer);
+            EndCommunication();
+        }
 
         public void SaveImage(BooruPost Post)
         {
