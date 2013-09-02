@@ -56,6 +56,7 @@ namespace TA.SharpBooru.Client.CLI
                             BooruAPIPost apiPost = api_posts[0];
                             apiPost.Tags = BooruTagList.FromString(tags);
                             apiPost.Private = privat;
+                            apiPost.DownloadImage();
                             _Booru.AddPost(apiPost);
                         }
                 })));

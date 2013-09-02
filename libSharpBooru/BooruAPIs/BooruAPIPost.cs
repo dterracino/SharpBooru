@@ -10,20 +10,10 @@ namespace TA.SharpBooru.BooruAPIs
         public string SourceURL = string.Empty;
         public string APIName = string.Empty;
 
-        public void DownloadImage()
+        public void DownloadImage() //TODO Progresscallback
         {
-            if (_DownloadedImage != null)
-                _DownloadedImage = BooruImage.FromURL(ImageURL);
-        }
-
-        private BooruImage _DownloadedImage;
-        public BooruImage DownloadedImage
-        {
-            get
-            {
-                DownloadImage();
-                return _DownloadedImage;
-            }
+            if (Image == null)
+                Image = BooruImage.FromURL(ImageURL);
         }
     }
 }
