@@ -284,7 +284,7 @@ namespace TA.SharpBooru.Server
                                     else if (string.IsNullOrWhiteSpace(newPost.Owner))
                                         newPost.Owner = _User.Username;
                                     //TODO Implement bandwidth limit (check length variable)
-                                    using (BooruImage bigImage = new BooruImage(_Reader.ReadBytes(length)))
+                                    using (BooruImage bigImage = BooruImage.FromBytes(_Reader.ReadBytes(length)))
                                     {
                                         //Maybe Width + Height checks?
                                         bigImage.Save(Path.Combine(_Server.Booru.Folder, "image" + newPost.ID));
@@ -369,7 +369,7 @@ namespace TA.SharpBooru.Server
                                     if (_Server.Booru.Posts.Contains(postID))
                                     {
                                         //TODO Implement bandwidth limit (check length variable)
-                                        using (BooruImage bigImage = new BooruImage(_Reader.ReadBytes(length)))
+                                        using (BooruImage bigImage = BooruImage.FromBytes(_Reader.ReadBytes(length)))
                                         {
                                             //Maybe Width + Height checks?
                                             bigImage.Save(Path.Combine(_Server.Booru.Folder, "image" + postID));

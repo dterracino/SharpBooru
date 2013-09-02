@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Security.Cryptography;
@@ -23,11 +24,15 @@ namespace TA.SharpBooru
             }
         }
 
-        private void FromStream(Stream Stream)
+        private BooruImage() { }
+
+        private static BooruImage FromStream(Stream Stream) //, Action<float> ProgessCallback = null)
         {
-            if (Stream is MemoryStream)
-                _Bytes = (Stream as MemoryStream).ToArray();
-            else using (MemoryStream ms = new MemoryStream())
+            BooruImage img = new BooruImage();
+            //if (ProgessCallback != null)
+            //    ProgessCallback(0f);
+            if (!(Stream is MemoryStream))
+                using (MemoryStream ms = new MemoryStream())
                 {
                     byte[] buffer = new byte[16 * 1024];
                     while (true)
@@ -37,34 +42,32 @@ namespace TA.SharpBooru
                             ms.Write(buffer, 0, read);
                         else break;
                     }
-                    _Bytes = ms.ToArray();
+                    img._Bytes = ms.ToArray();
                 }
+            else img._Bytes = (Stream as MemoryStream).ToArray();
+            //if (ProgessCallback != null)
+            //    ProgessCallback(1f);
+            return img;
         }
 
-        private BooruImage() { }
-
-        public BooruImage(Stream Stream) { FromStream(Stream); }
-
-        public BooruImage(Bitmap Bitmap)
+        public static BooruImage FromBitmap(Bitmap Bitmap)
         {
             using (MemoryStream ms = new MemoryStream())
             {
                 Bitmap.Save(ms, GetImageFormat(Bitmap));
                 ms.Position = 0;
-                FromStream(ms);
+                return FromStream(ms);
             }
-        }
-
-        public BooruImage(string File)
-        {
-            using (FileStream fileStream = System.IO.File.Open(File, FileMode.Open, FileAccess.Read, FileShare.Read))
-                FromStream(fileStream);
         }
 
         public static BooruImage FromURL(string URL)
         {
             if (Helper.CheckURL(URL))
-                try { return new BooruImage(Helper.DownloadBytes(URL)); }
+                try
+                {
+                    WebClient client = new WebClient();
+                    return BooruImage.FromBytes(client.DownloadData(URL));
+                }
                 catch { }
             return null;
         }
@@ -72,7 +75,11 @@ namespace TA.SharpBooru
         public static BooruImage FromFile(string File)
         {
             if (System.IO.File.Exists(File))
-                try { return new BooruImage(File); }
+                try
+                {
+                    using (FileStream fileStream = System.IO.File.Open(File, FileMode.Open, FileAccess.Read, FileShare.Read))
+                        return FromStream(fileStream);
+                }
                 catch { }
             return null;
         }
@@ -80,17 +87,15 @@ namespace TA.SharpBooru
         public static BooruImage FromFileOrURL(string FileOrURL)
         {
             if (File.Exists(FileOrURL))
-                try { return new BooruImage(FileOrURL); }
-                catch { }
+                return FromFile(FileOrURL);
             else if (Helper.CheckURL(FileOrURL))
-                try { return new BooruImage(Helper.DownloadBytes(FileOrURL)); }
-                catch { }
-            return null;
+                return FromURL(FileOrURL);
+            else return null;
         }
 
-        public BooruImage(byte[] Bytes) { _Bytes = Bytes; }
+        public static BooruImage FromBytes(byte[] Bytes) { return new BooruImage() { _Bytes = Bytes }; }
 
-        private ImageFormat GetImageFormat(Bitmap B)
+        private static ImageFormat GetImageFormat(Bitmap B)
         {
             if (B.RawFormat == null)
                 return ImageFormat.Png;
@@ -125,7 +130,7 @@ namespace TA.SharpBooru
                 catch { }
         }
 
-        public object Clone() { return new BooruImage(_Bytes.Clone() as byte[]); }
+        public object Clone() { return new BooruImage() { _Bytes = _Bytes.Clone() as byte[] }; }
 
         public void Save(Stream Stream, ImageFormat Format = null)
         {
@@ -223,7 +228,7 @@ namespace TA.SharpBooru
             Bitmap th = new Bitmap(th_size.Width, th_size.Height);
             using (Graphics g = Graphics.FromImage(th))
                 g.DrawImage(Bitmap, result);
-            return new BooruImage(th);
+            return BooruImage.FromBitmap(th);
         }
 
         public void ToWriter(BinaryWriter Writer, Action<float> ProgressCallback = null)
@@ -247,7 +252,7 @@ namespace TA.SharpBooru
         public static BooruImage FromReader(BinaryReader Reader)
         {
             int length = Reader.ReadInt32();
-            return new BooruImage(Reader.ReadBytes(length));
+            return BooruImage.FromBytes(Reader.ReadBytes(length));
         }
     }
 }
