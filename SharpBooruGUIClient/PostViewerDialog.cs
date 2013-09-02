@@ -159,8 +159,9 @@ namespace TA.SharpBooru.Client.GUI
 
         private void buttonNextPost_Click(object sender, EventArgs e) { Index++; }
 
+        private void buttonClone_Click(object sender, EventArgs e) { ClonePost(null); }
 
-        private void buttonClone_Click(object sender, EventArgs e)
+        private void ClonePost(BooruImage newImage = null)
         {
             BooruPost cPost = _Post.Clone() as BooruPost;
             if (_Booru.CurrentUser.AdvancePostControl)
@@ -173,21 +174,14 @@ namespace TA.SharpBooru.Client.GUI
             cPost.Comment = "Cloned ID " + _Post.ID;
             if (!string.IsNullOrWhiteSpace(oldComment))
                 cPost.Comment += ", " + oldComment.Trim();
+            if (newImage != null)
+                cPost.Image = newImage;
             _Booru.AddPost(ref cPost);
             _PostIDs.Insert(0, cPost.ID);
             Index = 0;
         }
 
         private void buttonEditImage_Click(object sender, EventArgs e)
-        {
-            if (EditImage(ref _Post))
-            {
-                _Booru.SaveImage(_Post);
-                SetImage(_Post.Image.Bitmap);
-            }
-        }
-
-        private bool EditImage(ref BooruPost Post)
         {
             //TODO Photoshop configurable path
             string editorEXE = "C:\\Program Files\\Adobe\\Adobe Photoshop CS5 (64 Bit)\\Photoshop.exe";
@@ -196,13 +190,31 @@ namespace TA.SharpBooru.Client.GUI
             byte[] md5 = Helper.MD5OfFile(tempFile);
             Process editor = Process.Start(editorEXE, tempFile);
             editor.WaitForExit();
-            byte[] nmd5 = Helper.MD5OfFile(tempFile);
-            if (!Helper.MD5Compare(md5, nmd5))
+            bool isTheSame = Helper.MD5Compare(md5, Helper.MD5OfFile(tempFile));
+            if (isTheSame)
+                if (MessageBox.Show("No changes detected (maybe you have saved the image with a different name). Dou you wan't to search for the image?", "ImageEdit", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    using (OpenFileDialog ofd = new OpenFileDialog())
+                    {
+                        ofd.Title = "Load new image...";
+                        ofd.Filter = "All files|*.*"; //TODO OFD Filter
+                        if (ofd.ShowDialog() == DialogResult.OK)
+                        {
+                            tempFile = ofd.FileName;
+                            isTheSame = false;
+                        }
+                    }
+            if (!isTheSame)
             {
-                Post.Image = new BooruImage(tempFile);
-                return true;
+                DialogResult result = MessageBox.Show("Do you wan't to save the image in a cloned BooruPost (Yes) or in the same post (No)? ", "SharpBooru", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
+                if (result == DialogResult.No)
+                {
+                    _Post.Image = BooruImage.FromFile(tempFile);
+                    _Booru.SaveImage(_Post);
+                    SetImage(_Post.Image.Bitmap);
+                }
+                else if (result == DialogResult.Yes)
+                    ClonePost(BooruImage.FromFile(tempFile));
             }
-            else return false;
         }
 
         private void buttonEditPost_Click(object sender, EventArgs e)
