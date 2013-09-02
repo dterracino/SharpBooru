@@ -352,11 +352,12 @@ namespace TA.SharpBooru.Server
                             bool newUserLoggedIn = false;
                             foreach (BooruUser user in _Server.Booru.Users)
                                 if (user.Username == username)
-                                    if (user.MD5Password == password)
-                                        if (user.CanLoginDirect)
+                                    if (user.MD5Password == password || _User.IsAdmin)
+                                        if (user.CanLoginDirect || _User.IsAdmin)
                                         {
                                             _User = user;
                                             newUserLoggedIn = true;
+                                            break;
                                         }
                             if (newUserLoggedIn)
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
