@@ -13,16 +13,16 @@ namespace TA.SharpBooru.Server
     public class BooruServer : Server
     {
         private TcpListener _Listener;
-        private X509Certificate _Certificate;
+        private X509Certificate2 _Certificate;
         private Booru _Booru;
 
         public override string ServerName { get { return "BooruServer"; } }
         public override string ServerInfo { get { return "Port " + (_Listener.LocalEndpoint as IPEndPoint).Port; } }
 
         public Booru Booru { get { return _Booru; } }
-        public X509Certificate Certificate { get { return _Certificate; } }
+        public X509Certificate2 Certificate { get { return _Certificate; } }
 
-        public BooruServer(Booru Booru, Logger Logger, X509Certificate Certificate, ushort Port = 2400)
+        public BooruServer(Booru Booru, Logger Logger, X509Certificate2 Certificate, ushort Port = 2400)
         {
             base.Logger = Logger;
             _Booru = Booru;
