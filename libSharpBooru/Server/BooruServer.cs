@@ -45,13 +45,11 @@ namespace TA.SharpBooru.Server
         public override void HandleClient(object Client)
         {
             using (TcpClient client = Client as TcpClient)
-            {
-                ClientHandler cHandler = new ClientHandler(this, client);
+            using (ClientHandler cHandler = new ClientHandler(this, client))
                 cHandler.Handle();
-            }
         }
 
-        public class ClientHandler
+        public class ClientHandler : IDisposable
         {
             private BooruServer _Server;
             private TcpClient _Client;
@@ -67,20 +65,19 @@ namespace TA.SharpBooru.Server
                 _Client = Client;
             }
 
-            public void Handle()
+            public void Dispose()
             {
-                try { HandlerStage2(); }
-                catch (Exception ex) { _Server.Logger.LogException("HandlerStage1", ex); }
-                finally
+                try
                 {
                     _Reader.Close();
                     _Writer.Close();
                     _SSLStream.Close();
                     _Client.Close();
                 }
+                catch { }
             }
 
-            private void HandlerStage2()
+            public void Handle()
             {
                 _Address = (_Client.Client.RemoteEndPoint as IPEndPoint).Address;
                 _Server.Logger.LogLine("{0} is connecting...", _Address);
