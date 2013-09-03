@@ -42,11 +42,21 @@ namespace TA.SharpBooru
             {
                 WriteANSI(0);
                 WriteDate();
-                if (!string.IsNullOrWhiteSpace(JobName))
-                    _Writer.Write(JobName + " failed: ");
                 WriteANSI(1, 31);
-                _Writer.Write(Ex.GetType().Name + ": ");
-                _Writer.WriteLine(Ex.Message);
+                if (!string.IsNullOrWhiteSpace(JobName))
+                    _Writer.WriteLine(JobName + " failed: ");
+                Exception theException = Ex;
+                for (int ec = 1; true; ec++)
+                {
+                    WriteANSI(1, 31);
+                    _Writer.Write(new string('-', ec));
+                    WriteANSI(1, 37);
+                    _Writer.Write(" " + Ex.GetType().Name + ": ");
+                    _Writer.WriteLine(Ex.Message);
+                    if (theException.InnerException != null)
+                        theException = theException.InnerException;
+                    else break;
+                }
                 _Writer.Flush();
             }
         }
