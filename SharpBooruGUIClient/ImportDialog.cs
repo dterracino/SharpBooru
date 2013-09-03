@@ -222,7 +222,7 @@ namespace TA.SharpBooru.Client.GUI
 
         private void MultiEditPostDialog_DragDrop(object sender, DragEventArgs e)
         {
-            string[] formats = e.Data.GetFormats();
+            //string[] formats = e.Data.GetFormats();
             if (e.Data.GetDataPresent("text/x-moz-url"))
             {
                 //Link from firefox

@@ -28,8 +28,9 @@ namespace Amib.Threading.Internal
 		private static readonly MethodInfo setLogicalCallContextMethodInfo =
 			typeof(Thread).GetMethod("SetLogicalCallContext", BindingFlags.Instance | BindingFlags.NonPublic);
 
-		private static string HttpContextSlotName = GetHttpContextSlotName();
+		//private static string HttpContextSlotName = GetHttpContextSlotName();
 
+		/*
 		private static string GetHttpContextSlotName()
 		{
 			FieldInfo fi = typeof(HttpContext).GetField("CallContextSlotName", BindingFlags.Static | BindingFlags.NonPublic);
@@ -41,6 +42,7 @@ namespace Amib.Threading.Internal
 
 		    return "HttpContext";
 		}
+		*/
 
         #endregion
 

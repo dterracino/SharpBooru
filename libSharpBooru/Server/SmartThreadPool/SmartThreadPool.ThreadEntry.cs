@@ -14,14 +14,14 @@ namespace Amib.Threading
             /// The thread creation time
             /// The value is stored as UTC value.
             /// </summary>
-            private readonly DateTime _creationTime;
+            //private readonly DateTime _creationTime;
 
             /// <summary>
             /// The last time this thread has been running
             /// It is updated by IAmAlive() method
             /// The value is stored as UTC value.
             /// </summary>
-            private DateTime _lastAliveTime;
+            //private DateTime _lastAliveTime;
 
             /// <summary>
             /// A reference from each thread in the thread pool to its SmartThreadPool
@@ -40,8 +40,8 @@ namespace Amib.Threading
             public ThreadEntry(SmartThreadPool stp)
             {
                 _associatedSmartThreadPool = stp;
-                _creationTime = DateTime.UtcNow;
-                _lastAliveTime = DateTime.MinValue;
+                //_creationTime = DateTime.UtcNow;
+                //_lastAliveTime = DateTime.MinValue;
             }
 
             public SmartThreadPool AssociatedSmartThreadPool
@@ -51,7 +51,7 @@ namespace Amib.Threading
 
             public void IAmAlive()
             {
-                _lastAliveTime = DateTime.UtcNow;
+                //_lastAliveTime = DateTime.UtcNow;
             }
         }
 

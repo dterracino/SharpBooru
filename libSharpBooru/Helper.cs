@@ -47,13 +47,12 @@ namespace TA.SharpBooru
 
         public static bool MemoryCompare(IntPtr Ptr1, IntPtr Ptr2, long Count)
         {
-            if (Ptr1 != null && Ptr2 != null)
-                if (Ptr1 != IntPtr.Zero && Ptr2 != IntPtr.Zero)
-                    if (Ptr1 == Ptr2)
-                        return true;
-                    else if (IsWindows())
-                        return _MemoryCompareWindows(Ptr1, Ptr2, Count) == 0;
-                    else return _MemoryCompareMono(Ptr1, Ptr2, Count) == 0;
+            if (Ptr1 != IntPtr.Zero && Ptr2 != IntPtr.Zero)
+                if (Ptr1 == Ptr2)
+                    return true;
+                else if (IsWindows())
+                    return _MemoryCompareWindows(Ptr1, Ptr2, Count) == 0;
+                else return _MemoryCompareMono(Ptr1, Ptr2, Count) == 0;
             return false;
         }
 

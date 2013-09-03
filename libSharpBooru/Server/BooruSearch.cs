@@ -6,7 +6,8 @@ namespace TA.SharpBooru.Server
 {
     public static class BooruSearch
     {
-        private static string[] allowedVariables = new string[] { "ViewCount", "EditCount", "Score", "Rating", "ID", "Width", "Height", "Private" };
+        //TODO Implement allowedVariables
+        //private static string[] allowedVariables = new string[] { "ViewCount", "EditCount", "Score", "Rating", "ID", "Width", "Height", "Private" };
         private static Regex operatorRegex = new Regex("<|>|=|!|<=|>=|<>");
 
         private class SpecialPattern
