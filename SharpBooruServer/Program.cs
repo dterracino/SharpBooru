@@ -44,7 +44,7 @@ namespace TA.SharpBooru.Server
         {
             _Logger.LogLine("Loading booru from disk...");
             string certificateFile = options.Certificate ?? Path.Combine(options.Location, "cert.pfx");
-            X509Certificate sCertificate = new X509Certificate(certificateFile, options.CertificatePassword);
+            X509Certificate2 sCertificate = new X509Certificate2(certificateFile, options.CertificatePassword);
             _Booru = Booru.ReadFromDisk(options.Location);
             _Logger.LogLine("Finished loading booru - {0} posts / {1} tags", _Booru.Posts.Count, _Booru.Tags.Count);
 
