@@ -34,9 +34,13 @@ namespace TA.SharpBooru.Client.CLI
                 {
                     string tempFile = Helper.GetTempFile();
                     _Booru.GetImage(id).Save(ref tempFile, true);
-                    bool isDISPLAYset = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("DISPLAY"));
-                    Process imgViewer = isDISPLAYset ? Process.Start(tempFile) : Process.Start("fbi", tempFile);
-                    imgViewer.WaitForExit();
+                    bool useFBI = string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("DISPLAY")) && Helper.IsUnix();
+                    if (useFBI)
+                        using (Process fbiImgViewer = Process.Start("fbi", tempFile))
+                            fbiImgViewer.WaitForExit();
+                    else using (Process imgViewer = Process.Start(tempFile))
+                            if (imgViewer != null)
+                                imgViewer.WaitForExit();
                 })));
             Commands.Add(new Command("server kill", "server kill", new Action(() => _Booru.ForceKillServer())));
             Commands.Add(new Command("server save", "server save", new Action(() => _Booru.SaveServerBooru())));
