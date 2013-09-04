@@ -105,12 +105,15 @@ namespace TA.SharpBooru
             {
                 Out.Write(Prompt);
                 string cmdLine = In.ReadLine();
-                if (cmdLine == "help")
-                    foreach (var command in _Commands)
-                        Out.WriteLine(command.HelpText);
-                else if (cmdLine != "exit")
-                    ExecuteCmdLine(cmdLine);
-                else break;
+                if (!string.IsNullOrWhiteSpace(cmdLine))
+                {
+                    if (cmdLine == "help")
+                        foreach (var command in _Commands)
+                            Out.WriteLine(command.HelpText);
+                    else if (cmdLine != "exit")
+                        ExecuteCmdLine(cmdLine);
+                    else break;
+                }
             }
         }
 
