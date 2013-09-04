@@ -7,6 +7,8 @@ namespace TA.SharpBooru.Server
 {
     public class Booru
     {
+        private static object _LockIO = new object();
+
         public string Folder;
         public Dictionary<string, string> Configuration = new Dictionary<string, string>();
         public List<BooruUser> Users = new List<BooruUser>();
@@ -87,31 +89,40 @@ namespace TA.SharpBooru.Server
 
         public void SaveToDisk()
         {
-            if (File.Exists(Path.Combine(Folder, "booru")))
+            lock (_LockIO)
             {
-                if (File.Exists(Path.Combine(Folder, "booru.bak")))
-                    File.Delete(Path.Combine(Folder, "booru.bak"));
-                File.Move(Path.Combine(Folder, "booru"), Path.Combine(Folder, "booru.bak"));
+                if (File.Exists(Path.Combine(Folder, "booru")))
+                {
+                    if (File.Exists(Path.Combine(Folder, "booru.bak")))
+                        File.Delete(Path.Combine(Folder, "booru.bak"));
+                    File.Move(Path.Combine(Folder, "booru"), Path.Combine(Folder, "booru.bak"));
+                }
+                using (FileStream file = File.Open(Path.Combine(Folder, "booru"), FileMode.Create, FileAccess.Write, FileShare.None))
+                using (BinaryWriter writer = new BinaryWriter(file, Encoding.Unicode))
+                    ToDiskWriter(writer);
             }
-            using (FileStream file = File.Open(Path.Combine(Folder, "booru"), FileMode.Create, FileAccess.Write, FileShare.None))
-            using (BinaryWriter writer = new BinaryWriter(file, Encoding.Unicode))
-                ToDiskWriter(writer);
         }
 
         public void SaveToDisk(string Folder)
         {
-            this.Folder = Folder;
-            SaveToDisk();
+            lock (_LockIO)
+            {
+                this.Folder = Folder;
+                SaveToDisk();
+            }
         }
 
         public static Booru ReadFromDisk(string Folder)
         {
-            using (FileStream file = File.Open(Path.Combine(Folder, "booru"), FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (BinaryReader reader = new BinaryReader(file, Encoding.Unicode))
+            lock (_LockIO)
             {
-                Booru booru = Booru.FromDiskReader(reader);
-                booru.Folder = Folder;
-                return booru;
+                using (FileStream file = File.Open(Path.Combine(Folder, "booru"), FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (BinaryReader reader = new BinaryReader(file, Encoding.Unicode))
+                {
+                    Booru booru = Booru.FromDiskReader(reader);
+                    booru.Folder = Folder;
+                    return booru;
+                }
             }
         }
 
