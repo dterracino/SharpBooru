@@ -41,7 +41,7 @@ namespace TA.SharpBooru.Client.CLI
             Commands.Add(new Command("server kill", "server kill", new Action(() => _Booru.ForceKillServer())));
             Commands.Add(new Command("server save", "server save", new Action(() => _Booru.SaveServerBooru())));
             Commands.Add(new Command("tag delete", "tag delete <ID>", new Action<ulong>(id => _Booru.DeleteTag(id))));
-            Commands.Add(new Command("user change", "user change <Username> [Password]", new Action<string, string>((un, pw) => _Booru.ChangeUser(un, pw))));
+            Commands.Add(new Command("user change", "user change <Username> <Password>", new Action<string, string>((un, pw) => _Booru.ChangeUser(un, pw))));
             //tag edit
             //post edit
             //post add
