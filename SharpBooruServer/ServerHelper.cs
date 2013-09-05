@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security;
 using System.Threading;
 using Mono.Unix;
 using Mono.Unix.Native;
@@ -27,7 +28,7 @@ namespace TA.SharpBooru.Server
             else if (!Helper.IsUnix())
                 throw new PlatformNotSupportedException("Not running Unix");
             else if (Syscall.getuid() != 0)
-                throw new Exception("Not running as root"); //Maybe SecurityException?
+                throw new SecurityException("Not running as root");
             else
             {
                 Passwd passwordStruct = Syscall.getpwnam(UserName);

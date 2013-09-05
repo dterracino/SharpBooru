@@ -48,6 +48,8 @@ namespace TA.SharpBooru
                 Exception theException = Ex;
                 for (int ec = 1; true; ec++)
                 {
+                    WriteANSI(0);
+                    WriteDate();
                     WriteANSI(1, 31);
                     _Writer.Write(new string('-', ec));
                     WriteANSI(1, 37);
