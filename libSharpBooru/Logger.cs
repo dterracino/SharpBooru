@@ -51,8 +51,8 @@ namespace TA.SharpBooru
                     WriteANSI(1, 31);
                     _Writer.Write(new string('-', ec));
                     WriteANSI(1, 37);
-                    _Writer.Write(" " + Ex.GetType().Name + ": ");
-                    _Writer.WriteLine(Ex.Message);
+                    _Writer.Write(" " + theException.GetType().Name + ": ");
+                    _Writer.WriteLine(theException.Message);
                     if (theException.InnerException != null)
                         theException = theException.InnerException;
                     else break;
