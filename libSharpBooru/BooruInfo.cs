@@ -7,12 +7,14 @@ namespace TA.SharpBooru
         public string BooruName;
         public string BooruCreator;
         public ushort ThumbnailSize;
+        public float ThumbnailQuality;
 
         public void ToWriter(BinaryWriter Writer)
         {
             Writer.Write(BooruName);
             Writer.Write(BooruCreator);
             Writer.Write(ThumbnailSize);
+            Writer.Write(ThumbnailQuality);
         }
 
         public static BooruInfo FromReader(BinaryReader Reader)
@@ -21,7 +23,8 @@ namespace TA.SharpBooru
             {
                 BooruName = Reader.ReadString(),
                 BooruCreator = Reader.ReadString(),
-                ThumbnailSize = Reader.ReadUInt16()
+                ThumbnailSize = Reader.ReadUInt16(),
+                ThumbnailQuality = Reader.ReadSingle()
             };
         }
     }

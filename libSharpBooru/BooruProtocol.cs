@@ -4,7 +4,7 @@ namespace TA.SharpBooru
 {
     public static class BooruProtocol
     {
-        public const ushort ProtocolVersion = 6;
+        public const ushort ProtocolVersion = 7;
 
         // ReturnParameter(Type), [Argument1(Type)], [Argument2(Type)], ...
         public enum Command : byte
@@ -17,10 +17,6 @@ namespace TA.SharpBooru
 
             // void
             ForceKillServer,
-
-            //TODO Implement StopServerGracefully
-            //void
-            StopServerGracefully,
 
             // void
             Disconnect,
@@ -77,7 +73,9 @@ namespace TA.SharpBooru
             AddUser,
 
             // void, Username(string)
-            RemoveUser,
+            DeleteUser,
+
+            //GetAllUsers
 
             // BooruInfo(BooruInfo)
             GetBooruInfo

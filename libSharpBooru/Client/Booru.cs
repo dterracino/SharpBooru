@@ -303,12 +303,12 @@ namespace TA.SharpBooru.Client
             }
         }
 
-        public void RemoveUser(BooruUser User) { RemoveUser(User.Username); }
-        public void RemoveUser(string Username)
+        public void DeleteUser(BooruUser User) { DeleteUser(User.Username); }
+        public void DeleteUser(string Username)
         {
             lock (_Lock)
             {
-                BeginCommunication(BooruProtocol.Command.RemoveUser);
+                BeginCommunication(BooruProtocol.Command.DeleteUser);
                 _Writer.Write(Username);
                 EndCommunication();
             }
