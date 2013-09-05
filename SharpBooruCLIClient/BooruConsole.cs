@@ -46,6 +46,26 @@ namespace TA.SharpBooru.Client.CLI
             Commands.Add(new Command("server save", "server save", new Action(() => _Booru.SaveServerBooru())));
             Commands.Add(new Command("tag delete", "tag delete <ID>", new Action<ulong>(id => _Booru.DeleteTag(id))));
             Commands.Add(new Command("user change", "user change <Username> <Password>", new Action<string, string>((un, pw) => _Booru.ChangeUser(un, pw))));
+            Commands.Add(new Command("user add", "user add <Username> <Password> <CanAddPosts> <CanDeletePosts> <CanEditPosts> <CanDeleteTags> <CanEditTags> <CanLoginDirect> <CanLoginOnline> <AdvancePostControl> <IsAdmin> <MaxRating>", new Action<string, string, bool, bool, bool, bool, bool, bool, bool, bool, bool, ushort>((un, pw, cap, cdp, cep, cdt, cet, cld, clo, apc, ia, mr) =>
+                {
+                    BooruUser user = new BooruUser()
+                    {
+                        Username = un,
+                        Password = pw,
+                        CanAddPosts = cap,
+                        CanDeletePosts = cdp,
+                        CanEditPosts = cep,
+                        CanDeleteTags = cdt,
+                        CanEditTags = cet,
+                        CanLoginDirect = cld,
+                        CanLoginOnline = clo,
+                        AdvancePostControl = apc,
+                        IsAdmin = ia,
+                        MaxRating = mr
+                    };
+                    _Booru.AddUser(user);
+                })));
+            Commands.Add(new Command("user delete", "user delete <Username>", new Action<string>(un => _Booru.DeleteUser(un))));
             //tag edit
             //post edit
             //post add
@@ -53,26 +73,26 @@ namespace TA.SharpBooru.Client.CLI
                 {
                     if (!Helper.CheckURL(url))
                         throw new ArgumentException("Not an URL");
-                        List<BooruAPIPost> api_posts = BooruAPI.SearchPostsPerURL(url);
-                        if (api_posts == null)
-                            _Booru.AddPost(new BooruAPIPost()
-                            {
-                                Tags = BooruTagList.FromString(tags),
-                                Private = privat,
-                                ImageURL = url
-                            });
-                        else if (api_posts.Count < 1)
-                            throw new Exception("Can't find a post");
-                        else if (api_posts.Count > 1)
-                            throw new Exception("Too much posts found (" + api_posts.Count + ")");
-                        else
+                    List<BooruAPIPost> api_posts = BooruAPI.SearchPostsPerURL(url);
+                    if (api_posts == null)
+                        _Booru.AddPost(new BooruAPIPost()
                         {
-                            BooruAPIPost apiPost = api_posts[0];
-                            apiPost.Tags = BooruTagList.FromString(tags);
-                            apiPost.Private = privat;
-                            apiPost.DownloadImage();
-                            _Booru.AddPost(apiPost);
-                        }
+                            Tags = BooruTagList.FromString(tags),
+                            Private = privat,
+                            ImageURL = url
+                        });
+                    else if (api_posts.Count < 1)
+                        throw new Exception("Can't find a post");
+                    else if (api_posts.Count > 1)
+                        throw new Exception("Too much posts found (" + api_posts.Count + ")");
+                    else
+                    {
+                        BooruAPIPost apiPost = api_posts[0];
+                        apiPost.Tags = BooruTagList.FromString(tags);
+                        apiPost.Private = privat;
+                        apiPost.DownloadImage();
+                        _Booru.AddPost(apiPost);
+                    }
                 })));
             //post delete
             //image get and open
