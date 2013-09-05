@@ -1,8 +1,10 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Collections.Generic;
 
 namespace TA.SharpBooru
 {
-    public class BooruUser
+    public class BooruUser : ICloneable
     {
         public bool IsAdmin;
         public bool CanLoginDirect;
@@ -61,6 +63,54 @@ namespace TA.SharpBooru
 
                 MaxRating = Reader.ReadUInt16()
             };
+        }
+
+        public object Clone() { return this.MemberwiseClone(); }
+    }
+
+    public class BooruUserList : List<BooruUser>, ICloneable
+    {
+        public BooruUser this[string Username]
+        {
+            get
+            {
+                foreach (BooruUser user in this)
+                    if (user.Username == Username)
+                        return user;
+                return null;
+            }
+        }
+
+        public bool Contains(string Username)
+        {
+            foreach (BooruUser user in this)
+                if (user.Username == Username)
+                    return true;
+            return false;
+        }
+
+        public int Remove(string Username) { return this.RemoveAll(x => { return x.Username == Username; }); }
+
+        public void ToWriter(BinaryWriter Writer, bool IncludePassword)
+        {
+            Writer.Write((uint)this.Count);
+            this.ForEach(x => x.ToWriter(Writer, IncludePassword));
+        }
+
+        public static BooruUserList FromReader(BinaryReader Reader, bool IncludePassword)
+        {
+            uint count = Reader.ReadUInt32();
+            BooruUserList bUserList = new BooruUserList();
+            for (uint i = 0; i < count; i++)
+                bUserList.Add(BooruUser.FromReader(Reader, IncludePassword));
+            return bUserList;
+        }
+
+        public object Clone()
+        {
+            BooruUserList cList = new BooruUserList();
+            this.ForEach(x => cList.Add(x.Clone() as BooruUser));
+            return cList;
         }
     }
 }

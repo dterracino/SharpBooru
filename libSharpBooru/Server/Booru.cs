@@ -11,12 +11,12 @@ namespace TA.SharpBooru.Server
 
         public string Folder;
         public Dictionary<string, string> Configuration = new Dictionary<string, string>();
-        public List<BooruUser> Users = new List<BooruUser>();
 
         public ulong PostIDCounter = 0;
         public ulong TagIDCounter = 0;
         public BooruPostList Posts = new BooruPostList();
         public BooruTagList Tags = new BooruTagList();
+        public BooruUserList Users = new BooruUserList();
         public BooruInfo Info = new BooruInfo();
 
         public ulong GetNextPostID() { return PostIDCounter++; }
@@ -62,8 +62,7 @@ namespace TA.SharpBooru.Server
                 Writer.Write(configEntry.Key);
                 Writer.Write(configEntry.Value);
             }
-            Writer.Write((uint)Users.Count);
-            Users.ForEach(x => x.ToWriter(Writer, true));
+            Users.ToWriter(Writer, true);
             Posts.ToDiskWriter(Writer);
             Tags.ToWriter(Writer);
         }
@@ -79,9 +78,7 @@ namespace TA.SharpBooru.Server
             uint configCount = Reader.ReadUInt32();
             for (uint i = 0; i < configCount; i++)
                 booru.Configuration.Add(Reader.ReadString(), Reader.ReadString());
-            uint userCount = Reader.ReadUInt32();
-            for (uint i = 0; i < userCount; i++)
-                booru.Users.Add(BooruUser.FromReader(Reader, true));
+            booru.Users = BooruUserList.FromReader(Reader, true);
             booru.Posts = BooruPostList.FromDiskReader(Reader);
             booru.Tags = BooruTagList.FromReader(Reader);
             return booru;
