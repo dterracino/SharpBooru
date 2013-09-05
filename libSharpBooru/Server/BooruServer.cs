@@ -5,6 +5,7 @@ using System.Text;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Net.Security;
+using System.Drawing.Imaging;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
@@ -285,8 +286,8 @@ namespace TA.SharpBooru.Server
                                     {
                                         //Maybe Width + Height checks?
                                         bigImage.Save(Path.Combine(_Server.Booru.Folder, "image" + newPost.ID));
-                                        using (BooruImage thumbImage = bigImage.CreateThumbnail(256)) //TODO ThumbSize 
-                                            thumbImage.Save(Path.Combine(_Server.Booru.Folder, "thumb" + newPost.ID));
+                                        using (BooruImage thumbImage = bigImage.CreateThumbnail(_Server.Booru.Info.ThumbnailSize, false))
+                                            thumbImage.Save(Path.Combine(_Server.Booru.Folder, "thumb" + newPost.ID), _Server.Booru.Info.ThumbnailQuality);
                                     }
                                     _Server.Booru.Posts.Add(newPost);
                                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
@@ -374,8 +375,8 @@ namespace TA.SharpBooru.Server
                                         {
                                             //Maybe Width + Height checks?
                                             bigImage.Save(Path.Combine(_Server.Booru.Folder, "image" + postID));
-                                            using (BooruImage thumbImage = bigImage.CreateThumbnail(256)) //TODO ThumbSize 
-                                                thumbImage.Save(Path.Combine(_Server.Booru.Folder, "thumb" + postID));
+                                            using (BooruImage thumbImage = bigImage.CreateThumbnail(_Server.Booru.Info.ThumbnailSize, false))
+                                                thumbImage.Save(Path.Combine(_Server.Booru.Folder, "thumb" + postID), _Server.Booru.Info.ThumbnailQuality);
                                         }
                                         BooruPost post = _Server.Booru.Posts[postID];
                                         post.Width = _Reader.ReadUInt32();
@@ -405,15 +406,12 @@ namespace TA.SharpBooru.Server
                             }
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                             break;
-                        case BooruProtocol.Command.RemoveUser:
+                        case BooruProtocol.Command.DeleteUser:
                             string usernameToRemove = _Reader.ReadString();
                             if (_User.IsAdmin)
                             {
-                                //TODO Make BooruUserList for this
-                                _Writer.Write((byte)BooruProtocol.ErrorCode.Success); 
-                                for (int i = 0; i < _Server.Booru.Users.Count; i++)
-                                    if (_Server.Booru.Users[i].Username == usernameToRemove)
-                                        _Server.Booru.Users.RemoveAt(i);
+                                _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                                _Server.Booru.Users.Remove(usernameToRemove);
                             }
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                             break;

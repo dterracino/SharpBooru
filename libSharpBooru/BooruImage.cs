@@ -150,6 +150,25 @@ namespace TA.SharpBooru
                 File += "." + (new ImageFormatConverter()).ConvertToString(imgFormat).ToLower();
             Save(File, imgFormat);
         }
+        public void Save(string File, float CompressionLevel)
+        {
+            ImageCodecInfo jpegEncoder = GetJPEG();
+            if (jpegEncoder == null)
+                throw new Exception("JPEG encoder not found");
+            long Quality = (long)(CompressionLevel * 100f + 0.5f);
+            EncoderParameters myEncoderParams = new EncoderParameters(1);
+            myEncoderParams.Param[0] = new EncoderParameter(Encoder.Quality, Quality);
+            using (FileStream fStream = new FileStream(File, FileMode.Create, FileAccess.Write, FileShare.Read))
+                Bitmap.Save(fStream, jpegEncoder, myEncoderParams);
+        }
+
+        private ImageCodecInfo GetJPEG()
+        {
+            foreach (ImageCodecInfo i in ImageCodecInfo.GetImageEncoders())
+                if (i.FormatID == ImageFormat.Jpeg.Guid)
+                    return i;
+            return null;
+        }
 
         public string MimeType
         {
@@ -216,19 +235,28 @@ namespace TA.SharpBooru
             return false;
         }
 
-        public BooruImage CreateThumbnail(int SideLength)
+        public BooruImage CreateThumbnail(int SideLength, bool Square)
         {
-            Size size = Bitmap.Size, th_size = new Size(SideLength, SideLength);
-            float num = Math.Min((float)th_size.Width / (float)size.Width, (float)th_size.Height / (float)size.Height);
-            Rectangle result = new Rectangle();
-            result.Width = (int)((float)size.Width * num);
-            result.Height = (int)((float)size.Height * num);
-            result.X = (th_size.Width - result.Width) / 2;
-            result.Y = (th_size.Height - result.Height) / 2;
-            Bitmap th = new Bitmap(th_size.Width, th_size.Height);
-            using (Graphics g = Graphics.FromImage(th))
-                g.DrawImage(Bitmap, result);
-            return BooruImage.FromBitmap(th);
+            Size size = Bitmap.Size;
+            Size th_size = new Size(SideLength, SideLength);
+            double num = Math.Min((double)th_size.Width / size.Width, (double)th_size.Height / size.Height);
+            Size resultSize = new Size((int)(size.Width * num), (int)(size.Height * num));
+            if (Square)
+            {
+                //TODO Maybe use floats instead of int division?
+                Point resultPoint = new Point((th_size.Width - resultSize.Width) / 2, (th_size.Height - resultSize.Height) / 2);
+                Bitmap th = new Bitmap(th_size.Width, th_size.Height);
+                using (Graphics g = Graphics.FromImage(th))
+                    g.DrawImage(Bitmap, resultPoint.X, resultPoint.Y, resultSize.Width, resultSize.Height);
+                return BooruImage.FromBitmap(th);
+            }
+            else
+            {
+                Bitmap th = new Bitmap(resultSize.Width, resultSize.Height);
+                using (Graphics g = Graphics.FromImage(th))
+                    g.DrawImage(Bitmap, 0f, 0f, resultSize.Width, resultSize.Height);
+                return BooruImage.FromBitmap(th);
+            }
         }
 
         public void ToWriter(BinaryWriter Writer, Action<float> ProgressCallback = null)

@@ -156,7 +156,7 @@ namespace TA.SharpBooru.Client.GUI
             if (!rating.HasValue)
                 rating = 7; //TODO StandardRating
             Bitmap thumbBitmap = null;
-            try { thumbBitmap = thumb.CreateThumbnail(256).Bitmap; } //TODO ThumbnailSize
+            try { thumbBitmap = thumb.CreateThumbnail(256, false).Bitmap; } //TODO ThumbnailSize
             catch { thumbBitmap = null; }
             DataGridViewRow row = new DataGridViewRow();
             row.Cells.Add(new DataGridViewTextBoxCell() { Value = file.Trim() });
