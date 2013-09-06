@@ -20,6 +20,9 @@ namespace TA.SharpBooru.Server
         [Option('w', "certificate-password", Required = false, DefaultValue = "sharpbooru", HelpText = "The password for the certificate")]
         public string CertificatePassword { get; set; }
 
+        [Option('i', "pidfile", Required = false, HelpText = "PID file")]
+        public string PIDFile { get; set; }
+
         [HelpOption]
         public string GetUsage() { return HelpText.AutoBuild(this); }
     }
