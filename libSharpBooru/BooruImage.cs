@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Drawing.Drawing2D;
 using System.Security.Cryptography;
 
 namespace TA.SharpBooru
@@ -246,17 +247,26 @@ namespace TA.SharpBooru
                 //TODO Maybe use floats instead of int division?
                 Point resultPoint = new Point((th_size.Width - resultSize.Width) / 2, (th_size.Height - resultSize.Height) / 2);
                 Bitmap th = new Bitmap(th_size.Width, th_size.Height);
-                using (Graphics g = Graphics.FromImage(th))
+                using (Graphics g = CreateAAGraphics(th))
                     g.DrawImage(Bitmap, resultPoint.X, resultPoint.Y, resultSize.Width, resultSize.Height);
                 return BooruImage.FromBitmap(th);
             }
             else
             {
                 Bitmap th = new Bitmap(resultSize.Width, resultSize.Height);
-                using (Graphics g = Graphics.FromImage(th))
+                using (Graphics g = CreateAAGraphics(th))
                     g.DrawImage(Bitmap, 0f, 0f, resultSize.Width, resultSize.Height);
                 return BooruImage.FromBitmap(th);
             }
+        }
+
+        private Graphics CreateAAGraphics(Bitmap Bitmap)
+        {
+            Graphics g = Graphics.FromImage(Bitmap);
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+            g.InterpolationMode = InterpolationMode.HighQualityBicubic;
+            g.CompositingQuality = CompositingQuality.HighQuality;
+            return g;
         }
 
         public void ToWriter(BinaryWriter Writer, Action<float> ProgressCallback = null)
