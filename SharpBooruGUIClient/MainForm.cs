@@ -34,29 +34,12 @@ namespace TA.SharpBooru.Client.GUI
                             _Booru.SavePost(post);
                 };
             this.deleteToolStripMenuItem.Click += (sender, e) => _Booru.DeletePost(booruThumbView.SelectedPost);
-            //notifyIcon.Click += notifyIcon_Click;
             GUIHelper.CreateToolTip(buttonAdminTools, "Admin tools");
             GUIHelper.CreateToolTip(buttonRefresh, "Refresh searched posts");
             GUIHelper.CreateToolTip(buttonChangeUser, "Change the user");
             GUIHelper.CreateToolTip(buttonImportDialog, "Import posts into the booru");
             CheckPermissions();
         }
-
-        /*
-        private void notifyIcon_Click(object sender, EventArgs e)
-        {
-            if (WindowState == FormWindowState.Minimized)
-            {
-                this.Show();
-                this.WindowState = FormWindowState.Normal;
-            }
-            else
-            {
-                this.Hide();
-                this.WindowState = FormWindowState.Minimized;
-            }
-        }
-        */
 
         public void SetLoadingMode(bool Loading)
         {
@@ -117,7 +100,8 @@ namespace TA.SharpBooru.Client.GUI
                         CheckPermissions();
                         booruThumbView.Posts = _Booru.Search(_LastSearch);
                     }
-                    catch (BooruProtocol.BooruException bEx) { MessageBox.Show(bEx.Message, "ERROR: Change User", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+                    catch (BooruProtocol.BooruException bEx)
+                    { MessageBox.Show(bEx.Message, "ERROR: Change User", MessageBoxButtons.OK, MessageBoxIcon.Error); }
                 }
         }
 
@@ -137,13 +121,6 @@ namespace TA.SharpBooru.Client.GUI
             booruThumbView.Posts = _Booru.Search(_LastSearch);
         }
 
-        protected override void OnResize(EventArgs e)
-        {
-            base.OnResize(e);
-            /*
-            if (WindowState == FormWindowState.Minimized)
-                this.Hide();
-            */
-        }
+        protected override void OnResize(EventArgs e) { base.OnResize(e); }
     }
 }
