@@ -5,6 +5,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
 using System.Security.Cryptography;
+using System.Runtime.InteropServices;
 
 namespace TA.SharpBooru
 {
@@ -267,6 +268,45 @@ namespace TA.SharpBooru
             g.InterpolationMode = InterpolationMode.HighQualityBicubic;
             g.CompositingQuality = CompositingQuality.HighQuality;
             return g;
+        }
+
+        //Based on jforshee's ImageHashing repo
+        //https://github.com/jforshee/ImageHashing/blob/master/ImageHashing/ImageHashing.cs
+        public ulong CalculateImageHash()
+        {
+            byte[] imgBytes = new byte[64 * 3];
+            using (Bitmap hB = new Bitmap(8, 8))
+            {
+                using (Graphics g = CreateAAGraphics(hB))
+                    g.DrawImage(Bitmap, 0, 0, 8, 8);
+                BitmapData bd = hB.LockBits(new Rectangle(0, 0, 8, 8), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+                Marshal.Copy(bd.Scan0, imgBytes, 0, 192);
+                hB.UnlockBits(bd);
+            }
+            byte[] grayscale = new byte[64];
+            ushort aSum = 0;
+            for (byte i = 0; i < grayscale.Length; i++)
+            {
+                int sum = imgBytes[i * 3] + imgBytes[i * 3 + 1] + imgBytes[i * 3 + 2];
+                grayscale[i] = (byte)(sum / 3f + 0.5f);
+                aSum += grayscale[i];
+            }
+            byte average = (byte)(aSum / 64f + 0.5f);
+            ulong hash = 0;
+            for (byte i = 0; i < 64; i++)
+                if (grayscale[i] >= average)
+                    hash |= 1UL << i;
+            return hash;
+        }
+
+        public float CompareImageHashes(ulong Hash1, ulong Hash2)
+        {
+            ulong diff = Hash1 ^ Hash2;
+            byte bitcount = 0;
+            for (byte i = 0; i < 64; i++)
+                if ((diff & (1UL << i)) > 0)
+                    bitcount++;
+            return (64 - bitcount) / 64f;
         }
 
         public void ToWriter(BinaryWriter Writer, Action<float> ProgressCallback = null)
