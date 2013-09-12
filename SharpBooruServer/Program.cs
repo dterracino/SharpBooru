@@ -104,6 +104,7 @@ namespace TA.SharpBooru.Server
             }
 
             _Logger.LogLine("Starting server...");
+            _Logger.LogLine(" Protocol version: {0}", BooruProtocol.ProtocolVersion);
             _BooruServer.Start();
 
             if (_Options.User != null)
