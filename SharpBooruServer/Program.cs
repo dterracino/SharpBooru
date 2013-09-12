@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
 using Mono.Unix.Native;
@@ -19,7 +21,7 @@ namespace TA.SharpBooru.Server
             {
                 if (Parser.Default.ParseArguments(args, options))
                 {
-                    (new Program(sLogger)).Run(options);
+                    (new Program(options, sLogger)).Run();
                     return 0;
                 }
                 else return 1;
@@ -31,8 +33,13 @@ namespace TA.SharpBooru.Server
             }
         }
 
-        public Program(Logger Logger) { _Logger = Logger; }
+        public Program(Options Options, Logger Logger)
+        {
+            _Options = Options;
+            _Logger = Logger;
+        }
 
+        private Options _Options;
         private Logger _Logger;
         private Booru _Booru;
         private Thread _AutoSaveThread;
@@ -40,14 +47,32 @@ namespace TA.SharpBooru.Server
         private ServerBroadcaster _ServerBroadcaster;
         private BooruServer _BooruServer;
 
-        public void Run(Options options)
+        public void Run()
         {
+            if (_Options.PIDFile != null)
+            {
+                if (!File.Exists(_Options.PIDFile))
+                {
+                    _Logger.LogLine("Writing PID file...");
+                    Process currentProcess = Process.GetCurrentProcess();
+                    File.WriteAllText(_Options.PIDFile, currentProcess.Id.ToString(), Encoding.ASCII); //TODO Use FileStream
+                    if (_Options.User != null)
+                    {
+                        _Logger.LogLine("Changing PID file ownership since we use SetUID later...");
+                        ServerHelper.ChOwn(_Options.PIDFile, _Options.User);
+                    }
+                }
+                else throw new Exception("PIDFile exists, make sure no 2nd instance is running and delete the PID file");
+            }
+
+            _Logger.LogLine("Loading certificate...");
+            string certificateFile = _Options.Certificate ?? Path.Combine(_Options.Location, "cert.pfx");
+            X509Certificate2 sCertificate = new X509Certificate2(certificateFile, _Options.CertificatePassword);
             _Logger.LogLine("Loading booru from disk...");
-            string certificateFile = options.Certificate ?? Path.Combine(options.Location, "cert.pfx");
-            X509Certificate2 sCertificate = new X509Certificate2(certificateFile, options.CertificatePassword);
-            _Booru = Booru.ReadFromDisk(options.Location);
+            _Booru = Booru.ReadFromDisk(_Options.Location);
             _Logger.LogLine("Finished loading booru - {0} posts / {1} tags", _Booru.Posts.Count, _Booru.Tags.Count);
 
+            _Logger.LogLine("Starting AutoSave thread...");
             _AutoSaveThread = new Thread(() =>
                 {
                     while (true)
@@ -56,31 +81,36 @@ namespace TA.SharpBooru.Server
                         if (_AutoSaveRunning)
                         {
                             _Booru.SaveToDisk();
-                            _Logger.LogLine("AutoSave: Booru saved");
+                            _Logger.LogLine("AutoSave: Booru saved to disk");
                         }
                         else break;
                     }
                 }) { IsBackground = true };
             _AutoSaveThread.Start();
 
-            _BooruServer = new BooruServer(_Booru, _Logger, sCertificate, options.Port);
+            _BooruServer = new BooruServer(_Booru, _Logger, sCertificate, _Options.Port);
 
-            _ServerBroadcaster = new ServerBroadcaster(_Booru, options.Port);
+            _Logger.LogLine("Starting ServerBroadcaster...");
+            _ServerBroadcaster = new ServerBroadcaster(_Booru, _Options.Port);
             _ServerBroadcaster.Start();
 
             EventWaitHandle waitEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
+            _Logger.LogLine("Registering CtrlC handler...");
             Console.CancelKeyPress += (sender, e) => Cancel(waitEvent);
             if (Helper.IsUnix())
             {
-                ServerHelper.SetupSignal(Signum.SIGUSR1, _Booru.SaveToDisk);
+                _Logger.LogLine("Registering SIGTERM handler...");
                 ServerHelper.SetupSignal(Signum.SIGTERM, () => Cancel(waitEvent));
             }
 
+            _Logger.LogLine("Starting server...");
             _BooruServer.Start();
 
-            try { ServerHelper.SetUID(options.User); }
-            catch (Exception ex) { _Logger.LogException("SetUID", ex); }
+            if (_Options.User != null)
+                try { ServerHelper.SetUID(_Options.User); }
+                catch (Exception ex) { _Logger.LogException("SetUID", ex); }
 
+            _Logger.LogLine("Server running.");
             waitEvent.WaitOne(); //Wait for Cancel to finish
         }
 
@@ -98,6 +128,12 @@ namespace TA.SharpBooru.Server
                 _Logger.LogLine("Saving booru to disk...");
                 _Booru.SaveToDisk();
                 WaitEvent.Set();
+                if (_Options.PIDFile != null)
+                {
+                    _Logger.LogLine("Removing PID file...");
+                    try { File.Delete(_Options.PIDFile); }
+                    catch (Exception ex) { _Logger.LogException("DeletePIDFile", ex); }
+                }
                 _CancelRunned = true;
             }
         }
