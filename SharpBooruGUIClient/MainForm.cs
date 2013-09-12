@@ -140,8 +140,10 @@ namespace TA.SharpBooru.Client.GUI
         protected override void OnResize(EventArgs e)
         {
             base.OnResize(e);
+            /*
             if (WindowState == FormWindowState.Minimized)
                 this.Hide();
+            */
         }
     }
 }
