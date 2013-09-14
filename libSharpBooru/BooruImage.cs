@@ -299,7 +299,7 @@ namespace TA.SharpBooru
             return hash;
         }
 
-        public float CompareImageHashes(ulong Hash1, ulong Hash2)
+        public static float CompareImageHashes(ulong Hash1, ulong Hash2)
         {
             ulong diff = Hash1 ^ Hash2;
             byte bitcount = 0;
