@@ -288,8 +288,8 @@ namespace TA.SharpBooru.Server
                                         bigImage.Save(Path.Combine(_Server.Booru.Folder, "image" + newPost.ID));
                                         using (BooruImage thumbImage = bigImage.CreateThumbnail(_Server.Booru.Info.ThumbnailSize, false))
                                             thumbImage.Save(Path.Combine(_Server.Booru.Folder, "thumb" + newPost.ID), _Server.Booru.Info.ThumbnailQuality);
-                                        newPost.Width = bigImage.Image.Width;
-                                        newPost.Height = bigImage.Image.Height;
+                                        newPost.Width = (uint)bigImage.Bitmap.Width;
+                                        newPost.Height = (uint)bigImage.Bitmap.Height;
                                         newPost.ImageHash = bigImage.CalculateImageHash();
                                     }
                                     _Server.Booru.Posts.Add(newPost);
@@ -381,8 +381,8 @@ namespace TA.SharpBooru.Server
                                             bigImage.Save(Path.Combine(_Server.Booru.Folder, "image" + postID));
                                             using (BooruImage thumbImage = bigImage.CreateThumbnail(_Server.Booru.Info.ThumbnailSize, false))
                                                 thumbImage.Save(Path.Combine(_Server.Booru.Folder, "thumb" + postID), _Server.Booru.Info.ThumbnailQuality);
-                                            post.Width = bigImage.Image.Width;
-                                            post.Height = bigImage.Image.Height;
+                                            post.Width = (uint)bigImage.Bitmap.Width;
+                                            post.Height = (uint)bigImage.Bitmap.Height;
                                             post.ImageHash = bigImage.CalculateImageHash();
                                         }
                                         _Server.Booru.Posts.Refresh(post);
