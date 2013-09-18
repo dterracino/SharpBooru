@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Drawing.Imaging;
+using System.Collections.Generic;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
@@ -422,6 +423,17 @@ namespace TA.SharpBooru.Server
                         case BooruProtocol.Command.GetBooruInfo:
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                             _Server.Booru.Info.ToWriter(_Writer);
+                            break;
+                        case BooruProtocol.Command.FindImageDupes:
+                            ulong hash = _Reader.ReadUInt64();
+                            _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                            List<ulong> ids = new List<ulong>();
+                            foreach (BooruPost post in _Server.Booru.Posts)
+                                if (BooruImage.CompareImageHashes(hash, post.ImageHash) > 0.88f)
+                                    ids.Add(post.ID);
+                            _Writer.Write((uint)ids.Count);
+                            foreach (ulong id in ids)
+                                _Writer.Write(id);
                             break;
                         default:
                             _Writer.Write((byte)BooruProtocol.ErrorCode.UnknownError);

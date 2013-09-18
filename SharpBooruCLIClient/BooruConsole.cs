@@ -42,6 +42,21 @@ namespace TA.SharpBooru.Client.CLI
                             if (imgViewer != null)
                                 imgViewer.WaitForExit();
                 })));
+            Commands.Add(new Command("image dupes", "image dupes <Folder>", new Action<string>(folder =>
+                {
+                    string[] files = Directory.GetFiles(folder);
+                    foreach (string file in files)
+                        using (BooruImage img = BooruImage.FromFile(file))
+                        {
+                            Console.Write("{0} -", Path.GetFileName(file));
+                            ulong hash = img.CalculateImageHash();
+                            List<ulong> dupes = _Booru.FindImageDupes(hash);
+                            if (dupes.Count > 0)
+                                foreach (ulong dupeID in dupes)
+                                    Console.WriteLine(" {0}", dupeID);
+                            else Console.WriteLine(" no dupes");
+                        }
+                })));
             Commands.Add(new Command("server kill", "server kill", new Action(() => _Booru.ForceKillServer())));
             Commands.Add(new Command("server save", "server save", new Action(() => _Booru.SaveServerBooru())));
             Commands.Add(new Command("tag delete", "tag delete <ID>", new Action<ulong>(id => _Booru.DeleteTag(id))));

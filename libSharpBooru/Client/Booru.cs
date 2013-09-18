@@ -332,6 +332,21 @@ namespace TA.SharpBooru.Client
             }
         }
 
+        public List<ulong> FindImageDupes(ulong ImageHash)
+        {
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.FindImageDupes);
+                _Writer.Write(ImageHash);
+                EndCommunication();
+                uint count = _Reader.ReadUInt32();
+                List<ulong> IDs = new List<ulong>();
+                for (uint i = 0; i < count; i++)
+                    IDs.Add(_Reader.ReadUInt64());
+                return IDs;
+            }
+        }
+
         public void Dispose() { Disconnect(true); }
         public void Disconnect(bool SendDisconnectCommand)
         {
