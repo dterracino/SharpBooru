@@ -215,10 +215,6 @@ namespace TA.SharpBooru.Client
             lock (_Lock)
             {
                 BeginCommunication(BooruProtocol.Command.AddPost);
-                if (NewPost.Width == 0)
-                    NewPost.Width = (uint)NewPost.Image.Bitmap.Width;
-                if (NewPost.Height == 0)
-                    NewPost.Height = (uint)NewPost.Image.Bitmap.Height;
                 NewPost.ToServerWriter(_Writer);
                 NewPost.Image.ToWriter(_Writer, ProgressCallback);
                 EndCommunication();
@@ -271,8 +267,6 @@ namespace TA.SharpBooru.Client
                 BeginCommunication(BooruProtocol.Command.EditImage);
                 _Writer.Write(ID);
                 Image.ToWriter(_Writer);
-                _Writer.Write((uint)Image.Bitmap.Width);
-                _Writer.Write((uint)Image.Bitmap.Height);
                 EndCommunication();
             }
         }

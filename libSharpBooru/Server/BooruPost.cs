@@ -22,6 +22,7 @@ namespace TA.SharpBooru.Server
         public ulong ViewCount = 0;
         public ulong EditCount = 0;
         public long Score = 0;
+        public ulong ImageHash = 0;
 
         public BooruImage Image = null;
         public BooruImage Thumbnail = null;
@@ -55,6 +56,7 @@ namespace TA.SharpBooru.Server
             Writer.Write(ViewCount);
             Writer.Write(EditCount);
             Writer.Write(Score);
+            Writer.Write(ImageHash);
         }
 
         public void ToDiskWriter(BinaryWriter Writer)
@@ -87,7 +89,8 @@ namespace TA.SharpBooru.Server
                 CreationDate = Helper.UnixTimeToDateTime(Reader.ReadUInt32()),
                 ViewCount = Reader.ReadUInt64(),
                 EditCount = Reader.ReadUInt64(),
-                Score = Reader.ReadInt64()
+                Score = Reader.ReadInt64(),
+                ImageHash = Reader.ReadUInt64()
             };
         }
 

@@ -20,6 +20,7 @@ namespace TA.SharpBooru.Client
         public ulong ViewCount = 0;
         public ulong EditCount = 0;
         public long Score = 0;
+        public ulong ImageHash = 0;
 
         public BooruImage Image = null;
         public BooruImage Thumbnail = null;
@@ -53,6 +54,7 @@ namespace TA.SharpBooru.Client
             Writer.Write(ViewCount);
             Writer.Write(EditCount);
             Writer.Write(Score);
+            Writer.Write(ImageHash);
             Writer.Write((uint)Tags.Count);
             Tags.ForEach(x => Writer.Write(x.Tag));
         }
@@ -73,6 +75,7 @@ namespace TA.SharpBooru.Client
                 ViewCount = Reader.ReadUInt64(),
                 EditCount = Reader.ReadUInt64(),
                 Score = Reader.ReadInt64(),
+                ImageHash = Reader.ReadUInt64(),
                 Tags = BooruTagList.FromReader(Reader)
             };
         }

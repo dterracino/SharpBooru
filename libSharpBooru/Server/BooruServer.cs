@@ -288,6 +288,9 @@ namespace TA.SharpBooru.Server
                                         bigImage.Save(Path.Combine(_Server.Booru.Folder, "image" + newPost.ID));
                                         using (BooruImage thumbImage = bigImage.CreateThumbnail(_Server.Booru.Info.ThumbnailSize, false))
                                             thumbImage.Save(Path.Combine(_Server.Booru.Folder, "thumb" + newPost.ID), _Server.Booru.Info.ThumbnailQuality);
+                                        newPost.Width = bigImage.Image.Width;
+                                        newPost.Height = bigImage.Image.Height;
+                                        newPost.ImageHash = bigImage.CalculateImageHash();
                                     }
                                     _Server.Booru.Posts.Add(newPost);
                                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
@@ -371,16 +374,17 @@ namespace TA.SharpBooru.Server
                                     if (_Server.Booru.Posts.Contains(postID))
                                     {
                                         //TODO Implement bandwidth limit (check length variable)
+                                        BooruPost post = _Server.Booru.Posts[postID];
                                         using (BooruImage bigImage = BooruImage.FromBytes(_Reader.ReadBytes(length)))
                                         {
                                             //Maybe Width + Height checks?
                                             bigImage.Save(Path.Combine(_Server.Booru.Folder, "image" + postID));
                                             using (BooruImage thumbImage = bigImage.CreateThumbnail(_Server.Booru.Info.ThumbnailSize, false))
                                                 thumbImage.Save(Path.Combine(_Server.Booru.Folder, "thumb" + postID), _Server.Booru.Info.ThumbnailQuality);
+                                            post.Width = bigImage.Image.Width;
+                                            post.Height = bigImage.Image.Height;
+                                            post.ImageHash = bigImage.CalculateImageHash();
                                         }
-                                        BooruPost post = _Server.Booru.Posts[postID];
-                                        post.Width = _Reader.ReadUInt32();
-                                        post.Height = _Reader.ReadUInt32();
                                         _Server.Booru.Posts.Refresh(post);
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     }
