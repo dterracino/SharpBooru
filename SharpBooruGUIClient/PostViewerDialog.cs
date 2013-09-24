@@ -15,6 +15,7 @@ namespace TA.SharpBooru.Client.GUI
         private List<ulong> _PostIDs;
         private int _Index = -1;
         private object _loadLock = new object();
+        private FormWindowState _oldWindowState = FormWindowState.Normal;
 
         private int Index
         {
@@ -238,6 +239,16 @@ namespace TA.SharpBooru.Client.GUI
                     imageBox.Image = Bitmap;
                     imageBox.ZoomToFit();
                 });
+        }
+
+        protected override void OnSizeChanged(EventArgs e)
+        {
+            base.OnSizeChanged(e);
+            if (WindowState != _oldWindowState)
+            {
+                _oldWindowState = WindowState;
+                imageBox.ZoomToFit();
+            }
         }
     }
 }
