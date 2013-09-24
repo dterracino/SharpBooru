@@ -109,6 +109,24 @@ namespace TA.SharpBooru.Client.CLI
                         _Booru.AddPost(apiPost);
                     }
                 })));
+            Commands.Add(new Command("post add", "post add <ImgPath> <Tags> <Private>", new Action<string, string, bool>((imgpath, tags, privat) =>
+                {
+                    if (!File.Exists(imgpath))
+                        throw new ArgumentException("Image not found");
+                    using (BooruImage img = BooruImage.FromFile(imgpath))
+                    {
+                        BooruPost post = new BooruPost()
+                        {
+                            Comment = "Imported via CLI",
+                            CreationDate = DateTime.Now,
+                            Image = img,
+                            ImageHash = img.CalculateImageHash(),
+                            Private = privat,
+                            Tags = BooruTagList.FromString(tags)
+                        };
+                        _Booru.AddPost(post);
+                    }
+                })));
             //post delete
             //image get and open
             /*
