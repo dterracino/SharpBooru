@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Data;
 using System.Drawing;
 using System.Collections.Generic;
 
@@ -59,6 +60,17 @@ namespace TA.SharpBooru
                 Type = Reader.ReadString(),
                 Description = Reader.ReadString(),
                 Color = Reader.ReadInt32()
+            };
+        }
+
+        public static BooruTag FromRow(DataRow Row)
+        {
+            return new BooruTag(Convert.ToString(Row["tag"]))
+            {
+                ID = Convert.ToUInt64(Row["id"]),
+                Type = Convert.ToString(Row["type"]),
+                Description = Convert.ToString(Row["description"]),
+                Color = Convert.ToInt32(Row["color"])
             };
         }
 
@@ -125,6 +137,14 @@ namespace TA.SharpBooru
                 foreach (string part in parts)
                     bTagList.Add(new BooruTag(part.ToLower()));
             }
+            return bTagList;
+        }
+
+        public static BooruTagList FromTable(DataTable Table)
+        {
+            BooruTagList bTagList = new BooruTagList();
+            foreach (DataRow row in Table.Rows)
+                bTagList.Add(BooruTag.FromRow(row));
             return bTagList;
         }
 

@@ -52,6 +52,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\BooruImage.cs">
+      <Link>libSharpBooru\BooruImage.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\BooruInfo.cs">
+      <Link>libSharpBooru\BooruInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\BooruPost.cs">
+      <Link>libSharpBooru\BooruPost.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\BooruProtocol.cs">
+      <Link>libSharpBooru\BooruProtocol.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\BooruTag.cs">
+      <Link>libSharpBooru\BooruTag.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\BooruUser.cs">
+      <Link>libSharpBooru\BooruUser.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\ConsoleEx.cs">
+      <Link>libSharpBooru\ConsoleEx.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\Helper.cs">
+      <Link>libSharpBooru\Helper.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\Logger.cs">
+      <Link>libSharpBooru\Logger.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\CommandLine\**\*.*">
+      <Link>libSharpBooru\CommandLine\%(RecursiveDir)%(FileName)</Link>
+    </Compile>
     <Compile Include="Controls\ImageBox\ImageBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -188,12 +218,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\icon_ok.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\libSharpBooru\libSharpBooru.csproj">
-      <Project>{0B2579ED-EC4D-455B-9468-1AFCC51A241B}</Project>
-      <Name>libSharpBooru</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\ajax_loading.gif" />

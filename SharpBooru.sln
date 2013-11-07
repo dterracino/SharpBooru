@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBooruServer", "SharpBooruServer\SharpBooruServer.csproj", "{CFC86CCC-0330-4AD2-9536-242F23295CC9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "libSharpBooru", "libSharpBooru\libSharpBooru.csproj", "{0B2579ED-EC4D-455B-9468-1AFCC51A241B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBooruCLIClient", "SharpBooruCLIClient\SharpBooruCLIClient.csproj", "{E6234399-C5F1-4393-8100-43DA9839A669}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpBooruGUIClient", "SharpBooruGUIClient\SharpBooruGUIClient.csproj", "{0A180E51-88C1-4751-8769-8B47F90355B7}"
@@ -31,16 +29,6 @@ Global
 		{CFC86CCC-0330-4AD2-9536-242F23295CC9}.Release|Mixed Platforms.Build.0 = Release|x86
 		{CFC86CCC-0330-4AD2-9536-242F23295CC9}.Release|x86.ActiveCfg = Release|x86
 		{CFC86CCC-0330-4AD2-9536-242F23295CC9}.Release|x86.Build.0 = Release|x86
-		{0B2579ED-EC4D-455B-9468-1AFCC51A241B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0B2579ED-EC4D-455B-9468-1AFCC51A241B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0B2579ED-EC4D-455B-9468-1AFCC51A241B}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{0B2579ED-EC4D-455B-9468-1AFCC51A241B}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{0B2579ED-EC4D-455B-9468-1AFCC51A241B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0B2579ED-EC4D-455B-9468-1AFCC51A241B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0B2579ED-EC4D-455B-9468-1AFCC51A241B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0B2579ED-EC4D-455B-9468-1AFCC51A241B}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{0B2579ED-EC4D-455B-9468-1AFCC51A241B}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{0B2579ED-EC4D-455B-9468-1AFCC51A241B}.Release|x86.ActiveCfg = Release|Any CPU
 		{E6234399-C5F1-4393-8100-43DA9839A669}.Debug|Any CPU.ActiveCfg = Debug|x86
 		{E6234399-C5F1-4393-8100-43DA9839A669}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
 		{E6234399-C5F1-4393-8100-43DA9839A669}.Debug|Mixed Platforms.Build.0 = Debug|x86

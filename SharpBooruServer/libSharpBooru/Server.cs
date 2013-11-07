@@ -53,14 +53,16 @@ namespace TA.SharpBooru.Server
                 else throw new Exception("Already running");
         }
 
-        public void Stop()
+        public void Stop(int Timeout = Timeout.Infinite)
         {
             lock (_StartStopLock)
                 if (_ConnectClientThreadRunning)
                 {
                     _ConnectClientThreadRunning = false;
                     StopListener();
-                    _ThreadPool.WaitForIdle(10 * 1000); //Wait max. 9s for idle
+                    if (Timeout > 0)
+                        _ThreadPool.WaitForIdle(Timeout);
+                    else _ThreadPool.WaitForIdle();
                     _ThreadPool.Cancel(true);
                     _ConnectClientThread.Abort();
                     Logger.LogLine("{0} stopped...", ServerString);

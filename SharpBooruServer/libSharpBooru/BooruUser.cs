@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Data;
 using System.Collections.Generic;
 
 namespace TA.SharpBooru
@@ -27,6 +28,7 @@ namespace TA.SharpBooru
 
         public void ToWriter(BinaryWriter Writer, bool IncludePassword)
         {
+            Writer.Write(IncludePassword);
             Writer.Write(Username);
             if (IncludePassword)
                 Writer.Write(MD5Password);
@@ -44,12 +46,13 @@ namespace TA.SharpBooru
             Writer.Write(MaxRating);
         }
 
-        public static BooruUser FromReader(BinaryReader Reader, bool IncludePassword)
+        public static BooruUser FromReader(BinaryReader Reader)
         {
+            bool includePassword = Reader.ReadBoolean();
             return new BooruUser()
             {
                 Username = Reader.ReadString(),
-                MD5Password = IncludePassword ? Reader.ReadString() : null,
+                MD5Password = includePassword ? Reader.ReadString() : null,
 
                 IsAdmin = Reader.ReadBoolean(),
                 CanLoginDirect = Reader.ReadBoolean(),
@@ -62,6 +65,25 @@ namespace TA.SharpBooru
                 CanDeleteTags = Reader.ReadBoolean(),
 
                 MaxRating = Reader.ReadUInt16()
+            };
+        }
+
+        public static BooruUser FromRow(DataRow Row)
+        {
+            return new BooruUser()
+            {
+                Username = Convert.ToString(Row["username"]),
+                MD5Password = Convert.ToString(Row["password"]),
+                IsAdmin = Convert.ToBoolean(Row["perm_isadmin"]),
+                CanLoginDirect = Convert.ToBoolean(Row["perm_canlogindirect"]),
+                CanLoginOnline = Convert.ToBoolean(Row["perm_canloginonline"]),
+                AdvancePostControl = Convert.ToBoolean(Row["perm_apc"]),
+                CanAddPosts = Convert.ToBoolean(Row["perm_canaddposts"]),
+                CanDeletePosts = Convert.ToBoolean(Row["perm_candeleteposts"]),
+                CanEditPosts = Convert.ToBoolean(Row["perm_caneditposts"]),
+                CanEditTags = Convert.ToBoolean(Row["perm_canedittags"]),
+                CanDeleteTags = Convert.ToBoolean(Row["perm_candeletetags"]),
+                MaxRating = Convert.ToUInt16(Row["max_rating"])
             };
         }
 

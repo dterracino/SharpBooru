@@ -4,19 +4,13 @@ namespace TA.SharpBooru
 {
     public static class BooruProtocol
     {
-        public const ushort ProtocolVersion = 9;
+        public const ushort ProtocolVersion = 0xA;
 
         // ReturnParameter(Type), [Argument1(Type)], [Argument2(Type)], ...
         public enum Command : byte
         {
             // IDs(ulong[]), SearchPattern(string)
             Search,
-
-            // void
-            SaveBooru,
-
-            // void
-            ForceKillServer,
 
             // void
             Disconnect,

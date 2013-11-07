@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Data;
 using System.Diagnostics;
 using System.Net.Sockets;
 using System.Net.Security;
@@ -122,19 +123,20 @@ namespace TA.SharpBooru.Server
                 string username = _Reader.ReadString();
                 string password = _Reader.ReadString();
                 password = Helper.ByteToString(Helper.MD5OfString(password));
-                foreach (BooruUser user in _Server.Booru.Users)
-                    if (user.Username == username)
-                        if (user.MD5Password == password)
-                            if (user.CanLoginDirect)
-                            {
-                                _Writer.Write(true);
-                                return user;
-                            }
-                            else
-                            {
-                                _Writer.Write(false);
-                                throw new BooruProtocol.BooruException("User can't login directly");
-                            }
+                DataRow userRow = _Server.Booru.DB.ExecuteRow("SELECT * FROM users WHERE username = ?", username);
+                BooruUser user = BooruUser.FromRow(userRow);
+                if (user != null)
+                    if (user.MD5Password == password)
+                        if (user.CanLoginDirect)
+                        {
+                            _Writer.Write(true);
+                            return user;
+                        }
+                        else
+                        {
+                            _Writer.Write(false);
+                            throw new BooruProtocol.BooruException("User can't login directly");
+                        }
                 _Writer.Write(false);
                 throw new BooruProtocol.BooruException("Authentication failed");
             }
@@ -151,59 +153,60 @@ namespace TA.SharpBooru.Server
                             {
                                 ulong postID = _Reader.ReadUInt64();
                                 bool includeThumbnail = _Reader.ReadBoolean();
-                                BooruPost post = _Server.Booru.Posts[postID];
+                                DataRow postRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetPostByID, postID);
+                                BooruPost post = BooruPost.FromRow(postRow);
+                                if (post != null)
+                                {
+                                    DataTable tagTable = _Server.Booru.DB.ExecuteTable(SQLStatements.GetTagsByPostID, postID);
+                                    post.Tags = BooruTagList.FromTable(tagTable);
+                                    if (post.Rating <= _User.MaxRating && IsPrivacyAllowed(post, _User))
+                                    {
+                                        _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                                        post.ToWriter(_Writer);
+                                        if (includeThumbnail)
+                                            _Server.Booru.ReadThumb(_Writer, postID);
+                                    }
+                                    else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
+                                }
+                                else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
+                            }
+                                break;
+                        case BooruProtocol.Command.GetThumbnail:
+                            {
+                                ulong postID = _Reader.ReadUInt64();
+                                DataRow postRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetPostByID, postID);
+                                BooruPost post = BooruPost.FromRow(postRow);
                                 if (post != null)
                                 {
                                     if (post.Rating <= _User.MaxRating && IsPrivacyAllowed(post, _User))
                                     {
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                                        post.ToClientWriter(_Writer, _Server.Booru);
-                                        if (includeThumbnail)
-                                            _Server.Booru.ReadFile(_Writer, "thumb" + postID);
+                                        _Server.Booru.ReadThumb(_Writer, postID);
                                     }
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                                 }
                                 else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
-                                break;
                             }
-                        case BooruProtocol.Command.GetThumbnail:
-                            {
-                                ulong postID = _Reader.ReadUInt64();
-                                if (_Server.Booru.Posts.Contains(postID) && File.Exists(Path.Combine(_Server.Booru.Folder, "thumb" + postID)))
-                                {
-                                    BooruPost post = _Server.Booru.Posts[postID];
-                                    if (post.Rating <= _User.MaxRating && IsPrivacyAllowed(post, _User))
-                                    {
-                                        _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                                        _Server.Booru.ReadFile(_Writer, "thumb" + postID);
-                                        post.ViewCount++;
-                                    }
-                                    else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
-                                }
-                                else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                                 break;
-                            }
                         case BooruProtocol.Command.GetImage:
                             {
                                 ulong postID = _Reader.ReadUInt64();
-                                if (_Server.Booru.Posts.Contains(postID) && File.Exists(Path.Combine(_Server.Booru.Folder, "image" + postID)))
+                                DataRow postRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetPostByID, postID);
+                                BooruPost post = BooruPost.FromRow(postRow);
+                                if (post != null)
                                 {
-                                    BooruPost post = _Server.Booru.Posts[postID];
                                     if (post.Rating <= _User.MaxRating && IsPrivacyAllowed(post, _User))
                                     {
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                                        _Server.Booru.ReadFile(_Writer, "image" + postID);
-                                        post.ViewCount++;
+                                        _Server.Booru.ReadImage(_Writer,postID);
+                                        post.ViewCount++; //TODO X Save post after ViewCount++
                                     }
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                                 }
                                 else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
-                                break;
                             }
-                        case BooruProtocol.Command.SaveBooru:
-                            _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                            _Server.Booru.SaveToDisk();
-                            break;
+                                break;
+                        // CURRENT POS - #################################################################################
                         case BooruProtocol.Command.Search:
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                             string searchPattern = _Reader.ReadString().Trim().ToLower();
@@ -224,32 +227,34 @@ namespace TA.SharpBooru.Server
                                 ulong postID = _Reader.ReadUInt64();
                                 if (_User.CanDeletePosts)
                                 {
-                                    if (_Server.Booru.Posts.Contains(postID))
+                                    //TODO X Test ExecuteInt
+                                    if (_Server.Booru.DB.ExecuteInt(SQLStatements.GetPostCountByID, postID) > 0)
                                     {
-                                        _Server.Booru.Posts.Remove(postID);
+                                        _Server.Booru.DB.ExecuteInt(SQLStatements.DeletePostByID, postID);
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     }
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                                 }
                                 else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
-                                break;
                             }
+                                break;
                         case BooruProtocol.Command.DeleteTag:
                             {
                                 ulong tagID = _Reader.ReadUInt64();
                                 if (_User.CanDeleteTags)
                                 {
-                                    if (_Server.Booru.Tags.Remove(tagID) > 0)
+                                    //TODO X Test ExecuteInt
+                                    if (_Server.Booru.DB.ExecuteInt(SQLStatements.GetTagCountByID, tagID) > 0)
                                     {
-                                        foreach (BooruPost post in _Server.Booru.Posts)
-                                            post.TagIDs.Remove(tagID);
+                                        _Server.Booru.DB.ExecuteInt(SQLStatements.DeleteTagByID, tagID);
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     }
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                                 }
                                 else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
-                                break;
                             }
+                                break;
+                        // CURRENT POS - #################################################################################
                         case BooruProtocol.Command.EditTag:
                             {
                                 BooruTag newTag = BooruTag.FromReader(_Reader);
@@ -264,8 +269,9 @@ namespace TA.SharpBooru.Server
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                                 }
                                 else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
-                                break;
                             }
+                                break;
+                        // CURRENT POS - #################################################################################
                         case BooruProtocol.Command.AddPost:
                             {
                                 BooruPost newPost = BooruPost.FromClientReader(_Reader, _Server.Booru);
@@ -304,8 +310,9 @@ namespace TA.SharpBooru.Server
                                     _Reader.ReadBytes(length % 1024);
                                     _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                                 }
-                                break;
                             }
+                                break;
+                        // CURRENT POS - #################################################################################
                         case BooruProtocol.Command.EditPost:
                             {
                                 BooruPost newPost = BooruPost.FromClientReader(_Reader, _Server.Booru);
@@ -327,26 +334,20 @@ namespace TA.SharpBooru.Server
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                                 }
                                 else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
-                                break;
                             }
-                        case BooruProtocol.Command.ForceKillServer:
-                            if (_User.IsAdmin)
-                            {
-                                _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                                Process.GetCurrentProcess().Kill(); //YOLO
-                            }
-                            else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                             break;
                         case BooruProtocol.Command.GetAllTags:
-                            _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                            _Writer.Write((uint)_Server.Booru.Tags.Count);
-                            foreach (BooruTag bTag in _Server.Booru.Tags)
-                                _Writer.Write(bTag.Tag);
+                            {
+                                _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                                DataTable tagTable = _Server.Booru.DB.ExecuteTable(SQLStatements.GetTags);
+                                BooruTagList.FromTable(tagTable).ToWriter(_Writer);
+                            }
                             break;
                         case BooruProtocol.Command.GetCurrentUser:
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                             _User.ToWriter(_Writer, false);
                             break;
+                        // CURRENT POS - #################################################################################
                         case BooruProtocol.Command.ChangeUser:
                             string username = _Reader.ReadString();
                             string password = _Reader.ReadString();
@@ -365,6 +366,7 @@ namespace TA.SharpBooru.Server
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                             break;
+                        // CURRENT POS - #################################################################################
                         case BooruProtocol.Command.EditImage:
                             {
                                 ulong postID = _Reader.ReadUInt64();
@@ -402,6 +404,7 @@ namespace TA.SharpBooru.Server
                                 }
                             }
                             break;
+                        // CURRENT POS - #################################################################################
                         case BooruProtocol.Command.AddUser:
                             BooruUser userToAdd = BooruUser.FromReader(_Reader, false);
                             if (_User.IsAdmin)
@@ -411,6 +414,7 @@ namespace TA.SharpBooru.Server
                             }
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                             break;
+                        // CURRENT POS - #################################################################################
                         case BooruProtocol.Command.DeleteUser:
                             string usernameToRemove = _Reader.ReadString();
                             if (_User.IsAdmin)
@@ -420,10 +424,12 @@ namespace TA.SharpBooru.Server
                             }
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                             break;
+                        // CURRENT POS - #################################################################################
                         case BooruProtocol.Command.GetBooruInfo:
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                             _Server.Booru.Info.ToWriter(_Writer);
                             break;
+                        // CURRENT POS - #################################################################################
                         case BooruProtocol.Command.FindImageDupes:
                             ulong hash = _Reader.ReadUInt64();
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
@@ -446,7 +452,7 @@ namespace TA.SharpBooru.Server
             private bool IsPrivacyAllowed(BooruPost Post, BooruUser User)
             {
                 if (Post.Private && !User.IsAdmin)
-                    return Post.Owner == User.Username;
+                    return Post.User == User.Username;
                 else return true;
             }
         }

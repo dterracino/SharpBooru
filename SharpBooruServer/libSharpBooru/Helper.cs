@@ -226,7 +226,7 @@ namespace TA.SharpBooru
         {
             StringBuilder sb = new StringBuilder();
             Array.ForEach<byte>(Data, x => sb.Append(x.ToString("X2")));
-            return sb.ToString();
+            return sb.ToString().ToLower();
         }
 
         public static bool MD5Compare(byte[] MD5_1, byte[] MD5_2)

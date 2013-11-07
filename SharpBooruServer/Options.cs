@@ -14,11 +14,13 @@ namespace TA.SharpBooru.Server
         [Option('u', "user", Required = false, DefaultValue = "nobody", HelpText = "Username used for SetUID")]
         public string User { get; set; }
 
+        /*
         [Option('c', "certificate", Required = false, HelpText = "The .pfx server certificate")]
         public string Certificate { get; set; }
 
         [Option('w', "certificate-password", Required = false, DefaultValue = "sharpbooru", HelpText = "The password for the certificate")]
         public string CertificatePassword { get; set; }
+        */
 
         [Option('i', "pidfile", Required = false, HelpText = "PID file")]
         public string PIDFile { get; set; }
