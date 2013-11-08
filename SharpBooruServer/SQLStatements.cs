@@ -19,7 +19,12 @@ namespace TA.SharpBooru.Server
         public const string GetPostCount = "SELECT COUNT(*) FROM posts";
 
         //Deletions
-        public const string DeletePostByID = "DELETE FROM posts WHERE id = ?1; DELETE FROM post_tags WHERE post = ?1";
-        public const string DeleteTagByID = "DELETE FROM tags WHERE id = ?1; DELETE FROM post_tags WHERE tag = ?1";
+        public const string DeletePostByID = "DELETE FROM posts WHERE id = ?";
+        public const string DeleteTagByID = "DELETE FROM tags WHERE id = ?1";
+        public const string DeletePostTagsByPostID = "DELETE FROM post_tags WHERE post = ?";
+        public const string DeletePostTagsByTagID = "DELETE FROM post_tags WHERE tag = ?";
+
+        //Insertions
+        //LOL NO
     }
 }

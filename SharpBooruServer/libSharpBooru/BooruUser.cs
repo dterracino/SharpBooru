@@ -87,6 +87,16 @@ namespace TA.SharpBooru
             };
         }
 
+        public static Dictionary<string, object> ToDictionary(bool IncludeID)
+        {
+            var dict = new Dictionary<string, object>()
+            {
+
+            };
+            if (IncludeID)
+                dict.Add("id", ID);
+        }
+
         public object Clone() { return this.MemberwiseClone(); }
     }
 

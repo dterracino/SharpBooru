@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Data;
+using System.Text;
 using System.Data.SQLite;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace TA.SharpBooru
@@ -95,6 +97,25 @@ namespace TA.SharpBooru
                     int cnt = command.ExecuteNonQuery();
                     return ReturnLastInsertedID ? GetLastInsertedID() : cnt;
                 }
+        }
+
+        public int ExecuteInsert(string TableName, Dictionary<string, object> Dictionary)
+        {
+            if (Dictionary.Count > 0)
+            {
+                //TODO X Test ExecuteInsert
+                StringBuilder statement = new StringBuilder();
+                statement.AppendFormat("INSERT INTO {0} ({1}) VALUES(", TableName, string.Join(", ", Dictionary.Keys));
+                for (int i = 0; i < Dictionary.Count;i++)
+                {
+                    if (i > 0)
+                        statement.Append(", ?");
+                    else statement.Append('?');
+                }
+                statement.Append(')');
+                return ExecuteInt(statement.ToString(), Dictionary.Values);
+            }
+            else throw new ArgumentException("Dictionary must contain things");
         }
 
         [SQLiteFunction(Name = "REGEXP", Arguments = 2, FuncType = FunctionType.Scalar)]

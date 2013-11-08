@@ -123,7 +123,7 @@ namespace TA.SharpBooru.Server
                 string username = _Reader.ReadString();
                 string password = _Reader.ReadString();
                 password = Helper.ByteToString(Helper.MD5OfString(password));
-                DataRow userRow = _Server.Booru.DB.ExecuteRow("SELECT * FROM users WHERE username = ?", username);
+                DataRow userRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetUserByUsername, username);
                 BooruUser user = BooruUser.FromRow(userRow);
                 if (user != null)
                     if (user.MD5Password == password)
@@ -231,6 +231,7 @@ namespace TA.SharpBooru.Server
                                     if (_Server.Booru.DB.ExecuteInt(SQLStatements.GetPostCountByID, postID) > 0)
                                     {
                                         _Server.Booru.DB.ExecuteInt(SQLStatements.DeletePostByID, postID);
+                                        _Server.Booru.DB.ExecuteInt(SQLStatements.DeletePostTagsByPostID, postID);
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     }
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
@@ -247,6 +248,7 @@ namespace TA.SharpBooru.Server
                                     if (_Server.Booru.DB.ExecuteInt(SQLStatements.GetTagCountByID, tagID) > 0)
                                     {
                                         _Server.Booru.DB.ExecuteInt(SQLStatements.DeleteTagByID, tagID);
+                                        _Server.Booru.DB.ExecuteInt(SQLStatements.DeletePostTagsByTagID, tagID);
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     }
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
@@ -254,16 +256,16 @@ namespace TA.SharpBooru.Server
                                 else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                             }
                                 break;
-                        // CURRENT POS - #################################################################################
                         case BooruProtocol.Command.EditTag:
                             {
                                 BooruTag newTag = BooruTag.FromReader(_Reader);
                                 if (_User.CanEditTags)
                                 {
-                                    if (_Server.Booru.Tags.Contains(newTag.ID))
+                                    //TODO X ExecuteInt works?
+                                    if (_Server.Booru.DB.ExecuteInt(SQLStatements.GetTagCountByID, newTag.ID) > 0)
                                     {
-                                        _Server.Booru.Tags.Remove(newTag.ID);
-                                        _Server.Booru.Tags.Add(newTag);
+                                        _Server.Booru.DB.ExecuteInt(SQLStatements.DeleteTagByID, newTag.ID);
+                                        _Server.Booru.DB.ExecuteInsert("tags", newTag.ToDictionary(true));
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     }
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
@@ -347,24 +349,21 @@ namespace TA.SharpBooru.Server
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                             _User.ToWriter(_Writer, false);
                             break;
-                        // CURRENT POS - #################################################################################
                         case BooruProtocol.Command.ChangeUser:
                             string username = _Reader.ReadString();
                             string password = _Reader.ReadString();
                             password = Helper.ByteToString(Helper.MD5OfString(password));
-                            bool newUserLoggedIn = false;
-                            foreach (BooruUser user in _Server.Booru.Users)
-                                if (user.Username == username)
-                                    if (user.MD5Password == password || _User.IsAdmin)
-                                        if (user.CanLoginDirect || _User.IsAdmin)
-                                        {
-                                            _User = user;
-                                            newUserLoggedIn = true;
-                                            break;
-                                        }
-                            if (newUserLoggedIn)
-                                _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                            else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
+                            DataRow userRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetUserByUsername, username);
+                            BooruUser user = BooruUser.FromRow(userRow);
+                            if (user != null)
+                                if (user.MD5Password == password)
+                                    if (user.CanLoginDirect)
+                                    {
+                                        _User = user;
+                                        _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                                        break;
+                                    }
+                            _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                             break;
                         // CURRENT POS - #################################################################################
                         case BooruProtocol.Command.EditImage:
