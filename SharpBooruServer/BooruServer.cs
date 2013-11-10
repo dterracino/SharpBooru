@@ -125,20 +125,21 @@ namespace TA.SharpBooru.Server
                 password = Helper.ByteToString(Helper.MD5OfString(password));
                 DataRow userRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetUserByUsername, username);
                 BooruUser user = BooruUser.FromRow(userRow);
+                var errorCode = BooruProtocol.ErrorCode.Success;
                 if (user != null)
+                {
                     if (user.MD5Password == password)
-                        if (user.CanLoginDirect)
-                        {
-                            _Writer.Write(true);
-                            return user;
-                        }
-                        else
-                        {
-                            _Writer.Write(false);
-                            throw new BooruProtocol.BooruException("User can't login directly");
-                        }
-                _Writer.Write(false);
-                throw new BooruProtocol.BooruException("Authentication failed");
+                    {
+                        if (!user.CanLoginDirect)
+                            errorCode = BooruProtocol.ErrorCode.NoPermission;
+                    }
+                    else errorCode = BooruProtocol.ErrorCode.LoginFailed;
+                }
+                else errorCode = BooruProtocol.ErrorCode.ResourceNotFound;
+                _Writer.Write((byte)errorCode);
+                if (errorCode == BooruProtocol.ErrorCode.Success)
+                    return user;
+                else throw new BooruProtocol.BooruException(errorCode);
             }
 
             private bool HandlerStage3()
@@ -361,15 +362,20 @@ namespace TA.SharpBooru.Server
                             password = Helper.ByteToString(Helper.MD5OfString(password));
                             DataRow userRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetUserByUsername, username);
                             BooruUser user = BooruUser.FromRow(userRow);
+                            var errorCode = BooruProtocol.ErrorCode.Success;
                             if (user != null)
-                                if (user.MD5Password == password)
-                                    if (user.CanLoginDirect)
-                                    {
-                                        _User = user;
-                                        _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                                        break;
-                                    }
-                            _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
+                            {
+                                if (user.MD5Password == password || user.IsAdmin)
+                                {
+                                    if (!user.CanLoginDirect)
+                                        errorCode = BooruProtocol.ErrorCode.NoPermission;
+                                }
+                                else errorCode = BooruProtocol.ErrorCode.LoginFailed;
+                            }
+                            else errorCode = BooruProtocol.ErrorCode.ResourceNotFound;
+                            if (errorCode == BooruProtocol.ErrorCode.Success)
+                                _User = user;
+                            _Writer.Write((byte)errorCode);
                             break;
                         case BooruProtocol.Command.EditImage:
                             {

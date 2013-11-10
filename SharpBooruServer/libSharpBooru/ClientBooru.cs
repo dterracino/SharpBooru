@@ -71,10 +71,11 @@ namespace TA.SharpBooru
                 _Writer.Write(_Username);
                 _Writer.Write(_Password);
                 _Writer.Flush();
-                if (!_Reader.ReadBoolean())
+                var loginErrorCode = (BooruProtocol.ErrorCode)_Reader.ReadByte();
+                if (loginErrorCode != BooruProtocol.ErrorCode.Success)
                 {
                     Disconnect(false);
-                    throw new BooruProtocol.BooruException(BooruProtocol.ErrorCode.LoginFailed);
+                    throw new BooruProtocol.BooruException(loginErrorCode);
                 }
             }
         }

@@ -4,7 +4,7 @@ namespace TA.SharpBooru
 {
     public static class BooruProtocol
     {
-        public const ushort ProtocolVersion = 0xA;
+        public const ushort ProtocolVersion = 0xB;
 
         // ReturnParameter(Type), [Argument1(Type)], [Argument2(Type)], ...
         public enum Command : byte
