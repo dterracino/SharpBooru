@@ -365,7 +365,7 @@ namespace TA.SharpBooru.Server
                             var errorCode = BooruProtocol.ErrorCode.Success;
                             if (user != null)
                             {
-                                if (user.MD5Password == password || user.IsAdmin)
+                                if (user.MD5Password == password || _User.IsAdmin)
                                 {
                                     if (!user.CanLoginDirect)
                                         errorCode = BooruProtocol.ErrorCode.NoPermission;
