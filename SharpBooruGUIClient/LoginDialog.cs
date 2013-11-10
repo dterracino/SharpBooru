@@ -5,13 +5,24 @@ namespace TA.SharpBooru.Client.GUI
 {
     public partial class LoginDialog : Form
     {
-        public LoginDialog()
+        private bool _IsAdminMode = false;
+
+
+        public LoginDialog(bool CurrentUserIsAdmin = false)
         {
             InitializeComponent();
+            if (CurrentUserIsAdmin)
+            {
+                _IsAdminMode = true;
+                textBoxPassword.Enabled = false;
+            }
+            else
+            {
+                textBoxPassword.KeyDown += keyDown;
+                textBoxPassword.TextChanged += textChanged;
+            }
             textBoxUsername.KeyDown += keyDown;
-            textBoxPassword.KeyDown += keyDown;
             textBoxUsername.TextChanged += textChanged;
-            textBoxPassword.TextChanged += textChanged;
             buttonOK.KeyDown += (sender, e) =>
                 {
                     if (e.KeyCode == Keys.Escape)
@@ -20,7 +31,11 @@ namespace TA.SharpBooru.Client.GUI
             textChanged(this, EventArgs.Empty);
         }
 
-        private void textChanged(object sender, EventArgs e) { buttonOK.Enabled = !string.IsNullOrWhiteSpace(Username) && !string.IsNullOrEmpty(Password); }
+        private void textChanged(object sender, EventArgs e)
+        {
+            buttonOK.Enabled = !string.IsNullOrWhiteSpace(Username) 
+                && (!string.IsNullOrEmpty(Password) || _IsAdminMode); 
+        }
 
         private void keyDown(object sender, KeyEventArgs e)
         {
