@@ -73,22 +73,24 @@ namespace TA.SharpBooru
 
         public static BooruUser FromRow(DataRow Row)
         {
-            return new BooruUser()
-            {
-                ID = Convert.ToUInt64(Row["ID"]),
-                Username = Convert.ToString(Row["username"]),
-                MD5Password = Convert.ToString(Row["password"]),
-                IsAdmin = Convert.ToBoolean(Row["perm_isadmin"]),
-                CanLoginDirect = Convert.ToBoolean(Row["perm_canlogindirect"]),
-                CanLoginOnline = Convert.ToBoolean(Row["perm_canloginonline"]),
-                AdvancePostControl = Convert.ToBoolean(Row["perm_apc"]),
-                CanAddPosts = Convert.ToBoolean(Row["perm_canaddposts"]),
-                CanDeletePosts = Convert.ToBoolean(Row["perm_candeleteposts"]),
-                CanEditPosts = Convert.ToBoolean(Row["perm_caneditposts"]),
-                CanEditTags = Convert.ToBoolean(Row["perm_canedittags"]),
-                CanDeleteTags = Convert.ToBoolean(Row["perm_candeletetags"]),
-                MaxRating = Convert.ToUInt16(Row["max_rating"])
-            };
+            if (Row != null)
+                return new BooruUser()
+                {
+                    ID = Convert.ToUInt64(Row["ID"]),
+                    Username = Convert.ToString(Row["username"]),
+                    MD5Password = Convert.ToString(Row["password"]),
+                    IsAdmin = Convert.ToBoolean(Row["perm_isadmin"]),
+                    CanLoginDirect = Convert.ToBoolean(Row["perm_canlogindirect"]),
+                    CanLoginOnline = Convert.ToBoolean(Row["perm_canloginonline"]),
+                    AdvancePostControl = Convert.ToBoolean(Row["perm_apc"]),
+                    CanAddPosts = Convert.ToBoolean(Row["perm_canaddposts"]),
+                    CanDeletePosts = Convert.ToBoolean(Row["perm_candeleteposts"]),
+                    CanEditPosts = Convert.ToBoolean(Row["perm_caneditposts"]),
+                    CanEditTags = Convert.ToBoolean(Row["perm_canedittags"]),
+                    CanDeleteTags = Convert.ToBoolean(Row["perm_candeletetags"]),
+                    MaxRating = Convert.ToUInt16(Row["max_rating"])
+                };
+            else return null;
         }
 
         public Dictionary<string, object> ToDictionary(bool IncludeID)

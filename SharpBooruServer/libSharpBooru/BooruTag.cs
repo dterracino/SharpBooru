@@ -62,13 +62,15 @@ namespace TA.SharpBooru
 
         public static BooruTag FromRow(DataRow Row)
         {
-            return new BooruTag(Convert.ToString(Row["tag"]))
-            {
-                ID = Convert.ToUInt64(Row["id"]),
-                Type = Convert.ToString(Row["type"]),
-                Description = Convert.ToString(Row["description"]),
-                Color = Convert.ToInt32(Row["color"])
-            };
+            if (Row != null)
+                return new BooruTag(Convert.ToString(Row["tag"]))
+                {
+                    ID = Convert.ToUInt64(Row["id"]),
+                    Type = Convert.ToString(Row["type"]),
+                    Description = Convert.ToString(Row["description"]),
+                    Color = Convert.ToInt32(Row["color"])
+                };
+            else return null;
         }
 
         public Dictionary<string, object> ToDictionary(bool IncludeID = false)

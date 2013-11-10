@@ -85,22 +85,24 @@ namespace TA.SharpBooru
         /// <summary>Creates a BooruPost from a DataRow. DOES NOT include Tags, Thumb and Image</summary>
         public static BooruPost FromRow(DataRow Row)
         {
-            return new BooruPost()
-            {
-                ID = Convert.ToUInt64(Row["id"]),
-                User = Convert.ToString(Row["user"]),
-                Private = Convert.ToBoolean(Row["private"]),
-                Source = Convert.ToString(Row["source"]),
-                Description = Convert.ToString(Row["description"]),
-                Rating = Convert.ToByte(Row["rating"]),
-                Width = Convert.ToUInt32(Row["width"]),
-                Height = Convert.ToUInt32(Row["height"]),
-                CreationDate = Helper.UnixTimeToDateTime(Convert.ToUInt32(Row["creationdate"])),
-                ViewCount = Convert.ToUInt64(Row["viewcount"]),
-                EditCount = Convert.ToUInt64(Row["editcount"]),
-                Score = Convert.ToInt64(Row["score"]),
-                ImageHash = Convert.ToUInt64(Row["hash"]),
-            };
+            if (Row != null)
+                return new BooruPost()
+                {
+                    ID = Convert.ToUInt64(Row["id"]),
+                    User = Convert.ToString(Row["user"]),
+                    Private = Convert.ToBoolean(Row["private"]),
+                    Source = Convert.ToString(Row["source"]),
+                    Description = Convert.ToString(Row["description"]),
+                    Rating = Convert.ToByte(Row["rating"]),
+                    Width = Convert.ToUInt32(Row["width"]),
+                    Height = Convert.ToUInt32(Row["height"]),
+                    CreationDate = Helper.UnixTimeToDateTime(Convert.ToUInt32(Row["creationdate"])),
+                    ViewCount = Convert.ToUInt64(Row["viewcount"]),
+                    EditCount = Convert.ToUInt64(Row["editcount"]),
+                    Score = Convert.ToInt64(Row["score"]),
+                    ImageHash = Convert.ToUInt64(Row["hash"]),
+                };
+            else return null;
         }
 
         public Dictionary<string, object> ToDictionary(bool IncludeID)
