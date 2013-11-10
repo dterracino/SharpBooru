@@ -57,10 +57,12 @@ namespace TA.SharpBooru.Client.GUI
 
         private void buttonSearchLAN_Click(object sender, EventArgs e)
         {
+            /* TODO X Search for server
             ServerBroadcast sb = ServerBroadcast.SearchForServer();
             if (sb == null)
                 MessageBox.Show("No LAN server found", "Server not found", MessageBoxButtons.OK, MessageBoxIcon.Error);
             else Server = string.Format("{0}:{1}", sb.IPAddress, sb.Port);
+             */
         }
     }
 }

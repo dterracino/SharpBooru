@@ -21,7 +21,7 @@ namespace TA.SharpBooru.Client.GUI.Controls
 
         public bool AsynchronousLoading = true;
 
-        private Booru _Booru = null;
+        private ClientBooru _Booru = null;
         private List<ulong> _Posts = new List<ulong>();
         private ushort _ThumbsPerPage = 30;
 
@@ -99,7 +99,7 @@ namespace TA.SharpBooru.Client.GUI.Controls
             RefreshLabel();
         }
 
-        public void SetBooru(Booru Booru) { _Booru = Booru; }
+        public void SetBooru(ClientBooru Booru) { _Booru = Booru; }
 
         private void pageSwitcher_PageChanged(object sender, EventArgs e)
         {
@@ -128,15 +128,15 @@ namespace TA.SharpBooru.Client.GUI.Controls
                 if (_Booru != null)
                 {
                     BooruPost postToAdd = _Booru.GetPost(postID);
-                    string toolTipText = string.Format("# {0} - {1}x{2} - Added {3} by {4}", postToAdd.ID, postToAdd.Width, postToAdd.Height, postToAdd.CreationDate, postToAdd.Owner);
+                    string toolTipText = string.Format("# {0} - {1}x{2} - Added {3} by {4}", postToAdd.ID, postToAdd.Width, postToAdd.Height, postToAdd.CreationDate, postToAdd.User);
                     Color? borderColor = null;
                     if (postToAdd.Private)
                     {
-                        if (postToAdd.Owner == _Booru.CurrentUser.Username)
+                        if (postToAdd.User == _Booru.CurrentUser.Username)
                             borderColor = Color.Red;
                         else borderColor = Color.Orange;
                     }
-                    else if (postToAdd.Owner == _Booru.CurrentUser.Username)
+                    else if (postToAdd.User == _Booru.CurrentUser.Username)
                         borderColor = Color.Green;
                     thumbView.Add(postToAdd.Thumbnail.Bitmap, postToAdd, toolTipText, borderColor);
                 }

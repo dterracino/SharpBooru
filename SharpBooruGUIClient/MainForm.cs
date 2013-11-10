@@ -7,10 +7,10 @@ namespace TA.SharpBooru.Client.GUI
 {
     public partial class MainForm : Form
     {
-        private Booru _Booru = null;
+        private ClientBooru _Booru = null;
         private string _LastSearch = null;
 
-        public MainForm(Booru Booru)
+        public MainForm(ClientBooru Booru)
         {
             _Booru = Booru;
             InitializeComponent();
@@ -23,8 +23,6 @@ namespace TA.SharpBooru.Client.GUI
             this.booruThumbView.LoadingFinished += () => SetLoadingMode(false);
             this.Shown += tagTextBox1_EnterPressed;
             this.buttonAdminTools.Click += (sender, e) => adminContextMenuStrip.Show(buttonAdminTools, new Point(buttonAdminTools.Width, 0));
-            this.killServerToolStripMenuItem.Click += killServerToolStripMenuItem_Click;
-            this.saveBooruToolStripMenuItem.Click += saveBooruToolStripMenuItem_Click;
             this.openToolStripMenuItem.Click += (sender, e) => openImage(booruThumbView.SelectedPost);
             this.editToolStripMenuItem.Click += (sender, e) =>
                 {
@@ -50,22 +48,6 @@ namespace TA.SharpBooru.Client.GUI
                 buttonChangeUser.Enabled = !Loading;
             }
             else this.Invoke(new Action<bool>(SetLoadingMode), Loading);
-        }
-
-        private void saveBooruToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            _Booru.SaveServerBooru();
-            MessageBox.Show("Booru saved", "SaveServerBooru", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        private void killServerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("Are you sure?", "ForceKillServer", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                _Booru.ForceKillServer();
-                MessageBox.Show("Server killed", "ForceKillServer", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Close();
-            }
         }
 
         private void openImage(object aObj)

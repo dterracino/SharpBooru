@@ -11,10 +11,10 @@ namespace TA.SharpBooru.Client.GUI
 {
     public partial class ImportDialog : Form
     {
-        private Booru _Booru;
+        private ClientBooru _Booru;
         private BooruTagList _AllTags;
 
-        public ImportDialog(Booru Booru)
+        public ImportDialog(ClientBooru Booru)
         {
             _Booru = Booru;
             InitializeComponent();
@@ -72,7 +72,7 @@ namespace TA.SharpBooru.Client.GUI
                     foreach (DataGridViewRow row in rows)
                     {
                         string imgPath = (string)row.Cells["image_file"].Value;
-                        using (BooruPost post = new BooruPost())
+                        BooruPost post = new BooruPost();
                             try
                             {
                                 BooruImage bImg = BooruImage.FromFileOrURL(imgPath);
@@ -80,7 +80,8 @@ namespace TA.SharpBooru.Client.GUI
                                     post.Image = bImg;
                                 else throw new FileNotFoundException("Image");
                                 post.Source = (string)row.Cells["source"].Value;
-                                post.Comment = (string)row.Cells["comment"].Value;
+                                //TODO X Rename table row comment -> description
+                                post.Description = (string)row.Cells["comment"].Value;
                                 post.Rating = Convert.ToByte(row.Cells["rating"].Value);
                                 post.Private = Convert.ToBoolean(row.Cells["privat"].Value);
                                 string tag_string = Convert.ToString(row.Cells["tags"].Value) + " " + sharedTagsTagTextBox.Text;

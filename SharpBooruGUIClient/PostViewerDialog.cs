@@ -10,7 +10,7 @@ namespace TA.SharpBooru.Client.GUI
 {
     public partial class PostViewerDialog : Form
     {
-        private Booru _Booru;
+        private ClientBooru _Booru;
         private BooruPost _Post;
         private List<ulong> _PostIDs;
         private int _Index = -1;
@@ -34,7 +34,7 @@ namespace TA.SharpBooru.Client.GUI
             }
         }
 
-        public PostViewerDialog(Booru Booru, List<ulong> PostIDs, int StartIndex = 0)
+        public PostViewerDialog(ClientBooru Booru, List<ulong> PostIDs, int StartIndex = 0)
         {
             _Booru = Booru;
             if (PostIDs == null)
@@ -86,7 +86,7 @@ namespace TA.SharpBooru.Client.GUI
                             GUIHelper.Invoke(this, () =>
                                 {
                                     tagList.Tags = _Post.Tags;
-                                    Text = string.Format("# {0} - {1}x{2} - Views {3} - Added {4} by {5}", _Post.ID, _Post.Width, _Post.Height, _Post.ViewCount, _Post.CreationDate, _Post.Owner);
+                                    Text = string.Format("# {0} - {1}x{2} - Views {3} - Added {4} by {5}", _Post.ID, _Post.Width, _Post.Height, _Post.ViewCount, _Post.CreationDate, _Post.User);
                                 });
                         }
                         catch (ObjectDisposedException) { }
@@ -171,10 +171,10 @@ namespace TA.SharpBooru.Client.GUI
                 cPost.EditCount = 0;
                 cPost.ViewCount = 0;
             }
-            string oldComment = cPost.Comment;
-            cPost.Comment = "Cloned ID " + _Post.ID;
+            string oldComment = cPost.Description;
+            cPost.Description = "Cloned ID " + _Post.ID;
             if (!string.IsNullOrWhiteSpace(oldComment))
-                cPost.Comment += ", " + oldComment.Trim();
+                cPost.Description += ", " + oldComment.Trim();
             if (newImage != null)
                 cPost.Image = newImage;
             _Booru.AddPost(ref cPost);

@@ -78,7 +78,7 @@ namespace TA.SharpBooru.Client.GUI
                 options.Password = "guest";
             }
 
-            using (Booru booru = new Booru(Helper.GetIPEndPointFromString(options.Server), options.Username, options.Password))
+            using (ClientBooru booru = new ClientBooru(Helper.GetIPEndPointFromString(options.Server), options.Username, options.Password))
             using (MainForm mForm = new MainForm(booru))
                 Application.Run(mForm);
             Helper.CleanTempFolder();

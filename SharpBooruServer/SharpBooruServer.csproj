@@ -53,9 +53,11 @@
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Booru.cs" />
+    <Compile Include="ServerBooru.cs" />
+    <Compile Include="libSharpBooru\ClientBooru.cs" />
     <Compile Include="libSharpBooru\BooruAPIs\BooruAPI.cs" />
     <Compile Include="libSharpBooru\BooruAPIs\BooruAPIPost.cs" />
     <Compile Include="libSharpBooru\BooruAPIs\GelbooruAPI.cs" />
@@ -119,6 +121,14 @@
     <Compile Include="libSharpBooru\CommandLine\Text\_ParsingErrorsHandler.cs" />
     <Compile Include="libSharpBooru\ConsoleEx.cs" />
     <Compile Include="libSharpBooru\Helper.cs" />
+    <Compile Include="libSharpBooru\LitJSON\IJsonWrapper.cs" />
+    <Compile Include="libSharpBooru\LitJSON\JsonData.cs" />
+    <Compile Include="libSharpBooru\LitJSON\JsonException.cs" />
+    <Compile Include="libSharpBooru\LitJSON\JsonMapper.cs" />
+    <Compile Include="libSharpBooru\LitJSON\JsonReader.cs" />
+    <Compile Include="libSharpBooru\LitJSON\JsonWriter.cs" />
+    <Compile Include="libSharpBooru\LitJSON\Lexer.cs" />
+    <Compile Include="libSharpBooru\LitJSON\ParserToken.cs" />
     <Compile Include="libSharpBooru\Logger.cs" />
     <Compile Include="libSharpBooru\Server.cs" />
     <Compile Include="libSharpBooru\SQLiteWrapper.cs" />

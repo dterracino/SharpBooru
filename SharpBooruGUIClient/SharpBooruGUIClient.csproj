@@ -70,6 +70,9 @@
     <Compile Include="..\SharpBooruServer\libSharpBooru\BooruUser.cs">
       <Link>libSharpBooru\BooruUser.cs</Link>
     </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\ClientBooru.cs">
+      <Link>libSharpBooru\ClientBooru.cs</Link>
+    </Compile>
     <Compile Include="..\SharpBooruServer\libSharpBooru\ConsoleEx.cs">
       <Link>libSharpBooru\ConsoleEx.cs</Link>
     </Compile>
@@ -81,6 +84,12 @@
     </Compile>
     <Compile Include="..\SharpBooruServer\libSharpBooru\CommandLine\**\*.*">
       <Link>libSharpBooru\CommandLine\%(RecursiveDir)%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\BooruAPIs\**\*.*">
+      <Link>libSharpBooru\BooruAPIs\%(RecursiveDir)%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\LitJSON\**\*.*">
+      <Link>libSharpBooru\LitJSON\%(RecursiveDir)%(FileName)</Link>
     </Compile>
     <Compile Include="Controls\ImageBox\ImageBox.cs">
       <SubType>Component</SubType>

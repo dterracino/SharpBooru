@@ -171,7 +171,7 @@ namespace TA.SharpBooru.BooruAPIs
             return new BooruAPIPost()
             {
                 APIName = APIName,
-                Comment = "Imported from " + APIName
+                Description = "Imported from " + APIName
             };
         }
     }

@@ -1,6 +1,4 @@
-﻿using TA.SharpBooru.Client;
-
-namespace TA.SharpBooru.BooruAPIs
+﻿namespace TA.SharpBooru.BooruAPIs
 {
     public class BooruAPIPost : BooruPost
     {

@@ -21,7 +21,7 @@ namespace TA.SharpBooru
             SQLiteFunction.RegisterFunction(typeof(MyRegEx));
         }
 
-        public override SQLiteConnection Connect()
+        public SQLiteConnection Connect()
         {
             lock (_Lock)
             {

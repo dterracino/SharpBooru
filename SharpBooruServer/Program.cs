@@ -41,7 +41,6 @@ namespace TA.SharpBooru.Server
 
         private Options _Options;
         private Logger _Logger;
-        private Booru _Booru;
         //private ServerBroadcaster _ServerBroadcaster;
         private BooruServer _BooruServer;
 
@@ -69,7 +68,8 @@ namespace TA.SharpBooru.Server
             //X509Certificate2 sCertificate = new X509Certificate2(certificateFile, _Options.CertificatePassword);
             X509Certificate2 sCertificate = new X509Certificate2(certificateFile, "sharpbooru");
 
-            _BooruServer = new BooruServer(_Booru, _Logger, sCertificate, _Options.Port);
+            ServerBooru booru = new ServerBooru(_Options.Location);
+            _BooruServer = new BooruServer(booru, _Logger, sCertificate, _Options.Port);
 
             /*
             _Logger.LogLine("Starting ServerBroadcaster...");

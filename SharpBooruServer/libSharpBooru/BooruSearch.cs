@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -42,12 +43,19 @@ namespace TA.SharpBooru.Server
             }
         }
 
-        public static BooruPostList DoSearch(string Pattern, BooruPostList Posts, BooruTagList Tags)
+        public static BooruPostList DoSearch(string Pattern, ServerBooru Booru)
         {
             string[] parts = SplitString(Pattern);
-            if (parts.Length < 1)
-                return Posts;
+            //if (parts.Length < 1)
+            //    return; //RETURN ALL POSTS
 
+            //Get all involved tags from DB
+            //Get valid post ids from DB (post_tags) self-construct the SQL statement
+            //Get all posts
+            //Perform all the special patterns
+            //return the post ids
+
+            /*
             for (int i = 0; i < parts.Length; i++)
             {
                 BooruPostList newPosts = new BooruPostList();
@@ -69,7 +77,7 @@ namespace TA.SharpBooru.Server
                     if (tag != null)
                     {
                         foreach (BooruPost post in Posts)
-                            if (negate ^ post.TagIDs.Contains(tag.ID))
+                            if (negate ^ post.Tags.Contains(tag.ID))
                                 newPosts.Add(post);
                     }
                 }
@@ -78,6 +86,13 @@ namespace TA.SharpBooru.Server
             }
 
             return Posts;
+            */
+
+            //TODO X Search
+            //for now, return all posts
+
+            using (DataTable postTable = Booru.DB.ExecuteTable(SQLStatements.GetPosts))
+                return BooruPostList.FromTable(postTable);
         }
 
         private static bool ExtractNegate(ref string Pattern)

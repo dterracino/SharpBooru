@@ -39,16 +39,13 @@ namespace TA.SharpBooru
 
         public override int GetHashCode() { return ID.GetHashCode(); }
 
-        public void ToWriter(BinaryWriter Writer, bool OnlyID = false)
+        public void ToWriter(BinaryWriter Writer)
         {
             Writer.Write(ID);
-            if (!OnlyID)
-            {
-                Writer.Write(Tag);
-                Writer.Write(Type);
-                Writer.Write(Description);
-                Writer.Write(Color);
-            }
+            Writer.Write(Tag);
+            Writer.Write(Type);
+            Writer.Write(Description);
+            Writer.Write(Color);
         }
 
         public static BooruTag FromReader(BinaryReader Reader)

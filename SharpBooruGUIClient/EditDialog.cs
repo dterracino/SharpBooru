@@ -13,25 +13,25 @@ namespace TA.SharpBooru.Client.GUI
     {
         public EditDialog() { InitializeComponent(); }
 
-        public DialogResult ShowDialog(Booru Booru, ref BooruPost Post)
+        public DialogResult ShowDialog(ClientBooru Booru, ref BooruPost Post)
         {
             textBoxTags.SetTags(Booru.GetAllTags());
             textBoxTags.Text = Post.Tags.ToString();
-            textBoxComment.Text = Post.Comment;
+            textBoxComment.Text = Post.Description;
             textBoxSource.Text = Post.Source;
             textBoxRating.Value = Post.Rating;
             checkBoxPrivate.Checked = Post.Private;
             textBoxOwner.Enabled = Booru.CurrentUser.AdvancePostControl;
-            textBoxOwner.Text = Post.Owner;
+            textBoxOwner.Text = Post.User;
             DialogResult dResult = this.ShowDialog();
             if (dResult == DialogResult.OK)
             {
                 Post.Tags = BooruTagList.FromString(textBoxTags.Text);
-                Post.Comment = textBoxComment.Text;
+                Post.Description = textBoxComment.Text;
                 Post.Source = textBoxSource.Text;
                 Post.Rating = Convert.ToByte(textBoxRating.Value);
                 Post.Private = checkBoxPrivate.Checked;
-                Post.Owner = textBoxOwner.Text;
+                Post.User = textBoxOwner.Text;
             }
             return dResult;
         }

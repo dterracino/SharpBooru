@@ -7,6 +7,7 @@ namespace TA.SharpBooru
 {
     public class BooruUser : ICloneable
     {
+        public ulong ID;
         public bool IsAdmin;
         public bool CanLoginDirect;
         public bool CanLoginOnline;
@@ -29,6 +30,7 @@ namespace TA.SharpBooru
         public void ToWriter(BinaryWriter Writer, bool IncludePassword)
         {
             Writer.Write(IncludePassword);
+            Writer.Write(ID);
             Writer.Write(Username);
             if (IncludePassword)
                 Writer.Write(MD5Password);
@@ -51,6 +53,7 @@ namespace TA.SharpBooru
             bool includePassword = Reader.ReadBoolean();
             return new BooruUser()
             {
+                ID = Reader.ReadUInt64(),
                 Username = Reader.ReadString(),
                 MD5Password = includePassword ? Reader.ReadString() : null,
 
@@ -72,6 +75,7 @@ namespace TA.SharpBooru
         {
             return new BooruUser()
             {
+                ID = Convert.ToUInt64(Row["ID"]),
                 Username = Convert.ToString(Row["username"]),
                 MD5Password = Convert.ToString(Row["password"]),
                 IsAdmin = Convert.ToBoolean(Row["perm_isadmin"]),
@@ -87,14 +91,26 @@ namespace TA.SharpBooru
             };
         }
 
-        public static Dictionary<string, object> ToDictionary(bool IncludeID)
+        public Dictionary<string, object> ToDictionary(bool IncludeID)
         {
             var dict = new Dictionary<string, object>()
             {
-
+                { "username", Username },
+                { "password", MD5Password },
+                { "perm_isadmin", IsAdmin },
+                { "perm_canlogindirect", CanLoginDirect },
+                { "perm_canloginonline", CanLoginOnline },
+                { "perm_apc", AdvancePostControl },
+                { "perm_canaddposts", CanAddPosts },
+                { "perm_candeleteposts", CanDeletePosts },
+                { "perm_caneditposts", CanEditPosts },
+                { "perm_canedittags", CanEditTags },
+                { "perm_candeletetags", CanDeleteTags },
+                { "max_rating", MaxRating }
             };
             if (IncludeID)
                 dict.Add("id", ID);
+            return dict;
         }
 
         public object Clone() { return this.MemberwiseClone(); }
@@ -129,12 +145,12 @@ namespace TA.SharpBooru
             this.ForEach(x => x.ToWriter(Writer, IncludePassword));
         }
 
-        public static BooruUserList FromReader(BinaryReader Reader, bool IncludePassword)
+        public static BooruUserList FromReader(BinaryReader Reader)
         {
             uint count = Reader.ReadUInt32();
             BooruUserList bUserList = new BooruUserList();
             for (uint i = 0; i < count; i++)
-                bUserList.Add(BooruUser.FromReader(Reader, IncludePassword));
+                bUserList.Add(BooruUser.FromReader(Reader));
             return bUserList;
         }
 
