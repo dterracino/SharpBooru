@@ -22,7 +22,7 @@ namespace TA.SharpBooru.Client.GUI
             this.booruThumbView.LoadingStarted += () => SetLoadingMode(true);
             this.booruThumbView.LoadingFinished += () => SetLoadingMode(false);
             this.Shown += tagTextBox1_EnterPressed;
-            this.buttonAdminTools.Click += (sender, e) => adminContextMenuStrip.Show(buttonAdminTools, new Point(buttonAdminTools.Width, 0));
+            //this.buttonAdminTools.Click += (sender, e) => adminContextMenuStrip.Show(buttonAdminTools, new Point(buttonAdminTools.Width, 0));
             this.openToolStripMenuItem.Click += (sender, e) => openImage(booruThumbView.SelectedPost);
             this.editToolStripMenuItem.Click += (sender, e) =>
                 {
@@ -32,7 +32,6 @@ namespace TA.SharpBooru.Client.GUI
                             _Booru.SavePost(post);
                 };
             this.deleteToolStripMenuItem.Click += (sender, e) => _Booru.DeletePost(booruThumbView.SelectedPost);
-            GUIHelper.CreateToolTip(buttonAdminTools, "Admin tools");
             GUIHelper.CreateToolTip(buttonRefresh, "Refresh searched posts");
             GUIHelper.CreateToolTip(buttonChangeUser, "Change the user");
             GUIHelper.CreateToolTip(buttonImportDialog, "Import posts into the booru");
@@ -73,7 +72,7 @@ namespace TA.SharpBooru.Client.GUI
 
         private void buttonChangeUser_Click(object sender, EventArgs e)
         {
-            using (LoginDialog ld = new LoginDialog())
+            using (LoginDialog ld = new LoginDialog(_Booru.CurrentUser.IsAdmin))
                 if (ld.ShowDialog() == DialogResult.OK)
                 {
                     try
@@ -91,7 +90,6 @@ namespace TA.SharpBooru.Client.GUI
         {
             BooruUser cUser = _Booru.CurrentUser;
             buttonImportDialog.Enabled = cUser.CanAddPosts;
-            buttonAdminTools.Visible = cUser.IsAdmin;
             editToolStripMenuItem.Enabled = cUser.CanEditPosts;
             deleteToolStripMenuItem.Enabled = cUser.CanDeletePosts;
         }

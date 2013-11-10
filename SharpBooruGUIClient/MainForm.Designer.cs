@@ -34,17 +34,12 @@
             this.buttonImportDialog = new System.Windows.Forms.Button();
             this.buttonChangeUser = new System.Windows.Forms.Button();
             this.buttonRefresh = new System.Windows.Forms.Button();
-            this.buttonAdminTools = new System.Windows.Forms.Button();
-            this.adminContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.saveBooruToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.killServerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imageContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchBox = new TA.SharpBooru.Client.GUI.Controls.TagTextBox();
             this.booruThumbView = new TA.SharpBooru.Client.GUI.Controls.BooruThumbView();
-            this.adminContextMenuStrip.SuspendLayout();
             this.imageContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -89,37 +84,6 @@
             this.buttonRefresh.Text = "Refresh";
             this.buttonRefresh.UseVisualStyleBackColor = true;
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
-            // 
-            // buttonAdminTools
-            // 
-            this.buttonAdminTools.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonAdminTools.Location = new System.Drawing.Point(12, 225);
-            this.buttonAdminTools.Name = "buttonAdminTools";
-            this.buttonAdminTools.Size = new System.Drawing.Size(100, 23);
-            this.buttonAdminTools.TabIndex = 5;
-            this.buttonAdminTools.Text = "Admin Tools";
-            this.buttonAdminTools.UseVisualStyleBackColor = true;
-            // 
-            // adminContextMenuStrip
-            // 
-            this.adminContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveBooruToolStripMenuItem,
-            this.killServerToolStripMenuItem});
-            this.adminContextMenuStrip.Name = "adminContextMenuStrip";
-            this.adminContextMenuStrip.Size = new System.Drawing.Size(139, 48);
-            // 
-            // saveBooruToolStripMenuItem
-            // 
-            this.saveBooruToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.saveBooruToolStripMenuItem.Name = "saveBooruToolStripMenuItem";
-            this.saveBooruToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.saveBooruToolStripMenuItem.Text = "Save Booru";
-            // 
-            // killServerToolStripMenuItem
-            // 
-            this.killServerToolStripMenuItem.Name = "killServerToolStripMenuItem";
-            this.killServerToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
-            this.killServerToolStripMenuItem.Text = "Kill Server";
             // 
             // imageContextMenuStrip
             // 
@@ -175,7 +139,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(589, 347);
-            this.Controls.Add(this.buttonAdminTools);
             this.Controls.Add(this.buttonRefresh);
             this.Controls.Add(this.buttonChangeUser);
             this.Controls.Add(this.buttonImportDialog);
@@ -185,7 +148,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "SharpBooru GUI Client";
-            this.adminContextMenuStrip.ResumeLayout(false);
             this.imageContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -200,10 +162,6 @@
         private System.Windows.Forms.Button buttonImportDialog;
         private System.Windows.Forms.Button buttonChangeUser;
         private System.Windows.Forms.Button buttonRefresh;
-        private System.Windows.Forms.Button buttonAdminTools;
-        private System.Windows.Forms.ContextMenuStrip adminContextMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem saveBooruToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem killServerToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip imageContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
