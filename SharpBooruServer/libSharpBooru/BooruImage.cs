@@ -270,7 +270,7 @@ namespace TA.SharpBooru
             return g;
         }
 
-        //Based on jforshee's ImageHashing repo
+        //Based on jforshee's ImageHashing algorythm
         //https://github.com/jforshee/ImageHashing/blob/master/ImageHashing/ImageHashing.cs
         public ulong CalculateImageHash()
         {

@@ -99,15 +99,15 @@ namespace TA.SharpBooru
             {
                 { "username", Username },
                 { "password", MD5Password },
-                { "perm_isadmin", IsAdmin },
-                { "perm_canlogindirect", CanLoginDirect },
-                { "perm_canloginonline", CanLoginOnline },
-                { "perm_apc", AdvancePostControl },
-                { "perm_canaddposts", CanAddPosts },
-                { "perm_candeleteposts", CanDeletePosts },
-                { "perm_caneditposts", CanEditPosts },
-                { "perm_canedittags", CanEditTags },
-                { "perm_candeletetags", CanDeleteTags },
+                { "perm_isadmin", IsAdmin.ToString() },
+                { "perm_canlogindirect", CanLoginDirect.ToString() },
+                { "perm_canloginonline", CanLoginOnline.ToString() },
+                { "perm_apc", AdvancePostControl.ToString() },
+                { "perm_canaddposts", CanAddPosts.ToString() },
+                { "perm_candeleteposts", CanDeletePosts.ToString() },
+                { "perm_caneditposts", CanEditPosts.ToString() },
+                { "perm_canedittags", CanEditTags.ToString() },
+                { "perm_candeletetags", CanDeleteTags.ToString() },
                 { "max_rating", MaxRating }
             };
             if (IncludeID)

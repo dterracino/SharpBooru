@@ -110,17 +110,17 @@ namespace TA.SharpBooru
             var dict = new Dictionary<string, object>()
             {
                 { "user", User },
-                { "private", Private },
+                { "private", Private.ToString() },
                 { "source", Source },
                 { "description", Description },
                 { "rating", Rating },
                 { "width", Width },
                 { "height", Height },
-                { "creationdate", CreationDate },
+                { "creationdate", Helper.DateTimeToUnixTime(CreationDate) },
                 { "viewcount", ViewCount },
                 { "editcount", EditCount },
                 { "score", Score },
-                { "hash", ImageHash }
+                { "hash", ImageHash.ToString() }
             };
             if (IncludeID)
                 dict.Add("id", ID);

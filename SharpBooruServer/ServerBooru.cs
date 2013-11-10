@@ -28,7 +28,6 @@ namespace TA.SharpBooru.Server
                     {
                         _Folder = Folder;
                         _DB = new SQLiteWrapper(dbPath);
-                        _DB.Connect();
                         return;
                     }
             throw new Exception("No valid booru directory");

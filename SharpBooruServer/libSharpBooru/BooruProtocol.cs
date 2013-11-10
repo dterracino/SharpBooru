@@ -10,37 +10,36 @@ namespace TA.SharpBooru
         public enum Command : byte
         {
             // IDs(ulong[]), SearchPattern(string)
-            Search,
+            Search, //TODO ########## UNTESTED
 
             // void
             Disconnect,
 
             // Post(BooruPost) [ + Thumbnail(BooruImage) ], PostID(ulong), IncludeThumbnail(bool)
-            GetPost,
+            GetPost, //TODO ########## UNTESTED
 
             // Image(BooruImage), PostID(ulong)
-            GetImage,
+            GetImage, //TODO ########## UNTESTED
 
             // Thunbmail(BooruImage), PostID(ulong)
-            GetThumbnail,
+            GetThumbnail, //TODO ########## UNTESTED
 
             // void, PostID(ulong)
-            DeletePost,
+            DeletePost, //TODO ########## UNTESTED
 
-            // ----- Maybe remove DeleteTag -----
             // void, TagID(ulong)
-            DeleteTag,
+            DeleteTag, //TODO ########## UNTESTED
 
             // void, NewTag(BooruTag) with old ID
-            EditTag,
+            EditTag, //TODO ########## UNTESTED
 
             // NewPostID(ulong), Post(BooruPost), Image(BooruImage)
             AddPost,
 
             // void, NewPost(BooruPost) with old ID
-            EditPost,
+            EditPost, //TODO ########## UNTESTED
 
-            // Tags(List<string>
+            // Tags(BooruTagList)
             GetAllTags,
 
             // User(BooruUser)
@@ -50,32 +49,30 @@ namespace TA.SharpBooru
             ChangeUser,
 
             // void, PostID(ulong), Image(BooruImage)
-            EditImage,
+            EditImage, //TODO ########## UNTESTED
 
             // Don't react to this byte
             TestConnection,
 
             /*
-            
             //TODO Implement Aliases
             AddAlias, //AliasString - BooruTag
             RemoveAlias //AliasString
-            
             */
 
             // void, NewUser(BooruUser)
-            AddUser,
+            AddUser, //TODO ########## UNTESTED
 
             // void, Username(string)
-            DeleteUser,
+            DeleteUser, //TODO ########## UNTESTED
 
             //GetAllUsers
 
             // BooruInfo(BooruInfo)
-            GetBooruInfo,
+            GetBooruInfo, //TODO ########## UNTESTED
 
             // DupeIDs(List<ulong>), ulong Hashs
-            FindImageDupes
+            FindImageDupes //TODO ########## UNTESTED
         }
 
         public enum ErrorCode : byte

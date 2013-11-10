@@ -10,41 +10,25 @@ namespace TA.SharpBooru
 {
     public class SQLiteWrapper
     {
-        private string _Database;
-        private bool _IsOpened = false;
         private object _Lock = new object();
         private SQLiteConnection _Connection;
 
         public SQLiteWrapper(string Database)
         {
-            _Database = Database;
+            if (!File.Exists(Database))
+                throw new FileNotFoundException("Database file not found");
+            string connectionString = string.Format("Data source={0}", Database);
+            if (_Connection != null)
+                _Connection.Dispose();
+            _Connection = new SQLiteConnection(connectionString);
+            _Connection.Open();
             SQLiteFunction.RegisterFunction(typeof(MyRegEx));
-        }
-
-        public SQLiteConnection Connect()
-        {
-            lock (_Lock)
-            {
-                if (!_IsOpened)
-                {
-                    if (!File.Exists(_Database))
-                        throw new FileNotFoundException("Database file not found");
-                    string connectionString = string.Format("Data source={0}", _Database);
-                    if (_Connection != null)
-                        _Connection.Dispose();
-                    _Connection = new SQLiteConnection(connectionString);
-                    _Connection.Open();
-                    _IsOpened = true;
-                }
-                return (SQLiteConnection)_Connection.Clone();
-            }
         }
 
         public int GetLastInsertedID()
         {
             lock (_Lock)
-                using (SQLiteConnection connection = Connect())
-                using (SQLiteCommand command = connection.CreateCommand())
+                using (SQLiteCommand command = _Connection.CreateCommand())
                 {
                     command.CommandText = "SELECT last_insert_rowid()";
                     return Convert.ToInt32(command.ExecuteScalar());
@@ -54,8 +38,7 @@ namespace TA.SharpBooru
         public DataTable ExecuteTable(string SQL, params object[] Args)
         {
             lock (_Lock)
-                using (SQLiteConnection connection = Connect())
-                using (SQLiteCommand command = connection.CreateCommand())
+                using (SQLiteCommand command = _Connection.CreateCommand())
                 {
                     command.CommandText = SQL;
                     command.Prepare();
@@ -83,8 +66,7 @@ namespace TA.SharpBooru
         public int ExecuteInt(bool ReturnLastInsertedID, string SQL, params object[] Args)
         {
             lock (_Lock)
-                using (SQLiteConnection connection = Connect())
-                using (SQLiteCommand command = connection.CreateCommand())
+                using (SQLiteCommand command = _Connection.CreateCommand())
                 {
                     command.CommandText = SQL;
                     command.Prepare();
@@ -106,26 +88,45 @@ namespace TA.SharpBooru
                 //TODO X Test ExecuteInsert
                 StringBuilder statement = new StringBuilder();
                 statement.AppendFormat("INSERT INTO {0} ({1}) VALUES(", TableName, string.Join(", ", Dictionary.Keys));
-                for (int i = 0; i < Dictionary.Count;i++)
+                for (int i = 0; i < Dictionary.Count; i++)
                 {
                     if (i > 0)
                         statement.Append(", ?");
                     else statement.Append('?');
                 }
                 statement.Append(')');
-                return ExecuteInt(statement.ToString(), Dictionary.Values);
+                lock (_Lock)
+                    using (SQLiteCommand command = _Connection.CreateCommand())
+                    {
+                        command.CommandText = statement.ToString();
+                        command.Prepare();
+                        foreach (object arg in Dictionary.Values)
+                        {
+                            SQLiteParameter param = command.CreateParameter();
+                            param.Value = arg;
+                            command.Parameters.Add(param);
+                        }
+                        command.ExecuteNonQuery();
+                        return GetLastInsertedID();
+                    }
             }
             else throw new ArgumentException("Dictionary must contain things");
         }
 
         [SQLiteFunction(Name = "REGEXP", Arguments = 2, FuncType = FunctionType.Scalar)]
-        internal class MyRegEx : SQLiteFunction
+        internal class MyRegEx : SQLiteFunction { public override object Invoke(object[] args) { return Regex.IsMatch(Convert.ToString(args[1]), Convert.ToString(args[0])); } }
+
+        [SQLiteFunction(Name = "IMGHASHCOMP", Arguments = 2, FuncType = FunctionType.Scalar)]
+        internal class MyImageHashComparator : SQLiteFunction
         {
             public override object Invoke(object[] args)
             {
-                if (args.Length != 2)
-                    throw new Exception("2 args expected");
-                else return Regex.IsMatch(Convert.ToString(args[1]), Convert.ToString(args[0]));
+                ulong hash_diff = Convert.ToUInt64(args[0]) ^ Convert.ToUInt64(args[1]);
+                byte one_count = 0;
+                for (byte i = 0; i < 64; i++)
+                    if ((hash_diff & (1UL << i)) > 0)
+                        one_count++;
+                return one_count;
             }
         }
     }

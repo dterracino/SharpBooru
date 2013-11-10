@@ -16,6 +16,7 @@ SELECT tags.id AS id, tags.tag AS tag, tag_types.type AS type, tag_types.descrip
 tag_types.color AS color FROM (SELECT tags.* FROM tags INNER JOIN post_tags ON tags.id = post_tags.tag
 WHERE post_tags.post = ?) AS tags INNER JOIN tag_types ON type_id = tag_types.id";
         public const string GetTagByTagString = "SELECT * FROM tags WHERE tag = ?";
+        public const string GetDuplicatePostIDs = "SELECT id, (hash IMGHASHCOMP ?1) AS hashdiff FROM posts WHERE hash IMGHASHCOMP ?1 < ?2"; //?1 = Hash, ?2 = Threshold
 
         //Counts
         public const string GetPostCountByID = "SELECT COUNT(*) FROM posts WHERE id = ?";
@@ -31,6 +32,7 @@ WHERE post_tags.post = ?) AS tags INNER JOIN tag_types ON type_id = tag_types.id
         public const string DeletePostTagsByTagID = "DELETE FROM post_tags WHERE tag = ?";
         public const string DeleteUserByUsername = "DELETE FROM users WHERE username = ?";
 
-        //Insertions - use the SQLWrapper.ExecuteInsert
+        //Insertions - use the SQLWrapper.ExecuteInsert for the most classes
+        public const string InsertPostTag = "INSERT INTO post_tags (post, tag) VALUES (?, ?)";
     }
 }

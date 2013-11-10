@@ -166,6 +166,7 @@ namespace TA.SharpBooru.Server
                                         post.ToWriter(_Writer);
                                         if (includeThumbnail)
                                             _Server.Booru.ReadThumb(_Writer, postID);
+                                        //TODO X ViewCount
                                     }
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                                 }
@@ -291,6 +292,11 @@ namespace TA.SharpBooru.Server
                                     //TODO Implement bandwidth limit (check length variable)
                                     using (BooruImage bigImage = BooruImage.FromBytes(_Reader.ReadBytes(length)))
                                     {
+                                        newPost.Width = (uint)bigImage.Bitmap.Width;
+                                        newPost.Height = (uint)bigImage.Bitmap.Height;
+                                        newPost.ImageHash = bigImage.CalculateImageHash();
+                                        //Insert it into the DB
+                                        newPost.ID = (uint)_Server.Booru.DB.ExecuteInsert("posts", newPost.ToDictionary(false));
                                         //Maybe Width + Height checks?
                                         bigImage.Save(Path.Combine(_Server.Booru.ImageFolder, "image" + newPost.ID));
                                         //TODO X ThumbnailSize
@@ -298,13 +304,19 @@ namespace TA.SharpBooru.Server
                                         using (BooruImage thumbImage = bigImage.CreateThumbnail(256, false))
                                             //TODO X ThumbnailQuality
                                             //thumbImage.Save(Path.Combine(_Server.Booru.ImageFolder, "thumb" + newPost.ID), _Server.Booru.Info.ThumbnailQuality);
-                                            thumbImage.Save(Path.Combine(_Server.Booru.ImageFolder, "thumb" + newPost.ID), 1f);
-                                        newPost.Width = (uint)bigImage.Bitmap.Width;
-                                        newPost.Height = (uint)bigImage.Bitmap.Height;
-                                        newPost.ImageHash = bigImage.CalculateImageHash();
-                                        //TODO X TAGS
+                                            thumbImage.Save(Path.Combine(_Server.Booru.ThumbFolder, "thumb" + newPost.ID), 1f);
+                                        foreach (BooruTag tag in newPost.Tags)
+                                        {
+                                            DataRow existingTagRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetTagByTagString, tag.Tag);
+                                            BooruTag existingTag = BooruTag.FromRow(existingTagRow);
+                                            if (existingTag == null)
+                                            {
+                                                BooruTag newTag = new BooruTag(tag.Tag, "Default", "Default", System.Drawing.Color.Black); //TODO X Default Tag
+                                                _Server.Booru.DB.ExecuteInt(SQLStatements.InsertPostTag, newPost.ID, _Server.Booru.DB.ExecuteInsert("tags", newTag.ToDictionary(false)));
+                                            }
+                                            else _Server.Booru.DB.ExecuteInt(SQLStatements.InsertPostTag, newPost.ID, existingTag.ID);
+                                        }
                                     }
-                                    newPost.ID = (uint)_Server.Booru.DB.ExecuteInsert("posts", newPost.ToDictionary(false));
                                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     _Writer.Write(newPost.ID);
                                 }
@@ -399,7 +411,7 @@ namespace TA.SharpBooru.Server
                                             using (BooruImage thumbImage = bigImage.CreateThumbnail(256, false))
                                                 //TODO X ThumbnailQuality
                                                 //thumbImage.Save(Path.Combine(_Server.Booru.ImageFolder, "thumb" + postID), _Server.Booru.Info.ThumbnailQuality);
-                                                thumbImage.Save(Path.Combine(_Server.Booru.ImageFolder, "thumb" + postID), 1f);
+                                                thumbImage.Save(Path.Combine(_Server.Booru.ThumbFolder, "thumb" + postID), 1f);
                                             post.Width = (uint)bigImage.Bitmap.Width;
                                             post.Height = (uint)bigImage.Bitmap.Height;
                                             post.ImageHash = bigImage.CalculateImageHash();
@@ -445,20 +457,16 @@ namespace TA.SharpBooru.Server
                             //_Server.Booru.Info.ToWriter(_Writer);
                             break;
                         case BooruProtocol.Command.FindImageDupes:
-                            break;
-                            /* TODO X FindImageDupes
-                             * 
                             ulong hash = _Reader.ReadUInt64();
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                            DataTable dupeTable = _Server.Booru.DB.ExecuteTable(SQLStatements.GetDuplicatePostIDs, hash, 12); //2nd Param = Threshold
                             List<ulong> ids = new List<ulong>();
-                            foreach (BooruPost post in _Server.Booru.Posts)
-                                if (BooruImage.CompareImageHashes(hash, post.ImageHash) > 0.88f)
-                                    ids.Add(post.ID);
+                            foreach (DataRow dupeRow in dupeTable.Rows)
+                                ids.Add(Convert.ToUInt64(dupeRow["id"]));
                             _Writer.Write((uint)ids.Count);
                             foreach (ulong id in ids)
                                 _Writer.Write(id);
                             break;
-                             */
                         default:
                             _Writer.Write((byte)BooruProtocol.ErrorCode.UnknownError);
                             throw new NotImplementedException();
