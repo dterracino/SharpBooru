@@ -36,8 +36,8 @@ namespace TA.SharpBooru.Client.WebServer
             {
                 { "Index", "/" },
                 //{ "Random", "/post?id=-1" },
-                { "GitHub", "http://www.github.com/teamalpha5441/SharpBooru" },
-                { "Info", "/info" }
+                { "GitHub", "http://www.github.com/teamalpha5441/SharpBooru" }
+                //{ "Info", "/info" }
             };
             /*
             if (Context.User.Perm_Upload)
@@ -45,7 +45,7 @@ namespace TA.SharpBooru.Client.WebServer
             if (Context.User.Perm_Admin)
                 links.Add("Admin", "/admin");
             */
-            string booruName = "BOORU"; //TODO Get booru name
+            string booruName = "SharpBooru"; //TODO Get booru name
 
             Context.OutWriter.Write("{0}<html><head><title>{1} - {2}</title>", DOCTYPE, Title, booruName);
             Context.OutWriter.Write("<link rel=\"stylesheet\" type=\"text/css\" href=\"style\">");

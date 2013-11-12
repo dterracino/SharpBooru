@@ -8,9 +8,9 @@ using TA.SharpBooru.Client.WebServer.VFS;
 
 namespace TA.SharpBooru.Client.WebServer
 {
-    public class BooruServer
+    public class BooruWebServer
     {
-        private Booru _Booru;
+        private ClientBooru _Booru;
         private Logger _Logger;
         private SmartThreadPool _Pool;
         private HttpListener _Listener;
@@ -20,19 +20,19 @@ namespace TA.SharpBooru.Client.WebServer
         private bool _EnableDirectoryListing;
         //private CookieManager _CookieManager;
 
-        public Booru Booru { get { return _Booru; } }
+        public ClientBooru Booru { get { return _Booru; } }
         public Logger Logger { get { return _Logger; } }
         public VFSDirectory RootDirectory { get { return _RootDirectory; } }
         public RequestSecurityManager RSM { get { return _RSM; } }
         public bool EnableDirectoryListing { get { return _EnableDirectoryListing; } set { _EnableDirectoryListing = value; } }
         //public CookieManager CookieManager { get { return _CookieManager; } }
 
-        public BooruServer(Booru Booru, Logger Logger) : this(Booru, Logger, "http://*:80/") { }
-        public BooruServer(Booru Booru, Logger Logger, string ListenerPrefix)
+        public BooruWebServer(ClientBooru Booru, Logger Logger) : this(Booru, Logger, "http://*:80/") { }
+        public BooruWebServer(ClientBooru Booru, Logger Logger, string ListenerPrefix)
             : this(Booru, Logger, new string[1] { ListenerPrefix }.ToList(), true) { }
-        public BooruServer(Booru Booru, Logger Logger, string ListenerPrefix, bool EnableRSM)
+        public BooruWebServer(ClientBooru Booru, Logger Logger, string ListenerPrefix, bool EnableRSM)
             : this(Booru, Logger, new string[1] { ListenerPrefix }.ToList(), EnableRSM) { }
-        public BooruServer(Booru Booru, Logger Logger, List<string> ListenerPrefixes, bool EnableRSM)
+        public BooruWebServer(ClientBooru Booru, Logger Logger, List<string> ListenerPrefixes, bool EnableRSM)
         {
             _Logger = Logger;
             if (Booru == null)

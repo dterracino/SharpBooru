@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using CommandLine;
 using TA.SharpBooru.Client.WebServer.VFS;
 
 namespace TA.SharpBooru.Client.WebServer
@@ -9,16 +10,23 @@ namespace TA.SharpBooru.Client.WebServer
         [STAThread]
         public static int Main(string[] args)
         {
-            Program program = new Program();
-            try { return program.Run(args); }
-            catch (Exception ex)
+            Console.Title = "SharpBooru WebServer";
+            Logger sLogger = new Logger(Console.Out);
+            Options options = new Options();
+            try
             {
-                Console.WriteLine("FATAL ERROR: {0}", ex.Message);
-                return 1;
+                if (Parser.Default.ParseArguments(args, options))
+                {
+                    (new Program()).Run(options, sLogger);
+                    return 0;
+                }
+                else return 1;
             }
+            catch (Exception ex) { sLogger.LogException("WebServer", ex); }
+            return 1;
         }
 
-        private void InitVFS(BooruServer Server, Booru Booru)
+        private void InitVFS(BooruWebServer Server, ClientBooru Booru)
         {
             //Server.RootDirectory.Add(new VFSLoginLogoutFile("login_logout"));
             //Server.RootDirectory.Add(new VFSAdminPanelFile("admin"));
@@ -33,14 +41,13 @@ namespace TA.SharpBooru.Client.WebServer
             //Server.RootDirectory.Add(new VFSBooruUploadFile("upload"));
         }
 
-        public int Run(string[] args)
+        public int Run(Options options, Logger logger)
         {
-            Logger _Logger = new Logger(Console.Out);
-            Booru _Booru = new Booru(Helper.GetIPEndPointFromString("localhost:2400"), args[0], args[1]);
-            BooruServer _Server = new BooruServer(_Booru, _Logger, "http://*:80/", false);
+            ClientBooru booru = new ClientBooru(Helper.GetIPEndPointFromString(options.Server), options.Username, options.Password);
+            BooruWebServer server = new BooruWebServer(booru, logger, string.Format("http://*:{0}/", options.Port), false);
 
-            InitVFS(_Server, _Booru);
-            _Server.Start();
+            InitVFS(server, booru);
+            server.Start();
 
             Thread.Sleep(Timeout.Infinite);
             return 0;

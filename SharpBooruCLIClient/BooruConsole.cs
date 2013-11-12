@@ -125,24 +125,6 @@ namespace TA.SharpBooru.Client.CLI
                         _Booru.AddPost(post);
                     }
                 })));
-            //post delete
-            //image get and open
-            /*
-            ulong id = Convert.ToUInt64(args[2]);
-            using (BooruImage bImage = booru.GetImage(id))
-                switch (args[1])
-                {
-                    case "get": bImage.Save(args[3]); break;
-                    case "view":
-                    case "open":
-                        {
-                            string tempFile = Helper.GetTempFile();
-                            tempFile = string.Format("{0}.{1}", tempFile, bImage.ImageFormatExtension);
-                            bImage.Save(tempFile);
-                            System.Diagnostics.Process.Start(tempFile);
-                        } break;
-                }
-            */
         }
     }
 }

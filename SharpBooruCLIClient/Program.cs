@@ -12,7 +12,7 @@ namespace TA.SharpBooru.Client.CLI
             {
                 if (Parser.Default.ParseArguments(args, options))
                 {
-                    using (ClientBooru booru = new ClientBooru(options.EndPoint, options.Username, options.Password))
+                    using (ClientBooru booru = new ClientBooru(Helper.GetIPEndPointFromString(options.Server), options.Username, options.Password))
                     {
                         booru.Connect();
                         BooruConsole bConsole = new BooruConsole(booru);

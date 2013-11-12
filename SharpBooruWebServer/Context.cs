@@ -83,13 +83,13 @@ namespace TA.SharpBooru.Client.WebServer
 
         public bool IsClosed = false;
         public HttpListenerContext InnerContext;
-        public BooruServer Server;
+        public BooruWebServer Server;
 
         public string Method { get { return InnerContext.Request.HttpMethod.ToUpper(); } }
         public IPAddress ClientIP { get { return InnerContext.Request.RemoteEndPoint.Address; } }
         public string RequestPath { get { return InnerContext.Request.Url.LocalPath ?? string.Empty; } }
         public string UserAgent { get { return InnerContext.Request.UserAgent ?? string.Empty; } }
-        public Booru Booru { get { return Server.Booru; } }
+        public ClientBooru Booru { get { return Server.Booru; } }
 
         public string MimeType
         {
@@ -158,7 +158,7 @@ namespace TA.SharpBooru.Client.WebServer
 
         //public bool LoggedIn { get { return User != Server.UserManager.GuestUser; } }
 
-        public Context(BooruServer Server, HttpListenerContext HttpListenerContext)
+        public Context(BooruWebServer Server, HttpListenerContext HttpListenerContext)
         {
             this.Server = Server;
             this.InnerContext = HttpListenerContext;

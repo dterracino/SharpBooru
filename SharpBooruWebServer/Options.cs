@@ -2,7 +2,7 @@
 using CommandLine;
 using CommandLine.Text;
 
-namespace TA.SharpBooru.Client.CLI
+namespace TA.SharpBooru.Client.WebServer
 {
     public class Options
     {
@@ -15,8 +15,8 @@ namespace TA.SharpBooru.Client.CLI
         [Option('p', "password", Required = false, DefaultValue = "guest", HelpText = "The password for auto login")]
         public string Password { get; set; }
 
-        [Option('c', "command", Required = false, HelpText = "The command to execute automatically")]
-        public string Command { get; set; }
+        [Option('p', "port", Required = false, DefaultValue = (ushort)80, HelpText = "The port of the server")]
+        public ushort Port { get; set; }
 
         [HelpOption]
         public string GetUsage() { return HelpText.AutoBuild(this); }
