@@ -22,7 +22,7 @@ namespace TA.SharpBooru.Client.CLI
                     }
                     return 0;
                 }
-                else Console.WriteLine(options.GetUsage());
+                else return 1;
             }
             catch (Exception ex)
             {
