@@ -8,24 +8,24 @@ namespace TA.SharpBooru.Client.CLI
 {
     public class BooruConsole : ConsoleEx
     {
-        private Booru _Booru;
+        private ClientBooru _Booru;
 
-        public BooruConsole(Booru Booru)
+        public BooruConsole(ClientBooru Booru)
             : base()
         { _Booru = Booru; }
 
-        public override string Prompt { get { return "BOORU> "; } }
+        public override string Prompt { get { return "Booru> "; } }
 
         protected override void PopulateCommandList(List<Command> Commands, TextWriter Out)
         {
             Commands.Add(new Command("post info", "post info <ID>", new Action<ulong>(id =>
                 {
                     BooruPost post = _Booru.GetPost(id, false);
-                    Out.WriteLine("Post #{0} uploaded {1} by {2}:", post.ID, post.CreationDate, post.Owner);
+                    Out.WriteLine("Post #{0} uploaded {1} by {2}:", post.ID, post.CreationDate, post.User);
                     Out.WriteLine("Viewed {0} times / Edited {1} times", post.ViewCount, post.EditCount);
                     Out.WriteLine("Rating {0}, Image size {1} x {2}", post.Rating, post.Width, post.Height);
                     Out.WriteLine("Source: {0}", post.Source);
-                    Out.WriteLine("Post is {0}, Comment: {1}", post.Private ? "private" : "public", post.Comment);
+                    Out.WriteLine("Post is {0}, Description: {1}", post.Private ? "private" : "public", post.Description);
                     Out.Write("Tags:"); post.Tags.ForEach(x => Console.Write(" {0}", x.Tag));
                     Out.WriteLine();
                 })));
@@ -57,8 +57,6 @@ namespace TA.SharpBooru.Client.CLI
                             else Console.WriteLine(" no dupes");
                         }
                 })));
-            Commands.Add(new Command("server kill", "server kill", new Action(() => _Booru.ForceKillServer())));
-            Commands.Add(new Command("server save", "server save", new Action(() => _Booru.SaveServerBooru())));
             Commands.Add(new Command("tag delete", "tag delete <ID>", new Action<ulong>(id => _Booru.DeleteTag(id))));
             Commands.Add(new Command("user change", "user change <Username> <Password>", new Action<string, string>((un, pw) => _Booru.ChangeUser(un, pw))));
             Commands.Add(new Command("user add", "user add <Username> <Password> <CanAddPosts> <CanDeletePosts> <CanEditPosts> <CanDeleteTags> <CanEditTags> <CanLoginDirect> <CanLoginOnline> <AdvancePostControl> <IsAdmin> <MaxRating>", new Action<string, string, bool, bool, bool, bool, bool, bool, bool, bool, bool, ushort>((un, pw, cap, cdp, cep, cdt, cet, cld, clo, apc, ia, mr) =>
@@ -117,7 +115,7 @@ namespace TA.SharpBooru.Client.CLI
                     {
                         BooruPost post = new BooruPost()
                         {
-                            Comment = "Imported via CLI",
+                            Description = "Imported via CLI",
                             CreationDate = DateTime.Now,
                             Image = img,
                             ImageHash = img.CalculateImageHash(),

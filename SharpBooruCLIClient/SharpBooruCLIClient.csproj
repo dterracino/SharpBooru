@@ -37,11 +37,48 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\BooruImage.cs">
+      <Link>libSharpBooru\BooruImage.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\BooruPost.cs">
+      <Link>libSharpBooru\BooruPost.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\BooruProtocol.cs">
+      <Link>libSharpBooru\BooruProtocol.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\BooruTag.cs">
+      <Link>libSharpBooru\BooruTag.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\BooruUser.cs">
+      <Link>libSharpBooru\BooruUser.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\ClientBooru.cs">
+      <Link>libSharpBooru\ClientBooru.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\ConsoleEx.cs">
+      <Link>libSharpBooru\ConsoleEx.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\Helper.cs">
+      <Link>libSharpBooru\Helper.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\Logger.cs">
+      <Link>libSharpBooru\Logger.cs</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\CommandLine\**\*.*">
+      <Link>libSharpBooru\CommandLine\%(RecursiveDir)%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\BooruAPIs\**\*.*">
+      <Link>libSharpBooru\BooruAPIs\%(RecursiveDir)%(FileName)</Link>
+    </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\LitJSON\**\*.*">
+      <Link>libSharpBooru\LitJSON\%(RecursiveDir)%(FileName)</Link>
+    </Compile>
     <Compile Include="BooruConsole.cs" />
-    <Compile Include="ConsoleEx.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
