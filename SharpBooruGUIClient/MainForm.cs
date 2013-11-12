@@ -66,8 +66,7 @@ namespace TA.SharpBooru.Client.GUI
         private void buttonImportDialog_Click(object sender, EventArgs e)
         {
             using (ImportDialog iDialog = new ImportDialog(_Booru))
-                if (iDialog.ShowDialog() == DialogResult.OK)
-                    Refresh();
+                iDialog.ShowDialog();
         }
 
         private void buttonChangeUser_Click(object sender, EventArgs e)
@@ -75,12 +74,7 @@ namespace TA.SharpBooru.Client.GUI
             using (LoginDialog ld = new LoginDialog(_Booru.CurrentUser.IsAdmin))
                 if (ld.ShowDialog() == DialogResult.OK)
                 {
-                    try
-                    {
-                        _Booru.ChangeUser(ld.Username, ld.Password);
-                        CheckPermissions();
-                        booruThumbView.Posts = _Booru.Search(_LastSearch);
-                    }
+                    try { _Booru.ChangeUser(ld.Username, ld.Password); }
                     catch (BooruProtocol.BooruException bEx)
                     { MessageBox.Show(bEx.Message, "ERROR: Change User", MessageBoxButtons.OK, MessageBoxIcon.Error); }
                 }

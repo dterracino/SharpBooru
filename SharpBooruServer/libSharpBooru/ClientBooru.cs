@@ -309,13 +309,17 @@ namespace TA.SharpBooru
             }
         }
 
-        public BooruInfo GetBooruInfo()
+        public Dictionary<string, string> GetBooruMiscOptions()
         {
             lock (_Lock)
             {
-                BeginCommunication(BooruProtocol.Command.GetBooruInfo);
+                BeginCommunication(BooruProtocol.Command.GetBooruMiscOptions);
                 EndCommunication();
-                return BooruInfo.FromReader(_Reader);
+                uint count = _Reader.ReadUInt32();
+                var optionsDict = new Dictionary<string, string>();
+                for (uint i = 0; i < count; i++)
+                    optionsDict.Add(_Reader.ReadString(), _Reader.ReadString());
+                return optionsDict;
             }
         }
 

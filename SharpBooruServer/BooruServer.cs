@@ -13,7 +13,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace TA.SharpBooru.Server
 {
-    public class BooruServer : Server
+    public class BooruServer : Server, IDisposable
     {
         private TcpListener _Listener;
         private X509Certificate2 _Certificate;
@@ -51,6 +51,8 @@ namespace TA.SharpBooru.Server
             using (ClientHandler cHandler = new ClientHandler(this, client))
                 cHandler.Handle();
         }
+
+        public void Dispose() { _Booru.Dispose(); }
 
         public class ClientHandler : IDisposable
         {
@@ -228,11 +230,10 @@ namespace TA.SharpBooru.Server
                                 ulong postID = _Reader.ReadUInt64();
                                 if (_User.CanDeletePosts)
                                 {
-                                    //TODO X Test ExecuteInt
-                                    if (_Server.Booru.DB.ExecuteInt(SQLStatements.GetPostCountByID, postID) > 0)
+                                    if (_Server.Booru.DB.ExecuteScalar<int>(SQLStatements.GetPostCountByID, postID) > 0)
                                     {
-                                        _Server.Booru.DB.ExecuteInt(SQLStatements.DeletePostByID, postID);
-                                        _Server.Booru.DB.ExecuteInt(SQLStatements.DeletePostTagsByPostID, postID);
+                                        _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeletePostByID, postID);
+                                        _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeletePostTagsByPostID, postID);
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     }
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
@@ -245,11 +246,10 @@ namespace TA.SharpBooru.Server
                                 ulong tagID = _Reader.ReadUInt64();
                                 if (_User.CanDeleteTags)
                                 {
-                                    //TODO X Test ExecuteInt
-                                    if (_Server.Booru.DB.ExecuteInt(SQLStatements.GetTagCountByID, tagID) > 0)
+                                    if (_Server.Booru.DB.ExecuteScalar<int>(SQLStatements.GetTagCountByID, tagID) > 0)
                                     {
-                                        _Server.Booru.DB.ExecuteInt(SQLStatements.DeleteTagByID, tagID);
-                                        _Server.Booru.DB.ExecuteInt(SQLStatements.DeletePostTagsByTagID, tagID);
+                                        _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeleteTagByID, tagID);
+                                        _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeletePostTagsByTagID, tagID);
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     }
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
@@ -262,10 +262,9 @@ namespace TA.SharpBooru.Server
                                 BooruTag newTag = BooruTag.FromReader(_Reader);
                                 if (_User.CanEditTags)
                                 {
-                                    //TODO X ExecuteInt works?
-                                    if (_Server.Booru.DB.ExecuteInt(SQLStatements.GetTagCountByID, newTag.ID) > 0)
+                                    if (_Server.Booru.DB.ExecuteScalar<int>(SQLStatements.GetTagCountByID, newTag.ID) > 0)
                                     {
-                                        _Server.Booru.DB.ExecuteInt(SQLStatements.DeleteTagByID, newTag.ID);
+                                        _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeleteTagByID, newTag.ID);
                                         _Server.Booru.DB.ExecuteInsert("tags", newTag.ToDictionary(true));
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     }
@@ -299,23 +298,11 @@ namespace TA.SharpBooru.Server
                                         newPost.ID = (uint)_Server.Booru.DB.ExecuteInsert("posts", newPost.ToDictionary(false));
                                         //Maybe Width + Height checks?
                                         bigImage.Save(Path.Combine(_Server.Booru.ImageFolder, "image" + newPost.ID));
-                                        //TODO X ThumbnailSize
-                                        //using (BooruImage thumbImage = bigImage.CreateThumbnail(_Server.Booru.Info.ThumbnailSize, false))
-                                        using (BooruImage thumbImage = bigImage.CreateThumbnail(256, false))
-                                            //TODO X ThumbnailQuality
-                                            //thumbImage.Save(Path.Combine(_Server.Booru.ImageFolder, "thumb" + newPost.ID), _Server.Booru.Info.ThumbnailQuality);
-                                            thumbImage.Save(Path.Combine(_Server.Booru.ThumbFolder, "thumb" + newPost.ID), 1f);
-                                        foreach (BooruTag tag in newPost.Tags)
-                                        {
-                                            DataRow existingTagRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetTagByTagString, tag.Tag);
-                                            BooruTag existingTag = BooruTag.FromRow(existingTagRow);
-                                            if (existingTag == null)
-                                            {
-                                                BooruTag newTag = new BooruTag(tag.Tag, "Default", "Default", System.Drawing.Color.Black); //TODO X Default Tag
-                                                _Server.Booru.DB.ExecuteInt(SQLStatements.InsertPostTag, newPost.ID, _Server.Booru.DB.ExecuteInsert("tags", newTag.ToDictionary(false)));
-                                            }
-                                            else _Server.Booru.DB.ExecuteInt(SQLStatements.InsertPostTag, newPost.ID, existingTag.ID);
-                                        }
+                                        int thumbnailSize = _Server.Booru.GetMiscOption<int>(ServerBooru.MiscOption.ThumbnailSize);
+                                        int thumbnailQuality = _Server.Booru.GetMiscOption<int>(ServerBooru.MiscOption.ThumbnailQuality);
+                                        using (BooruImage thumbImage = bigImage.CreateThumbnail(thumbnailSize, false))
+                                            thumbImage.Save(Path.Combine(_Server.Booru.ThumbFolder, "thumb" + newPost.ID), thumbnailQuality);
+                                        AddPostTags(newPost);
                                     }
                                     _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     _Writer.Write(newPost.ID);
@@ -334,8 +321,7 @@ namespace TA.SharpBooru.Server
                                 BooruPost newPost = BooruPost.FromReader(_Reader);
                                 if (_User.CanEditPosts)
                                 {
-                                    //TODO X ExecuteInt?
-                                    if (_Server.Booru.DB.ExecuteInt(SQLStatements.GetPostCountByID, newPost.ID) > 0)
+                                    if (_Server.Booru.DB.ExecuteScalar<int>(SQLStatements.GetPostCountByID, newPost.ID) > 0)
                                     {
                                         if (!_User.AdvancePostControl)
                                         {
@@ -347,7 +333,9 @@ namespace TA.SharpBooru.Server
                                             newPost.ViewCount = oldPost.ViewCount;
                                             //TODO X TAGS
                                         }
-                                        _Server.Booru.DB.ExecuteInt(SQLStatements.DeletePostByID, newPost.ID);
+                                        _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeletePostByID, newPost.ID);
+                                        _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeletePostTagsByPostID, newPost.ID);
+                                        AddPostTags(newPost);
                                         _Server.Booru.DB.ExecuteInsert("posts", newPost.ToDictionary(true));
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     }
@@ -396,8 +384,7 @@ namespace TA.SharpBooru.Server
                                 BooruProtocol.ErrorCode? error = null;
                                 if (_User.CanEditPosts)
                                 {
-                                    //TODO X ExecuteInt?
-                                    if (_Server.Booru.DB.ExecuteInt(SQLStatements.GetPostCountByID, postID) > 0)
+                                    if (_Server.Booru.DB.ExecuteScalar<int>(SQLStatements.GetPostCountByID, postID) > 0)
                                     {
                                         //TODO Implement bandwidth limit (check length variable)
                                         DataRow postRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetPostByID, postID);
@@ -406,17 +393,15 @@ namespace TA.SharpBooru.Server
                                         {
                                             //Maybe Width + Height checks?
                                             bigImage.Save(Path.Combine(_Server.Booru.ImageFolder, "image" + postID));
-                                            //TODO X ThumbnailSize
-                                            //using (BooruImage thumbImage = bigImage.CreateThumbnail(_Server.Booru.Info.ThumbnailSize, false))
-                                            using (BooruImage thumbImage = bigImage.CreateThumbnail(256, false))
-                                                //TODO X ThumbnailQuality
-                                                //thumbImage.Save(Path.Combine(_Server.Booru.ImageFolder, "thumb" + postID), _Server.Booru.Info.ThumbnailQuality);
-                                                thumbImage.Save(Path.Combine(_Server.Booru.ThumbFolder, "thumb" + postID), 1f);
+                                            int thumbnailSize = _Server.Booru.GetMiscOption<int>(ServerBooru.MiscOption.ThumbnailSize);
+                                            int thumbnailQuality = _Server.Booru.GetMiscOption<int>(ServerBooru.MiscOption.ThumbnailQuality);
+                                            using (BooruImage thumbImage = bigImage.CreateThumbnail(thumbnailSize, false))
+                                                thumbImage.Save(Path.Combine(_Server.Booru.ThumbFolder, "thumb" + postID), thumbnailQuality);
                                             post.Width = (uint)bigImage.Bitmap.Width;
                                             post.Height = (uint)bigImage.Bitmap.Height;
                                             post.ImageHash = bigImage.CalculateImageHash();
                                         }
-                                        _Server.Booru.DB.ExecuteInt(SQLStatements.DeletePostByID, postID);
+                                        _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeletePostByID, postID);
                                         _Server.Booru.DB.ExecuteInsert("posts", post.ToDictionary(true));
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     }
@@ -446,15 +431,20 @@ namespace TA.SharpBooru.Server
                             string usernameToRemove = _Reader.ReadString();
                             if (_User.IsAdmin)
                             {
-                                _Server.Booru.DB.ExecuteInt(SQLStatements.DeleteUserByUsername, usernameToRemove);
+                                _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeleteUserByUsername, usernameToRemove);
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                             }
                             else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                             break;
-                        case BooruProtocol.Command.GetBooruInfo:
+                        case BooruProtocol.Command.GetBooruMiscOptions:
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                            //TODO X GetBooruInfo
-                            //_Server.Booru.Info.ToWriter(_Writer);
+                            var allOptionsDict = _Server.Booru.GetAllMiscOptions();
+                            _Writer.Write((uint)allOptionsDict.Count);
+                            foreach (var keyValuePair in allOptionsDict)
+                            {
+                                _Writer.Write(keyValuePair.Key);
+                                _Writer.Write(keyValuePair.Value);
+                            }
                             break;
                         case BooruProtocol.Command.FindImageDupes:
                             ulong hash = _Reader.ReadUInt64();
@@ -480,6 +470,23 @@ namespace TA.SharpBooru.Server
                 if (Post.Private && !User.IsAdmin)
                     return Post.User == User.Username;
                 else return true;
+            }
+
+            private void AddPostTags(BooruPost newPost)
+            {
+                int defaultTagType = _Server.Booru.GetMiscOption<int>(ServerBooru.MiscOption.DefaultTagType);
+                foreach (BooruTag tag in newPost.Tags)
+                {
+                    DataRow existingTagRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetTagByTagString, tag.Tag);
+                    BooruTag existingTag = BooruTag.FromRow(existingTagRow);
+                    if (existingTag == null)
+                    {
+                        _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertTagWithTypeID, tag.Tag, defaultTagType);
+                        ulong newTagID = _Server.Booru.DB.GetLastInsertedID();
+                        _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertPostTag, newPost.ID, newTagID);
+                    }
+                    else _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertPostTag, newPost.ID, existingTag.ID);
+                }
             }
         }
     }

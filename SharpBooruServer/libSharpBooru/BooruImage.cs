@@ -152,12 +152,11 @@ namespace TA.SharpBooru
                 File += "." + (new ImageFormatConverter()).ConvertToString(imgFormat).ToLower();
             Save(File, imgFormat);
         }
-        public void Save(string File, float CompressionLevel)
+        public void Save(string File, long Quality)
         {
             ImageCodecInfo jpegEncoder = GetJPEG();
             if (jpegEncoder == null)
                 throw new Exception("JPEG encoder not found");
-            long Quality = (long)(CompressionLevel * 100f + 0.5f);
             EncoderParameters myEncoderParams = new EncoderParameters(1);
             myEncoderParams.Param[0] = new EncoderParameter(Encoder.Quality, Quality);
             using (FileStream fStream = new FileStream(File, FileMode.Create, FileAccess.Write, FileShare.Read))

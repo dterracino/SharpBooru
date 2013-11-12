@@ -64,7 +64,6 @@
     <Compile Include="libSharpBooru\BooruAPIs\KonachanAPI.cs" />
     <Compile Include="libSharpBooru\BooruAPIs\SafebooruAPI.cs" />
     <Compile Include="libSharpBooru\BooruImage.cs" />
-    <Compile Include="libSharpBooru\BooruInfo.cs" />
     <Compile Include="libSharpBooru\BooruPost.cs" />
     <Compile Include="libSharpBooru\BooruProtocol.cs" />
     <Compile Include="libSharpBooru\BooruSearch.cs" />

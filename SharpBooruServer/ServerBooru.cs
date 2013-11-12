@@ -1,12 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Data;
 using System.Collections.Generic;
 using System.Data.SQLite;
 
 namespace TA.SharpBooru.Server
 {
-    public class ServerBooru
+    public class ServerBooru : IDisposable
     {
         private SQLiteWrapper _DB;
         private string _Folder;
@@ -53,5 +54,32 @@ namespace TA.SharpBooru.Server
                 }
             }
         }
+
+        public enum MiscOption
+        {
+            BooruName, BooruCreator,
+            ThumbnailSize, ThumbnailQuality,
+            DefaultRating, DefaultTagType
+        }
+
+        public T GetMiscOption<T>(MiscOption Option)
+        {
+            string key = Enum.GetName(typeof(MiscOption), Option);
+            DataRow optionRow = _DB.ExecuteRow(SQLStatements.GetMiscOptionByKey, key);
+            return (T)Convert.ChangeType(optionRow["value"], typeof(T));
+        }
+
+        public Dictionary<string, string> GetAllMiscOptions()
+        {
+            using (DataTable optionsTable = _DB.ExecuteTable(SQLStatements.GetMiscOptions))
+            {
+                var options = new Dictionary<string, string>();
+                foreach (DataRow optionRow in optionsTable.Rows)
+                    options.Add(Convert.ToString(optionRow["key"]), Convert.ToString(optionRow["value"]));
+                return options;
+            }
+        }
+
+        public void Dispose() { _DB.Dispose(); }
     }
 }

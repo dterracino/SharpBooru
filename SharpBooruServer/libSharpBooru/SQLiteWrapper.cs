@@ -8,9 +8,8 @@ using System.Text.RegularExpressions;
 
 namespace TA.SharpBooru
 {
-    public class SQLiteWrapper
+    public class SQLiteWrapper : IDisposable
     {
-        private object _Lock = new object();
         private SQLiteConnection _Connection;
 
         public SQLiteWrapper(string Database)
@@ -25,33 +24,31 @@ namespace TA.SharpBooru
             SQLiteFunction.RegisterFunction(typeof(MyRegEx));
         }
 
-        public int GetLastInsertedID()
+        public ulong GetLastInsertedID()
         {
-            lock (_Lock)
-                using (SQLiteCommand command = _Connection.CreateCommand())
-                {
-                    command.CommandText = "SELECT last_insert_rowid()";
-                    return Convert.ToInt32(command.ExecuteScalar());
-                }
+            using (SQLiteCommand command = _Connection.CreateCommand())
+            {
+                command.CommandText = "SELECT last_insert_rowid()";
+                return Convert.ToUInt64(command.ExecuteScalar());
+            }
         }
 
         public DataTable ExecuteTable(string SQL, params object[] Args)
         {
-            lock (_Lock)
-                using (SQLiteCommand command = _Connection.CreateCommand())
+            using (SQLiteCommand command = _Connection.CreateCommand())
+            {
+                command.CommandText = SQL;
+                command.Prepare();
+                foreach (object arg in Args)
                 {
-                    command.CommandText = SQL;
-                    command.Prepare();
-                    foreach (object arg in Args)
-                    {
-                        SQLiteParameter param = command.CreateParameter();
-                        param.Value = arg;
-                        command.Parameters.Add(param);
-                    }
-                    DataTable dt = new DataTable();
-                    dt.Load(command.ExecuteReader());
-                    return dt;
+                    SQLiteParameter param = command.CreateParameter();
+                    param.Value = arg;
+                    command.Parameters.Add(param);
                 }
+                DataTable dt = new DataTable();
+                dt.Load(command.ExecuteReader());
+                return dt;
+            }
         }
 
         public DataRow ExecuteRow(string SQL, params object[] Args)
@@ -62,26 +59,23 @@ namespace TA.SharpBooru
                 else return null;
         }
 
-        public int ExecuteInt(string SQL, params object[] Args) { return ExecuteInt(false, SQL, Args); }
-        public int ExecuteInt(bool ReturnLastInsertedID, string SQL, params object[] Args)
+        public int ExecuteNonQuery(string SQL, params object[] Args)
         {
-            lock (_Lock)
-                using (SQLiteCommand command = _Connection.CreateCommand())
+            using (SQLiteCommand command = _Connection.CreateCommand())
+            {
+                command.CommandText = SQL;
+                command.Prepare();
+                foreach (object arg in Args)
                 {
-                    command.CommandText = SQL;
-                    command.Prepare();
-                    foreach (object arg in Args)
-                    {
-                        SQLiteParameter param = command.CreateParameter();
-                        param.Value = arg;
-                        command.Parameters.Add(param);
-                    }
-                    int cnt = command.ExecuteNonQuery();
-                    return ReturnLastInsertedID ? GetLastInsertedID() : cnt;
+                    SQLiteParameter param = command.CreateParameter();
+                    param.Value = arg;
+                    command.Parameters.Add(param);
                 }
+                return command.ExecuteNonQuery();
+            }
         }
 
-        public int ExecuteInsert(string TableName, Dictionary<string, object> Dictionary)
+        public ulong ExecuteInsert(string TableName, Dictionary<string, object> Dictionary)
         {
             if (Dictionary.Count > 0)
             {
@@ -95,22 +89,44 @@ namespace TA.SharpBooru
                     else statement.Append('?');
                 }
                 statement.Append(')');
-                lock (_Lock)
-                    using (SQLiteCommand command = _Connection.CreateCommand())
+                using (SQLiteCommand command = _Connection.CreateCommand())
+                {
+                    command.CommandText = statement.ToString();
+                    command.Prepare();
+                    foreach (object arg in Dictionary.Values)
                     {
-                        command.CommandText = statement.ToString();
-                        command.Prepare();
-                        foreach (object arg in Dictionary.Values)
-                        {
-                            SQLiteParameter param = command.CreateParameter();
-                            param.Value = arg;
-                            command.Parameters.Add(param);
-                        }
-                        command.ExecuteNonQuery();
-                        return GetLastInsertedID();
+                        SQLiteParameter param = command.CreateParameter();
+                        param.Value = arg;
+                        command.Parameters.Add(param);
                     }
+                    command.ExecuteNonQuery();
+                    return GetLastInsertedID();
+                }
             }
             else throw new ArgumentException("Dictionary must contain things");
+        }
+
+        public T ExecuteScalar<T>(string SQL, params object[] Args)
+        {
+            using (SQLiteCommand command = _Connection.CreateCommand())
+            {
+                command.CommandText = SQL;
+                command.Prepare();
+                foreach (object arg in Args)
+                {
+                    SQLiteParameter param = command.CreateParameter();
+                    param.Value = arg;
+                    command.Parameters.Add(param);
+                }
+                object retObj = command.ExecuteScalar();
+                return (T)Convert.ChangeType(retObj, typeof(T));
+            }
+        }
+
+        public void Dispose()
+        {
+            _Connection.Close();
+            _Connection.Dispose();
         }
 
         [SQLiteFunction(Name = "REGEXP", Arguments = 2, FuncType = FunctionType.Scalar)]

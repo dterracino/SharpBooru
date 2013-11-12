@@ -15,8 +15,12 @@ tag_types.color AS color FROM tags INNER JOIN tag_types ON type_id = tag_types.i
 SELECT tags.id AS id, tags.tag AS tag, tag_types.type AS type, tag_types.description AS description,
 tag_types.color AS color FROM (SELECT tags.* FROM tags INNER JOIN post_tags ON tags.id = post_tags.tag
 WHERE post_tags.post = ?) AS tags INNER JOIN tag_types ON type_id = tag_types.id";
-        public const string GetTagByTagString = "SELECT * FROM tags WHERE tag = ?";
-        public const string GetDuplicatePostIDs = "SELECT id, (hash IMGHASHCOMP ?1) AS hashdiff FROM posts WHERE hash IMGHASHCOMP ?1 < ?2"; //?1 = Hash, ?2 = Threshold
+        public const string GetTagByTagString = @"
+SELECT tags.id AS id, tags.tag AS tag, tag_types.type AS type, tag_types.description AS description,
+tag_types.color AS color FROM tags INNER JOIN tag_types WHERE tag = ?";
+        public const string GetDuplicatePostIDs = "SELECT id, (hash IMGHASHCOMP ?) AS hashdiff FROM posts WHERE hashdiff < ?";
+        public const string GetMiscOptionByKey = "SELECT * FROM misc_options WHERE key = ?";
+        public const string GetMiscOptions = "SELECT * FROM misc_options";
 
         //Counts
         public const string GetPostCountByID = "SELECT COUNT(*) FROM posts WHERE id = ?";
@@ -34,5 +38,6 @@ WHERE post_tags.post = ?) AS tags INNER JOIN tag_types ON type_id = tag_types.id
 
         //Insertions - use the SQLWrapper.ExecuteInsert for the most classes
         public const string InsertPostTag = "INSERT INTO post_tags (post, tag) VALUES (?, ?)";
+        public const string InsertTagWithTypeID = "INSERT INTO tags (tag, type_id) VALUES (?, ?)";
     }
 }

@@ -4,7 +4,7 @@ namespace TA.SharpBooru
 {
     public static class BooruProtocol
     {
-        public const ushort ProtocolVersion = 0xB;
+        public const ushort ProtocolVersion = 0xC;
 
         // ReturnParameter(Type), [Argument1(Type)], [Argument2(Type)], ...
         public enum Command : byte
@@ -16,19 +16,19 @@ namespace TA.SharpBooru
             Disconnect,
 
             // Post(BooruPost) [ + Thumbnail(BooruImage) ], PostID(ulong), IncludeThumbnail(bool)
-            GetPost, //TODO ########## UNTESTED
+            GetPost,
 
             // Image(BooruImage), PostID(ulong)
-            GetImage, //TODO ########## UNTESTED
+            GetImage,
 
             // Thunbmail(BooruImage), PostID(ulong)
-            GetThumbnail, //TODO ########## UNTESTED
+            GetThumbnail,
 
             // void, PostID(ulong)
-            DeletePost, //TODO ########## UNTESTED
+            DeletePost,
 
             // void, TagID(ulong)
-            DeleteTag, //TODO ########## UNTESTED
+            DeleteTag,
 
             // void, NewTag(BooruTag) with old ID
             EditTag, //TODO ########## UNTESTED
@@ -37,7 +37,7 @@ namespace TA.SharpBooru
             AddPost,
 
             // void, NewPost(BooruPost) with old ID
-            EditPost, //TODO ########## UNTESTED
+            EditPost,
 
             // Tags(BooruTagList)
             GetAllTags,
@@ -46,6 +46,7 @@ namespace TA.SharpBooru
             GetCurrentUser,
 
             // void, Username(string), Password(string)
+            //TODO Use UID instead of Username
             ChangeUser,
 
             // void, PostID(ulong), Image(BooruImage)
@@ -64,12 +65,11 @@ namespace TA.SharpBooru
             AddUser, //TODO ########## UNTESTED
 
             // void, Username(string)
-            DeleteUser, //TODO ########## UNTESTED
+            //TODO Use UID instead of Username
+            DeleteUser,
 
-            //GetAllUsers
-
-            // BooruInfo(BooruInfo)
-            GetBooruInfo, //TODO ########## UNTESTED
+            // BooruInfo(Dictionary<string, string>)
+            GetBooruMiscOptions,
 
             // DupeIDs(List<ulong>), ulong Hashs
             FindImageDupes //TODO ########## UNTESTED

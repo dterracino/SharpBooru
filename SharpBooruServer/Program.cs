@@ -68,7 +68,10 @@ namespace TA.SharpBooru.Server
             //X509Certificate2 sCertificate = new X509Certificate2(certificateFile, _Options.CertificatePassword);
             X509Certificate2 sCertificate = new X509Certificate2(certificateFile, "sharpbooru");
 
+            _Logger.LogLine("Loading booru database...");
             ServerBooru booru = new ServerBooru(_Options.Location);
+
+            _Logger.LogLine("Creating server instance...");
             _BooruServer = new BooruServer(booru, _Logger, sCertificate, _Options.Port);
 
             /*
@@ -109,6 +112,8 @@ namespace TA.SharpBooru.Server
                 _Logger.LogLine("Stopping server and waiting for clients to finish...");
                 //_ServerBroadcaster.Stop();
                 _BooruServer.Stop();
+                _Logger.LogLine("Disposing server and closing database connection...");
+                _BooruServer.Dispose();
                 WaitEvent.Set();
                 if (_Options.PIDFile != null)
                 {
