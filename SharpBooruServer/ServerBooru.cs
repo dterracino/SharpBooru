@@ -37,6 +37,12 @@ namespace TA.SharpBooru.Server
         public void ReadThumb(BinaryWriter Writer, ulong ID) { ReadFile(Writer, Path.Combine("thumbs", "thumb" + ID)); }
         public void ReadImage(BinaryWriter Writer, ulong ID) { ReadFile(Writer, Path.Combine("images", "image" + ID)); }
 
+        public void DeleteThumbAndImage(ulong ID)
+        {
+            File.Delete(Path.Combine(ThumbFolder, "thumb" + ID));
+            File.Delete(Path.Combine(ImageFolder, "image" + ID));
+        }
+
         private void ReadFile(BinaryWriter Writer, string Name)
         {
             using (FileStream file = File.Open(Path.Combine(_Folder, Name), FileMode.Open, FileAccess.Read, FileShare.Read))

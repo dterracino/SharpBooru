@@ -234,6 +234,7 @@ namespace TA.SharpBooru.Server
                                     {
                                         _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeletePostByID, postID);
                                         _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeletePostTagsByPostID, postID);
+                                        _Server.Booru.DeleteThumbAndImage(postID);
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                     }
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
