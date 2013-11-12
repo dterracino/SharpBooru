@@ -279,7 +279,7 @@ namespace TA.SharpBooru
             lock (_Lock)
             {
                 BeginCommunication(BooruProtocol.Command.AddUser);
-                User.ToWriter(_Writer, false);
+                User.ToWriter(_Writer, true);
                 EndCommunication();
             }
         }
