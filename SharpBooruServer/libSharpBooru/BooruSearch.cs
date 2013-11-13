@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Reflection;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace TA.SharpBooru.Server
@@ -46,53 +47,50 @@ namespace TA.SharpBooru.Server
         public static BooruPostList DoSearch(string Pattern, ServerBooru Booru)
         {
             string[] parts = SplitString(Pattern);
-            //if (parts.Length < 1)
-            //    return; //RETURN ALL POSTS
+            if (parts.Length < 1)
+                using (DataTable postTable = Booru.DB.ExecuteTable(SQLStatements.GetPosts))
+                    return BooruPostList.FromTable(postTable);
 
-            //Get all involved tags from DB
-            //Get valid post ids from DB (post_tags) self-construct the SQL statement
             //Get all posts
             //Perform all the special patterns
             //return the post ids
 
-            /*
+            List<string> tagSearchQueries = new List<string>();
+            var specialPatterns = new Dictionary<bool, SpecialPattern>();
+
+            //Extract all the needed information
             for (int i = 0; i < parts.Length; i++)
             {
-                BooruPostList newPosts = new BooruPostList();
                 string part = parts[i];
                 bool negate = ExtractNegate(ref part);
 
-                if (IsSpecialPattern(part))
-                    try
-                    {
-                        SpecialPattern sPattern = ExtractSpecialPattern(part);
-                        foreach (BooruPost post in Posts)
-                            if (sPattern.CheckPost(post))
-                                newPosts.Add(post);
-                    }
-                    catch { }
-                else
+                if (!IsSpecialPattern(part))
                 {
-                    BooruTag tag = Tags[part];
-                    if (tag != null)
-                    {
-                        foreach (BooruPost post in Posts)
-                            if (negate ^ post.Tags.Contains(tag.ID))
-                                newPosts.Add(post);
-                    }
+                    DataRow tagRow = Booru.DB.ExecuteRow(SQLStatements.GetTagByTagString, part);
+                    BooruTag tag = BooruTag.FromRow(tagRow);
+                    tagSearchQueries.Add(string.Format("id {0} (SELECT post FROM post_tags WHERE tag = {1})", negate ? "NOT IN" : "IN", tag.ID));
                 }
-
-                Posts = newPosts;
+                else specialPatterns.Add(negate, ExtractSpecialPattern(part));
             }
 
-            return Posts;
-            */
+            string tagSearchQuery = "SELECT * FROM posts WHERE " + string.Join(" AND ", tagSearchQueries);
+            using (DataTable postTable = Booru.DB.ExecuteTable(tagSearchQuery))
+            {
+                BooruPostList postList = new BooruPostList();
+                foreach (BooruPost post in BooruPostList.FromTable(postTable))
+                    if (DoSpecialPatternChecks(specialPatterns, post))
+                        postList.Add(post);
+                postList.Sort(new Comparison<BooruPost>(delegate(BooruPost p1, BooruPost p2) { return p1.CreationDate.CompareTo(p2.CreationDate); }));
+                return postList;
+            }
+        }
 
-            //TODO X Search
-            //for now, return all posts
-
-            using (DataTable postTable = Booru.DB.ExecuteTable(SQLStatements.GetPosts))
-                return BooruPostList.FromTable(postTable);
+        private static bool DoSpecialPatternChecks(Dictionary<bool, SpecialPattern> Patterns, BooruPost Post)
+        {
+            foreach (var check in Patterns)
+                if (!(check.Value.CheckPost(Post) ^ check.Key))
+                    return false;
+            return true;
         }
 
         private static bool ExtractNegate(ref string Pattern)
