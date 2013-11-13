@@ -7,7 +7,7 @@ namespace TA.SharpBooru
 {
     public class Broadcaster
     {
-        private const byte[] BROADCAST_MAGIC = new byte[] { 0x42, 0x4f, 0x4f, 0x52, 0x55, 0x31, 0x37 };
+        private static byte[] BROADCAST_MAGIC = new byte[] { 0x42, 0x4f, 0x4f, 0x52, 0x55, 0x31, 0x37 };
         private const ushort PORT = 2400;
 
         public class Response
