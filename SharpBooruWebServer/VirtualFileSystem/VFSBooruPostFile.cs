@@ -44,7 +44,7 @@ namespace TA.SharpBooru.Client.WebServer.VFS
                         ServerHelper.WriteSubSectionHeader(Context, "Tags");
                         tags.ForEach(x =>
                         {
-                            string color = ColorTranslator.ToHtml(Color.FromArgb(x.Color));
+                            string color = ColorTranslator.ToHtml(x.Color);
                             Context.OutWriter.Write("<span style=\"color:{0}\">", color);
                             string tag = x.Tag;
                             Context.OutWriter.Write("<a href=\"index?tags={0}\">", HttpUtility.HtmlEncode(tag));

@@ -13,7 +13,7 @@ namespace TA.SharpBooru
         public string Tag = "unknown";
         public string Type = "Temporary";
         public string Description = "Temporary tags";
-        public int Color = unchecked((int)0xFF000000);
+        public Color Color = Color.Black;
 
         public BooruTag(string Tag) { this.Tag = Tag; }
         public BooruTag(string Tag, string Type, string Description, Color Color)
@@ -21,7 +21,7 @@ namespace TA.SharpBooru
         {
             this.Type = Type;
             this.Description = Description;
-            this.Color = Color.ToArgb();
+            this.Color = Color;
         }
 
         public static bool operator ==(BooruTag Tag1, BooruTag Tag2)
@@ -30,7 +30,7 @@ namespace TA.SharpBooru
                 return true;
             else if ((object)Tag1 == null || (object)Tag2 == null)
                 return false;
-            else return Tag1.ID == Tag2.ID; 
+            else return Tag1.ID == Tag2.ID;
         }
 
         public static bool operator !=(BooruTag Tag1, BooruTag Tag2) { return !(Tag1 == Tag2); }
@@ -45,7 +45,7 @@ namespace TA.SharpBooru
             Writer.Write(Tag);
             Writer.Write(Type);
             Writer.Write(Description);
-            Writer.Write(Color);
+            Writer.Write(Color.ToArgb());
         }
 
         public static BooruTag FromReader(BinaryReader Reader)
@@ -56,7 +56,7 @@ namespace TA.SharpBooru
                 ID = id,
                 Type = Reader.ReadString(),
                 Description = Reader.ReadString(),
-                Color = Reader.ReadInt32()
+                Color = Color.FromArgb(Reader.ReadInt32())
             };
         }
 
@@ -68,7 +68,7 @@ namespace TA.SharpBooru
                     ID = Convert.ToUInt64(Row["id"]),
                     Type = Convert.ToString(Row["type"]),
                     Description = Convert.ToString(Row["description"]),
-                    Color = Convert.ToInt32(Row["color"])
+                    Color = ColorTranslator.FromHtml(Convert.ToString(Row["color"]))
                 };
             else return null;
         }
@@ -80,7 +80,7 @@ namespace TA.SharpBooru
                 { "tag", Tag },
                 { "type", Type },
                 { "description", Description },
-                { "color", Color }
+                { "color", ColorTranslator.ToHtml(Color) }
             };
             if (IncludeID)
                 dict.Add("id", ID);

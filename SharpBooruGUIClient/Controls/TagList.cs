@@ -92,7 +92,7 @@ namespace TA.SharpBooru.Client.GUI.Controls
             Point p = e.Bounds.Location;
             //p.X += offset;
             //p.Y += offset;
-            Color color = Enabled ? Color.FromArgb(_Tags[e.Index].Color) : Color.LightGray;
+            Color color = Enabled ? _Tags[e.Index].Color : Color.LightGray;
             using (SolidBrush brush = new SolidBrush(color))
                 e.Graphics.DrawString(_Tags[e.Index].Tag, e.Font, brush, p);
         }
