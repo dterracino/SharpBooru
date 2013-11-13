@@ -35,6 +35,7 @@ namespace TA.SharpBooru.Client.GUI
             GUIHelper.CreateToolTip(buttonRefresh, "Refresh searched posts");
             GUIHelper.CreateToolTip(buttonChangeUser, "Change the user");
             GUIHelper.CreateToolTip(buttonImportDialog, "Import posts into the booru");
+            GUIHelper.CreateToolTip(buttonImgSearch, "Search for image duplicates");
             CheckPermissions();
         }
 
@@ -45,6 +46,7 @@ namespace TA.SharpBooru.Client.GUI
                 searchBox.Enabled = !Loading;
                 buttonRefresh.Enabled = !Loading;
                 buttonChangeUser.Enabled = !Loading;
+                buttonImgSearch.Enabled = !Loading;
             }
             else this.Invoke(new Action<bool>(SetLoadingMode), Loading);
         }
