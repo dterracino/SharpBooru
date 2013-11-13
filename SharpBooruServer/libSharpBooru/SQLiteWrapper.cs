@@ -10,18 +10,21 @@ namespace TA.SharpBooru
 {
     public class SQLiteWrapper : IDisposable
     {
-        private SQLiteConnection _Connection;
+        private SQLiteConnection _Connection = null;
+
+        static SQLiteWrapper()
+        {
+            SQLiteFunctionEx.RegisterFunction(typeof(MyRegEx));
+            SQLiteFunctionEx.RegisterFunction(typeof(MyImageHashComparator));
+        }
 
         public SQLiteWrapper(string Database)
         {
             if (!File.Exists(Database))
                 throw new FileNotFoundException("Database file not found");
             string connectionString = string.Format("Data source={0}", Database);
-            if (_Connection != null)
-                _Connection.Dispose();
             _Connection = new SQLiteConnection(connectionString);
             _Connection.Open();
-            SQLiteFunction.RegisterFunction(typeof(MyRegEx));
         }
 
         public ulong GetLastInsertedID()
@@ -132,7 +135,7 @@ namespace TA.SharpBooru
         [SQLiteFunction(Name = "REGEXP", Arguments = 2, FuncType = FunctionType.Scalar)]
         internal class MyRegEx : SQLiteFunction { public override object Invoke(object[] args) { return Regex.IsMatch(Convert.ToString(args[1]), Convert.ToString(args[0])); } }
 
-        [SQLiteFunction(Name = "IMGHASHCOMP", Arguments = 2, FuncType = FunctionType.Scalar)]
+        [SQLiteFunction(Name = "IHCOMP", Arguments = 2, FuncType = FunctionType.Scalar)]
         internal class MyImageHashComparator : SQLiteFunction
         {
             public override object Invoke(object[] args)

@@ -448,10 +448,12 @@ namespace TA.SharpBooru.Server
                         case BooruProtocol.Command.FindImageDupes:
                             ulong hash = _Reader.ReadUInt64();
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                            DataTable dupeTable = _Server.Booru.DB.ExecuteTable(SQLStatements.GetDuplicatePostIDs, hash, 12); //2nd Param = Threshold
+                            DataTable dupeTable = _Server.Booru.DB.ExecuteTable(SQLStatements.GetDuplicatePosts, hash.ToString(), 25); //TODO X Tune threshold value
+                            BooruPostList dupes = BooruPostList.FromTable(dupeTable);
                             List<ulong> ids = new List<ulong>();
-                            foreach (DataRow dupeRow in dupeTable.Rows)
-                                ids.Add(Convert.ToUInt64(dupeRow["id"]));
+                            foreach (BooruPost dupe in dupes)
+                                if (dupe.Rating <= _User.MaxRating && IsPrivacyAllowed(dupe, _User))
+                                    ids.Add(dupe.ID);
                             _Writer.Write((uint)ids.Count);
                             foreach (ulong id in ids)
                                 _Writer.Write(id);

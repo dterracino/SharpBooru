@@ -10,7 +10,7 @@ namespace TA.SharpBooru
         public enum Command : byte
         {
             // IDs(ulong[]), SearchPattern(string)
-            Search, //TODO ########## UNTESTED
+            Search,
 
             // void
             Disconnect,
@@ -62,7 +62,7 @@ namespace TA.SharpBooru
             */
 
             // void, NewUser(BooruUser)
-            AddUser, //TODO ########## UNTESTED
+            AddUser,
 
             // void, Username(string)
             //TODO Use UID instead of Username
@@ -72,7 +72,7 @@ namespace TA.SharpBooru
             GetBooruMiscOptions,
 
             // DupeIDs(List<ulong>), ulong Hashs
-            FindImageDupes //TODO ########## UNTESTED
+            FindImageDupes
         }
 
         public enum ErrorCode : byte

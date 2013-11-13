@@ -96,5 +96,21 @@ namespace TA.SharpBooru.Client.GUI
         }
 
         protected override void OnResize(EventArgs e) { base.OnResize(e); }
+
+        private void buttonImgSearch_Click(object sender, EventArgs e)
+        {
+            if (Clipboard.ContainsImage())
+            {
+                Image cbImg = Clipboard.GetImage();
+                if (cbImg is Bitmap)
+                    using (BooruImage bImg = BooruImage.FromBitmap(cbImg as Bitmap))
+                    {
+                        ulong imgHash = bImg.CalculateImageHash();
+                        booruThumbView.Posts = _Booru.FindImageDupes(imgHash);
+                    }
+                else MessageBox.Show("No valid bitmap in clipboard", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else MessageBox.Show("No image in clipboard", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
     }
 }

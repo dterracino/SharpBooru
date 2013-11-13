@@ -40,6 +40,7 @@
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchBox = new TA.SharpBooru.Client.GUI.Controls.TagTextBox();
             this.booruThumbView = new TA.SharpBooru.Client.GUI.Controls.BooruThumbView();
+            this.buttonImgSearch = new System.Windows.Forms.Button();
             this.imageContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -92,25 +93,25 @@
             this.editToolStripMenuItem,
             this.deleteToolStripMenuItem});
             this.imageContextMenuStrip.Name = "imageContextMenuStrip";
-            this.imageContextMenuStrip.Size = new System.Drawing.Size(153, 92);
+            this.imageContextMenuStrip.Size = new System.Drawing.Size(108, 70);
             // 
             // openToolStripMenuItem
             // 
             this.openToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.openToolStripMenuItem.Name = "openToolStripMenuItem";
-            this.openToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.openToolStripMenuItem.Text = "Open";
             // 
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.editToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.editToolStripMenuItem.Text = "Edit";
             // 
             // deleteToolStripMenuItem
             // 
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
-            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.deleteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             // 
             // searchBox
@@ -134,11 +135,22 @@
             this.booruThumbView.TabIndex = 4;
             this.booruThumbView.ThumbViewBackColor = System.Drawing.Color.White;
             // 
+            // buttonImgSearch
+            // 
+            this.buttonImgSearch.Location = new System.Drawing.Point(12, 57);
+            this.buttonImgSearch.Name = "buttonImgSearch";
+            this.buttonImgSearch.Size = new System.Drawing.Size(100, 23);
+            this.buttonImgSearch.TabIndex = 5;
+            this.buttonImgSearch.Text = "ImgSearch";
+            this.buttonImgSearch.UseVisualStyleBackColor = true;
+            this.buttonImgSearch.Click += new System.EventHandler(this.buttonImgSearch_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(589, 347);
+            this.Controls.Add(this.buttonImgSearch);
             this.Controls.Add(this.buttonRefresh);
             this.Controls.Add(this.buttonChangeUser);
             this.Controls.Add(this.buttonImportDialog);
@@ -166,6 +178,7 @@
         private System.Windows.Forms.ToolStripMenuItem openToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
+        private System.Windows.Forms.Button buttonImgSearch;
 
     }
 }
