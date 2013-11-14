@@ -10,7 +10,7 @@ namespace TA.SharpBooru.Server
         public const string GetTags = @"
 SELECT tags.id AS id, tags.tag AS tag, tag_types.type AS type, tag_types.description AS description,
 tag_types.color AS color FROM tags INNER JOIN tag_types ON type_id = tag_types.id";
-        public const string GetPosts = "SELECT * FROM posts SORT BY creationdate DESC";
+        public const string GetPosts = "SELECT * FROM posts ORDER BY creationdate DESC";
         public const string GetTagsByPostID = @"
 SELECT tags.id AS id, tags.tag AS tag, tag_types.type AS type, tag_types.description AS description,
 tag_types.color AS color FROM (SELECT tags.* FROM tags INNER JOIN post_tags ON tags.id = post_tags.tag

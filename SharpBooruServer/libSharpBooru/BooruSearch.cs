@@ -75,7 +75,7 @@ namespace TA.SharpBooru.Server
             }
 
             string tagSearchQuery = tagSearchQueries.Count > 0 ?
-                "SELECT * FROM posts WHERE " + string.Join(" AND ", tagSearchQueries) + " SORT BY creationdate DESC"
+                "SELECT * FROM posts WHERE " + string.Join(" AND ", tagSearchQueries) + " ORDER BY creationdate DESC"
                 : SQLStatements.GetPosts;
             using (DataTable postTable = Booru.DB.ExecuteTable(tagSearchQuery))
             {
