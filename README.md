@@ -8,12 +8,13 @@ If you don't know what a 'booru' is, just google it :D
 Server Installation
 -------------------
 
-It's not possible to create a booru database at this time.
-A empty database will be uploaded to the repo as soon as the code is rewritten.
-
+- Create a directory for your booru and cd into it
+- Extract "sample_database.tar.xz" inside the directory
+- Follow the instructions in the INSTALL file
 
 
 Client Installation
 -------------------
 
-No installation needed, just build and run.
+- Build the client
+- Run the client
