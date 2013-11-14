@@ -10,7 +10,7 @@ namespace TA.SharpBooru.Server
         public const string GetTags = @"
 SELECT tags.id AS id, tags.tag AS tag, tag_types.type AS type, tag_types.description AS description,
 tag_types.color AS color FROM tags INNER JOIN tag_types ON type_id = tag_types.id";
-        public const string GetPosts = "SELECT * FROM posts";
+        public const string GetPosts = "SELECT * FROM posts SORT BY creationdate DESC";
         public const string GetTagsByPostID = @"
 SELECT tags.id AS id, tags.tag AS tag, tag_types.type AS type, tag_types.description AS description,
 tag_types.color AS color FROM (SELECT tags.* FROM tags INNER JOIN post_tags ON tags.id = post_tags.tag
@@ -18,6 +18,9 @@ WHERE post_tags.post = ?) AS tags INNER JOIN tag_types ON type_id = tag_types.id
         public const string GetTagByTagString = @"
 SELECT tags.id AS id, tags.tag AS tag, tag_types.type AS type, tag_types.description AS description,
 tag_types.color AS color FROM tags INNER JOIN tag_types WHERE tag = ?";
+        public const string GetTagByID = @"
+SELECT tags.id AS id, tags.tag AS tag, tag_types.type AS type, tag_types.description AS description,
+tag_types.color AS color FROM tags INNER JOIN tag_types WHERE id = ?";
         public const string GetDuplicatePosts = "SELECT *, IHCOMP(hash, ?) AS hdiff FROM posts WHERE hdiff < ? ORDER BY hdiff LIMIT 25";
         public const string GetMiscOptionByKey = "SELECT * FROM misc_options WHERE key = ?";
         public const string GetMiscOptions = "SELECT * FROM misc_options";

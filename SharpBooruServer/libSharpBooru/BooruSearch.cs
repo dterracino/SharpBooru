@@ -68,19 +68,21 @@ namespace TA.SharpBooru.Server
                 {
                     DataRow tagRow = Booru.DB.ExecuteRow(SQLStatements.GetTagByTagString, part);
                     BooruTag tag = BooruTag.FromRow(tagRow);
-                    tagSearchQueries.Add(string.Format("id {0} (SELECT post FROM post_tags WHERE tag = {1})", negate ? "NOT IN" : "IN", tag.ID));
+                    if (tag != null)
+                        tagSearchQueries.Add(string.Format("id {0} (SELECT post FROM post_tags WHERE tag = {1})", negate ? "NOT IN" : "IN", tag.ID));
                 }
                 else specialPatterns.Add(negate, ExtractSpecialPattern(part));
             }
 
-            string tagSearchQuery = "SELECT * FROM posts WHERE " + string.Join(" AND ", tagSearchQueries);
+            string tagSearchQuery = tagSearchQueries.Count > 0 ?
+                "SELECT * FROM posts WHERE " + string.Join(" AND ", tagSearchQueries) + " SORT BY creationdate DESC"
+                : SQLStatements.GetPosts;
             using (DataTable postTable = Booru.DB.ExecuteTable(tagSearchQuery))
             {
                 BooruPostList postList = new BooruPostList();
                 foreach (BooruPost post in BooruPostList.FromTable(postTable))
                     if (DoSpecialPatternChecks(specialPatterns, post))
                         postList.Add(post);
-                postList.Sort(new Comparison<BooruPost>(delegate(BooruPost p1, BooruPost p2) { return p1.CreationDate.CompareTo(p2.CreationDate); }));
                 return postList;
             }
         }
