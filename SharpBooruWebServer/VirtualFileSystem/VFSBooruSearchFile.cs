@@ -70,7 +70,7 @@ namespace TA.SharpBooru.Client.WebServer.VFS
                 foreach (ulong postID in postIDs)
                 {
                     Context.OutWriter.Write("<a href=\"post?id={0}&amp;tags={1}\">", postID, tagSearch);
-                    Context.OutWriter.Write("<img class=\"thumb\" alt=\"\" src=\"thumb?id={0}\"></a>", postID);
+                    Context.OutWriter.Write("<div class=\"thumb\"><img alt=\"PostID: #{0}\" src=\"thumb?id={0}\"></div></a>", postID);
                 }
                 Context.OutWriter.Write("</div><br><div class=\"page_chooser\">");
                 if (totalPages > 0)
