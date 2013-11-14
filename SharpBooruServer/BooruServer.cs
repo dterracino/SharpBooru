@@ -278,9 +278,14 @@ namespace TA.SharpBooru.Server
                                 {
                                     if (_Server.Booru.DB.ExecuteScalar<int>(SQLStatements.GetTagCountByID, newTag.ID) > 0)
                                     {
-                                        _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeleteTagByID, newTag.ID);
-                                        _Server.Booru.DB.ExecuteInsert("tags", newTag.ToDictionary(true));
-                                        _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                                        DataRow typeRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetTagTypeByTypeName, newTag.Type);
+                                        if (typeRow != null)
+                                        {
+                                            _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeleteTagByID, newTag.ID);
+                                            _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertTagWithTypeID, newTag.Tag, Convert.ToUInt32(typeRow["id"]));
+                                            _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                                        }
+                                        else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                                     }
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
                                 }
@@ -461,13 +466,13 @@ namespace TA.SharpBooru.Server
                             }
                             break;
                         case BooruProtocol.Command.FindImageDupes:
-                            ulong hash = _Reader.ReadUInt64();
+                            byte[] hash = _Reader.ReadBytes((int)_Reader.ReadUInt32());
                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
-                            DataTable dupeTable = _Server.Booru.DB.ExecuteTable(SQLStatements.GetDuplicatePosts, hash.ToString(), 25); //TODO X Tune threshold value
+                            DataTable dupeTable = _Server.Booru.DB.ExecuteTable(SQLStatements.GetDuplicatePosts, Convert.ToBase64String(hash), _User.MaxRating, 20);
                             BooruPostList dupes = BooruPostList.FromTable(dupeTable);
                             List<ulong> ids = new List<ulong>();
                             foreach (BooruPost dupe in dupes)
-                                if (dupe.Rating <= _User.MaxRating && IsPrivacyAllowed(dupe, _User))
+                                if (IsPrivacyAllowed(dupe, _User))
                                     ids.Add(dupe.ID);
                             _Writer.Write((uint)ids.Count);
                             foreach (ulong id in ids)

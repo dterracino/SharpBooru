@@ -346,11 +346,12 @@ namespace TA.SharpBooru
             }
         }
 
-        public List<ulong> FindImageDupes(ulong ImageHash)
+        public List<ulong> FindImageDupes(byte[] ImageHash)
         {
             lock (_Lock)
             {
                 BeginCommunication(BooruProtocol.Command.FindImageDupes);
+                _Writer.Write((uint)ImageHash.Length);
                 _Writer.Write(ImageHash);
                 EndCommunication();
                 uint count = _Reader.ReadUInt32();

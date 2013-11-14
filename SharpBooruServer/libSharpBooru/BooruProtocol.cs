@@ -4,7 +4,7 @@ namespace TA.SharpBooru
 {
     public static class BooruProtocol
     {
-        public const ushort ProtocolVersion = 0xD;
+        public const ushort ProtocolVersion = 0xE;
 
         // ReturnParameter(Type), [Argument1(Type)], [Argument2(Type)], ...
         public enum Command : byte
@@ -34,7 +34,7 @@ namespace TA.SharpBooru
             DeleteTag,
 
             // void, NewTag(BooruTag) with old ID
-            EditTag, //TODO ########## UNTESTED
+            EditTag,
 
             // NewPostID(ulong), Post(BooruPost), Image(BooruImage)
             AddPost,

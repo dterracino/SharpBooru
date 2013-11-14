@@ -21,9 +21,10 @@ tag_types.color AS color FROM tags INNER JOIN tag_types WHERE tag = ?";
         public const string GetTagByID = @"
 SELECT tags.id AS id, tags.tag AS tag, tag_types.type AS type, tag_types.description AS description,
 tag_types.color AS color FROM tags INNER JOIN tag_types WHERE id = ?";
-        public const string GetDuplicatePosts = "SELECT *, IHCOMP(hash, ?) AS hdiff FROM posts WHERE hdiff < ? ORDER BY hdiff LIMIT 25";
+        public const string GetDuplicatePosts = "SELECT *, IHCOMP(hash, ?) AS hdiff FROM posts WHERE rating < ? ORDER BY hdiff DESC LIMIT ?";
         public const string GetMiscOptionByKey = "SELECT * FROM misc_options WHERE key = ?";
         public const string GetMiscOptions = "SELECT * FROM misc_options";
+        public const string GetTagTypeByTypeName = "SELECT * FROM tag_types WHERE type = ?";
 
         //Counts
         public const string GetPostCountByID = "SELECT COUNT(*) FROM posts WHERE id = ?";

@@ -269,43 +269,46 @@ namespace TA.SharpBooru
             return g;
         }
 
-        //Based on jforshee's ImageHashing algorythm
-        //https://github.com/jforshee/ImageHashing/blob/master/ImageHashing/ImageHashing.cs
-        public ulong CalculateImageHash()
+        public byte[] CalculateImageHash()
         {
-            byte[] imgBytes = new byte[64 * 3];
+            byte sideLen = 8;
+            byte[] imgBytes = new byte[sideLen * sideLen * 3];
             using (Bitmap hB = new Bitmap(8, 8))
             {
                 using (Graphics g = CreateAAGraphics(hB))
-                    g.DrawImage(Bitmap, 0, 0, 8, 8);
-                BitmapData bd = hB.LockBits(new Rectangle(0, 0, 8, 8), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-                Marshal.Copy(bd.Scan0, imgBytes, 0, 192);
+                    g.DrawImage(Bitmap, 0, 0, sideLen, sideLen);
+                BitmapData bd = hB.LockBits(new Rectangle(0, 0, sideLen, sideLen), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
+                Marshal.Copy(bd.Scan0, imgBytes, 0, imgBytes.Length);
                 hB.UnlockBits(bd);
             }
-            byte[] grayscale = new byte[64];
-            ushort aSum = 0;
-            for (byte i = 0; i < grayscale.Length; i++)
-            {
-                int sum = imgBytes[i * 3] + imgBytes[i * 3 + 1] + imgBytes[i * 3 + 2];
-                grayscale[i] = (byte)(sum / 3f + 0.5f);
-                aSum += grayscale[i];
-            }
-            byte average = (byte)(aSum / 64f + 0.5f);
-            ulong hash = 0;
-            for (byte i = 0; i < 64; i++)
-                if (grayscale[i] >= average)
-                    hash |= 1UL << i;
+            byte[] hash = new byte[sideLen * sideLen];
+            for (ushort i = 0; i < hash.Length; i++)
+                hash[i] = CalcYUV(imgBytes, 3 * i);
             return hash;
         }
 
-        public static float CompareImageHashes(ulong Hash1, ulong Hash2)
+        private byte CalcYUV(byte[] Pixels, int Index)
         {
-            ulong diff = Hash1 ^ Hash2;
-            byte bitcount = 0;
-            for (byte i = 0; i < 64; i++)
-                if ((diff & (1UL << i)) > 0)
-                    bitcount++;
-            return (64 - bitcount) / 64f;
+            float fy = Pixels[Index] * 0.114f + Pixels[Index + 1] * 0.587f + Pixels[Index + 2] * 0.299f;
+            byte by = (byte)(fy * 63f / 255f + 0.5f);
+            byte bu = (byte)((Pixels[Index] - fy + 255) * 3f / 510f + 0.5f);
+            byte bv = (byte)((Pixels[Index + 2] - fy + 255) * 3f / 510f + 0.5f);
+            return (byte)(by << 4 | bu << 2 | bv);
+        }
+
+        public static float CompareImageHashes(byte[] Hash1, byte[] Hash2)
+        {
+            if (Hash1.Length != Hash2.Length)
+                throw new ArgumentException("Hashes must have the same length");
+            ushort bitcount = 0;
+            for (ushort i = 0; i < Hash1.Length; i++)
+            {
+                byte diff = (byte)(Hash1[i] ^ Hash2[i]);
+                for (byte j = 0; j < 8; j++)
+                    if ((diff & (0x01 << j)) > 0)
+                        bitcount++;
+            }
+            return ((float)Hash1.Length - bitcount) / Hash1.Length;
         }
 
         public void ToWriter(BinaryWriter Writer, Action<float> ProgressCallback = null)

@@ -21,7 +21,7 @@ namespace TA.SharpBooru
         public ulong ViewCount = 0;
         public ulong EditCount = 0;
         public long Score = 0;
-        public ulong ImageHash = 0;
+        public byte[] ImageHash = new byte[0];
         public BooruTagList Tags = new BooruTagList();
 
         public BooruImage Image = null;
@@ -57,6 +57,7 @@ namespace TA.SharpBooru
             Writer.Write(ViewCount);
             Writer.Write(EditCount);
             Writer.Write(Score);
+            Writer.Write((uint)ImageHash.Length);
             Writer.Write(ImageHash);
             Tags.ToWriter(Writer);
         }
@@ -77,7 +78,7 @@ namespace TA.SharpBooru
                 ViewCount = Reader.ReadUInt64(),
                 EditCount = Reader.ReadUInt64(),
                 Score = Reader.ReadInt64(),
-                ImageHash = Reader.ReadUInt64(),
+                ImageHash = Reader.ReadBytes((int)Reader.ReadUInt32()),
                 Tags = BooruTagList.FromReader(Reader)
             };
         }
@@ -100,7 +101,7 @@ namespace TA.SharpBooru
                     ViewCount = Convert.ToUInt64(Row["viewcount"]),
                     EditCount = Convert.ToUInt64(Row["editcount"]),
                     Score = Convert.ToInt64(Row["score"]),
-                    ImageHash = Convert.ToUInt64(Row["hash"]),
+                    ImageHash = Convert.FromBase64String(Convert.ToString(Row["hash"])),
                 };
             else return null;
         }
@@ -120,7 +121,7 @@ namespace TA.SharpBooru
                 { "viewcount", ViewCount },
                 { "editcount", EditCount },
                 { "score", Score },
-                { "hash", ImageHash.ToString() }
+                { "hash", Convert.ToBase64String(ImageHash) }
             };
             if (IncludeID)
                 dict.Add("id", ID);

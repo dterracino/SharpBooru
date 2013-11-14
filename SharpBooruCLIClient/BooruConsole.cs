@@ -42,9 +42,9 @@ namespace TA.SharpBooru.Client.CLI
                             if (imgViewer != null)
                                 imgViewer.WaitForExit();
                 })));
+            /* TODO Command image dupes
             Commands.Add(new Command("image dupes", "image dupes <Folder>", new Action<string>(folder =>
                 {
-                    //TODO - Improve this
                     string[] files = Directory.GetFiles(folder);
                     foreach (string file in files)
                         using (BooruImage img = BooruImage.FromFile(file))
@@ -57,10 +57,6 @@ namespace TA.SharpBooru.Client.CLI
                                     Console.WriteLine(" {0}", dupeID);
                             else Console.WriteLine(" no dupes");
                         }
-                })));
-            /* TODO Command tag type set
-            Commands.Add(new Command("tag type set", "tag type set <TagString> <TypeID>", new Action<string, uint>((tag, tid) =>
-                {
                 })));
             */
             Commands.Add(new Command("tag delete", "tag delete <ID>", new Action<ulong>(id => _Booru.DeleteTag(id))));
@@ -85,9 +81,6 @@ namespace TA.SharpBooru.Client.CLI
                     _Booru.AddUser(user);
                 })));
             Commands.Add(new Command("user delete", "user delete <Username>", new Action<string>(un => _Booru.DeleteUser(un))));
-            //tag edit
-            //post edit
-            //post add
             Commands.Add(new Command("post import", "post import <URL> <Tags> <Private>", new Action<string, string, bool>((url, tags, privat) =>
                 {
                     if (!Helper.CheckURL(url))
@@ -130,6 +123,13 @@ namespace TA.SharpBooru.Client.CLI
                         };
                         _Booru.AddPost(post);
                     }
+                })));
+            //TODO Command post edit
+            Commands.Add(new Command("tag chtype", "tag chtype <TagID> <TypeString>", new Action<ulong, string>((tagid, type) =>
+                {
+                    BooruTag tag = _Booru.GetTag(tagid);
+                    tag.Type = type;
+                    _Booru.SaveTag(tag);
                 })));
         }
     }

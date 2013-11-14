@@ -140,12 +140,9 @@ namespace TA.SharpBooru
         {
             public override object Invoke(object[] args)
             {
-                ulong hash_diff = Convert.ToUInt64(args[0]) ^ Convert.ToUInt64(args[1]);
-                byte one_count = 0;
-                for (byte i = 0; i < 64; i++)
-                    if ((hash_diff & (1UL << i)) > 0)
-                        one_count++;
-                return one_count;
+                byte[] hash1 = Convert.FromBase64String(Convert.ToString(args[0]));
+                byte[] hash2 = Convert.FromBase64String(Convert.ToString(args[1]));
+                return BooruImage.CompareImageHashes(hash1, hash2);
             }
         }
     }

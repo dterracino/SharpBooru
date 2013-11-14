@@ -107,7 +107,7 @@ namespace TA.SharpBooru.Client.GUI
                 if (cbImg is Bitmap)
                     using (BooruImage bImg = BooruImage.FromBitmap(cbImg as Bitmap))
                     {
-                        ulong imgHash = bImg.CalculateImageHash();
+                        byte[] imgHash = bImg.CalculateImageHash();
                         booruThumbView.Posts = _Booru.FindImageDupes(imgHash);
                     }
                 else MessageBox.Show("No valid bitmap in clipboard", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
