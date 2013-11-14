@@ -15,7 +15,7 @@ namespace TA.SharpBooru.Client.WebServer
         [Option('p', "password", Required = false, DefaultValue = "guest", HelpText = "The password for auto login")]
         public string Password { get; set; }
 
-        [Option('p', "port", Required = false, DefaultValue = (ushort)80, HelpText = "The port of the server")]
+        [Option('h', "http-port", Required = false, DefaultValue = (ushort)80, HelpText = "The port of the server")]
         public ushort Port { get; set; }
 
         [HelpOption]

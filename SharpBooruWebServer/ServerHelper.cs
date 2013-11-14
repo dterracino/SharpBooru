@@ -76,7 +76,7 @@ namespace TA.SharpBooru.Client.WebServer
                 Context.OutWriter.Write(" <input style=\"float: left\" type=\"submit\" value=\"Login\"></form>");
             }
             */
-            string serverMOTD = "Download the GUI client (better) here: http://sharpbooru.zapto.org/gui.zip"; //TODO Get server MOTD
+            string serverMOTD = ""; //TODO Get server MOTD
             if (!string.IsNullOrWhiteSpace(serverMOTD))
             {
                 Context.OutWriter.Write("</div><div class=\"motd\"><b>Notice: </b>");

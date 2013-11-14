@@ -90,12 +90,19 @@ div.wrap {{
     display: table;
 }}
 
-img.thumb {{
-    display: block;
+div.thumb img {{
+    max-width: {0}px;
+    max-height: {0}px;
+    vertical-align: middle;
+}}
+
+div.thumb {{
     width: {0}px;
     height: {0}px;
     float: left;
     margin: 6px;
+    line-height: {0}px;
+    text-align: center;
 }}
 
 table.vtable {{
