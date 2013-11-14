@@ -284,6 +284,29 @@ namespace TA.SharpBooru
             }
         }
 
+        public BooruTag GetTag(string TagString)
+        {
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.GetTag);
+                _Writer.Write(true);
+                _Writer.Write(TagString);
+                EndCommunication();
+                return BooruTag.FromReader(_Reader);
+            }
+        }
+        public BooruTag GetTag(ulong ID)
+        {
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.GetTag);
+                _Writer.Write(false);
+                _Writer.Write(ID);
+                EndCommunication();
+                return BooruTag.FromReader(_Reader);
+            }
+        }
+
         public void DeleteUser(BooruUser User) { DeleteUser(User.Username); }
         public void DeleteUser(string Username)
         {

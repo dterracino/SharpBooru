@@ -4,7 +4,7 @@ namespace TA.SharpBooru
 {
     public static class BooruProtocol
     {
-        public const ushort ProtocolVersion = 0xC;
+        public const ushort ProtocolVersion = 0xD;
 
         // ReturnParameter(Type), [Argument1(Type)], [Argument2(Type)], ...
         public enum Command : byte
@@ -21,7 +21,10 @@ namespace TA.SharpBooru
             // Image(BooruImage), PostID(ulong)
             GetImage,
 
-            // Thunbmail(BooruImage), PostID(ulong)
+            // Tag(BooruTag), UseStringNotID(bool), TagString(string) | TagID(ulong)
+            GetTag,
+
+            // Thumbnail(BooruImage), PostID(ulong)
             GetThumbnail,
 
             // void, PostID(ulong)

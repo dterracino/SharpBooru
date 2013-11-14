@@ -256,6 +256,21 @@ namespace TA.SharpBooru.Server
                                 else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                             }
                             break;
+                        case BooruProtocol.Command.GetTag:
+                            {
+                                bool useString = _Reader.ReadBoolean();
+                                string query = useString ? SQLStatements.GetTagByTagString : SQLStatements.GetPostByID;
+                                object param = useString ? (object)_Reader.ReadString() : (object)_Reader.ReadUInt64();
+                                DataRow tagRow = _Server.Booru.DB.ExecuteRow(query, param);
+                                BooruTag tag = BooruTag.FromRow(tagRow);
+                                if (tag != null)
+                                {
+                                    _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                                    tag.ToWriter(_Writer);
+                                }
+                                else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
+                            }
+                            break;
                         case BooruProtocol.Command.EditTag:
                             {
                                 BooruTag newTag = BooruTag.FromReader(_Reader);

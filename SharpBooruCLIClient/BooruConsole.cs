@@ -44,6 +44,7 @@ namespace TA.SharpBooru.Client.CLI
                 })));
             Commands.Add(new Command("image dupes", "image dupes <Folder>", new Action<string>(folder =>
                 {
+                    //TODO - Improve this
                     string[] files = Directory.GetFiles(folder);
                     foreach (string file in files)
                         using (BooruImage img = BooruImage.FromFile(file))
@@ -57,6 +58,11 @@ namespace TA.SharpBooru.Client.CLI
                             else Console.WriteLine(" no dupes");
                         }
                 })));
+            /* TODO Command tag type set
+            Commands.Add(new Command("tag type set", "tag type set <TagString> <TypeID>", new Action<string, uint>((tag, tid) =>
+                {
+                })));
+            */
             Commands.Add(new Command("tag delete", "tag delete <ID>", new Action<ulong>(id => _Booru.DeleteTag(id))));
             Commands.Add(new Command("user change", "user change <Username> <Password>", new Action<string, string>((un, pw) => _Booru.ChangeUser(un, pw))));
             Commands.Add(new Command("user add", "user add <Username> <Password> <CanAddPosts> <CanDeletePosts> <CanEditPosts> <CanDeleteTags> <CanEditTags> <CanLoginDirect> <CanLoginOnline> <AdvancePostControl> <IsAdmin> <MaxRating>", new Action<string, string, bool, bool, bool, bool, bool, bool, bool, bool, bool, ushort>((un, pw, cap, cdp, cep, cdt, cet, cld, clo, apc, ia, mr) =>
