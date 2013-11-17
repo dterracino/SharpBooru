@@ -97,6 +97,7 @@ namespace TA.SharpBooru.Client.GUI
         {
             CheckPermissions();
             searchBox.SetTags(_Booru.GetAllTags());
+            _Booru.ClearCaches();
             booruThumbView.Posts = _Booru.Search(_LastSearch);
         }
 
