@@ -242,18 +242,17 @@ namespace TA.SharpBooru
             return list;
         }
 
-        public BooruTagList GetAllTags()
+        public List<string> GetAllTags()
         {
             lock (_Lock)
             {
                 BeginCommunication(BooruProtocol.Command.GetAllTags);
                 EndCommunication();
-                //uint count = _Reader.ReadUInt32();
-                //BooruTagList bTagList = new BooruTagList();
-                //for (uint i = 0; i < count; i++)
-                //    bTagList.Add(new BooruTag(_Reader.ReadString()));
-                //return bTagList;
-                return BooruTagList.FromReader(_Reader);
+                uint count = _Reader.ReadUInt32();
+                var bTagList = new List<string>();
+                for (uint i = 0; i < count; i++)
+                    bTagList.Add(_Reader.ReadString());
+                return bTagList;
             }
         }
 
@@ -378,6 +377,18 @@ namespace TA.SharpBooru
                 for (uint i = 0; i < count; i++)
                     IDs.Add(_Reader.ReadUInt64());
                 return IDs;
+            }
+        }
+
+        public void AddAlias(string Alias, BooruTag Tag) { AddAlias(Alias, Tag.ID); }
+        public void AddAlias(string Alias, ulong TagID)
+        {
+            lock (_Lock)
+            {
+                BeginCommunication(BooruProtocol.Command.AddAlias);
+                _Writer.Write(Alias);
+                _Writer.Write(TagID);
+                EndCommunication();
             }
         }
 

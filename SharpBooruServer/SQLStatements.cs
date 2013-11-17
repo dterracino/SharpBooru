@@ -25,6 +25,8 @@ tag_types.color AS color FROM tags INNER JOIN tag_types WHERE id = ?";
         public const string GetMiscOptionByKey = "SELECT * FROM misc_options WHERE key = ?";
         public const string GetMiscOptions = "SELECT * FROM misc_options";
         public const string GetTagTypeByTypeName = "SELECT * FROM tag_types WHERE type = ?";
+        public const string GetAliases = "SELECT * FROM aliases";
+        public const string GetAliasByString = "SELECT * FROM aliases WHERE alias = ?";
 
         //Counts
         public const string GetPostCountByID = "SELECT COUNT(*) FROM posts WHERE id = ?";
@@ -43,5 +45,6 @@ tag_types.color AS color FROM tags INNER JOIN tag_types WHERE id = ?";
         //Insertions - use the SQLWrapper.ExecuteInsert for the most classes
         public const string InsertPostTag = "INSERT INTO post_tags (post, tag) VALUES (?, ?)";
         public const string InsertTagWithTypeID = "INSERT INTO tags (tag, type_id) VALUES (?, ?)";
+        public const string InsertAlias = "INSERT INTO aliases (alias, tagid) VALUES (?, ?)";
     }
 }

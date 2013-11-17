@@ -12,7 +12,7 @@ namespace TA.SharpBooru.Client.GUI
     public partial class ImportDialog : Form
     {
         private ClientBooru _Booru;
-        private BooruTagList _AllTags;
+        private List<string> _AllTags;
 
         public ImportDialog(ClientBooru Booru)
         {
@@ -184,7 +184,7 @@ namespace TA.SharpBooru.Client.GUI
                     BooruTagList.FromString(tags).ForEach(x =>
                         {
                             if (!allowedTagsCheckedListBox.Items.Contains(x.Tag))
-                                allowedTagsCheckedListBox.Items.Add(x.Tag, _AllTags.Contains(x));
+                                allowedTagsCheckedListBox.Items.Add(x.Tag, _AllTags.Contains(x.Tag));
                         })
                 );
             }
@@ -206,7 +206,7 @@ namespace TA.SharpBooru.Client.GUI
                             allowedTagsCheckedListBox.Items.RemoveAt(i);
                     foreach (BooruTag tag in tags)
                         if (!allowedTagsCheckedListBox.Items.Contains(tag.Tag))
-                            allowedTagsCheckedListBox.Items.Add(tag.Tag, _AllTags.Contains(tag));
+                            allowedTagsCheckedListBox.Items.Add(tag.Tag, _AllTags.Contains(tag.Tag));
                 });
         }
 

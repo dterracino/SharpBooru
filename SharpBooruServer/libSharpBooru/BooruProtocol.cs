@@ -4,7 +4,7 @@ namespace TA.SharpBooru
 {
     public static class BooruProtocol
     {
-        public const ushort ProtocolVersion = 0xE;
+        public const ushort ProtocolVersion = 0xF;
 
         // ReturnParameter(Type), [Argument1(Type)], [Argument2(Type)], ...
         public enum Command : byte
@@ -42,7 +42,7 @@ namespace TA.SharpBooru
             // void, NewPost(BooruPost) with old ID
             EditPost,
 
-            // Tags(BooruTagList)
+            // Tags(List<string>)
             GetAllTags,
 
             // User(BooruUser)
@@ -58,12 +58,6 @@ namespace TA.SharpBooru
             // Don't react to this byte
             TestConnection,
 
-            /*
-            //TODO Implement Aliases
-            AddAlias, //AliasString - BooruTag
-            RemoveAlias //AliasString
-            */
-
             // void, NewUser(BooruUser)
             AddUser,
 
@@ -75,7 +69,10 @@ namespace TA.SharpBooru
             GetBooruMiscOptions,
 
             // DupeIDs(List<ulong>), ulong Hashs
-            FindImageDupes
+            FindImageDupes,
+
+            // void, Alias(string), TagID(ulong)
+            AddAlias
         }
 
         public enum ErrorCode : byte

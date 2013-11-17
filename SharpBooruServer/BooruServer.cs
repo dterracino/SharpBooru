@@ -368,7 +368,13 @@ namespace TA.SharpBooru.Server
                             {
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                 DataTable tagTable = _Server.Booru.DB.ExecuteTable(SQLStatements.GetTags);
-                                BooruTagList.FromTable(tagTable).ToWriter(_Writer);
+                                BooruTagList allTags = BooruTagList.FromTable(tagTable);
+                                DataTable aliasTable = _Server.Booru.DB.ExecuteTable(SQLStatements.GetAliases);
+                                _Writer.Write((uint)(allTags.Count + aliasTable.Rows.Count));
+                                foreach (BooruTag tag in allTags)
+                                    _Writer.Write(tag.Tag);
+                                foreach (DataRow aRow in aliasTable.Rows)
+                                    _Writer.Write(Convert.ToString(aRow["alias"]));
                             }
                             break;
                         case BooruProtocol.Command.GetCurrentUser:
@@ -478,6 +484,20 @@ namespace TA.SharpBooru.Server
                             foreach (ulong id in ids)
                                 _Writer.Write(id);
                             break;
+                        case BooruProtocol.Command.AddAlias:
+                            string alias = _Reader.ReadString();
+                            ulong tagid = _Reader.ReadUInt64();
+                            if (_User.CanEditTags) //TODO Alias permission?
+                            {
+                                if (_Server.Booru.DB.ExecuteScalar<int>(SQLStatements.GetTagCountByID, tagid) > 0)
+                                {
+                                    _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertAlias, alias, tagid);
+                                    _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
+                                }
+                                else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
+                            }
+                            else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
+                            break;
                         default:
                             _Writer.Write((byte)BooruProtocol.ErrorCode.UnknownError);
                             throw new NotImplementedException();
@@ -502,9 +522,23 @@ namespace TA.SharpBooru.Server
                     BooruTag existingTag = BooruTag.FromRow(existingTagRow);
                     if (existingTag == null)
                     {
-                        _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertTagWithTypeID, tag.Tag, defaultTagType);
-                        ulong newTagID = _Server.Booru.DB.GetLastInsertedID();
-                        _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertPostTag, newPost.ID, newTagID);
+                        bool taggedAliasAdded = false;
+                        DataRow existingAliasRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetAliasByString, tag.Tag);
+                        if (existingAliasRow != null)
+                        {
+                            ulong tagID = Convert.ToUInt64(existingAliasRow["tagid"]);
+                            if (_Server.Booru.DB.ExecuteScalar<int>(SQLStatements.GetTagCountByID, tagID) > 0)
+                            {
+                                _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertPostTag, newPost.ID, tagID);
+                                taggedAliasAdded = true;
+                            }
+                        }
+                        if (!taggedAliasAdded)
+                        {
+                            _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertTagWithTypeID, tag.Tag, defaultTagType);
+                            ulong newTagID = _Server.Booru.DB.GetLastInsertedID();
+                            _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertPostTag, newPost.ID, newTagID);
+                        }
                     }
                     else _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertPostTag, newPost.ID, existingTag.ID);
                 }

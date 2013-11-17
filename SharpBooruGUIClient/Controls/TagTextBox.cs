@@ -57,15 +57,15 @@ namespace TA.SharpBooru.Client.GUI.Controls
 
         void _listBox_DoubleClick(object sender, EventArgs e) { this_KeyDown(sender, new KeyEventArgs(Keys.Tab)); }
 
-        public void SetTags(List<BooruTag> Tags)
+        public void SetTags(List<string> Tags)
         {
             if (Tags == null)
                 this.Tags = null;
             else
             {
                 List<string> tmp = new List<string>();
-                foreach (BooruTag tag in Tags)
-                    tmp.Add(tag.Tag);
+                foreach (string tag in Tags)
+                    tmp.Add(tag);
                 this.Tags = tmp;
             }
         }
