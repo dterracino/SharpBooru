@@ -20,6 +20,9 @@ namespace TA.SharpBooru
         private BinaryWriter _Writer;
         private object _Lock = new object();
 
+        private CountCache<BooruPost> _CachePosts = new CountCache<BooruPost>(400);
+        private CountCache<BooruImage> _CacheImgs = new CountCache<BooruImage>(20);
+
         private BooruUser _CurrentUser = null;
         public BooruUser CurrentUser
         {
@@ -96,17 +99,23 @@ namespace TA.SharpBooru
 
         public BooruPost GetPost(ulong ID, bool IncludeThumbnail = true)
         {
-            lock (_Lock)
-            {
-                BeginCommunication(BooruProtocol.Command.GetPost);
-                _Writer.Write(ID);
-                _Writer.Write(IncludeThumbnail);
-                EndCommunication();
-                BooruPost post = BooruPost.FromReader(_Reader);
-                if (IncludeThumbnail)
-                    post.Thumbnail = BooruImage.FromReader(_Reader);
-                return post;
-            }
+            BooruPost cachedPosts = _CachePosts[ID];
+            if (cachedPosts == null)
+                lock (_Lock)
+                {
+                    BeginCommunication(BooruProtocol.Command.GetPost);
+                    _Writer.Write(ID);
+                    _Writer.Write(IncludeThumbnail);
+                    EndCommunication();
+                    BooruPost post = BooruPost.FromReader(_Reader);
+                    if (IncludeThumbnail)
+                    {
+                        post.Thumbnail = BooruImage.FromReader(_Reader);
+                        _CachePosts.Add(post.ID, post); //only add when thumb is included
+                    }
+                    return post;
+                }
+            else return cachedPosts;
         }
 
         public void GetImage(ref BooruPost Post)
@@ -116,24 +125,31 @@ namespace TA.SharpBooru
         }
         public BooruImage GetImage(ulong ID)
         {
-            lock (_Lock)
-            {
-                BeginCommunication(BooruProtocol.Command.GetImage);
-                _Writer.Write(ID);
-                EndCommunication();
-                return BooruImage.FromReader(_Reader);
-            }
+            BooruImage cachedImage = _CacheImgs[ID];
+            if (cachedImage == null)
+                lock (_Lock)
+                {
+                    BeginCommunication(BooruProtocol.Command.GetImage);
+                    _Writer.Write(ID);
+                    EndCommunication();
+                    cachedImage = BooruImage.FromReader(_Reader);
+                    _CacheImgs.Add(ID, cachedImage);
+                }
+            return cachedImage;
         }
 
         public BooruImage GetThumbnail(ulong ID)
         {
-            lock (_Lock)
-            {
-                BeginCommunication(BooruProtocol.Command.GetThumbnail);
-                _Writer.Write(ID);
-                EndCommunication();
-                return BooruImage.FromReader(_Reader);
-            }
+            BooruPost cachedPost = _CachePosts[ID];
+            if (cachedPost == null)
+                lock (_Lock)
+                {
+                    BeginCommunication(BooruProtocol.Command.GetThumbnail);
+                    _Writer.Write(ID);
+                    EndCommunication();
+                    return BooruImage.FromReader(_Reader);
+                }
+            else return cachedPost.Thumbnail;
         }
 
         public void DeletePost(BooruPost Post) { DeletePost(Post.ID); }
@@ -360,6 +376,12 @@ namespace TA.SharpBooru
                     IDs.Add(_Reader.ReadUInt64());
                 return IDs;
             }
+        }
+
+        public void ClearCaches()
+        {
+            _CachePosts.Clear();
+            _CacheImgs.Clear();
         }
 
         public void Dispose() { Disconnect(true); }

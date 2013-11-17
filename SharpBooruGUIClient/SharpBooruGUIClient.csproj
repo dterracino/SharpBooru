@@ -73,6 +73,9 @@
     <Compile Include="..\SharpBooruServer\libSharpBooru\ConsoleEx.cs">
       <Link>libSharpBooru\ConsoleEx.cs</Link>
     </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\CountCache.cs">
+      <Link>libSharpBooru\CountCache.cs</Link>
+    </Compile>
     <Compile Include="..\SharpBooruServer\libSharpBooru\Helper.cs">
       <Link>libSharpBooru\Helper.cs</Link>
     </Compile>
