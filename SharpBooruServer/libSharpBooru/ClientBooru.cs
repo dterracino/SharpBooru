@@ -161,6 +161,8 @@ namespace TA.SharpBooru
                 _Writer.Write(ID);
                 EndCommunication();
             }
+            _CachePosts.Remove(ID);
+            _CacheImgs.Remove(ID);
         }
 
         public List<ulong> Search(string Pattern)
@@ -288,6 +290,7 @@ namespace TA.SharpBooru
                 Post.ToWriter(_Writer);
                 EndCommunication();
             }
+            _CachePosts.Remove(Post.ID);
         }
 
         public void AddUser(BooruUser User)

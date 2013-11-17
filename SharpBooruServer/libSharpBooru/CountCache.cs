@@ -17,13 +17,16 @@ namespace TA.SharpBooru
         {
             lock (_Lock)
             {
-                _Keys.Add(ID);
-                _Objs.Add(Object);
-                if (_Keys.Count > MaxObjectCount)
+                if (!_Keys.Contains(ID))
                 {
-                    //maybe remove least used instead of oldest
-                    _Keys.RemoveAt(0);
-                    _Objs.RemoveAt(0);
+                    _Keys.Add(ID);
+                    _Objs.Add(Object);
+                    if (_Keys.Count > MaxObjectCount)
+                    {
+                        //maybe remove least used instead of oldest
+                        _Keys.RemoveAt(0);
+                        _Objs.RemoveAt(0);
+                    }
                 }
             }
         }
@@ -32,8 +35,11 @@ namespace TA.SharpBooru
         {
             lock (_Lock)
             {
-                _Objs.RemoveAt(_Keys.IndexOf(ID));
-                _Keys.Remove(ID);
+                if (_Keys.Contains(ID))
+                {
+                    _Objs.RemoveAt(_Keys.IndexOf(ID));
+                    _Keys.Remove(ID);
+                }
             }
         }
 
