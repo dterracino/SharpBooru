@@ -140,13 +140,11 @@
     <Compile Include="ServerHelper.cs" />
     <Compile Include="libSharpBooru\SmartThreadPool\CallerThreadContext.cs" />
     <Compile Include="libSharpBooru\SmartThreadPool\CanceledWorkItemsGroup.cs" />
-    <Compile Include="libSharpBooru\SmartThreadPool\EventWaitHandle.cs" />
     <Compile Include="libSharpBooru\SmartThreadPool\EventWaitHandleFactory.cs" />
     <Compile Include="libSharpBooru\SmartThreadPool\Exceptions.cs" />
     <Compile Include="libSharpBooru\SmartThreadPool\Interfaces.cs" />
     <Compile Include="libSharpBooru\SmartThreadPool\InternalInterfaces.cs" />
     <Compile Include="libSharpBooru\SmartThreadPool\PriorityQueue.cs" />
-    <Compile Include="libSharpBooru\SmartThreadPool\SLExt.cs" />
     <Compile Include="libSharpBooru\SmartThreadPool\SmartThreadPool.cs" />
     <Compile Include="libSharpBooru\SmartThreadPool\SmartThreadPool.ThreadEntry.cs" />
     <Compile Include="libSharpBooru\SmartThreadPool\STPEventWaitHandle.cs" />
