@@ -16,7 +16,10 @@
             {
                 ulong id = Context.Params.GET.Get<ulong>("id");
                 using (BooruImage img = _MainImage ? Context.Booru.GetImage(id) : Context.Booru.GetThumbnail(id))
+                {
+                    Context.MimeType = img.MimeType;
                     Context.InnerContext.Response.OutputStream.Write(img.Bytes, 0, img.Bytes.Length);
+                }
                 //TODO Implement If-None-Match and ETag
                 //string ifNoneMatch = Context.InnerContext.Request.Headers["If-None-Match"];
                 //Context.InnerContext.Response.AddHeader("ETag", md5);
