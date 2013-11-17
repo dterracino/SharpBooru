@@ -381,6 +381,7 @@ namespace TA.SharpBooru
         }
 
         public void AddAlias(string Alias, BooruTag Tag) { AddAlias(Alias, Tag.ID); }
+        public void AddAlias(string Alias, string Tag) { AddAlias(Alias, GetTag(Tag)); }
         public void AddAlias(string Alias, ulong TagID)
         {
             lock (_Lock)
