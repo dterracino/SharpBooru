@@ -37,7 +37,7 @@ tag_types.color AS color FROM tags INNER JOIN tag_types WHERE id = ?";
 
         //Deletions
         public const string DeletePostByID = "DELETE FROM posts WHERE id = ?";
-        public const string DeleteTagByID = "DELETE FROM tags WHERE id = ?1";
+        public const string DeleteTagByID = "DELETE FROM tags WHERE id = ?";
         public const string DeletePostTagsByPostID = "DELETE FROM post_tags WHERE post = ?";
         public const string DeletePostTagsByTagID = "DELETE FROM post_tags WHERE tag = ?";
         public const string DeleteUserByUsername = "DELETE FROM users WHERE username = ?";
