@@ -76,9 +76,12 @@ namespace TA.SharpBooru.Client.GUI
             using (LoginDialog ld = new LoginDialog(_Booru.CurrentUser.IsAdmin))
                 if (ld.ShowDialog() == DialogResult.OK)
                 {
-                    try { _Booru.ChangeUser(ld.Username, ld.Password); }
-                    catch (BooruProtocol.BooruException bEx)
-                    { MessageBox.Show(bEx.Message, "ERROR: Change User", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+                    try
+                    {
+                        _Booru.ChangeUser(ld.Username, ld.Password);
+                        CheckPermissions();
+                    }
+                    catch (BooruProtocol.BooruException bEx) { MessageBox.Show(bEx.Message, "ERROR: Change User", MessageBoxButtons.OK, MessageBoxIcon.Error); }
                 }
         }
 
