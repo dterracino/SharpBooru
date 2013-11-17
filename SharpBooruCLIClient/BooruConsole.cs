@@ -126,13 +126,13 @@ namespace TA.SharpBooru.Client.CLI
                 })));
             //TODO Command post edit
             Commands.Add(new Command("tag getid", "tag getid <Tag>", new Action<string>(tag => Out.WriteLine(_Booru.GetTag(tag).ID))));
-            Commands.Add(new Command("tag chtype", "tag chtype <TagID> <TypeString>", new Action<ulong, string>((tagid, type) =>
+            Commands.Add(new Command("tag chtype", "tag chtype <Tag> <Type>", new Action<string, string>((tagid, type) =>
                 {
-                    BooruTag tag = _Booru.GetTag(tagid);
-                    tag.Type = type;
-                    _Booru.SaveTag(tag);
+                    BooruTag bTag = _Booru.GetTag(tagid);
+                    bTag.Type = type;
+                    _Booru.SaveTag(bTag);
                 })));
-            Commands.Add(new Command("alias add", "alias add <Alias> <TagID>", new Action<string, ulong>((alias, tagid) => _Booru.AddAlias(alias, tagid))));
+            Commands.Add(new Command("alias add", "alias add <Alias> <Tag>", new Action<string, string>((alias, tagid) => _Booru.AddAlias(alias, tagid))));
         }
     }
 }
