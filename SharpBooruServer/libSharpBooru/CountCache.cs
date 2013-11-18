@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace TA.SharpBooru
 {
-    public class CountCache<T> where T : class
+    public class CountCache<T> where T : class, IDisposable
     {
         private List<ulong> _Keys = new List<ulong>();
         private List<T> _Objs = new List<T>();
@@ -24,6 +25,7 @@ namespace TA.SharpBooru
                     {
                         //maybe remove least used instead of oldest
                         _Keys.RemoveAt(0);
+                        _Objs[0].Dispose();
                         _Objs.RemoveAt(0);
                     }
                 }
@@ -36,7 +38,9 @@ namespace TA.SharpBooru
             {
                 if (_Keys.Contains(ID))
                 {
-                    _Objs.RemoveAt(_Keys.IndexOf(ID));
+                    int index = _Keys.IndexOf(ID);
+                    _Objs[index].Dispose();
+                    _Objs.RemoveAt(index);
                     _Keys.Remove(ID);
                 }
             }
@@ -47,6 +51,8 @@ namespace TA.SharpBooru
             lock (_Lock)
             {
                 _Keys.Clear();
+                foreach (IDisposable idObj in _Objs)
+                    idObj.Dispose();
                 _Objs.Clear();
             }
         }
