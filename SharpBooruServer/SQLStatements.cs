@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TA.SharpBooru.Server
+﻿namespace TA.SharpBooru.Server
 {
     public static class SQLStatements
     {
@@ -44,7 +42,8 @@ tag_types.color AS color FROM tags INNER JOIN tag_types WHERE id = ?";
 
         //Insertions - use the SQLWrapper.ExecuteInsert for the most classes
         public const string InsertPostTag = "INSERT INTO post_tags (post, tag) VALUES (?, ?)";
-        public const string InsertTagWithTypeID = "INSERT INTO tags (tag, type_id) VALUES (?, ?)";
+        public const string InsertTag = "INSERT INTO tags (tag, type_id) VALUES (?, ?)";
+        public const string InsertTagWithID = "INSERT INTO tags (id, tag, type_id) VALUES (?, ?, ?)";
         public const string InsertAlias = "INSERT INTO aliases (alias, tagid) VALUES (?, ?)";
     }
 }

@@ -281,8 +281,9 @@ namespace TA.SharpBooru.Server
                                         DataRow typeRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetTagTypeByTypeName, newTag.Type);
                                         if (typeRow != null)
                                         {
+                                            uint typeID = Convert.ToUInt32(typeRow["id"]);
                                             _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeleteTagByID, newTag.ID);
-                                            _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertTagWithTypeID, newTag.Tag, Convert.ToUInt32(typeRow["id"]));
+                                            _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertTagWithID, newTag.ID, newTag.Tag, typeID);
                                             _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                         }
                                         else _Writer.Write((byte)BooruProtocol.ErrorCode.ResourceNotFound);
@@ -535,7 +536,7 @@ namespace TA.SharpBooru.Server
                         }
                         if (!taggedAliasAdded)
                         {
-                            _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertTagWithTypeID, tag.Tag, defaultTagType);
+                            _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertTag, tag.Tag, defaultTagType);
                             ulong newTagID = _Server.Booru.DB.GetLastInsertedID();
                             _Server.Booru.DB.ExecuteNonQuery(SQLStatements.InsertPostTag, newPost.ID, newTagID);
                         }
