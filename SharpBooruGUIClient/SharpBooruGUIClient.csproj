@@ -249,6 +249,10 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\icon.ico" />
+    <None Include="Resources\icon_users.png" />
+    <None Include="Resources\icon_imgsearch.png" />
+    <None Include="Resources\icon_import.png" />
+    <None Include="Resources\icon_refresh.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

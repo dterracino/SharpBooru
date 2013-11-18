@@ -38,9 +38,9 @@
             this.openToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buttonImgSearch = new System.Windows.Forms.Button();
             this.searchBox = new TA.SharpBooru.Client.GUI.Controls.TagTextBox();
             this.booruThumbView = new TA.SharpBooru.Client.GUI.Controls.BooruThumbView();
-            this.buttonImgSearch = new System.Windows.Forms.Button();
             this.imageContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,7 +48,7 @@
             // 
             this.labelSearchBox.Location = new System.Drawing.Point(12, 15);
             this.labelSearchBox.Name = "labelSearchBox";
-            this.labelSearchBox.Size = new System.Drawing.Size(100, 13);
+            this.labelSearchBox.Size = new System.Drawing.Size(122, 13);
             this.labelSearchBox.TabIndex = 4;
             this.labelSearchBox.Text = "Tag search";
             this.labelSearchBox.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -56,33 +56,33 @@
             // buttonImportDialog
             // 
             this.buttonImportDialog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonImportDialog.Location = new System.Drawing.Point(12, 312);
+            this.buttonImportDialog.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_import;
+            this.buttonImportDialog.Location = new System.Drawing.Point(12, 277);
             this.buttonImportDialog.Name = "buttonImportDialog";
-            this.buttonImportDialog.Size = new System.Drawing.Size(100, 23);
+            this.buttonImportDialog.Size = new System.Drawing.Size(58, 58);
             this.buttonImportDialog.TabIndex = 3;
-            this.buttonImportDialog.Text = "Import";
             this.buttonImportDialog.UseVisualStyleBackColor = true;
             this.buttonImportDialog.Click += new System.EventHandler(this.buttonImportDialog_Click);
             // 
             // buttonChangeUser
             // 
             this.buttonChangeUser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonChangeUser.Location = new System.Drawing.Point(12, 283);
+            this.buttonChangeUser.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_users;
+            this.buttonChangeUser.Location = new System.Drawing.Point(76, 277);
             this.buttonChangeUser.Name = "buttonChangeUser";
-            this.buttonChangeUser.Size = new System.Drawing.Size(100, 23);
+            this.buttonChangeUser.Size = new System.Drawing.Size(58, 58);
             this.buttonChangeUser.TabIndex = 2;
-            this.buttonChangeUser.Text = "Change User";
             this.buttonChangeUser.UseVisualStyleBackColor = true;
             this.buttonChangeUser.Click += new System.EventHandler(this.buttonChangeUser_Click);
             // 
             // buttonRefresh
             // 
             this.buttonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonRefresh.Location = new System.Drawing.Point(12, 254);
+            this.buttonRefresh.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_refresh;
+            this.buttonRefresh.Location = new System.Drawing.Point(76, 213);
             this.buttonRefresh.Name = "buttonRefresh";
-            this.buttonRefresh.Size = new System.Drawing.Size(100, 23);
+            this.buttonRefresh.Size = new System.Drawing.Size(58, 58);
             this.buttonRefresh.TabIndex = 1;
-            this.buttonRefresh.Text = "Refresh";
             this.buttonRefresh.UseVisualStyleBackColor = true;
             this.buttonRefresh.Click += new System.EventHandler(this.buttonRefresh_Click);
             // 
@@ -114,12 +114,23 @@
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             // 
+            // buttonImgSearch
+            // 
+            this.buttonImgSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonImgSearch.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_imgsearch;
+            this.buttonImgSearch.Location = new System.Drawing.Point(12, 213);
+            this.buttonImgSearch.Name = "buttonImgSearch";
+            this.buttonImgSearch.Size = new System.Drawing.Size(58, 58);
+            this.buttonImgSearch.TabIndex = 5;
+            this.buttonImgSearch.UseVisualStyleBackColor = true;
+            this.buttonImgSearch.Click += new System.EventHandler(this.buttonImgSearch_Click);
+            // 
             // searchBox
             // 
             this.searchBox.Location = new System.Drawing.Point(12, 31);
             this.searchBox.Name = "searchBox";
             this.searchBox.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.searchBox.Size = new System.Drawing.Size(100, 20);
+            this.searchBox.Size = new System.Drawing.Size(122, 20);
             this.searchBox.TabIndex = 0;
             // 
             // booruThumbView
@@ -129,34 +140,24 @@
                         | System.Windows.Forms.AnchorStyles.Right)));
             this.booruThumbView.BackColor = System.Drawing.Color.SteelBlue;
             this.booruThumbView.LabelForeColor = System.Drawing.Color.White;
-            this.booruThumbView.Location = new System.Drawing.Point(123, 12);
+            this.booruThumbView.Location = new System.Drawing.Point(140, 12);
             this.booruThumbView.Name = "booruThumbView";
-            this.booruThumbView.Size = new System.Drawing.Size(454, 323);
+            this.booruThumbView.Size = new System.Drawing.Size(437, 323);
             this.booruThumbView.TabIndex = 4;
             this.booruThumbView.ThumbViewBackColor = System.Drawing.Color.White;
-            // 
-            // buttonImgSearch
-            // 
-            this.buttonImgSearch.Location = new System.Drawing.Point(12, 57);
-            this.buttonImgSearch.Name = "buttonImgSearch";
-            this.buttonImgSearch.Size = new System.Drawing.Size(100, 23);
-            this.buttonImgSearch.TabIndex = 5;
-            this.buttonImgSearch.Text = "ImgSearch";
-            this.buttonImgSearch.UseVisualStyleBackColor = true;
-            this.buttonImgSearch.Click += new System.EventHandler(this.buttonImgSearch_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(589, 347);
-            this.Controls.Add(this.buttonImgSearch);
-            this.Controls.Add(this.buttonRefresh);
-            this.Controls.Add(this.buttonChangeUser);
             this.Controls.Add(this.buttonImportDialog);
             this.Controls.Add(this.labelSearchBox);
+            this.Controls.Add(this.buttonRefresh);
             this.Controls.Add(this.searchBox);
+            this.Controls.Add(this.buttonImgSearch);
             this.Controls.Add(this.booruThumbView);
+            this.Controls.Add(this.buttonChangeUser);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "SharpBooru GUI Client";
