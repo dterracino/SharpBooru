@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Data;
-using System.Linq;
 using System.Drawing;
 using System.Collections.Generic;
 

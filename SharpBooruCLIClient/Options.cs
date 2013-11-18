@@ -1,5 +1,4 @@
-﻿using System.Net;
-using CommandLine;
+﻿using CommandLine;
 using CommandLine.Text;
 
 namespace TA.SharpBooru.Client.CLI

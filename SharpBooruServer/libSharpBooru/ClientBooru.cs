@@ -5,7 +5,6 @@ using System.Text;
 using System.Net.Sockets;
 using System.Net.Security;
 using System.Collections.Generic;
-using TA.SharpBooru.BooruAPIs;
 
 namespace TA.SharpBooru
 {
