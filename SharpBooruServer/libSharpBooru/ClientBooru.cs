@@ -21,6 +21,7 @@ namespace TA.SharpBooru
 
         private CountCache<BooruPost> _CachePosts = new CountCache<BooruPost>(400);
         private CountCache<BooruImage> _CacheImgs = new CountCache<BooruImage>(20);
+        private List<string> _CacheAllTags = null;
 
         private BooruUser _CurrentUser = null;
         public BooruUser CurrentUser
@@ -188,6 +189,7 @@ namespace TA.SharpBooru
                 _Writer.Write(ID);
                 EndCommunication();
             }
+            _CacheAllTags.Clear();
         }
 
         public void EditTag(ulong ID, BooruTag Tag)
@@ -204,6 +206,7 @@ namespace TA.SharpBooru
                 Tag.ToWriter(_Writer);
                 EndCommunication();
             }
+            _CacheAllTags.Clear();
         }
 
         public BooruUser GetCurrentUser()
@@ -244,15 +247,16 @@ namespace TA.SharpBooru
         public List<string> GetAllTags()
         {
             lock (_Lock)
-            {
-                BeginCommunication(BooruProtocol.Command.GetAllTags);
-                EndCommunication();
-                uint count = _Reader.ReadUInt32();
-                var bTagList = new List<string>();
-                for (uint i = 0; i < count; i++)
-                    bTagList.Add(_Reader.ReadString());
-                return bTagList;
-            }
+                if (_CacheAllTags == null)
+                {
+                    BeginCommunication(BooruProtocol.Command.GetAllTags);
+                    EndCommunication();
+                    uint count = _Reader.ReadUInt32();
+                    _CacheAllTags = new List<string>();
+                    for (uint i = 0; i < count; i++)
+                        _CacheAllTags.Add(_Reader.ReadString());
+                }
+                return _CacheAllTags;
         }
 
         public void SaveImage(BooruPost Post)
@@ -272,6 +276,7 @@ namespace TA.SharpBooru
                 Image.ToWriter(_Writer);
                 EndCommunication();
             }
+            _CacheImgs.Remove(ID);
         }
 
         public void EditPost(ulong ID, BooruPost Post)
@@ -396,6 +401,7 @@ namespace TA.SharpBooru
         {
             _CachePosts.Clear();
             _CacheImgs.Clear();
+            _CacheAllTags = null;
         }
 
         public void Dispose() { Disconnect(true); }
