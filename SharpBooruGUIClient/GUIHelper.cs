@@ -16,12 +16,6 @@ namespace TA.SharpBooru.Client.GUI
         [DllImport("user32.dll", EntryPoint = "SendMessage")]
         private static extern int _SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
-        /*
-        [DllImport("user32.dll", EntryPoint = "EnableWindow")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _EnableWindow(IntPtr hWnd, bool bEnable);
-        */
-
         public static int SetListViewPadding(ListView ListView, int leftPadding, int topPadding)
         {
             if (Helper.IsWindows())
@@ -72,19 +66,6 @@ namespace TA.SharpBooru.Client.GUI
             }
             else return false;
         }
-
-        /*
-        public static bool EnableWindow(Form Form, bool Enable)
-        {
-            if (Helper.IsWindows())
-            {
-                IntPtr handle = IntPtr.Zero;
-                Invoke(Form, () => { handle = Form.Handle; });
-                return _EnableWindow(handle, Enable);
-            }
-            else return false;
-        }
-        */
 
         public static void Invoke(Control Control, Action Action)
         {

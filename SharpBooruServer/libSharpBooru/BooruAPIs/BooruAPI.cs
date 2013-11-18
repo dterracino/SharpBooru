@@ -11,7 +11,6 @@ namespace TA.SharpBooru.BooruAPIs
     public abstract class BooruAPI
     {
         public abstract List<BooruAPIPost> SearchPosts(string[] Pattern);
-        //public abstract List<BooruAPITag> SearchTags(string[] Pattern);
         protected abstract string GetBaseURI();
 
         public virtual BooruAPIPost GetSinglePost(string ID)
