@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TA.SharpBooru
 {
-    public class CountCache<T> where T : class, IDisposable
+    public class CountCache<T> where T : class, IDisposable, ICloneable
     {
         private List<ulong> _Keys = new List<ulong>();
         private List<T> _Objs = new List<T>();
@@ -20,7 +20,7 @@ namespace TA.SharpBooru
                 if (!_Keys.Contains(ID))
                 {
                     _Keys.Add(ID);
-                    _Objs.Add(Object);
+                    _Objs.Add(Object.Clone() as T);
                     if (_Keys.Count > MaxObjectCount)
                     {
                         //maybe remove least used instead of oldest
@@ -64,7 +64,7 @@ namespace TA.SharpBooru
                 try
                 {
                     lock (_Lock)
-                        return _Objs[_Keys.IndexOf(ID)];
+                        return _Objs[_Keys.IndexOf(ID)].Clone() as T;
                 }
                 catch { return null; }
             }
