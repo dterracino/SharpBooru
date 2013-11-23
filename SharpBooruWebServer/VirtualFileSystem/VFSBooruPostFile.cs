@@ -52,6 +52,7 @@ namespace TA.SharpBooru.Client.WebServer.VFS
                         });
                         ServerHelper.WriteSubSectionFooter(Context);
                     }
+                    ServerHelper.WriteSubSection(Context, "User", "{0}", post.User);
                     if (!string.IsNullOrWhiteSpace(post.Source))
                     {
                         ServerHelper.WriteSubSectionHeader(Context, "Source");
@@ -62,7 +63,7 @@ namespace TA.SharpBooru.Client.WebServer.VFS
                     }
                     ServerHelper.WriteSubSection(Context, "Rating", "{0}", post.Rating);
                     ServerHelper.WriteSubSection(Context, "Size", "{0}x{1}", post.Width, post.Height);
-                    ServerHelper.WriteSubSection(Context, "Counter", "Views: {0}<br>Edits: {1}", post.ViewCount, post.EditCount);
+                    ServerHelper.WriteSubSection(Context, "Counters", "Views: {0}<br>Edits: {1}", post.ViewCount, post.EditCount);
                     ServerHelper.WriteTableMiddle(Context);
                     Context.OutWriter.Write("<img id=\"mimg\" class=\"mimg\" alt=\"\" src=\"image?id={0}\">", post.ID);
                     /*
