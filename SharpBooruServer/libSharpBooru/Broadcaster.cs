@@ -51,7 +51,7 @@ namespace TA.SharpBooru
             using (MemoryStream datagramStream = new MemoryStream(client.Receive(ref clientEndPoint)))
             {
                 byte[] datagram = datagramStream.ToArray();
-                if (datagram.Length == BROADCAST_MAGIC.Length)
+                if (datagram.Length > BROADCAST_MAGIC.Length)
                 {
                     for (byte i = 0; i < BROADCAST_MAGIC.Length; i++)
                         if (datagram[i] != BROADCAST_MAGIC[i])
