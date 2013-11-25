@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 
@@ -34,16 +35,16 @@ namespace TA.SharpBooru
                     using (BinaryReader reader = new BinaryReader(datagramStream))
                         return new Response
                         {
-                            BooruName = reader.ReadString(),
                             Hostname = reader.ReadString(),
-                            EndPoint = clientEndPoint //Port correctly set?
+                            BooruName = reader.ReadString(),
+                            EndPoint = new IPEndPoint(clientEndPoint.Address, reader.ReadUInt16())
                         };
                 }
             }
             catch { return null; }
         }
 
-        public static void ListenForBroadcast()
+        public static void ListenForBroadcast(string BooruName, ushort Port)
         {
             IPEndPoint clientEndPoint = new IPEndPoint(IPAddress.Any, PORT);
             using (UdpClient client = new UdpClient(clientEndPoint))
@@ -52,9 +53,20 @@ namespace TA.SharpBooru
                 byte[] datagram = datagramStream.ToArray();
                 if (datagram.Length == BROADCAST_MAGIC.Length)
                 {
-                    //TODO Checks
-                    //TODO Send Response instance
-                    client.Send(new byte[1] { 0x17 }, 1, clientEndPoint);
+                    for (byte i = 0; i < BROADCAST_MAGIC.Length; i++)
+                        if (datagram[i] != BROADCAST_MAGIC[i])
+                            return;
+                    using (MemoryStream responseStream = new MemoryStream())
+                    {
+                        using (BinaryWriter responseWriter = new BinaryWriter(responseStream))
+                        {
+                            responseWriter.Write(Environment.MachineName);
+                            responseWriter.Write(BooruName);
+                            responseWriter.Write(Port);
+                        }
+                        byte[] response = responseStream.ToArray(); ;
+                        client.Send(response, response.Length, clientEndPoint);
+                    }
                 }
             }
         }
