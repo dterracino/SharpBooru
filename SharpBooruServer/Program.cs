@@ -125,8 +125,7 @@ namespace TA.SharpBooru.Server
                 _BroadcastListenerThreadRunning = false;
                 _BroadcastListenerThread.Abort();
                 _Logger.LogLine("Stopping server and waiting for clients to finish...");
-                //_ServerBroadcaster.Stop();
-                _BooruServer.Stop();
+                _BooruServer.Stop(3000);
                 _Logger.LogLine("Disposing server and closing database connection...");
                 _BooruServer.Dispose();
                 WaitEvent.Set();
