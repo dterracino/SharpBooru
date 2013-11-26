@@ -41,7 +41,8 @@ namespace TA.SharpBooru.Server
 
         private Options _Options;
         private Logger _Logger;
-        //private ServerBroadcaster _ServerBroadcaster;
+        private Thread _BroadcastListenerThread;
+        private bool _BroadcastListenerThreadRunning = true;
         private BooruServer _BooruServer;
 
         public void Run()
@@ -74,11 +75,22 @@ namespace TA.SharpBooru.Server
             _Logger.LogLine("Creating server instance...");
             _BooruServer = new BooruServer(booru, _Logger, sCertificate, _Options.Port);
 
-            /*
-            _Logger.LogLine("Starting ServerBroadcaster...");
-            _ServerBroadcaster = new ServerBroadcaster(_Booru, _Options.Port);
-            _ServerBroadcaster.Start();
-            */
+            _Logger.LogLine("Starting BroadcastListener...");
+            _BroadcastListenerThread = new Thread(() =>
+                {
+                    while (true)
+                        try
+                        {
+                            string booruName = booru.GetMiscOption<string>(ServerBooru.MiscOption.BooruName);
+                            Broadcaster.ListenForBroadcast(booruName, _Options.Port);
+                        }
+                        catch (Exception ex)
+                        {
+                            if (_BroadcastListenerThreadRunning)
+                                _Logger.LogException("BroadcastListener", ex);
+                        }
+                });
+            _BroadcastListenerThread.Start();
 
             EventWaitHandle waitEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
             _Logger.LogLine("Registering CtrlC handler...");
@@ -109,6 +121,9 @@ namespace TA.SharpBooru.Server
         {
             if (!_CancelRunned)
             {
+                _Logger.LogLine("Stopping BroadcastListener...");
+                _BroadcastListenerThreadRunning = false;
+                _BroadcastListenerThread.Abort();
                 _Logger.LogLine("Stopping server and waiting for clients to finish...");
                 //_ServerBroadcaster.Stop();
                 _BooruServer.Stop();
