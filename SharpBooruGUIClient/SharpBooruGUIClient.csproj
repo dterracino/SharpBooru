@@ -82,6 +82,9 @@
     <Compile Include="..\SharpBooruServer\libSharpBooru\Logger.cs">
       <Link>libSharpBooru\Logger.cs</Link>
     </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\Broadcaster.cs">
+      <Link>libSharpBooru\Broadcaster.cs</Link>
+    </Compile>
     <Compile Include="..\SharpBooruServer\libSharpBooru\CommandLine\**\*.*">
       <Link>libSharpBooru\CommandLine\%(RecursiveDir)%(FileName)</Link>
     </Compile>

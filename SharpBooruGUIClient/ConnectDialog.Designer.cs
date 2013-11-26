@@ -65,7 +65,6 @@
             // 
             // buttonSearchLAN
             // 
-            this.buttonSearchLAN.Enabled = false;
             this.buttonSearchLAN.Location = new System.Drawing.Point(12, 71);
             this.buttonSearchLAN.Name = "buttonSearchLAN";
             this.buttonSearchLAN.Size = new System.Drawing.Size(96, 23);
