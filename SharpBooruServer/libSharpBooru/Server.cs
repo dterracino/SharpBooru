@@ -61,7 +61,8 @@ namespace TA.SharpBooru.Server
                     StopListener();
                     if (Timeout > 0)
                         _ThreadPool.WaitForIdle(Timeout);
-                    else _ThreadPool.WaitForIdle();
+                    else if (Timeout < 0)
+                        _ThreadPool.WaitForIdle();
                     _ThreadPool.Cancel(true);
                     _ConnectClientThread.Abort();
                     Logger.LogLine("{0} stopped...", ServerString);
