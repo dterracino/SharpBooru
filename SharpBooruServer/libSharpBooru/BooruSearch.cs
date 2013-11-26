@@ -17,8 +17,11 @@ namespace TA.SharpBooru.Server
             public string Variable;
             public string Value;
             public int Operator;
+            public bool Negate = false;
 
-            public bool CheckPost(BooruPost Post)
+            public bool CheckPost(BooruPost Post) { return nonNegatedCheckPost(Post) ^ Negate; }
+
+            private bool nonNegatedCheckPost(BooruPost Post)
             {
                 FieldInfo[] fields = typeof(BooruPost).GetFields();
                 try
@@ -56,7 +59,7 @@ namespace TA.SharpBooru.Server
             //return the post ids
 
             List<string> tagSearchQueries = new List<string>();
-            var specialPatterns = new Dictionary<bool, SpecialPattern>();
+            var specialPatterns = new List<SpecialPattern>();
 
             //Extract all the needed information
             for (int i = 0; i < parts.Length; i++)
@@ -71,7 +74,12 @@ namespace TA.SharpBooru.Server
                     if (tag != null)
                         tagSearchQueries.Add(string.Format("id {0} (SELECT post FROM post_tags WHERE tag = {1})", negate ? "NOT IN" : "IN", tag.ID));
                 }
-                else specialPatterns.Add(negate, ExtractSpecialPattern(part));
+                else
+                {
+                    SpecialPattern sPattern = ExtractSpecialPattern(part);
+                    sPattern.Negate = negate;
+                    specialPatterns.Add(sPattern);
+                }
             }
 
             string tagSearchQuery = tagSearchQueries.Count > 0 ?
@@ -87,10 +95,10 @@ namespace TA.SharpBooru.Server
             }
         }
 
-        private static bool DoSpecialPatternChecks(Dictionary<bool, SpecialPattern> Patterns, BooruPost Post)
+        private static bool DoSpecialPatternChecks(List<SpecialPattern> Patterns, BooruPost Post)
         {
             foreach (var check in Patterns)
-                if (!(check.Value.CheckPost(Post) ^ check.Key))
+                if (!(check.CheckPost(Post)))
                     return false;
             return true;
         }
@@ -133,7 +141,6 @@ namespace TA.SharpBooru.Server
                 case "<=": return 1;
                 case ">": return 4;
                 case ">=": return 3;
-                case "!":
                 case "!=":
                 case "<>": return 5;
                 case "=":
