@@ -45,5 +45,8 @@ tag_types.color AS color FROM tags INNER JOIN tag_types WHERE id = ?";
         public const string InsertTag = "INSERT INTO tags (tag, type_id) VALUES (?, ?)";
         public const string InsertTagWithID = "INSERT INTO tags (id, tag, type_id) VALUES (?, ?, ?)";
         public const string InsertAlias = "INSERT INTO aliases (alias, tagid) VALUES (?, ?)";
+
+        //Updates
+        public const string UpdateIncrementViewCount = "UPDATE posts SET viewcount = viewcount + 1 WHERE id = ?";
     }
 }

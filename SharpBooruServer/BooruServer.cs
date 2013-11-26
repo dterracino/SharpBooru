@@ -201,7 +201,7 @@ namespace TA.SharpBooru.Server
                                     {
                                         _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
                                         _Server.Booru.ReadImage(_Writer, postID);
-                                        post.ViewCount++; //TODO X Save post after ViewCount++
+                                        _Server.Booru.DB.ExecuteNonQuery(SQLStatements.UpdateIncrementViewCount, postID);
                                     }
                                     else _Writer.Write((byte)BooruProtocol.ErrorCode.NoPermission);
                                 }
