@@ -351,7 +351,6 @@ namespace TA.SharpBooru.Server
                                             newPost.CreationDate = oldPost.CreationDate;
                                             newPost.User = oldPost.User;
                                             newPost.ViewCount = oldPost.ViewCount;
-                                            //TODO X TAGS
                                         }
                                         _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeletePostByID, newPost.ID);
                                         _Server.Booru.DB.ExecuteNonQuery(SQLStatements.DeletePostTagsByPostID, newPost.ID);
@@ -365,6 +364,7 @@ namespace TA.SharpBooru.Server
                             }
                             break;
                         //TODO Replace with GetAllTagsWithLetter or something
+                        //TODO Maybe add parameter bool IncludeTags or something
                         case BooruProtocol.Command.GetAllTags:
                             {
                                 _Writer.Write((byte)BooruProtocol.ErrorCode.Success);
