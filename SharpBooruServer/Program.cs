@@ -128,7 +128,6 @@ namespace TA.SharpBooru.Server
                 _BooruServer.Stop(3000);
                 _Logger.LogLine("Disposing server and closing database connection...");
                 _BooruServer.Dispose();
-                WaitEvent.Set();
                 if (_Options.PIDFile != null)
                 {
                     _Logger.LogLine("Removing PID file...");
@@ -136,6 +135,7 @@ namespace TA.SharpBooru.Server
                     catch (Exception ex) { _Logger.LogException("RemovePIDFile", ex); }
                 }
                 _CancelRunned = true;
+                WaitEvent.Set();
             }
         }
     }
