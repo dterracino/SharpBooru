@@ -100,6 +100,7 @@ namespace TA.SharpBooru.Client.GUI
             BooruUser cUser = _Booru.CurrentUser;
             editToolStripMenuItem.Enabled = cUser.CanEditPosts;
             deleteToolStripMenuItem.Enabled = cUser.CanDeletePosts;
+            buttonImportDialog.Enabled = _Booru.CurrentUser.CanAddPosts;
         }
 
         private void buttonRefresh_Click(object sender, EventArgs e)
