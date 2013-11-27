@@ -4,10 +4,12 @@ using System.Net;
 using System.Web;
 using System.Linq;
 using System.Text;
+using System.Security;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Collections.Specialized;
 using HttpMultipartParser;
+using Mono.Unix;
 using Mono.Unix.Native;
 
 namespace TA.SharpBooru.Client.WebServer
@@ -111,17 +113,24 @@ namespace TA.SharpBooru.Client.WebServer
             Context.OutWriter.Write("</form>");
         }
 
-        public static bool SetUID(string UserName)
+        public static void SetUID(string Username)
         {
-            if (Helper.IsMono())
-                if (!string.IsNullOrWhiteSpace(UserName))
-                {
-                    Passwd passwordStruct = Syscall.getpwnam(UserName);
-                    if (passwordStruct != null)
-                        return Syscall.setuid(passwordStruct.pw_uid) == 0;
-                    else return false;
-                }
-            return true;
+            if (Username == null)
+                throw new ArgumentNullException("Username");
+            else if (string.IsNullOrWhiteSpace(Username))
+                throw new ArgumentException("Username");
+            else if (!Helper.IsUnix())
+                throw new PlatformNotSupportedException("Not running Unix");
+            else if (Syscall.getuid() != 0)
+                throw new SecurityException("Not running as root");
+            else
+            {
+                Passwd passwordStruct = Syscall.getpwnam(Username);
+                if (passwordStruct == null)
+                    throw new UnixIOException(string.Format("User {0} not found", Username));
+                else if (Syscall.setuid(passwordStruct.pw_uid) != 0)
+                    throw new Exception("SetUID failed");
+            }
         }
 
         public static DictionaryEx ParseParameters(string Query)

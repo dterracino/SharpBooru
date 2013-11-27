@@ -49,6 +49,9 @@ namespace TA.SharpBooru.Client.WebServer
             InitVFS(server, booru);
             server.Start();
 
+            try { ServerHelper.SetUID("nobody"); }
+            catch { Console.WriteLine("SetUID FAILED"); }
+
             Thread.Sleep(Timeout.Infinite);
             return 0;
         }
