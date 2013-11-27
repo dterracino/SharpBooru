@@ -22,7 +22,6 @@ namespace TA.SharpBooru.Client.GUI
             this.booruThumbView.LoadingStarted += () => SetLoadingMode(true);
             this.booruThumbView.LoadingFinished += () => SetLoadingMode(false);
             this.Shown += tagTextBox1_EnterPressed;
-            //this.buttonAdminTools.Click += (sender, e) => adminContextMenuStrip.Show(buttonAdminTools, new Point(buttonAdminTools.Width, 0));
             this.openToolStripMenuItem.Click += (sender, e) => openImage(booruThumbView.SelectedPost);
             this.editToolStripMenuItem.Click += (sender, e) =>
                 {
@@ -36,6 +35,7 @@ namespace TA.SharpBooru.Client.GUI
             GUIHelper.CreateToolTip(buttonChangeUser, "Change the user");
             GUIHelper.CreateToolTip(buttonImportDialog, "Import posts into the booru");
             GUIHelper.CreateToolTip(buttonImgSearch, "Search for image duplicates");
+            SetTitle();
             CheckPermissions();
         }
 
@@ -47,6 +47,7 @@ namespace TA.SharpBooru.Client.GUI
                 buttonRefresh.Enabled = !Loading;
                 buttonChangeUser.Enabled = !Loading;
                 buttonImgSearch.Enabled = !Loading;
+                buttonImportDialog.Enabled = !Loading && _Booru.CurrentUser.CanAddPosts;
             }
             else this.Invoke(new Action<bool>(SetLoadingMode), Loading);
         }
@@ -79,22 +80,31 @@ namespace TA.SharpBooru.Client.GUI
                     try
                     {
                         _Booru.ChangeUser(ld.Username, ld.Password);
+                        SetTitle();
                         CheckPermissions();
                     }
                     catch (BooruProtocol.BooruException bEx) { MessageBox.Show(bEx.Message, "ERROR: Change User", MessageBoxButtons.OK, MessageBoxIcon.Error); }
                 }
         }
 
+        private void SetTitle()
+        {
+            Text = string.Format("SharpBooru GUI Client  -  {0} by {1} [{2}]",
+                _Booru.GetBooruMiscOption<string>(BooruMiscOption.BooruName),
+                _Booru.GetBooruMiscOption<string>(BooruMiscOption.BooruCreator),
+                _Booru.CurrentUser.Username);
+        }
+
         private void CheckPermissions()
         {
             BooruUser cUser = _Booru.CurrentUser;
-            buttonImportDialog.Enabled = cUser.CanAddPosts;
             editToolStripMenuItem.Enabled = cUser.CanEditPosts;
             deleteToolStripMenuItem.Enabled = cUser.CanDeletePosts;
         }
 
         private void buttonRefresh_Click(object sender, EventArgs e)
         {
+            SetTitle();
             CheckPermissions();
             searchBox.SetTags(_Booru.GetAllTags());
             _Booru.ClearCaches();
