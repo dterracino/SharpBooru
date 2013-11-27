@@ -45,6 +45,9 @@
     <Compile Include="..\SharpBooruServer\libSharpBooru\BooruImage.cs">
       <Link>libSharpBooru\BooruImage.cs</Link>
     </Compile>
+    <Compile Include="..\SharpBooruServer\libSharpBooru\BooruMiscOption.cs">
+      <Link>libSharpBooru\BooruMiscOption.cs</Link>
+    </Compile>
     <Compile Include="..\SharpBooruServer\libSharpBooru\BooruPost.cs">
       <Link>libSharpBooru\BooruPost.cs</Link>
     </Compile>

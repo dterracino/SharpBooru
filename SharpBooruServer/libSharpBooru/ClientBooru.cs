@@ -368,6 +368,14 @@ namespace TA.SharpBooru
             }
         }
 
+        public T GetBooruMiscOption<T>(BooruMiscOption Option)
+        {
+            //TODO X Implement separate GetBooruMiscOption command in protocol
+            string tmp = Enum.GetName(typeof(BooruMiscOption), Option);
+            tmp = GetBooruMiscOptions()[tmp];
+            return (T)Convert.ChangeType(tmp, typeof(T));
+        }
+
         public List<ulong> FindImageDupes(byte[] ImageHash)
         {
             lock (_Lock)

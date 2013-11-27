@@ -81,7 +81,7 @@ namespace TA.SharpBooru.Server
                     while (true)
                         try
                         {
-                            string booruName = booru.GetMiscOption<string>(ServerBooru.MiscOption.BooruName);
+                            string booruName = booru.GetMiscOption<string>(BooruMiscOption.BooruName);
                             Broadcaster.ListenForBroadcast(booruName, _Options.Port);
                         }
                         catch (Exception ex)

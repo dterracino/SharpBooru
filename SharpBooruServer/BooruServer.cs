@@ -318,8 +318,8 @@ namespace TA.SharpBooru.Server
                                         newPost.ID = (uint)_Server.Booru.DB.ExecuteInsert("posts", newPost.ToDictionary(false));
                                         //Maybe Width + Height checks?
                                         bigImage.Save(Path.Combine(_Server.Booru.ImageFolder, "image" + newPost.ID));
-                                        int thumbnailSize = _Server.Booru.GetMiscOption<int>(ServerBooru.MiscOption.ThumbnailSize);
-                                        int thumbnailQuality = _Server.Booru.GetMiscOption<int>(ServerBooru.MiscOption.ThumbnailQuality);
+                                        int thumbnailSize = _Server.Booru.GetMiscOption<int>(BooruMiscOption.ThumbnailSize);
+                                        int thumbnailQuality = _Server.Booru.GetMiscOption<int>(BooruMiscOption.ThumbnailQuality);
                                         using (BooruImage thumbImage = bigImage.CreateThumbnail(thumbnailSize, false))
                                             thumbImage.Save(Path.Combine(_Server.Booru.ThumbFolder, "thumb" + newPost.ID), thumbnailQuality);
                                         AddPostTags(newPost);
@@ -419,8 +419,8 @@ namespace TA.SharpBooru.Server
                                         {
                                             //Maybe Width + Height checks?
                                             bigImage.Save(Path.Combine(_Server.Booru.ImageFolder, "image" + postID));
-                                            int thumbnailSize = _Server.Booru.GetMiscOption<int>(ServerBooru.MiscOption.ThumbnailSize);
-                                            int thumbnailQuality = _Server.Booru.GetMiscOption<int>(ServerBooru.MiscOption.ThumbnailQuality);
+                                            int thumbnailSize = _Server.Booru.GetMiscOption<int>(BooruMiscOption.ThumbnailSize);
+                                            int thumbnailQuality = _Server.Booru.GetMiscOption<int>(BooruMiscOption.ThumbnailQuality);
                                             using (BooruImage thumbImage = bigImage.CreateThumbnail(thumbnailSize, false))
                                                 thumbImage.Save(Path.Combine(_Server.Booru.ThumbFolder, "thumb" + postID), thumbnailQuality);
                                             post.Width = (uint)bigImage.Bitmap.Width;
@@ -516,7 +516,7 @@ namespace TA.SharpBooru.Server
 
             private void AddPostTags(BooruPost newPost)
             {
-                int defaultTagType = _Server.Booru.GetMiscOption<int>(ServerBooru.MiscOption.DefaultTagType);
+                int defaultTagType = _Server.Booru.GetMiscOption<int>(BooruMiscOption.DefaultTagType);
                 foreach (BooruTag tag in newPost.Tags)
                 {
                     DataRow existingTagRow = _Server.Booru.DB.ExecuteRow(SQLStatements.GetTagByTagString, tag.Tag);

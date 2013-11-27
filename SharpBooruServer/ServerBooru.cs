@@ -61,16 +61,9 @@ namespace TA.SharpBooru.Server
             }
         }
 
-        public enum MiscOption
+        public T GetMiscOption<T>(BooruMiscOption Option)
         {
-            BooruName, BooruCreator,
-            ThumbnailSize, ThumbnailQuality,
-            DefaultRating, DefaultTagType
-        }
-
-        public T GetMiscOption<T>(MiscOption Option)
-        {
-            string key = Enum.GetName(typeof(MiscOption), Option);
+            string key = Enum.GetName(typeof(BooruMiscOption), Option);
             DataRow optionRow = _DB.ExecuteRow(SQLStatements.GetMiscOptionByKey, key);
             return (T)Convert.ChangeType(optionRow["value"], typeof(T));
         }
