@@ -189,7 +189,8 @@ namespace TA.SharpBooru
                 _Writer.Write(ID);
                 EndCommunication();
             }
-            _CacheAllTags.Clear();
+            if (_CacheAllTags != null)
+                _CacheAllTags.Clear();
         }
 
         public void EditTag(ulong ID, BooruTag Tag)
@@ -206,7 +207,8 @@ namespace TA.SharpBooru
                 Tag.ToWriter(_Writer);
                 EndCommunication();
             }
-            _CacheAllTags.Clear();
+            if (_CacheAllTags != null)
+                _CacheAllTags.Clear();
         }
 
         public BooruUser GetCurrentUser()
@@ -409,7 +411,11 @@ namespace TA.SharpBooru
         {
             _CachePosts.Clear();
             _CacheImgs.Clear();
-            _CacheAllTags = null;
+            if (_CacheAllTags != null)
+            {
+                _CacheAllTags.Clear();
+                _CacheAllTags = null;
+            }
         }
 
         public void Dispose() { Disconnect(true); }
