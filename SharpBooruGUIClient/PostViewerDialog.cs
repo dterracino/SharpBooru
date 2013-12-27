@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Drawing;
 using System.Threading;
 using System.Diagnostics;
@@ -116,7 +117,7 @@ namespace TA.SharpBooru.Client.GUI
                     buttonNextPost.Enabled = Index < _PostIDs.Count - 1;
                 }
                 tagList.Enabled = !LoadingMode;
-                buttonEditImage.Enabled = !LoadingMode && cUser.CanEditPosts;
+                buttonEditImage.Enabled = !LoadingMode && cUser.CanEditPosts && Helper.IsWindows();
                 buttonClone.Enabled = !LoadingMode && cUser.CanAddPosts;
             }
             else Invoke(new Action<bool>(SetLoadingMode), LoadingMode);
@@ -182,10 +183,24 @@ namespace TA.SharpBooru.Client.GUI
             Index = 0;
         }
 
+        private string getImageEditor()
+        {
+            //TODO Imag editor configurable paths
+            List<string> editors = new List<string>();
+            for (int i = 6; i > 2; i--)
+                editors.Add("C:\\Program Files\\Adobe\\Adobe Photoshop CS" + i + " (64 Bit)\\Photoshop.exe");
+            for (int i = 6; i > 2; i--)
+                editors.Add("C:\\Program Files (x86)\\Adobe\\Adobe Photoshop CS" + i + "\\Photoshop.exe");
+            editors.Add("C:\\Windows\\System32\\mspaint.exe");
+            foreach (string editor in editors)
+                if (File.Exists(editor))
+                    return editor;
+            return null;
+        }
+
         private void buttonEditImage_Click(object sender, EventArgs e)
         {
-            //TODO Photoshop configurable path
-            string editorEXE = "C:\\Program Files\\Adobe\\Adobe Photoshop CS5 (64 Bit)\\Photoshop.exe";
+            string editorEXE = getImageEditor();
             string tempFile = Helper.GetTempFile();
             _Post.Image.Save(ref tempFile, true);
             byte[] md5 = Helper.MD5OfFile(tempFile);
