@@ -140,8 +140,8 @@ namespace TA.SharpBooru.Client.GUI
 
         private void buttonSaveImage_Click(object sender, EventArgs e)
         {
-            //TODO Better filter = rename file after saving
             SaveFileDialog sfd = new SaveFileDialog();
+            sfd.FileName = string.Format("image{0}.png", _Post.ID);
             sfd.Filter = "All files|*.*";
             if (sfd.ShowDialog() == DialogResult.OK)
             {
