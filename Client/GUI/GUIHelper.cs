@@ -16,6 +16,18 @@ namespace TA.SharpBooru.Client.GUI
         [DllImport("user32.dll", EntryPoint = "SendMessage")]
         private static extern int _SendMessage(IntPtr hWnd, int msg, IntPtr wParam, IntPtr lParam);
 
+        [DllImport("kernel32.dll", EntryPoint = "GetConsoleWindow")]
+        private static extern IntPtr GetConsoleWindow();
+
+        [DllImport("user32.dll", EntryPoint = "ShowWindow")]
+        private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
+
+        public static void HideConsoleWindow()
+        {
+            if (Helper.IsWindows())
+                ShowWindow(GetConsoleWindow(), 0);
+        }
+
         public static int SetListViewPadding(ListView ListView, int leftPadding, int topPadding)
         {
             if (Helper.IsWindows())

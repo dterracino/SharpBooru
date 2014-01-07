@@ -43,6 +43,7 @@ namespace TA.SharpBooru
 
         private static int RunClientGUI(Options options)
         {
+            GUIHelper.HideConsoleWindow();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             using (ClientBooru booru = ConnectBooru(options))
