@@ -15,7 +15,6 @@ namespace TA.SharpBooru.Client.GUI
         private BooruPost _Post;
         private List<ulong> _PostIDs;
         private int _Index = -1;
-        private object _loadLock = new object();
         private FormWindowState _oldWindowState = FormWindowState.Normal;
 
         private int Index
@@ -73,28 +72,20 @@ namespace TA.SharpBooru.Client.GUI
         public void ChangePost(BooruPost Post)
         {
             _Post = Post;
-            Thread loadThread = new Thread(() =>
-                {
-                    lock (_loadLock)
+            SetLoadingMode(true);
+            if (_Post.Image == null)
+                _Booru.GetImage(ref _Post);
+            try
+            {
+                SetImage(_Post.Image.Bitmap);
+                GUIHelper.Invoke(this, () =>
                     {
-                        SetLoadingMode(true);
-                        if (_Post.Image == null)
-                            _Booru.GetImage(ref _Post);
-                        Bitmap image = _Post.Image.Bitmap;
-                        try
-                        {
-                            SetImage(_Post.Image.Bitmap);
-                            GUIHelper.Invoke(this, () =>
-                                {
-                                    tagList.Tags = _Post.Tags;
-                                    Text = string.Format("# {0} - {1}x{2} - Views {3} - Added {4} by {5}", _Post.ID, _Post.Width, _Post.Height, _Post.ViewCount, _Post.CreationDate, _Post.User);
-                                });
-                        }
-                        catch (ObjectDisposedException) { }
-                        SetLoadingMode(false);
-                    }
-                }) { IsBackground = true };
-            loadThread.Start();
+                        tagList.Tags = _Post.Tags;
+                        Text = string.Format("# {0} - {1}x{2} - Views {3} - Added {4} by {5}", _Post.ID, _Post.Width, _Post.Height, _Post.ViewCount, _Post.CreationDate, _Post.User);
+                    });
+            }
+            catch (ObjectDisposedException) { }
+            SetLoadingMode(false);
         }
 
         private void SetLoadingMode(bool LoadingMode)
@@ -246,7 +237,6 @@ namespace TA.SharpBooru.Client.GUI
             }
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         private void SetImage(Bitmap Bitmap)
         {
             GUIHelper.Invoke(imageBox, () =>
