@@ -57,7 +57,7 @@
     <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>TA.SharpBooru.MainProgram</StartupObject>
+    <StartupObject>TA.SharpBooru.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Posix">
@@ -75,8 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\CLI\BooruConsole.cs" />
-    <Compile Include="Client\CLI\Options.cs" />
-    <Compile Include="Client\CLI\Program.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="Client\GUI\Controls\ImageBox\ImageBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -149,7 +148,6 @@
     <Compile Include="Client\GUI\LoginDialog.Designer.cs">
       <DependentUpon>LoginDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Client\GUI\Options.cs" />
     <Compile Include="Client\GUI\PleaseWaitDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -162,7 +160,6 @@
     <Compile Include="Client\GUI\PostViewerDialog.designer.cs">
       <DependentUpon>PostViewerDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Client\GUI\Program.cs" />
     <Compile Include="Client\WebServer\BooruWebServer.cs" />
     <Compile Include="Client\WebServer\Context.cs" />
     <Compile Include="Client\WebServer\DictionaryEx.cs" />
@@ -173,7 +170,6 @@
     <Compile Include="Client\WebServer\HttpMultipartDataParser\ParameterPart.cs" />
     <Compile Include="Client\WebServer\HttpMultipartDataParser\RebufferableBinaryReader.cs" />
     <Compile Include="Client\WebServer\HttpMultipartDataParser\SubsequenceFinder.cs" />
-    <Compile Include="Client\WebServer\Options.cs" />
     <Compile Include="Client\WebServer\Program.cs" />
     <Compile Include="Client\WebServer\RequestSecurityManager.cs" />
     <Compile Include="Client\WebServer\ServerHelper.cs" />
@@ -286,7 +282,7 @@
     <Compile Include="libSharpBooru\SmartThreadPool\WorkItemsQueue.cs" />
     <Compile Include="libSharpBooru\SQLiteWrapper.cs" />
     <Compile Include="libSharpBooru\WeakCache.cs" />
-    <Compile Include="MainProgram.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Client\GUI\MainForm.cs">
       <SubType>Form</SubType>
@@ -295,7 +291,6 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Server\BooruServer.cs" />
-    <Compile Include="Server\Options.cs" />
     <Compile Include="Server\Program.cs" />
     <Compile Include="Server\ServerBooru.cs" />
     <Compile Include="Server\ServerHelper.cs" />

@@ -12,25 +12,10 @@ namespace TA.SharpBooru.Server
 {
     public class Program
     {
-        public static int subMain(string[] args)
+        public static void subMain(Options options, Logger logger)
         {
-            Console.Title = "SharpBooru Server";
-            Logger sLogger = new Logger(Console.Out);
-            Options options = new Options();
-            try
-            {
-                if (Parser.Default.ParseArguments(args, options))
-                {
-                    (new Program(options, sLogger)).Run();
-                    return 0;
-                }
-                else return 1;
-            }
-            catch (Exception ex)
-            {
-                sLogger.LogException("Main", ex);
-                return 1;
-            }
+            Program program = new Program(options, logger);
+            program.Run();
         }
 
         public Program(Options Options, Logger Logger)
@@ -47,6 +32,7 @@ namespace TA.SharpBooru.Server
 
         public void Run()
         {
+            /*
             if (_Options.PIDFile != null)
             {
                 if (!File.Exists(_Options.PIDFile))
@@ -62,6 +48,10 @@ namespace TA.SharpBooru.Server
                 }
                 else throw new Exception("PIDFile exists, make sure no 2nd instance is running and delete the PID file");
             }
+            */
+
+            if (_Options.Location == null)
+                throw new ArgumentException("Please provide a valid location");
 
             _Logger.LogLine("Loading certificate...");
             //string certificateFile = _Options.Certificate ?? Path.Combine(_Options.Location, "cert.pfx");
@@ -104,10 +94,10 @@ namespace TA.SharpBooru.Server
             _Logger.LogLine("Starting server (ProtocolVersion = {0})...", BooruProtocol.ProtocolVersion);
             _BooruServer.Start();
 
-            if (_Options.User != null)
+            if (_Options.Username != null)
             {
-                _Logger.LogLine("Changing UID to user '{0}'...", _Options.User);
-                try { ServerHelper.SetUID(_Options.User); }
+                _Logger.LogLine("Changing UID to user '{0}'...", _Options.Username);
+                try { ServerHelper.SetUID(_Options.Username); }
                 catch (Exception ex) { _Logger.LogException("SetUID", ex); }
             }
 
@@ -128,12 +118,14 @@ namespace TA.SharpBooru.Server
                 _BooruServer.Stop(3000);
                 _Logger.LogLine("Disposing server and closing database connection...");
                 _BooruServer.Dispose();
+                /*
                 if (_Options.PIDFile != null)
                 {
                     _Logger.LogLine("Removing PID file...");
                     try { File.Delete(_Options.PIDFile); }
                     catch (Exception ex) { _Logger.LogException("RemovePIDFile", ex); }
                 }
+                */
                 _CancelRunned = true;
                 WaitEvent.Set();
             }
