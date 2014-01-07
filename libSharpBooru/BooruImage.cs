@@ -20,6 +20,9 @@ namespace TA.SharpBooru
         {
             get
             {
+                if (_Bitmap != null)
+                    try { int isDisposedWidth = _Bitmap.Width; }
+                    catch (ObjectDisposedException) { Dispose(); }
                 if (_Bitmap == null)
                     _Bitmap = new Bitmap(new MemoryStream(_Bytes));
                 return _Bitmap;
@@ -128,8 +131,11 @@ namespace TA.SharpBooru
         public void Dispose()
         {
             if (_Bitmap != null)
+            {
                 try { _Bitmap.Dispose(); }
                 catch { }
+                _Bitmap = null;
+            }
         }
 
         public object Clone() { return new BooruImage() { _Bytes = _Bytes.Clone() as byte[] }; }
