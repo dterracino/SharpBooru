@@ -8,7 +8,7 @@ namespace TA.SharpBooru.Client.WebServer
     public class Program
     {
         [STAThread]
-        public static int Main(string[] args)
+        public static int subMain(string[] args)
         {
             Console.Title = "SharpBooru WebServer";
             Logger sLogger = new Logger(Console.Out);

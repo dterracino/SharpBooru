@@ -1,0 +1,407 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{0A180E51-88C1-4751-8769-8B47F90355B7}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TA.SharpBooru</RootNamespace>
+    <AssemblyName>SharpBooru</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Resources\icon.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>TA.SharpBooru.MainProgram</StartupObject>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Mono.Posix">
+      <HintPath>Mono.Posix.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Client\CLI\BooruConsole.cs" />
+    <Compile Include="Client\CLI\Options.cs" />
+    <Compile Include="Client\CLI\Program.cs" />
+    <Compile Include="Client\GUI\Controls\ImageBox\ImageBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\Controls\ImageBox\ImageBoxBorderStyle.cs" />
+    <Compile Include="Client\GUI\Controls\ImageBox\ImageBoxCancelEventArgs.cs" />
+    <Compile Include="Client\GUI\Controls\ImageBox\ImageBoxGridDisplayMode.cs" />
+    <Compile Include="Client\GUI\Controls\ImageBox\ImageBoxGridScale.cs" />
+    <Compile Include="Client\GUI\Controls\ImageBox\ImageBoxNativeMethods.cs" />
+    <Compile Include="Client\GUI\Controls\ImageBox\ImageBoxSelectionMode.cs" />
+    <Compile Include="Client\GUI\Controls\ImageBox\ScrollControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\Controls\ImageBox\ScrollProperties.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\Controls\ImageBox\VirtualScrollableControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\Controls\ImageBox\ZoomLevelCollection.cs" />
+    <Compile Include="Client\GUI\Controls\ImageBox\ZoomLevelCollectionConverter.cs" />
+    <Compile Include="Client\GUI\Controls\TagList.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\Controls\TagList.Designer.cs">
+      <DependentUpon>TagList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Client\GUI\Controls\BooruThumbView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\Controls\BooruThumbView.Designer.cs">
+      <DependentUpon>BooruThumbView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Client\GUI\Controls\TagTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\EditDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\EditDialog.Designer.cs">
+      <DependentUpon>EditDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Client\GUI\GUIHelper.cs" />
+    <Compile Include="Client\GUI\Controls\AjaxLoading.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\Controls\PageSwitcher.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\Controls\SelectablePictureBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\Controls\ThumbView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\ImportDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\ImportDialog.designer.cs">
+      <DependentUpon>ImportDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Client\GUI\ConnectDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\ConnectDialog.Designer.cs">
+      <DependentUpon>ConnectDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Client\GUI\LoginDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\LoginDialog.Designer.cs">
+      <DependentUpon>LoginDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Client\GUI\Options.cs" />
+    <Compile Include="Client\GUI\PleaseWaitDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\PleaseWaitDialog.Designer.cs">
+      <DependentUpon>PleaseWaitDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Client\GUI\PostViewerDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\PostViewerDialog.designer.cs">
+      <DependentUpon>PostViewerDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Client\GUI\Program.cs" />
+    <Compile Include="Client\WebServer\BooruWebServer.cs" />
+    <Compile Include="Client\WebServer\Context.cs" />
+    <Compile Include="Client\WebServer\DictionaryEx.cs" />
+    <Compile Include="Client\WebServer\HttpMultipartDataParser\BinaryStreamStack.cs" />
+    <Compile Include="Client\WebServer\HttpMultipartDataParser\FilePart.cs" />
+    <Compile Include="Client\WebServer\HttpMultipartDataParser\MultipartFormDataParser.cs" />
+    <Compile Include="Client\WebServer\HttpMultipartDataParser\MultipartParseException.cs" />
+    <Compile Include="Client\WebServer\HttpMultipartDataParser\ParameterPart.cs" />
+    <Compile Include="Client\WebServer\HttpMultipartDataParser\RebufferableBinaryReader.cs" />
+    <Compile Include="Client\WebServer\HttpMultipartDataParser\SubsequenceFinder.cs" />
+    <Compile Include="Client\WebServer\Options.cs" />
+    <Compile Include="Client\WebServer\Program.cs" />
+    <Compile Include="Client\WebServer\RequestSecurityManager.cs" />
+    <Compile Include="Client\WebServer\ServerHelper.cs" />
+    <Compile Include="Client\WebServer\VirtualFileSystem\BaseClasses.cs" />
+    <Compile Include="Client\WebServer\VirtualFileSystem\VFSBooruImageFile.cs" />
+    <Compile Include="Client\WebServer\VirtualFileSystem\VFSBooruPostFile.cs" />
+    <Compile Include="Client\WebServer\VirtualFileSystem\VFSBooruSearchFile.cs" />
+    <Compile Include="Client\WebServer\VirtualFileSystem\VFSByteFile.cs" />
+    <Compile Include="Client\WebServer\VirtualFileSystem\VFSDelegateFile.cs" />
+    <Compile Include="Client\WebServer\VirtualFileSystem\VFSDirectoryListingFile.cs" />
+    <Compile Include="Client\WebServer\VirtualFileSystem\VFSErrorFile.cs" />
+    <Compile Include="Client\WebServer\VirtualFileSystem\VFSRealFile.cs" />
+    <Compile Include="Client\WebServer\VirtualFileSystem\VFSStringFile.cs" />
+    <Compile Include="libSharpBooru\BooruAPIs\BooruAPI.cs" />
+    <Compile Include="libSharpBooru\BooruAPIs\BooruAPIPost.cs" />
+    <Compile Include="libSharpBooru\BooruAPIs\GelbooruAPI.cs" />
+    <Compile Include="libSharpBooru\BooruAPIs\KonachanAPI.cs" />
+    <Compile Include="libSharpBooru\BooruAPIs\SafebooruAPI.cs" />
+    <Compile Include="libSharpBooru\BooruImage.cs" />
+    <Compile Include="libSharpBooru\BooruMiscOption.cs" />
+    <Compile Include="libSharpBooru\BooruPost.cs" />
+    <Compile Include="libSharpBooru\BooruProtocol.cs" />
+    <Compile Include="libSharpBooru\BooruSearch.cs" />
+    <Compile Include="libSharpBooru\BooruTag.cs" />
+    <Compile Include="libSharpBooru\BooruUser.cs" />
+    <Compile Include="libSharpBooru\Broadcaster.cs" />
+    <Compile Include="libSharpBooru\ClientBooru.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Attributes\AssemblyLicenseAttribute.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Attributes\AssemblyUsageAttribute.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Attributes\BaseOptionAttribute.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Attributes\HelpOptionAttribute.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Attributes\HelpVerbOptionAttribute.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Attributes\MultiLineTextAttribute.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Attributes\OptionArrayAttribute.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Attributes\OptionAttribute.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Attributes\OptionListAttribute.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Attributes\ParserStateAttribute.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Attributes\ValueListAttribute.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Attributes\ValueOptionAttribute.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Attributes\VerbOptionAttribute.cs" />
+    <Compile Include="libSharpBooru\CommandLine\BadOptionInfo.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Extensions\CharExtensions.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Extensions\StringExtensions.cs" />
+    <Compile Include="libSharpBooru\CommandLine\GlobalSuppressions.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Infrastructure\Assumes.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Infrastructure\Pair.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Infrastructure\PopsicleSetter.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Infrastructure\ReflectionCache.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Infrastructure\ReflectionHelper.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Infrastructure\SR.strings.cs" />
+    <Compile Include="libSharpBooru\CommandLine\IParserState.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Parser.cs" />
+    <Compile Include="libSharpBooru\CommandLine\ParserException.cs" />
+    <Compile Include="libSharpBooru\CommandLine\ParserSettings.cs" />
+    <Compile Include="libSharpBooru\CommandLine\ParserState.cs" />
+    <Compile Include="libSharpBooru\CommandLine\ParsingError.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Parsing\ArgumentParser.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Parsing\IArgumentEnumerator.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Parsing\LongOptionParser.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Parsing\OneCharStringEnumerator.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Parsing\OptionGroupParser.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Parsing\OptionInfo.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Parsing\OptionMap.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Parsing\PresentParserState.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Parsing\PropertyWriter.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Parsing\StringArrayEnumerator.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Parsing\TargetCapabilitiesExtensions.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Parsing\ValueMapper.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Text\BaseSentenceBuilder.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Text\CopyrightInfo.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Text\EnglishSentenceBuilder.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Text\FormatOptionHelpTextEventArgs.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Text\HeadingInfo.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Text\HelpText.cs" />
+    <Compile Include="libSharpBooru\CommandLine\Text\_ParsingErrorsHandler.cs" />
+    <Compile Include="libSharpBooru\ConsoleEx.cs" />
+    <Compile Include="libSharpBooru\CountCache.cs" />
+    <Compile Include="libSharpBooru\Helper.cs" />
+    <Compile Include="libSharpBooru\LitJSON\IJsonWrapper.cs" />
+    <Compile Include="libSharpBooru\LitJSON\JsonData.cs" />
+    <Compile Include="libSharpBooru\LitJSON\JsonException.cs" />
+    <Compile Include="libSharpBooru\LitJSON\JsonMapper.cs" />
+    <Compile Include="libSharpBooru\LitJSON\JsonReader.cs" />
+    <Compile Include="libSharpBooru\LitJSON\JsonWriter.cs" />
+    <Compile Include="libSharpBooru\LitJSON\Lexer.cs" />
+    <Compile Include="libSharpBooru\LitJSON\ParserToken.cs" />
+    <Compile Include="libSharpBooru\Logger.cs" />
+    <Compile Include="libSharpBooru\Server.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\CallerThreadContext.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\CanceledWorkItemsGroup.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\EventWaitHandleFactory.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\Exceptions.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\Interfaces.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\InternalInterfaces.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\PriorityQueue.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\SmartThreadPool.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\SmartThreadPool.ThreadEntry.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\STPEventWaitHandle.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\STPPerformanceCounter.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\STPStartInfo.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\SynchronizedDictionary.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\WIGStartInfo.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\WorkItem.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\WorkItem.WorkItemResult.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\WorkItemFactory.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\WorkItemInfo.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\WorkItemResultTWrapper.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\WorkItemsGroup.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\WorkItemsGroupBase.cs" />
+    <Compile Include="libSharpBooru\SmartThreadPool\WorkItemsQueue.cs" />
+    <Compile Include="libSharpBooru\SQLiteWrapper.cs" />
+    <Compile Include="libSharpBooru\WeakCache.cs" />
+    <Compile Include="MainProgram.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Client\GUI\MainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Client\GUI\MainForm.Designer.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Server\BooruServer.cs" />
+    <Compile Include="Server\Options.cs" />
+    <Compile Include="Server\Program.cs" />
+    <Compile Include="Server\ServerBooru.cs" />
+    <Compile Include="Server\ServerHelper.cs" />
+    <Compile Include="Server\SQLStatements.cs" />
+    <EmbeddedResource Include="Client\GUI\Controls\BooruThumbView.resx">
+      <DependentUpon>BooruThumbView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Client\GUI\EditDialog.resx">
+      <DependentUpon>EditDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Client\GUI\ImportDialog.resx">
+      <DependentUpon>ImportDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Client\GUI\ConnectDialog.resx">
+      <DependentUpon>ConnectDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Client\GUI\LoginDialog.resx">
+      <DependentUpon>LoginDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Client\GUI\PostViewerDialog.resx">
+      <DependentUpon>PostViewerDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Client\GUI\MainForm.resx">
+      <DependentUpon>MainForm.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\favicon.ico.bin" />
+    <None Include="Resources\icon_arrow_right.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_arrow_left.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_close.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_ok.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\ajax_loading.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_fullscreen.png" />
+    <None Include="Resources\icon_delete.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_photoshop.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icon_edit.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\icon.ico" />
+    <Content Include="Resources\icon_clone.png" />
+    <None Include="Resources\imgscript_js.txt" />
+    <None Include="Resources\style_css.txt" />
+    <None Include="Resources\icon_users.png" />
+    <None Include="Resources\icon_imgsearch.png" />
+    <None Include="Resources\icon_import.png" />
+    <None Include="Resources\icon_refresh.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4 %28x86 und x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

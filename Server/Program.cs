@@ -12,7 +12,7 @@ namespace TA.SharpBooru.Server
 {
     public class Program
     {
-        public static int Main(string[] args)
+        public static int subMain(string[] args)
         {
             Console.Title = "SharpBooru Server";
             Logger sLogger = new Logger(Console.Out);

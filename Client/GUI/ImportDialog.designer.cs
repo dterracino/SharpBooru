@@ -57,7 +57,7 @@
             // okButton
             // 
             this.okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.okButton.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_ok;
+            this.okButton.Image = global::TA.SharpBooru.Properties.Resources.icon_ok;
             this.okButton.Location = new System.Drawing.Point(862, 563);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(30, 30);

@@ -56,7 +56,7 @@
             // buttonImportDialog
             // 
             this.buttonImportDialog.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonImportDialog.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_import;
+            this.buttonImportDialog.Image = global::TA.SharpBooru.Properties.Resources.icon_import;
             this.buttonImportDialog.Location = new System.Drawing.Point(12, 277);
             this.buttonImportDialog.Name = "buttonImportDialog";
             this.buttonImportDialog.Size = new System.Drawing.Size(58, 58);
@@ -67,7 +67,7 @@
             // buttonChangeUser
             // 
             this.buttonChangeUser.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonChangeUser.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_users;
+            this.buttonChangeUser.Image = global::TA.SharpBooru.Properties.Resources.icon_users;
             this.buttonChangeUser.Location = new System.Drawing.Point(76, 277);
             this.buttonChangeUser.Name = "buttonChangeUser";
             this.buttonChangeUser.Size = new System.Drawing.Size(58, 58);
@@ -78,7 +78,7 @@
             // buttonRefresh
             // 
             this.buttonRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonRefresh.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_refresh;
+            this.buttonRefresh.Image = global::TA.SharpBooru.Properties.Resources.icon_refresh;
             this.buttonRefresh.Location = new System.Drawing.Point(76, 213);
             this.buttonRefresh.Name = "buttonRefresh";
             this.buttonRefresh.Size = new System.Drawing.Size(58, 58);
@@ -117,7 +117,7 @@
             // buttonImgSearch
             // 
             this.buttonImgSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonImgSearch.Image = global::TA.SharpBooru.Client.GUI.Properties.Resources.icon_imgsearch;
+            this.buttonImgSearch.Image = global::TA.SharpBooru.Properties.Resources.icon_imgsearch;
             this.buttonImgSearch.Location = new System.Drawing.Point(12, 213);
             this.buttonImgSearch.Name = "buttonImgSearch";
             this.buttonImgSearch.Size = new System.Drawing.Size(58, 58);

@@ -5,7 +5,7 @@ namespace TA.SharpBooru.Client.CLI
 {
     public static class Program
     {
-        public static int Main(string[] args)
+        public static int subMain(string[] args)
         {
             Options options = new Options();
             try
