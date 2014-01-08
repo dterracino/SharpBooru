@@ -46,7 +46,7 @@ namespace TA.SharpBooru
         [Option('c', "command", Required = false, DefaultValue = null)]
         public string Command { get; set; }
 
-        [Option("port", Required = false, DefaultValue = 0)]
+        [Option("port", Required = false, DefaultValue = (ushort)0)]
         public ushort Port { get; set; }
 
         [Option('l', "location", Required = false, DefaultValue = null)]
