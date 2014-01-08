@@ -36,11 +36,12 @@ namespace TA.SharpBooru
             }
             set { internalServer = string.Format("{0}:{1}", value.Address, value.Port); }
         }
+        public bool IsServerDefined { get { return internalServer != null; } }
 
-        [Option('u', "username", Required = false, DefaultValue = "guest")]
+        [Option('u', "username", Required = false, DefaultValue = null)]
         public string Username { get; set; }
 
-        [Option('p', "password", Required = false, DefaultValue = "guest")]
+        [Option('p', "password", Required = false, DefaultValue = null)]
         public string Password { get; set; }
 
         [Option('c', "command", Required = false, DefaultValue = null)]
@@ -83,7 +84,7 @@ namespace TA.SharpBooru
 
             sb.AppendLine("Server Mode [-m server]");
             sb.AppendLine("  -l, --location   Location of the booru");
-            sb.AppendLine("  -u, --username   Username for SetUID [nobody]");
+            sb.AppendLine("  -u, --username   Username for SetUID");
             sb.AppendLine("      --port       TCPListener port [2400]");
             sb.AppendLine("You must provide -l, all other switches are optional");
             sb.AppendLine();

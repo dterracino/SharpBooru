@@ -43,7 +43,7 @@ namespace TA.SharpBooru.Client.WebServer
 
         public int Run(Options options, Logger logger)
         {
-            ClientBooru booru = new ClientBooru(options.Server, options.Username, options.Password);
+            ClientBooru booru = new ClientBooru(options.Server, options.Username ?? "guest", options.Password ?? "guest");
             ushort port = options.Port < 1 ? (ushort)80 : options.Port;
             BooruWebServer server = new BooruWebServer(booru, logger, string.Format("http://*:{0}/", port), false);
 

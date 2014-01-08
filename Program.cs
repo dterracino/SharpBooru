@@ -35,12 +35,13 @@ namespace TA.SharpBooru
             return 1;
         }
 
-        private static ClientBooru ConnectBooru(Options options) { return new ClientBooru(options.Server, options.Username, options.Password); }
+        private static ClientBooru ConnectBooru(Options options) { return new ClientBooru(options.Server, options.Username ?? "guest", options.Password ?? "guest"); }
 
         private static int RunClientGUI(Options options)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            //TODO Show connect dialog
             using (ClientBooru booru = ConnectBooru(options))
             using (MainForm mForm = new MainForm(booru))
             {
