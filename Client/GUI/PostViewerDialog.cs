@@ -50,6 +50,7 @@ namespace TA.SharpBooru.Client.GUI
             GUIHelper.CreateToolTip(buttonNextPost, "Next post");
             GUIHelper.CreateToolTip(buttonPreviousPost, "Previous post");
             GUIHelper.CreateToolTip(buttonEditImage, "Edit image");
+            GUIHelper.CreateToolTip(buttonEditPost, "Edit post");
             SetLoadingMode(false);
         }
 
