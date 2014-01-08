@@ -180,9 +180,10 @@ namespace TA.SharpBooru.Client.GUI
             //TODO Imag editor configurable paths
             List<string> editors = new List<string>();
             for (int i = 6; i > 2; i--)
+            {
                 editors.Add("C:\\Program Files\\Adobe\\Adobe Photoshop CS" + i + " (64 Bit)\\Photoshop.exe");
-            for (int i = 6; i > 2; i--)
                 editors.Add("C:\\Program Files (x86)\\Adobe\\Adobe Photoshop CS" + i + "\\Photoshop.exe");
+            }
             editors.Add("C:\\Windows\\System32\\mspaint.exe");
             foreach (string editor in editors)
                 if (File.Exists(editor))
