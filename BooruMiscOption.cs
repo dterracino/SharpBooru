@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TA.SharpBooru
+﻿namespace TA.SharpBooru
 {
     public enum BooruMiscOption
     {

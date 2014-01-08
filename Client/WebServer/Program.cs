@@ -43,8 +43,9 @@ namespace TA.SharpBooru.Client.WebServer
 
         public int Run(Options options, Logger logger)
         {
-            ClientBooru booru = new ClientBooru(Helper.GetIPEndPointFromString(options.Server), options.Username, options.Password);
-            BooruWebServer server = new BooruWebServer(booru, logger, string.Format("http://*:{0}/", options.Port), false);
+            ClientBooru booru = new ClientBooru(options.Server, options.Username, options.Password);
+            ushort port = options.Port < 1 ? (ushort)80 : options.Port;
+            BooruWebServer server = new BooruWebServer(booru, logger, string.Format("http://*:{0}/", port), false);
 
             InitVFS(server, booru);
             server.Start();

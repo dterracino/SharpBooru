@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Net;
+using System.Text;
+using System.Net.Sockets;
+using System.Reflection;
 using CommandLine;
 using CommandLine.Text;
 
@@ -6,36 +10,46 @@ namespace TA.SharpBooru
 {
     public class Options
     {
-        [Option('m', "mode", Required = false, DefaultValue = "gui", HelpText = "The run mode: gui|cli|server|webserver")]
-        public string _Mode { get; set; }
+        [Option('m', "mode", Required = false, DefaultValue = "gui")]
+        public string internalMode { get; set; }
         public RunMode Mode
         {
             get
             {
                 RunMode mode;
-                if (System.Enum.TryParse<RunMode>(_Mode, true, out mode))
+                if (System.Enum.TryParse<RunMode>(internalMode, true, out mode))
                     return mode;
-                else return RunMode.GUI; //Default mode
+                else return RunMode.GUI;
             }
-            set { _Mode = System.Enum.GetName(typeof(RunMode), value); }
+            set { internalMode = System.Enum.GetName(typeof(RunMode), value); }
         }
 
-        [Option('s', "server", Required = false, DefaultValue = "127.0.0.1", HelpText = "All clients - Server IP or hostname + port")]
-        public string Server { get; set; }
+        [Option('s', "server", Required = false, DefaultValue = null)]
+        public string internalServer { get; set; }
+        public IPEndPoint Server
+        {
+            get
+            {
+                if (internalServer != null)
+                    return Helper.GetIPEndPointFromString(internalServer, 2400);
+                else return new IPEndPoint(IPAddress.Loopback, 2400);
+            }
+            set { internalServer = string.Format("{0}:{1}", value.Address, value.Port); }
+        }
 
-        [Option('u', "username", Required = false, DefaultValue = "guest", HelpText = "All clients - The username for auto login; Server only - The username for SetUID")]
+        [Option('u', "username", Required = false, DefaultValue = "guest")]
         public string Username { get; set; }
 
-        [Option('p', "password", Required = false, DefaultValue = "guest", HelpText = "All clients - The password for auto login")]
+        [Option('p', "password", Required = false, DefaultValue = "guest")]
         public string Password { get; set; }
 
-        [Option('c', "command", Required = false, HelpText = "CLI only - The command to execute automatically")]
+        [Option('c', "command", Required = false, DefaultValue = null)]
         public string Command { get; set; }
 
-        [Option("port", Required = false, HelpText = "Server and WebServer - The listener port")]
+        [Option("port", Required = false, DefaultValue = 0)]
         public ushort Port { get; set; }
 
-        [Option('l', "location", Required = false, DefaultValue = null, HelpText = "Server only - The location of the booru")]
+        [Option('l', "location", Required = false, DefaultValue = null)]
         public string Location { get; set; }
 
         /*
@@ -46,8 +60,65 @@ namespace TA.SharpBooru
         public string CertificatePassword { get; set; }
         */
 
-        [HelpOption]
-        public string GetUsage() { return HelpText.AutoBuild(this); }
+        [HelpOption('h')]
+        public string GetUsage() 
+        {
+            StringBuilder sb = new StringBuilder();
+
+            string productName = GetAssemblyAttribute<AssemblyProductAttribute>(x => x.Product);
+            Version version = Assembly.GetExecutingAssembly().GetName().Version;
+            sb.AppendFormat("{0} V{1}", productName, version);
+            sb.AppendLine();
+            string copyright = GetAssemblyAttribute<AssemblyCopyrightAttribute>(x => x.Copyright);
+            sb.Append(copyright);
+            sb.AppendLine();
+
+            sb.AppendLine();
+
+            sb.AppendLine("This program can run in multiple modes:");
+            sb.AppendLine("  -m, --mode       Mode can be server, gui, cli or webserver");
+            sb.AppendLine();
+            sb.AppendLine("The other command line switches are different for the modes");
+            sb.AppendLine();
+
+            sb.AppendLine("Server Mode [-m server]");
+            sb.AppendLine("  -l, --location   Location of the booru");
+            sb.AppendLine("  -u, --username   Username for SetUID [nobody]");
+            sb.AppendLine("      --port       TCPListener port [2400]");
+            sb.AppendLine("You must provide -l, all other switches are optional");
+            sb.AppendLine();
+
+            sb.AppendLine("GUI Mode [-m gui]");
+            sb.AppendLine("  -s, --server     Server to connect to [localhost]");
+            sb.AppendLine("  -u, --username   Username for auto login [guest]");
+            sb.AppendLine("  -s, --server     Password for auto login [guest]");
+            sb.AppendLine("All switches are optional");
+            sb.AppendLine();
+
+            sb.AppendLine("CLI Mode [-m cli]");
+            sb.AppendLine("  -s, --server     Server to connect to [localhost]");
+            sb.AppendLine("  -u, --username   Username for auto login [guest]");
+            sb.AppendLine("  -s, --server     Password for auto login [guest]");
+            sb.AppendLine("  -c, --command    Command to execute [null]");
+            sb.AppendLine("All switches are optional");
+            sb.AppendLine();
+
+            sb.AppendLine("WebServer Mode");
+            sb.AppendLine("  -s, --server     Server to connect to [localhost]");
+            sb.AppendLine("  -u, --username   Username for auto login [guest]");
+            sb.AppendLine("  -s, --server     Password for auto login [guest]");
+            sb.AppendLine("      --port       HTTP port [80]");
+            sb.AppendLine("All switches are optional");
+            sb.AppendLine();
+
+            return sb.ToString();
+        }
+
+        private string GetAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
+        {
+            T attribute = (T)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(T));
+            return value.Invoke(attribute);
+        }
 
         public enum RunMode { GUI, CLI, Server, WebServer }
     }

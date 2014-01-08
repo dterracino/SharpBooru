@@ -6,7 +6,7 @@ using System.Data.SQLite;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace TA.SharpBooru
+namespace TA.SharpBooru.Server
 {
     public class SQLiteWrapper : IDisposable
     {

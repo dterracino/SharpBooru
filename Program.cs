@@ -31,24 +31,22 @@ namespace TA.SharpBooru
                     return returnCode;
                 }
             }
-            catch (Exception ex) { sLogger.LogException("WebServer", ex); }
+            catch (Exception ex) { sLogger.LogException("SharpBooru", ex); }
             return 1;
         }
 
-        private static ClientBooru ConnectBooru(Options options)
-        {
-            IPEndPoint endPoint = Helper.GetIPEndPointFromString(options.Server, 2400);
-            return new ClientBooru(endPoint, options.Username, options.Password);
-        }
+        private static ClientBooru ConnectBooru(Options options) { return new ClientBooru(options.Server, options.Username, options.Password); }
 
         private static int RunClientGUI(Options options)
         {
-            GUIHelper.HideConsoleWindow();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             using (ClientBooru booru = ConnectBooru(options))
             using (MainForm mForm = new MainForm(booru))
-                Application.Run(mForm);
+            {
+                GUIHelper.HideConsoleWindow();
+                mForm.ShowDialog();
+            }
             return 0;
         }
 

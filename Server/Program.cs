@@ -51,19 +51,22 @@ namespace TA.SharpBooru.Server
             */
 
             if (_Options.Location == null)
-                throw new ArgumentException("Please provide a valid location");
+                throw new ArgumentNullException("Please provide a booru location");
+            else if (!Directory.Exists(_Options.Location))
+                throw new DirectoryNotFoundException("Booru location not found");
 
             _Logger.LogLine("Loading certificate...");
-            //string certificateFile = _Options.Certificate ?? Path.Combine(_Options.Location, "cert.pfx");
             string certificateFile = Path.Combine(_Options.Location, "cert.pfx");
-            //X509Certificate2 sCertificate = new X509Certificate2(certificateFile, _Options.CertificatePassword);
+            if (!File.Exists(certificateFile))
+                throw new FileNotFoundException("Certificate (cert.pfx) not found");
             X509Certificate2 sCertificate = new X509Certificate2(certificateFile, "sharpbooru");
 
             _Logger.LogLine("Loading booru database...");
             ServerBooru booru = new ServerBooru(_Options.Location);
 
             _Logger.LogLine("Creating server instance...");
-            _BooruServer = new BooruServer(booru, _Logger, sCertificate, _Options.Port);
+            ushort port = _Options.Port < 1 ? (ushort)2400 : _Options.Port;
+            _BooruServer = new BooruServer(booru, _Logger, sCertificate, port);
 
             _Logger.LogLine("Starting BroadcastListener...");
             _BroadcastListenerThread = new Thread(() =>
@@ -72,7 +75,7 @@ namespace TA.SharpBooru.Server
                         try
                         {
                             string booruName = booru.GetMiscOption<string>(BooruMiscOption.BooruName);
-                            Broadcaster.ListenForBroadcast(booruName, _Options.Port);
+                            Broadcaster.ListenForBroadcast(booruName, port);
                         }
                         catch (Exception ex)
                         {
