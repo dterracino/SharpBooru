@@ -192,6 +192,10 @@
     <Compile Include="BooruMiscOption.cs" />
     <Compile Include="BooruPost.cs" />
     <Compile Include="BooruProtocol.cs" />
+    <Compile Include="Protocol\Packet.cs" />
+    <Compile Include="Protocol\Packet1_ConnectRequest.cs" />
+    <Compile Include="Protocol\Packet2_Error.cs" />
+    <Compile Include="Protocol\Packet3_EncryptionRequest.cs" />
     <Compile Include="Server\BooruSearch.cs" />
     <Compile Include="BooruTag.cs" />
     <Compile Include="BooruUser.cs" />
