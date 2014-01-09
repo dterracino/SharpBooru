@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Net;
-using System.Net.Sockets;
+using System.Threading;
 using System.Windows.Forms;
+using TA.SharpBooru.Server;
 using TA.SharpBooru.Client.GUI;
 using TA.SharpBooru.Client.CLI;
+using TA.SharpBooru.Client.WebServer;
+using TA.SharpBooru.Client.WebServer.VFS;
 using CommandLine;
 
 namespace TA.SharpBooru
@@ -20,49 +23,88 @@ namespace TA.SharpBooru
             {
                 if (Parser.Default.ParseArguments(args, options))
                 {
-                    int returnCode = 0;
-                    switch (options.Mode)
+                    if (options.Mode == Options.RunMode.Server)
                     {
-                        case Options.RunMode.GUI: returnCode = RunClientGUI(options); break;
-                        case Options.RunMode.CLI: returnCode = RunClientCLI(options); break;
-                        case Options.RunMode.Server: Server.Program.subMain(options, sLogger); break;
-                        case Options.RunMode.WebServer: Client.WebServer.Program.subMain(options, sLogger); break;
+                        ushort port = options.Port < 1 ? (ushort)2400 : options.Port;
+                        ServerWrapper wrapper = new ServerWrapper(sLogger);
+                        wrapper.StartServer(options.Location, options.Username, new IPEndPoint(IPAddress.Any, port));
                     }
-                    Helper.CleanTempFolder();
-                    return returnCode;
+                    else if (options.Mode == Options.RunMode.Standalone)
+                    {
+                        ServerWrapper wrapper = new ServerWrapper(sLogger);
+                        string location = options.Location ?? Environment.CurrentDirectory;
+                        wrapper.StartServer(location, null, new IPEndPoint(IPAddress.Loopback, 0), false);
+                        IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Loopback, wrapper.BooruServer.Port);
+                        using (ClientBooru booru = new ClientBooru(serverEndPoint, options.Username ?? "guest", options.Password ?? "guest"))
+                            RunClientGUI(booru);
+                        wrapper.Cancel(null);
+                    }
+                    else using (ClientBooru booru = new ClientBooru(options.Server, options.Username ?? "guest", options.Password ?? "password"))
+                            switch (options.Mode)
+                            {
+                                case Options.RunMode.GUI: RunClientGUI(booru); break;
+                                case Options.RunMode.CLI: RunClientCLI(booru, options.Command); break;
+                                case Options.RunMode.WebServer: RunClientWebserver(booru, options.Port, sLogger); break;
+                            }
                 }
+                return 0;
             }
-            catch (Exception ex) { sLogger.LogException("SharpBooru", ex); }
-            return 1;
+            catch (Exception ex)
+            {
+                sLogger.LogException("SharpBooru", ex);
+                return 1;
+            }
+            finally
+            {
+                Helper.CleanTempFolder();
+            }
         }
 
         private static ClientBooru ConnectBooru(Options options) { return new ClientBooru(options.Server, options.Username ?? "guest", options.Password ?? "guest"); }
 
-        private static int RunClientGUI(Options options)
+        private static void RunClientWebserver(ClientBooru booru, ushort port, Logger logger)
         {
+            port = port < 1 ? (ushort)80 : port;
+            BooruWebServer server = new BooruWebServer(booru, logger, string.Format("http://*:{0}/", port), false);
+
+            //Server.RootDirectory.Add(new VFSLoginLogoutFile("login_logout"));
+            //Server.RootDirectory.Add(new VFSAdminPanelFile("admin"));
+            server.RootDirectory.Add(new VFSBooruImageFile("image", true));
+            server.RootDirectory.Add(new VFSBooruImageFile("thumb", false));
+            server.RootDirectory.Add(new VFSBooruPostFile("post", "Post #{0}"));
+            server.RootDirectory.Add(new VFSByteFile("favicon.ico", "image/x-icon", Properties.Resources.favicon_ico));
+            server.RootDirectory.Add(new VFSBooruSearchFile("index", "Search"));
+            //Server.RootDirectory.Add(new VFSBooruInfoFile("info"));
+            server.RootDirectory.Add(new VFSDelegateFile("style", "text/css", c => c.OutWriter.Write(WebserverHelper.GetStyle(c)), false, null));
+            server.RootDirectory.Add(new VFSStringFile("robots.txt", "text/plain", "User-agent: *\r\nDisallow: /", false, null));
+            //Server.RootDirectory.Add(new VFSBooruUploadFile("upload"));
+
+            server.Start();
+
+            try { ServerHelper.SetUID("nobody"); }
+            catch { Console.WriteLine("SetUID FAILED"); }
+
+            Thread.Sleep(Timeout.Infinite);
+        }
+
+        private static void RunClientGUI(ClientBooru booru)
+        {
+            //TODO Show connect dialog when connection string not given
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            //TODO Show connect dialog
-            using (ClientBooru booru = ConnectBooru(options))
             using (MainForm mForm = new MainForm(booru))
             {
                 GUIHelper.HideConsoleWindow();
                 mForm.ShowDialog();
             }
-            return 0;
         }
 
-        private static int RunClientCLI(Options options)
+        private static void RunClientCLI(ClientBooru booru, string command = null)
         {
-            using (ClientBooru booru = ConnectBooru(options))
-            {
-                booru.Connect();
-                BooruConsole bConsole = new BooruConsole(booru);
-                if (!string.IsNullOrWhiteSpace(options.Command))
-                    bConsole.ExecuteCmdLine(options.Command);
-                else bConsole.StartInteractive();
-            }
-            return 0;
+            BooruConsole bConsole = new BooruConsole(booru);
+            if (!string.IsNullOrWhiteSpace(command))
+                bConsole.ExecuteCmdLine(command);
+            else bConsole.StartInteractive();
         }
     }
 }

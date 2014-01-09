@@ -23,7 +23,7 @@
             if (!string.IsNullOrWhiteSpace(_Directory.Name))
                 indexOfString += " of " + _Directory.Name;
             if (UseHelperHTMLWrapping)
-                ServerHelper.WriteHeader(Context, CustomTitle ?? indexOfString);
+                WebserverHelper.WriteHeader(Context, CustomTitle ?? indexOfString);
             Context.OutWriter.WriteLine("<b>{0}</b><br><br>", indexOfString);
             foreach (VFSEntry entry in _Directory.Entrys)
             {
@@ -32,7 +32,7 @@
                 Context.OutWriter.WriteLine("</a><br>");
             }
             if (UseHelperHTMLWrapping)
-                ServerHelper.WriteFooter(Context);
+                WebserverHelper.WriteFooter(Context);
         }
     }
 }

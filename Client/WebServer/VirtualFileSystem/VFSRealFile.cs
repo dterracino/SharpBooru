@@ -33,7 +33,7 @@ namespace TA.SharpBooru.Client.WebServer.VFS
             if (MimeType != null)
                 Context.MimeType = MimeType;
             if (UseHelperHTMLWrapping)
-                ServerHelper.WriteHeader(Context, Title ?? Name);
+                WebserverHelper.WriteHeader(Context, Title ?? Name);
             if (System.IO.File.Exists(_File))
                 using (FileStream fs = System.IO.File.Open(_File, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
@@ -48,7 +48,7 @@ namespace TA.SharpBooru.Client.WebServer.VFS
                 }
             else Context.HTTPCode = 404;
             if (UseHelperHTMLWrapping)
-                ServerHelper.WriteFooter(Context);
+                WebserverHelper.WriteFooter(Context);
         }
     }
 }

@@ -170,9 +170,8 @@
     <Compile Include="Client\WebServer\HttpMultipartDataParser\ParameterPart.cs" />
     <Compile Include="Client\WebServer\HttpMultipartDataParser\RebufferableBinaryReader.cs" />
     <Compile Include="Client\WebServer\HttpMultipartDataParser\SubsequenceFinder.cs" />
-    <Compile Include="Client\WebServer\Program.cs" />
     <Compile Include="Client\WebServer\RequestSecurityManager.cs" />
-    <Compile Include="Client\WebServer\ServerHelper.cs" />
+    <Compile Include="Client\WebServer\WebserverHelper.cs" />
     <Compile Include="Client\WebServer\VirtualFileSystem\BaseClasses.cs" />
     <Compile Include="Client\WebServer\VirtualFileSystem\VFSBooruImageFile.cs" />
     <Compile Include="Client\WebServer\VirtualFileSystem\VFSBooruPostFile.cs" />
@@ -291,7 +290,7 @@
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Server\BooruServer.cs" />
-    <Compile Include="Server\Program.cs" />
+    <Compile Include="Server\ServerWrapper.cs" />
     <Compile Include="Server\ServerBooru.cs" />
     <Compile Include="Server\ServerHelper.cs" />
     <Compile Include="Server\SQLStatements.cs" />

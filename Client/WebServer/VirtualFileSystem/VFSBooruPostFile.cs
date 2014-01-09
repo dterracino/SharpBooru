@@ -31,17 +31,17 @@ namespace TA.SharpBooru.Client.WebServer.VFS
                 ulong id = Context.Params.GET.Get<ulong>("id");
                 using (BooruPost post = Context.Booru.GetPost(id))
                 {
-                    ServerHelper.WriteHeader(Context, string.Format(Title, post.ID), Properties.Resources.imgscript_js);
-                    ServerHelper.WriteTableHeader(Context, "vtable");
+                    WebserverHelper.WriteHeader(Context, string.Format(Title, post.ID), Properties.Resources.imgscript_js);
+                    WebserverHelper.WriteTableHeader(Context, "vtable");
                     string tagSearch = null;
                     if (Context.Params.GET.IsSet<string>("tags"))
                         tagSearch = Context.Params.GET.Get<string>("tags");
-                    ServerHelper.WriteSearchTextBox(Context, "index", tagSearch);
+                    WebserverHelper.WriteSearchTextBox(Context, "index", tagSearch);
                     Context.OutWriter.Write("<br>");
                     List<BooruTag> tags = post.Tags;
                     if (tags.Count > 0)
                     {
-                        ServerHelper.WriteSubSectionHeader(Context, "Tags");
+                        WebserverHelper.WriteSubSectionHeader(Context, "Tags");
                         tags.ForEach(x =>
                         {
                             string color = ColorTranslator.ToHtml(x.Color);
@@ -50,21 +50,21 @@ namespace TA.SharpBooru.Client.WebServer.VFS
                             Context.OutWriter.Write("<a href=\"index?tags={0}\">", HttpUtility.HtmlEncode(tag));
                             Context.OutWriter.Write("{0}</a></span><br>", HttpUtility.HtmlEncode(tag));
                         });
-                        ServerHelper.WriteSubSectionFooter(Context);
+                        WebserverHelper.WriteSubSectionFooter(Context);
                     }
-                    ServerHelper.WriteSubSection(Context, "User", "{0}", post.User);
+                    WebserverHelper.WriteSubSection(Context, "User", "{0}", post.User);
                     if (!string.IsNullOrWhiteSpace(post.Source))
                     {
-                        ServerHelper.WriteSubSectionHeader(Context, "Source");
+                        WebserverHelper.WriteSubSectionHeader(Context, "Source");
                         if (Helper.CheckURL(post.Source, false))
                             Context.OutWriter.Write("<a href=\"{0}\">{0}</a>", HttpUtility.HtmlEncode(post.Source));
                         else Context.OutWriter.Write(HttpUtility.HtmlEncode(post.Source));
-                        ServerHelper.WriteSubSectionFooter(Context);
+                        WebserverHelper.WriteSubSectionFooter(Context);
                     }
-                    ServerHelper.WriteSubSection(Context, "Rating", "{0}", post.Rating);
-                    ServerHelper.WriteSubSection(Context, "Size", "{0}x{1}", post.Width, post.Height);
-                    ServerHelper.WriteSubSection(Context, "Counters", "Views: {0}<br>Edits: {1}", post.ViewCount, post.EditCount);
-                    ServerHelper.WriteTableMiddle(Context);
+                    WebserverHelper.WriteSubSection(Context, "Rating", "{0}", post.Rating);
+                    WebserverHelper.WriteSubSection(Context, "Size", "{0}x{1}", post.Width, post.Height);
+                    WebserverHelper.WriteSubSection(Context, "Counters", "Views: {0}<br>Edits: {1}", post.ViewCount, post.EditCount);
+                    WebserverHelper.WriteTableMiddle(Context);
                     Context.OutWriter.Write("<img id=\"mimg\" class=\"mimg\" alt=\"\" src=\"image?id={0}\">", post.ID);
                     /*
                     if (editMode)
@@ -85,9 +85,9 @@ namespace TA.SharpBooru.Client.WebServer.VFS
                         Context.OutWriter.Write("<a href=\"?id={0}&amp;tags={1}&amp;edit=true\">Delete</a>", id, tagSearch);
                     }
                     */
-                    ServerHelper.WriteTableFooter(Context);
+                    WebserverHelper.WriteTableFooter(Context);
                     //post.ViewCount++;
-                    ServerHelper.WriteFooter(Context);
+                    WebserverHelper.WriteFooter(Context);
                 }
             }
             else Context.HTTPCode = 404;

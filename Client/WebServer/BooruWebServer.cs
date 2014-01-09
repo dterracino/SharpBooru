@@ -114,7 +114,7 @@ namespace TA.SharpBooru.Client.WebServer
                         throw new NotImplementedException(string.Format("HTTP method {0} not implemented", bContext.Method));
                     internalHandleRequestS2(bContext, RSMCode);
                     if (!(bContext.HTTPCode < 400))
-                        throw new WebException(string.Format("Returned to [c7]{0}[cr]: {1} - {2}", bContext.ClientIP.ToString(), bContext.HTTPCode, ServerHelper.GetHTTPCodeDescription(bContext.HTTPCode)));
+                        throw new WebException(string.Format("Returned to [c7]{0}[cr]: {1} - {2}", bContext.ClientIP.ToString(), bContext.HTTPCode, WebserverHelper.GetHTTPCodeDescription(bContext.HTTPCode)));
                 }
                 catch (Exception ex) { LogException(ex); }
                 if (RSM != null)

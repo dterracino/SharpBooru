@@ -22,13 +22,19 @@ namespace TA.SharpBooru.Server
 
         public ServerBooru Booru { get { return _Booru; } }
         public X509Certificate2 Certificate { get { return _Certificate; } }
+        public ushort Port { get { return (ushort)(_Listener.LocalEndpoint as IPEndPoint).Port; } }
 
         public BooruServer(ServerBooru Booru, Logger Logger, X509Certificate2 Certificate, ushort Port = 2400)
+            : this(Booru, Logger, Certificate, new IPEndPoint(IPAddress.Any, Port)) { }
+
+        public BooruServer(ServerBooru Booru, Logger Logger, X509Certificate2 Certificate, IPEndPoint LocalEndPoint = null)
         {
             base.Logger = Logger;
             _Booru = Booru;
             _Certificate = Certificate;
-            _Listener = new TcpListener(IPAddress.Any, Port);
+            if (LocalEndPoint != null)
+                _Listener = new TcpListener(LocalEndPoint);
+            else _Listener = new TcpListener(IPAddress.Any, 2400);
         }
 
         public override object ConnectClient() { return _Listener.AcceptTcpClient(); }

@@ -34,7 +34,7 @@ namespace TA.SharpBooru.Server
             throw new Exception("No valid booru directory");
         }
 
-        public void ReadThumb(BinaryWriter Writer, ulong ID) { ReadFile(Writer, Path.Combine("thumbs", "thumb" + ID)); }
+        public void ReadThumb(BinaryWriter Writer, ulong ID) { ReadFile(Writer, Path.Combine("thumbs", "thumb" + ID)); } //TODO X regen thumb if not found
         public void ReadImage(BinaryWriter Writer, ulong ID) { ReadFile(Writer, Path.Combine("images", "image" + ID)); }
 
         public void DeleteThumbAndImage(ulong ID)

@@ -77,7 +77,7 @@ namespace TA.SharpBooru
             sb.AppendLine();
 
             sb.AppendLine("This program can run in multiple modes:");
-            sb.AppendLine("  -m, --mode       Mode can be server, gui, cli or webserver");
+            sb.AppendLine("  -m, --mode       Mode can be server, gui, cli, webserver or standalone");
             sb.AppendLine();
             sb.AppendLine("The other command line switches are different for the modes");
             sb.AppendLine();
@@ -92,23 +92,30 @@ namespace TA.SharpBooru
             sb.AppendLine("GUI Mode [-m gui]");
             sb.AppendLine("  -s, --server     Server to connect to [localhost]");
             sb.AppendLine("  -u, --username   Username for auto login [guest]");
-            sb.AppendLine("  -s, --server     Password for auto login [guest]");
+            sb.AppendLine("  -p, --password   Password for auto login [guest]");
             sb.AppendLine("All switches are optional");
             sb.AppendLine();
 
             sb.AppendLine("CLI Mode [-m cli]");
             sb.AppendLine("  -s, --server     Server to connect to [localhost]");
             sb.AppendLine("  -u, --username   Username for auto login [guest]");
-            sb.AppendLine("  -s, --server     Password for auto login [guest]");
+            sb.AppendLine("  -p, --password   Password for auto login [guest]");
             sb.AppendLine("  -c, --command    Command to execute [null]");
             sb.AppendLine("All switches are optional");
             sb.AppendLine();
 
-            sb.AppendLine("WebServer Mode");
+            sb.AppendLine("WebServer Mode [-m webserver]");
             sb.AppendLine("  -s, --server     Server to connect to [localhost]");
             sb.AppendLine("  -u, --username   Username for auto login [guest]");
-            sb.AppendLine("  -s, --server     Password for auto login [guest]");
+            sb.AppendLine("  -p, --password   Password for auto login [guest]");
             sb.AppendLine("      --port       HTTP port [80]");
+            sb.AppendLine("All switches are optional");
+            sb.AppendLine();
+
+            sb.AppendLine("Standalone Mode [-m standalone]");
+            sb.AppendLine("  -l, --location   Location of the booru [WorkingDirectory]");
+            sb.AppendLine("  -u, --username   Username for auto login [guest]");
+            sb.AppendLine("  -p, --password   Password for auto login [guest]");
             sb.AppendLine("All switches are optional");
             sb.AppendLine();
 
@@ -121,6 +128,6 @@ namespace TA.SharpBooru
             return value.Invoke(attribute);
         }
 
-        public enum RunMode { GUI, CLI, Server, WebServer }
+        public enum RunMode { GUI, CLI, Server, WebServer, Standalone }
     }
 }

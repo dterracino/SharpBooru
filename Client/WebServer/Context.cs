@@ -28,7 +28,7 @@ namespace TA.SharpBooru.Client.WebServer
                 get
                 {
                     if (_GET == null)
-                        _GET = ServerHelper.ParseParameters(InnerContext.Request.Url.Query);
+                        _GET = WebserverHelper.ParseParameters(InnerContext.Request.Url.Query);
                     return _GET;
                 }
             }
@@ -49,11 +49,11 @@ namespace TA.SharpBooru.Client.WebServer
                         using (StreamReader inReader = new StreamReader(inStream, InnerContext.Request.ContentEncoding))
                         {
                             string inData = inReader.ReadToEnd();
-                            _POST = ServerHelper.ParseParameters(inData);
+                            _POST = WebserverHelper.ParseParameters(inData);
                         }
                     }
                     else if (cType.StartsWith("multipart/form-data"))
-                        ServerHelper.ParseMultipartFormData(InnerContext.Request.InputStream, out _POST, out _Files);
+                        WebserverHelper.ParseMultipartFormData(InnerContext.Request.InputStream, out _POST, out _Files);
                     else throw new NotImplementedException(string.Format("Content type {0} not supported", cType));
                 }
             }
