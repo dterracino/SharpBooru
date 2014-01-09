@@ -26,7 +26,7 @@ namespace TA.SharpBooru
                         case Options.RunMode.GUI: returnCode = RunClientGUI(options); break;
                         case Options.RunMode.CLI: returnCode = RunClientCLI(options); break;
                         case Options.RunMode.Server: Server.Program.subMain(options, sLogger); break;
-                        case Options.RunMode.WebServer: throw new NotImplementedException();
+                        case Options.RunMode.WebServer: Client.WebServer.Program.subMain(options, sLogger); break;
                     }
                     Helper.CleanTempFolder();
                     return returnCode;

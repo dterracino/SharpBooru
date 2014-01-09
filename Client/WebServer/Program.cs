@@ -1,32 +1,12 @@
 ﻿using System;
 using System.Threading;
-using CommandLine;
 using TA.SharpBooru.Client.WebServer.VFS;
 
 namespace TA.SharpBooru.Client.WebServer
 {
     public class Program
     {
-        [STAThread]
-        public static int subMain(string[] args)
-        {
-            Console.Title = "SharpBooru WebServer";
-            Logger sLogger = new Logger(Console.Out);
-            Options options = new Options();
-            try
-            {
-                if (Parser.Default.ParseArguments(args, options))
-                {
-                    (new Program()).Run(options, sLogger);
-                    return 0;
-                }
-                else return 1;
-            }
-            catch (Exception ex) { sLogger.LogException("WebServer", ex); }
-            return 1;
-        }
-
-        private void InitVFS(BooruWebServer Server, ClientBooru Booru)
+        private static void InitVFS(BooruWebServer Server, ClientBooru Booru)
         {
             //Server.RootDirectory.Add(new VFSLoginLogoutFile("login_logout"));
             //Server.RootDirectory.Add(new VFSAdminPanelFile("admin"));
@@ -41,7 +21,7 @@ namespace TA.SharpBooru.Client.WebServer
             //Server.RootDirectory.Add(new VFSBooruUploadFile("upload"));
         }
 
-        public int Run(Options options, Logger logger)
+        public static void subMain(Options options, Logger logger)
         {
             ClientBooru booru = new ClientBooru(options.Server, options.Username ?? "guest", options.Password ?? "guest");
             ushort port = options.Port < 1 ? (ushort)80 : options.Port;
@@ -54,7 +34,6 @@ namespace TA.SharpBooru.Client.WebServer
             catch { Console.WriteLine("SetUID FAILED"); }
 
             Thread.Sleep(Timeout.Infinite);
-            return 0;
         }
     }
 }
