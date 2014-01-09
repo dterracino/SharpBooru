@@ -10,6 +10,7 @@ namespace TA.SharpBooru
 {
     public class Program
     {
+        [STAThread]
         public static int Main(string[] args)
         {
             Console.Title = "SharpBooru";
