@@ -75,6 +75,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Client\CLI\BooruConsole.cs" />
+    <Compile Include="ImageOptimizer.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Client\GUI\Controls\ImageBox\ImageBox.cs">
       <SubType>Component</SubType>
