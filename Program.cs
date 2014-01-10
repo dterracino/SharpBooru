@@ -17,6 +17,9 @@ namespace TA.SharpBooru
         public static int Main(string[] args)
         {
             Console.Title = "SharpBooru";
+            Console.Write(Properties.Resources.ascii_banner);
+            Console.WriteLine();
+            
             Logger sLogger = new Logger(Console.Out);
             Options options = new Options();
             try
@@ -25,12 +28,14 @@ namespace TA.SharpBooru
                 {
                     if (options.Mode == Options.RunMode.Server)
                     {
+                        Console.Title = "SharpBooru Server";
                         ushort port = options.Port < 1 ? (ushort)2400 : options.Port;
                         ServerWrapper wrapper = new ServerWrapper(sLogger);
                         wrapper.StartServer(options.Location, options.Username, new IPEndPoint(IPAddress.Any, port));
                     }
                     else if (options.Mode == Options.RunMode.Standalone)
                     {
+                        Console.Title = "SharpBooru Standalone";
                         ServerWrapper wrapper = new ServerWrapper(sLogger);
                         string location = options.Location ?? Environment.CurrentDirectory;
                         wrapper.StartServer(location, null, new IPEndPoint(IPAddress.Loopback, 0), false);
@@ -64,6 +69,8 @@ namespace TA.SharpBooru
 
         private static void RunClientWebserver(ClientBooru booru, ushort port, Logger logger)
         {
+            Console.Title = "SharpBooru Webserver";
+
             port = port < 1 ? (ushort)80 : port;
             BooruWebServer server = new BooruWebServer(booru, logger, string.Format("http://*:{0}/", port), false);
 
@@ -102,6 +109,8 @@ namespace TA.SharpBooru
 
         private static void RunClientCLI(ClientBooru booru, string command = null)
         {
+            Console.Title = "SharpBooru CLI Client";
+
             BooruConsole bConsole = new BooruConsole(booru);
             if (!string.IsNullOrWhiteSpace(command))
                 bConsole.ExecuteCmdLine(command);

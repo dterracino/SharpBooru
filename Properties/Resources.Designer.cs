@@ -71,6 +71,20 @@ namespace TA.SharpBooru.Properties {
         }
         
         /// <summary>
+        ///   Sucht eine lokalisierte Zeichenfolge, die    _____ __                     ____
+        ///  / ___// /_  ____ __________  / __ )____  ____  _______  __
+        ///  \__ \/ __ \/ __ `/ ___/ __ \/ __  / __ \/ __ \/ ___/ / / /
+        /// ___/ / / / / /_/ / /  / /_/ / /_/ / /_/ / /_/ / /  / /_/ / 
+        ////____/_/ /_/\__,_/_/  / .___/_____/\____/\____/_/   \__,_/  
+        ///                     /_/ ähnelt.
+        /// </summary>
+        internal static string ascii_banner {
+            get {
+                return ResourceManager.GetString("ascii_banner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
         /// </summary>
         internal static byte[] favicon_ico {
