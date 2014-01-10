@@ -62,7 +62,7 @@ namespace TA.SharpBooru.Client.WebServer
                             HttpListenerContext Context = _Listener.GetContext();
                             _Pool.QueueWorkItem(new WorkItemCallback(internalHandleRequestS1), Context);
                         }
-                        catch (Exception ex) { LogException(ex); }
+                        catch (Exception ex) { Logger.LogException("QueueRequest", ex); }
                 });
         }
 
@@ -73,7 +73,7 @@ namespace TA.SharpBooru.Client.WebServer
                 InitAcceptConnectionsThread();
                 _Listener.Start();
                 _AcceptConnectionsThread.Start();
-                Logger.LogLine("[c3]Server running...");
+                Logger.LogLine("Server running...");
             }
         }
 
@@ -84,7 +84,7 @@ namespace TA.SharpBooru.Client.WebServer
             if (Wait)
                 while (_AcceptConnectionsThread.IsAlive)
                     Thread.Sleep(100);
-            Logger.LogLine("[c3]Server stopped...");
+            Logger.LogLine("Server stopped...");
         }
 
         public void Restart()
@@ -93,20 +93,13 @@ namespace TA.SharpBooru.Client.WebServer
             Start();
         }
 
-        private void LogException(Exception ex)
-        {
-            if (ex == null)
-                ex = new ArgumentException("Unknown exception");
-            Logger.LogLine("[c1]ERROR[cr]: [c7]{0}", ex.Message);
-        }
-
         private object internalHandleRequestS1(object oContext)
         {
             if (!(oContext is HttpListenerContext))
                 throw new ArgumentException("oContext is no HttpListenerContext");
             using (Context bContext = new Context(this, oContext as HttpListenerContext))
             {
-                Logger.LogLine("Request from [c7]{2}[cr]: {0} {1}", bContext.Method, bContext.InnerContext.Request.Url, bContext.ClientIP);
+                Logger.LogLine("Request from {2}: {0} {1}", bContext.Method, bContext.InnerContext.Request.Url, bContext.ClientIP);
                 try
                 {
                     int RSMCode = RSM == null ? 200 : RSM.CheckAllowedConnectionAndReturnHttpCode(bContext.ClientIP);
@@ -116,7 +109,7 @@ namespace TA.SharpBooru.Client.WebServer
                     if (!(bContext.HTTPCode < 400))
                         throw new WebException(string.Format("Returned to [c7]{0}[cr]: {1} - {2}", bContext.ClientIP.ToString(), bContext.HTTPCode, WebserverHelper.GetHTTPCodeDescription(bContext.HTTPCode)));
                 }
-                catch (Exception ex) { LogException(ex); }
+                catch (Exception ex) { Logger.LogException("HandleRequest", ex); }
                 if (RSM != null)
                     RSM.RequestProcessed(bContext.ClientIP);
                 return null;

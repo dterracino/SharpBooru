@@ -81,8 +81,9 @@ namespace TA.SharpBooru
 
             server.Start();
 
+            logger.LogLine("Changing UID to user 'nobody'...");
             try { ServerHelper.SetUID("nobody"); }
-            catch { Console.WriteLine("SetUID FAILED"); }
+            catch (Exception ex) { logger.LogException("SetUID", ex); }
 
             Thread.Sleep(Timeout.Infinite);
         }
