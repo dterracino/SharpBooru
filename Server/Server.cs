@@ -24,9 +24,9 @@ namespace TA.SharpBooru.Server
 
         public abstract object ConnectClient();
         public abstract void HandleClient(object Client);
-        public abstract bool HandleException(Exception Ex);
         public abstract void StartListener();
         public abstract void StopListener();
+        public virtual bool HandleException(object Client, Exception Ex) { return false; }
 
         private string ServerString
         {
@@ -70,13 +70,14 @@ namespace TA.SharpBooru.Server
                 else throw new Exception("Not running");
         }
 
-        protected void _HandlerStage1()
+        private void _HandlerStage1()
         {
             while (_ConnectClientThreadRunning)
             {
+                object client = null;
                 try
                 {
-                    object client = ConnectClient();
+                    client = ConnectClient();
                     if (_ConnectClientThreadRunning)
                         _ThreadPool.QueueWorkItem(new WorkItemCallback(_HandlerStage2), client);
                 }
@@ -84,20 +85,20 @@ namespace TA.SharpBooru.Server
                 {
                     if (!_ConnectClientThreadRunning)
                         break; //Exit the thread silently
-                    else if (!HandleException(ex))
+                    else if (!HandleException(client, ex))
                         throw ex;
                 }
             }
         }
 
-        protected object _HandlerStage2(object Client)
+        private object _HandlerStage2(object Client)
         {
             try { HandleClient(Client); }
             catch (Exception ex)
             {
                 if (!_ConnectClientThreadRunning)
                     return null;
-                else if (!HandleException(ex))
+                else if (!HandleException(Client, ex))
                     throw ex;
             }
             return null;

@@ -33,11 +33,13 @@ namespace TA.SharpBooru.Server
 
         public override object ConnectClient() { return _Listener.AcceptTcpClient(); }
 
+        /*
         public override bool HandleException(System.Exception Ex)
         {
             Logger.LogException(ServerName, Ex);
             return true;
         }
+        */
 
         public override void StartListener() { _Listener.Start(); }
 

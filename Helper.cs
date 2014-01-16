@@ -15,6 +15,8 @@ namespace TA.SharpBooru
         private const string TEMP_FOLDER_NAME = "SharpBooru";
         private static readonly DateTime UNIX_TIME = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
+        public static readonly Random Random = new Random();
+
         /*
         [DllImport("kernel32.dll", EntryPoint = "AllocConsole")]
         [return: MarshalAsAttribute(UnmanagedType.Bool)]
@@ -131,7 +133,7 @@ namespace TA.SharpBooru
             else return stdin.CanWrite;
         }
 
-        public static Color RandomColor() { return RandomColor(new Random()); }
+        public static Color RandomColor() { return RandomColor(Random); }
         public static Color RandomColor(Random R)
         {
             byte[] bytes = new byte[3];
@@ -174,7 +176,7 @@ namespace TA.SharpBooru
             return Path.Combine(tempFolder, tempFileName);
         }
 
-        public static string RandomString(int Len) { return RandomString(new Random(), Len); }
+        public static string RandomString(int Len) { return RandomString(Random, Len); }
         public static string RandomString(Random R, int Len)
         {
             StringBuilder builder = new StringBuilder();
@@ -309,7 +311,7 @@ namespace TA.SharpBooru
                     return validHosts[0];
                 else
                 {
-                    int randomIndex = (new Random()).Next(0, validHosts.Count);
+                    int randomIndex = Random.Next(0, validHosts.Count);
                     return validHosts[randomIndex];
                 }
             }
