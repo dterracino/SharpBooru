@@ -76,10 +76,15 @@
   <ItemGroup>
     <Compile Include="Client\CLI\BooruConsole.cs" />
     <Compile Include="NetIO\Client.cs" />
+    <Compile Include="NetIO\Encryption\AesEncryptor.cs" />
+    <Compile Include="NetIO\Encryption\SymmetricEncryptor.cs" />
     <Compile Include="NetIO\Packet.cs" />
     <Compile Include="NetIO\Packet0_Success.cs" />
     <Compile Include="NetIO\Packet1_Exception.cs" />
+    <Compile Include="NetIO\Encryption\StreamEncryptor.cs" />
     <Compile Include="NetIO\ReaderWriter.cs" />
+    <Compile Include="NetIO\ServerException.cs" />
+    <Compile Include="NetIO\TcpClientWrapper.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Client\GUI\Controls\ImageBox\ImageBox.cs">
       <SubType>Component</SubType>

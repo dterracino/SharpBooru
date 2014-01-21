@@ -24,22 +24,28 @@ namespace TA.SharpBooru.NetIO
             }
         }
 
-        private Stream stream;
-        private List<ResponseWaiter> waiters = new List<ResponseWaiter>();
+        private Logger _Logger;
+        private List<ResponseWaiter> _Waiters;
+        private TcpClient _Client;
+        private Stream _Stream;
 
-        public Client()
+        public Client(IPEndPoint EndPoint, Logger Logger = null)
         {
+            _Logger = Logger;
+            _Waiters = new List<ResponseWaiter>();
+            _Client = new TcpClient();
+            _Client.Connect(EndPoint);
         }
 
         private void ProgressResponse(Packet response)
         {
-            lock (waiters)
-                for (int i = 0; i < waiters.Count; i++)
-                    if (waiters[i].RequestID == response.RequestID)
+            lock (_Waiters)
+                for (int i = 0; i < _Waiters.Count; i++)
+                    if (_Waiters[i].RequestID == response.RequestID)
                     {
-                        waiters[i].Response = response;
-                        waiters[i].WaitEvent.Set();
-                        waiters.RemoveAt(i);
+                        _Waiters[i].Response = response;
+                        _Waiters[i].WaitEvent.Set();
+                        _Waiters.RemoveAt(i);
                         return;
                     }
             throw new ProtocolViolationException("Nobody is waiting for this RequestID");
@@ -47,11 +53,12 @@ namespace TA.SharpBooru.NetIO
 
         public Packet DoRequest(Packet RequestPacket, TimeSpan? Timeout = null)
         {
-            RequestPacket.ToStream(stream);
+            //TODO Test connection before sending and reconnect if needed
+            RequestPacket.ToStream(_Stream);
             using (ResponseWaiter waiter = new ResponseWaiter(RequestPacket.RequestID))
             {
-                lock (waiters)
-                    waiters.Add(waiter);
+                lock (_Waiters)
+                    _Waiters.Add(waiter);
                 if (Timeout.HasValue)
                     waiter.WaitEvent.Wait(Timeout.Value);
                 else waiter.WaitEvent.Wait();

@@ -9,7 +9,7 @@ namespace TA.SharpBooru.NetIO
 
         public override void FromReader(ReaderWriter Reader) { }
 
-        public override void ToWriter(ReaderWriter Writer) { WritePacketHeader(Writer); }
+        public override void ToWriter(ReaderWriter Writer) { WritePacketHeader(Writer, 0); }
 
         public override void Dispose() { }
     }

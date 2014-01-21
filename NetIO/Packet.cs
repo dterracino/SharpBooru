@@ -10,7 +10,9 @@ namespace TA.SharpBooru.NetIO
      *   |  RequestID (4)  |  PacketID (2)  |  PayloadLength (4)  |  Payload (n)  |
      *   |_________________|________________|_____________________|_______________|
      * 
-     *   RequestID is sent first. All values are LSB first.
+     *   RequestID is sent first. All values are LSB first (use ReaderWriter class).
+     *   Every request has an answer, if no data is replied, use Packet0_Success.
+     *   The request and answer have the same RequestID.
      */
 
     public abstract class Packet : IDisposable
@@ -19,10 +21,11 @@ namespace TA.SharpBooru.NetIO
 
         public abstract ushort PacketID { get; }
 
-        public void FromBytes(byte[] Bytes) { FromStream(new MemoryStream(Bytes)); }
+        //public void FromBytes(byte[] Bytes) { FromStream(new MemoryStream(Bytes)); }
         public void FromStream(Stream Stream) { FromReader(new BinaryReader(Stream)); }
         public abstract void FromReader(BinaryReader Reader);
 
+        /*
         public byte[] ToBytes()
         {
             using (MemoryStream ms = new MemoryStream())
@@ -31,6 +34,7 @@ namespace TA.SharpBooru.NetIO
                 return ms.ToArray();
             }
         }
+        */
         public void ToStream(Stream Stream) { ToWriter(new ReaderWriter(Stream)); }
         public abstract void ToWriter(ReaderWriter Writer);
 
