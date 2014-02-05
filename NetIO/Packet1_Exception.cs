@@ -8,26 +8,11 @@ namespace TA.SharpBooru.NetIO
         public Exception Exception { get; set; }
 
         public override ushort PacketID { get { return 1; } }
-        public override uint PayloadLength { get { return (uint)Exception.Message.Length * 2; } }
 
-        public override void FromReader(BinaryReader Reader)
-        {
+        public override void FromReader(ReaderWriter Reader) { Exception = new Exception(Reader.ReadString()); }
 
-        }
+        public override void ToWriter(ReaderWriter Writer) { Writer.Write(Exception.Message, true); }
 
-        public override void ToWriter(BinaryWriter Writer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void Dispose()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void ToWriter(ReaderWriter Writer)
-        {
-            throw new NotImplementedException();
-        }
+        public override void Dispose() { }
     }
 }

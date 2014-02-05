@@ -202,7 +202,7 @@
     <Compile Include="BooruMiscOption.cs" />
     <Compile Include="BooruPost.cs" />
     <Compile Include="BooruProtocol.cs" />
-    <Compile Include="NetIO\Server.cs" />
+    <Compile Include="NetIO\NetIOServer.cs" />
     <Compile Include="Server\BooruSearch.cs" />
     <Compile Include="BooruTag.cs" />
     <Compile Include="BooruUser.cs" />

@@ -37,11 +37,11 @@ namespace TA.SharpBooru.NetIO
             _Client.Connect(EndPoint);
         }
 
-        private void ProgressResponse(Packet response)
+        private void ProgressResponse(uint RequestID, Packet response)
         {
             lock (_Waiters)
                 for (int i = 0; i < _Waiters.Count; i++)
-                    if (_Waiters[i].RequestID == response.RequestID)
+                    if (_Waiters[i].RequestID == RequestID)
                     {
                         _Waiters[i].Response = response;
                         _Waiters[i].WaitEvent.Set();
@@ -54,8 +54,8 @@ namespace TA.SharpBooru.NetIO
         public Packet DoRequest(Packet RequestPacket, TimeSpan? Timeout = null)
         {
             //TODO Test connection before sending and reconnect if needed
-            RequestPacket.ToStream(_Stream);
-            using (ResponseWaiter waiter = new ResponseWaiter(RequestPacket.RequestID))
+            uint requestID = RequestPacket.ToStream(_Stream);
+            using (ResponseWaiter waiter = new ResponseWaiter(requestID))
             {
                 lock (_Waiters)
                     _Waiters.Add(waiter);

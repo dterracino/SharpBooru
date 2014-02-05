@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 
 namespace TA.SharpBooru.NetIO
 {
     /*   Packet Layout
      *    _________________ ________________ _____________________ _______________
+     *   |                 |---------------------Packet class---------------------|
      *   |                 |                |                     |               |
      *   |  RequestID (4)  |  PacketID (2)  |  PayloadLength (4)  |  Payload (n)  |
      *   |_________________|________________|_____________________|_______________|
@@ -17,32 +19,30 @@ namespace TA.SharpBooru.NetIO
 
     public abstract class Packet : IDisposable
     {
-        public readonly uint RequestID = (uint)(Helper.Random.Next());
-
         public abstract ushort PacketID { get; }
 
-        //public void FromBytes(byte[] Bytes) { FromStream(new MemoryStream(Bytes)); }
-        public void FromStream(Stream Stream) { FromReader(new BinaryReader(Stream)); }
-        public abstract void FromReader(BinaryReader Reader);
+        protected abstract void ToWriter(ReaderWriter Writer);
+        protected abstract void FromReader(ReaderWriter Reader);
 
-        /*
-        public byte[] ToBytes()
+        /// <summary>Write the packet to a stream</summary>
+        /// <param name="Stream">The stream</param>
+        /// <param name="RequestID">The RequestID to send, use 0 for a random RID</param>
+        /// <returns>The used RequestID</returns>
+        public uint ToStream(Stream Stream, uint RequestID = 0)
         {
-            using (MemoryStream ms = new MemoryStream())
+            uint __requestID = RequestID < 1 ? (uint)Helper.Random.Next() : RequestID;
+            using (ReaderWriter packetWriter = new ReaderWriter(Stream))
             {
-                ToStream(ms);
-                return ms.ToArray();
+                packetWriter.Write(__requestID);
+                packetWriter.Write(PacketID);
+                using (MemoryStream bodyStream = new MemoryStream())
+                {
+                    using (ReaderWriter bodyWriter = new ReaderWriter(bodyStream))
+                        ToWriter(bodyWriter);
+                    packetWriter.Write(bodyStream.ToArray(), true);
+                }
             }
-        }
-        */
-        public void ToStream(Stream Stream) { ToWriter(new ReaderWriter(Stream)); }
-        public abstract void ToWriter(ReaderWriter Writer);
-
-        protected void WritePacketHeader(ReaderWriter Writer, uint PayloadLength)
-        {
-            Writer.Write(RequestID);
-            Writer.Write(PacketID);
-            Writer.Write(PayloadLength);
+            return __requestID;
         }
 
         public abstract void Dispose();

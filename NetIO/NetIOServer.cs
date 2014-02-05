@@ -2,11 +2,10 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
-using TA.SharpBooru.Server;
 
 namespace TA.SharpBooru.NetIO
 {
-    public class Server : Server
+    public class NetIOServer : Server.Server
     {
         private List<TcpClient> _Clients = new List<TcpClient>();
         private TcpListener _Listener;
