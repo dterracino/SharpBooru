@@ -4,14 +4,14 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 using TA.SharpBooru.Server;
 
-namespace TA.NetworkIO
+namespace TA.SharpBooru.NetIO
 {
-    public class TANIO_Server : Server
+    public class Server : Server
     {
         private List<TcpClient> _Clients = new List<TcpClient>();
         private TcpListener _Listener;
 
-        public override string ServerName { get { return "SharpBooru Server"; } }
+        public override string ServerName { get { return "NetIO Server"; } }
         public override string ServerInfo { get { return "LocalEndPoint " + _Listener.LocalEndpoint.ToString(); } }
 
         public override object ConnectClient() { return _Listener.AcceptTcpClient(); }
