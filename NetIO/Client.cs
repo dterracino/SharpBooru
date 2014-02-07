@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading;
 using System.Net.Sockets;
 using System.Collections.Generic;
+using TA.SharpBooru.NetIO.Packets;
 
 namespace TA.SharpBooru.NetIO
 {
@@ -62,8 +63,9 @@ namespace TA.SharpBooru.NetIO
                 if (Timeout.HasValue)
                     waiter.WaitEvent.Wait(Timeout.Value);
                 else waiter.WaitEvent.Wait();
-                //TODO HANDLE EXCEPTION PACKET
-                return waiter.Response;
+                if (waiter.Response is Packet1_Exception)
+                    throw ((Packet1_Exception)waiter.Response).Exception;
+                else return waiter.Response;
             }
         }
     }

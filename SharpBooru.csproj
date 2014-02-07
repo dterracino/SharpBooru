@@ -79,12 +79,12 @@
     <Compile Include="NetIO\Encryption\AesEncryptor.cs" />
     <Compile Include="NetIO\Encryption\SymmetricEncryptor.cs" />
     <Compile Include="NetIO\Packet.cs" />
-    <Compile Include="NetIO\Packet0_Success.cs" />
-    <Compile Include="NetIO\Packet1_Exception.cs" />
+    <Compile Include="NetIO\Packets\Packet0_Success.cs" />
+    <Compile Include="NetIO\Packets\Packet1_Exception.cs" />
     <Compile Include="NetIO\Encryption\StreamEncryptor.cs" />
+    <Compile Include="NetIO\Packets\Packet2_IsAlive.cs" />
     <Compile Include="NetIO\ReaderWriter.cs" />
-    <Compile Include="NetIO\ServerException.cs" />
-    <Compile Include="NetIO\TcpClientWrapper.cs" />
+    <Compile Include="NetIO\ClientHandler.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Client\GUI\Controls\ImageBox\ImageBox.cs">
       <SubType>Component</SubType>
@@ -202,7 +202,7 @@
     <Compile Include="BooruMiscOption.cs" />
     <Compile Include="BooruPost.cs" />
     <Compile Include="BooruProtocol.cs" />
-    <Compile Include="NetIO\NetIOServer.cs" />
+    <Compile Include="NetIO\Server.cs" />
     <Compile Include="Server\BooruSearch.cs" />
     <Compile Include="BooruTag.cs" />
     <Compile Include="BooruUser.cs" />

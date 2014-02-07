@@ -1,9 +1,8 @@
-﻿
-namespace TA.SharpBooru.NetIO
+﻿namespace TA.SharpBooru.NetIO.Packets
 {
-    public class Packet0_Success : Packet
+    public class Packet2_IsAlive : Packet
     {
-        public override ushort PacketID { get { return 0; } }
+        public override ushort PacketID { get { return 2; } }
 
         protected override void ToWriter(ReaderWriter Writer) { }
 

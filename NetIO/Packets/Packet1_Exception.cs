@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace TA.SharpBooru.NetIO
+namespace TA.SharpBooru.NetIO.Packets
 {
     public class Packet1_Exception : Packet
     {
