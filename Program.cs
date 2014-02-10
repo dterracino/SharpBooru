@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
+using TA.SharpBooru.Client;
 using TA.SharpBooru.Client.GUI;
 using TA.SharpBooru.Client.CLI;
 using CommandLine;
@@ -36,14 +37,21 @@ namespace TA.SharpBooru
             return 1;
         }
 
-        private static ClientBooru ConnectBooru(Options options) { return new ClientBooru(options.Server, options.Username ?? "guest", options.Password ?? "guest"); }
+        private static BooruClient ConnectBooru(Options options) 
+        {
+            BooruClient client = new BooruClient();
+            client.Connect(options.Server);
+            if (options.Username != null && options.Password != null)
+                client.Login(options.Username, options.Password);
+            return client;
+        }
 
         private static int RunClientGUI(Options options)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             //TODO Show connect dialog
-            using (ClientBooru booru = ConnectBooru(options))
+            using (BooruClient booru = ConnectBooru(options))
             using (MainForm mForm = new MainForm(booru))
             {
                 GUIHelper.HideConsoleWindow();
@@ -54,9 +62,8 @@ namespace TA.SharpBooru
 
         private static int RunClientCLI(Options options)
         {
-            using (ClientBooru booru = ConnectBooru(options))
+            using (BooruClient booru = ConnectBooru(options))
             {
-                booru.Connect();
                 BooruConsole bConsole = new BooruConsole(booru);
                 if (!string.IsNullOrWhiteSpace(options.Command))
                     bConsole.ExecuteCmdLine(options.Command);

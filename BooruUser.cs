@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace TA.SharpBooru
 {
-    public class BooruUser : ICloneable
+    public class BooruUser : BooruResource, ICloneable
     {
         public ulong ID;
         public bool IsAdmin;
@@ -27,13 +27,13 @@ namespace TA.SharpBooru
 
         public string Password { set { MD5Password = Helper.ByteToString(Helper.MD5OfString(value)); } }
 
-        public void ToWriter(BinaryWriter Writer, bool IncludePassword)
+        public override void ToWriter(ReaderWriter Writer)
         {
-            Writer.Write(IncludePassword);
+            Writer.Write(MD5Password != null);
             Writer.Write(ID);
-            Writer.Write(Username);
-            if (IncludePassword)
-                Writer.Write(MD5Password);
+            Writer.Write(Username, true);
+            if (MD5Password != null)
+                Writer.Write(MD5Password, true);
 
             Writer.Write(IsAdmin);
             Writer.Write(CanLoginDirect);
@@ -48,26 +48,26 @@ namespace TA.SharpBooru
             Writer.Write(MaxRating);
         }
 
-        public static BooruUser FromReader(BinaryReader Reader)
+        public static BooruUser FromReader(ReaderWriter Reader)
         {
-            bool includePassword = Reader.ReadBoolean();
+            bool includePassword = Reader.ReadBool();
             return new BooruUser()
             {
-                ID = Reader.ReadUInt64(),
+                ID = Reader.ReadULong(),
                 Username = Reader.ReadString(),
                 MD5Password = includePassword ? Reader.ReadString() : null,
 
-                IsAdmin = Reader.ReadBoolean(),
-                CanLoginDirect = Reader.ReadBoolean(),
-                CanLoginOnline = Reader.ReadBoolean(),
-                CanAddPosts = Reader.ReadBoolean(),
-                AdvancePostControl = Reader.ReadBoolean(),
-                CanDeletePosts = Reader.ReadBoolean(),
-                CanEditPosts = Reader.ReadBoolean(),
-                CanEditTags = Reader.ReadBoolean(),
-                CanDeleteTags = Reader.ReadBoolean(),
+                IsAdmin = Reader.ReadBool(),
+                CanLoginDirect = Reader.ReadBool(),
+                CanLoginOnline = Reader.ReadBool(),
+                CanAddPosts = Reader.ReadBool(),
+                AdvancePostControl = Reader.ReadBool(),
+                CanDeletePosts = Reader.ReadBool(),
+                CanEditPosts = Reader.ReadBool(),
+                CanEditTags = Reader.ReadBool(),
+                CanDeleteTags = Reader.ReadBool(),
 
-                MaxRating = Reader.ReadUInt16()
+                MaxRating = Reader.ReadUShort()
             };
         }
 
@@ -141,15 +141,15 @@ namespace TA.SharpBooru
 
         public int Remove(string Username) { return this.RemoveAll(x => { return x.Username == Username; }); }
 
-        public void ToWriter(BinaryWriter Writer, bool IncludePassword)
+        public void ToWriter(ReaderWriter Writer)
         {
             Writer.Write((uint)this.Count);
-            this.ForEach(x => x.ToWriter(Writer, IncludePassword));
+            this.ForEach(x => x.ToWriter(Writer));
         }
 
-        public static BooruUserList FromReader(BinaryReader Reader)
+        public static BooruUserList FromReader(ReaderWriter Reader)
         {
-            uint count = Reader.ReadUInt32();
+            uint count = Reader.ReadUInt();
             BooruUserList bUserList = new BooruUserList();
             for (uint i = 0; i < count; i++)
                 bUserList.Add(BooruUser.FromReader(Reader));

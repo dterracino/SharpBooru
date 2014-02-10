@@ -11,7 +11,7 @@ namespace TA.SharpBooru.Client.GUI
 {
     public partial class PostViewerDialog : Form
     {
-        private ClientBooru _Booru;
+        private BooruClient _Booru;
         private BooruPost _Post;
         private List<ulong> _PostIDs;
         private int _Index = -1;
@@ -34,7 +34,7 @@ namespace TA.SharpBooru.Client.GUI
             }
         }
 
-        public PostViewerDialog(ClientBooru Booru, List<ulong> PostIDs, int StartIndex = 0)
+        public PostViewerDialog(BooruClient Booru, List<ulong> PostIDs, int StartIndex = 0)
         {
             _Booru = Booru;
             if (PostIDs == null)

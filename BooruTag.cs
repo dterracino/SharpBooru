@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace TA.SharpBooru
 {
-    public class BooruTag : ICloneable
+    public class BooruTag : BooruResource, ICloneable
     {
         public ulong ID;
 
@@ -39,24 +39,24 @@ namespace TA.SharpBooru
 
         public override int GetHashCode() { return ID.GetHashCode(); }
 
-        public void ToWriter(BinaryWriter Writer)
+        public override void ToWriter(ReaderWriter Writer)
         {
             Writer.Write(ID);
-            Writer.Write(Tag);
-            Writer.Write(Type);
-            Writer.Write(Description);
+            Writer.Write(Tag, true);
+            Writer.Write(Type, true);
+            Writer.Write(Description, true);
             Writer.Write(Color.ToArgb());
         }
 
-        public static BooruTag FromReader(BinaryReader Reader)
+        public static BooruTag FromReader(ReaderWriter Reader)
         {
-            ulong id = Reader.ReadUInt64();
+            ulong id = Reader.ReadULong();
             return new BooruTag(Reader.ReadString())
             {
                 ID = id,
                 Type = Reader.ReadString(),
                 Description = Reader.ReadString(),
-                Color = Color.FromArgb(Reader.ReadInt32())
+                Color = Color.FromArgb(Reader.ReadInt())
             };
         }
 
@@ -112,15 +112,15 @@ namespace TA.SharpBooru
 
         public int Remove(ulong ID) { return this.RemoveAll(x => { return x.ID == ID; }); }
 
-        public void ToWriter(BinaryWriter Writer)
+        public void ToWriter(ReaderWriter Writer)
         {
             Writer.Write((uint)this.Count);
             this.ForEach(x => x.ToWriter(Writer));
         }
 
-        public static BooruTagList FromReader(BinaryReader Reader)
+        public static BooruTagList FromReader(ReaderWriter Reader)
         {
-            uint count = Reader.ReadUInt32();
+            uint count = Reader.ReadUInt();
             BooruTagList bTagList = new BooruTagList();
             for (uint i = 0; i < count; i++)
                 bTagList.Add(BooruTag.FromReader(Reader));

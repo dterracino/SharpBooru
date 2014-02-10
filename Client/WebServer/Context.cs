@@ -89,7 +89,7 @@ namespace TA.SharpBooru.Client.WebServer
         public IPAddress ClientIP { get { return InnerContext.Request.RemoteEndPoint.Address; } }
         public string RequestPath { get { return InnerContext.Request.Url.LocalPath ?? string.Empty; } }
         public string UserAgent { get { return InnerContext.Request.UserAgent ?? string.Empty; } }
-        public ClientBooru Booru { get { return Server.Booru; } }
+        public BooruClient Booru { get { return Server.Booru; } }
 
         public string MimeType
         {

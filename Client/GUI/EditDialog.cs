@@ -13,7 +13,7 @@ namespace TA.SharpBooru.Client.GUI
     {
         public EditDialog() { InitializeComponent(); }
 
-        public DialogResult ShowDialog(ClientBooru Booru, ref BooruPost Post)
+        public DialogResult ShowDialog(BooruClient Booru, ref BooruPost Post)
         {
             textBoxTags.SetTags(Booru.GetAllTags());
             textBoxTags.Text = Post.Tags.ToString();

@@ -1,4 +1,4 @@
-﻿namespace TA.SharpBooru.NetIO.Packets
+﻿namespace TA.SharpBooru.NetIO.Packets.CorePackets
 {
     public class Packet0_Success : Packet
     {

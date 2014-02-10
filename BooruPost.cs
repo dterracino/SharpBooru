@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace TA.SharpBooru
 {
-    public class BooruPost : ICloneable, IDisposable
+    public class BooruPost : BooruResource, ICloneable, IDisposable
     {
         public ulong ID = 0;
         public string User = string.Empty;
@@ -42,13 +42,13 @@ namespace TA.SharpBooru
         public override int GetHashCode() { return ID.GetHashCode(); }
 
         //TODO IncludeThumb, IncludeImage
-        public void ToWriter(BinaryWriter Writer)
+        public override void ToWriter(ReaderWriter Writer)
         {
             Writer.Write(ID);
-            Writer.Write(User);
+            Writer.Write(User, true);
             Writer.Write(Private);
-            Writer.Write(Source);
-            Writer.Write(Description);
+            Writer.Write(Source, true);
+            Writer.Write(Description, true);
             Writer.Write(Rating);
             Writer.Write(Width);
             Writer.Write(Height);
@@ -57,27 +57,27 @@ namespace TA.SharpBooru
             Writer.Write(EditCount);
             Writer.Write(Score);
             Writer.Write((uint)ImageHash.Length);
-            Writer.Write(ImageHash);
+            Writer.Write(ImageHash, true);
             Tags.ToWriter(Writer);
         }
 
-        public static BooruPost FromReader(BinaryReader Reader)
+        public static BooruPost FromReader(ReaderWriter Reader)
         {
             return new BooruPost()
             {
-                ID = Reader.ReadUInt64(),
+                ID = Reader.ReadULong(),
                 User = Reader.ReadString(),
-                Private = Reader.ReadBoolean(),
+                Private = Reader.ReadBool(),
                 Source = Reader.ReadString(),
                 Description = Reader.ReadString(),
                 Rating = Reader.ReadByte(),
-                Width = Reader.ReadUInt32(),
-                Height = Reader.ReadUInt32(),
-                CreationDate = Helper.UnixTimeToDateTime(Reader.ReadUInt32()),
-                ViewCount = Reader.ReadUInt64(),
-                EditCount = Reader.ReadUInt64(),
-                Score = Reader.ReadInt64(),
-                ImageHash = Reader.ReadBytes((int)Reader.ReadUInt32()),
+                Width = Reader.ReadUInt(),
+                Height = Reader.ReadUInt(),
+                CreationDate = Helper.UnixTimeToDateTime(Reader.ReadUInt()),
+                ViewCount = Reader.ReadULong(),
+                EditCount = Reader.ReadULong(),
+                Score = Reader.ReadLong(),
+                ImageHash = Reader.ReadBytes(),
                 Tags = BooruTagList.FromReader(Reader)
             };
         }
@@ -172,15 +172,15 @@ namespace TA.SharpBooru
 
         public int Remove(ulong ID) { return this.RemoveAll(x => { return x.ID == ID; }); }
 
-        public void ToClientWriter(BinaryWriter Writer)
+        public void ToClientWriter(ReaderWriter Writer)
         {
             Writer.Write((uint)this.Count);
             this.ForEach(x => x.ToWriter(Writer));
         }
 
-        public static BooruPostList FromClientReader(BinaryReader Reader)
+        public static BooruPostList FromClientReader(ReaderWriter Reader)
         {
-            uint count = Reader.ReadUInt32();
+            uint count = Reader.ReadUInt();
             BooruPostList bTagList = new BooruPostList();
             for (uint i = 0; i < count; i++)
                 bTagList.Add(BooruPost.FromReader(Reader));

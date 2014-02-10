@@ -66,17 +66,13 @@ namespace TA.SharpBooru.Server
 
             _Logger.LogLine("Creating server instance...");
             ushort port = _Options.Port < 1 ? (ushort)2400 : _Options.Port;
-            _BooruServer = new BooruServer(booru, _Logger, sCertificate, port);
+            _BooruServer = new BooruServer(booru, _Logger, port);
 
             _Logger.LogLine("Starting BroadcastListener...");
             _BroadcastListenerThread = new Thread(() =>
                 {
                     while (true)
-                        try
-                        {
-                            string booruName = booru.GetMiscOption<string>(BooruMiscOption.BooruName);
-                            Broadcaster.ListenForBroadcast(booruName, port);
-                        }
+                        try { Broadcaster.ListenForBroadcast(booru.BooruInfo.BooruName, port); }
                         catch (Exception ex)
                         {
                             if (_BroadcastListenerThreadRunning)

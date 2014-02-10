@@ -21,7 +21,7 @@ namespace TA.SharpBooru.Client.GUI.Controls
 
         public bool AsynchronousLoading = true;
 
-        private ClientBooru _Booru = null;
+        private BooruClient _Booru = null;
         private List<ulong> _Posts = new List<ulong>();
         private ushort _ThumbsPerPage = 30;
 
@@ -99,7 +99,7 @@ namespace TA.SharpBooru.Client.GUI.Controls
             RefreshLabel();
         }
 
-        public void SetBooru(ClientBooru Booru) { _Booru = Booru; }
+        public void SetBooru(BooruClient Booru) { _Booru = Booru; }
 
         private void pageSwitcher_PageChanged(object sender, EventArgs e)
         {
