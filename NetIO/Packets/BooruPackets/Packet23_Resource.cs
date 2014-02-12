@@ -4,7 +4,7 @@ namespace TA.SharpBooru.NetIO.Packets.BooruPackets
 {
     public class Packet23_Resource : Packet
     {
-        public enum ResourceType : byte { Post, Tag, Image, Thumbnail, User }
+        public enum ResourceType : byte { Post, Tag, Image, Thumbnail, User, BooruInfo }
 
         public BooruResource Resource { get; set; }
         public ResourceType Type { get; set; }
@@ -27,6 +27,7 @@ namespace TA.SharpBooru.NetIO.Packets.BooruPackets
                 case ResourceType.Image:
                 case ResourceType.Thumbnail: Resource = BooruImage.FromReader(Reader); break;
                 case ResourceType.User: Resource = BooruUser.FromReader(Reader); break;
+                case ResourceType.BooruInfo: Resource = BooruInfo.FromReader(Reader); break;
             }
         }
 

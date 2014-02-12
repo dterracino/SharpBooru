@@ -1,12 +1,8 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Threading;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
 using Mono.Unix.Native;
-using CommandLine;
 
 namespace TA.SharpBooru.Server
 {
@@ -54,12 +50,6 @@ namespace TA.SharpBooru.Server
                 throw new ArgumentNullException("Please provide a booru location");
             else if (!Directory.Exists(_Options.Location))
                 throw new DirectoryNotFoundException("Booru location not found");
-
-            _Logger.LogLine("Loading certificate...");
-            string certificateFile = Path.Combine(_Options.Location, "cert.pfx");
-            if (!File.Exists(certificateFile))
-                throw new FileNotFoundException("Certificate (cert.pfx) not found");
-            X509Certificate2 sCertificate = new X509Certificate2(certificateFile, "sharpbooru");
 
             _Logger.LogLine("Loading booru database...");
             ServerBooru booru = new ServerBooru(_Options.Location);

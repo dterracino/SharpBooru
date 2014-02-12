@@ -4,7 +4,7 @@ namespace TA.SharpBooru.NetIO.Packets.BooruPackets
 {
     public class Packet21_AddResource : Packet
     {
-        public enum ResourceType : byte { Post, User, Alias }
+        public enum ResourceType : byte { Post, User }
 
         public ResourceType Type { get; set; }
         public BooruResource Resource { get; set; }

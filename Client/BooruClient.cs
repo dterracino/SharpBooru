@@ -14,6 +14,8 @@ namespace TA.SharpBooru.Client
 {
     public class BooruClient:IDisposable
     {
+        public delegate bool CheckFingerprintDelegate(string Fingerprint);
+
         private const ushort ProtocolVersion = 50;
 
         private Logger _Logger;
@@ -29,60 +31,82 @@ namespace TA.SharpBooru.Client
         {
             if (_CurrentRequestID == uint.MaxValue)
                 _CurrentRequestID = 0;
+            else _CurrentRequestID++;
             return _CurrentRequestID;
         }
 
         public BooruClient(Logger Logger = null) { _Logger = Logger; }
 
-        public void Connect(IPEndPoint EndPoint)
+        public void Connect(IPEndPoint EndPoint, CheckFingerprintDelegate CheckFingerprintDelegate = null)
         {
-            _Waiters = new List<ResponseWaiter>();
             _Client = new TcpClient();
             _Client.Connect(EndPoint);
             _Stream = _Client.GetStream();
             _ReaderWriter = new ReaderWriter(_Stream);
-            DoHandshake();
-            _ReceiverThread = new Thread(ReceiveThreadCode);
-            _ReceiverThread.Start();
+            string errorString = DoHandshake(CheckFingerprintDelegate);
+            if (errorString == null)
+            {
+                _Waiters = new List<ResponseWaiter>();
+                _ReceiverThread = new Thread(ReceiverThreadCode);
+                _ReceiverThread.Start();
+            }
+            else
+            {
+                Disconnect();
+                throw new Exception(errorString);
+            }
         }
 
-        private void DoHandshake()
+        private string DoHandshake(CheckFingerprintDelegate ChkDelegate)
         {
             _ReaderWriter.Write(ProtocolVersion);
-            _Stream.Flush();
-            byte serverProtocolVersion = _ReaderWriter.ReadByte();
+            _ReaderWriter.Flush();
+            ushort serverProtocolVersion = _ReaderWriter.ReadUShort();
             if (serverProtocolVersion != ProtocolVersion)
-                throw new Exception(string.Format("ServerProtocolVersion {0} != ClientProtocolVersion {1}", serverProtocolVersion, ProtocolVersion));
+                return string.Format("ServerProtocolVersion {0} != ClientProtocolVersion {1}", serverProtocolVersion, ProtocolVersion);
             Packet4_ServerInfo serverInfo = (Packet4_ServerInfo)Packet.PacketFromReader(_ReaderWriter);
-            //TODO Check fingerprint
-            if (serverInfo.Encryption)
+            using (RSA rsa = new RSA(serverInfo.Modulus, serverInfo.Exponent))
             {
-                using (RSA rsa = new RSA(serverInfo.Modulus, serverInfo.Exponent))
+                string fingerprint = rsa.GetFingerprint();
+                //_Logger.LogLine("RSA Fingerprint is {0}", fingerprint);
+                bool fingerprintOK = true;
+                if (ChkDelegate != null)
+                    fingerprintOK = ChkDelegate(rsa.GetFingerprint());
+                if (fingerprintOK)
                 {
-                    byte[] key = new byte[256 / 8];
-                    Helper.Random.NextBytes(key); //TODO RNGCryptoServiceProvider
-                    key = rsa.EncryptPublic(key);
-                    (new Packet5_Encryption() { Key = key }).PacketToWriter(_ReaderWriter);
-                    _Stream.Flush();
-                    //TODO Switch to AES
+                    if (serverInfo.Encryption)
+                    {
+                        byte[] key = new byte[256 / 8];
+                        Helper.Random.NextBytes(key); //TODO RNGCryptoServiceProvider
+                        key = rsa.EncryptPublic(key);
+                        (new Packet5_Encryption() { Key = key }).PacketToWriter(_ReaderWriter);
+                        //TODO Switch to AES
+                    }
+                    else (new Packet0_Success()).PacketToWriter(_ReaderWriter);
                 }
+                else return "Fingerprint not accepted";
             }
             _BooruInfo = (BooruInfo)((Packet23_Resource)Packet.PacketFromReader(_ReaderWriter)).Resource;
             _CurrentUser = (BooruUser)((Packet23_Resource)Packet.PacketFromReader(_ReaderWriter)).Resource;
+            return null;
         }
 
         public void Dispose() { Disconnect(); }
 
         public void Disconnect()
         {
-            //TODO Disconnect
-            foreach (ResponseWaiter rWaiter in _Waiters)
-                rWaiter.WaitEvent.Set();
-            _ReceiverThread.Abort();
-            _Client.Close();
+            if (_ReceiverThread.IsAlive)
+                _ReceiverThread.Abort();
+            try { (new Packet3_Disconnect()).PacketToWriter(_ReaderWriter); }
+            catch { }
+            lock (_Waiters) //Maybe aborted _ReceiverThread locked _Waiters, Deadlock?
+                foreach (ResponseWaiter rWaiter in _Waiters)
+                    rWaiter.WaitEvent.Set();
+            try { _Client.Close(); }
+            catch { }
         }
 
-        private void ReceiveThreadCode()
+        private void ReceiverThreadCode()
         {
             try
             {
@@ -110,21 +134,20 @@ namespace TA.SharpBooru.Client
                         _Waiters.RemoveAt(i);
                         return;
                     }
-            throw new ProtocolViolationException("Nobody is waiting for this RequestID");
         }
 
         private Packet DoRequest(Packet RequestPacket, TimeSpan? Timeout = null)
         {
             uint requestID = GetNextRequestID();
-            lock (_ReaderWriter)
-            {
-                RequestPacket.PacketToWriter(_ReaderWriter);
-                _Stream.Flush();
-            }
             using (ResponseWaiter waiter = new ResponseWaiter(requestID))
             {
                 lock (_Waiters)
                     _Waiters.Add(waiter);
+                lock (_ReaderWriter)
+                {
+                    _ReaderWriter.Write(requestID);
+                    RequestPacket.PacketToWriter(_ReaderWriter);
+                }
                 if (Timeout.HasValue)
                     waiter.WaitEvent.Wait(Timeout.Value);
                 else waiter.WaitEvent.Wait();
@@ -133,8 +156,6 @@ namespace TA.SharpBooru.Client
                 else return waiter.Response;
             }
         }
-
-        // ##################################################
 
         private BooruUser _CurrentUser;
         private BooruInfo _BooruInfo;
@@ -222,12 +243,13 @@ namespace TA.SharpBooru.Client
         public void AddAlias(string Alias, string Tag) { AddAlias(Alias, GetTag(Tag)); }
         public void AddAlias(string Alias, ulong TagID)
         {
-            throw new NotImplementedException();
+            DoRequest(new Packet27_AddAlias() { Alias = Alias, TagID = TagID });
         }
 
         public BooruTag GetTag(string TagString)
         {
-            throw new NotImplementedException();
+            Packet tagPacket = DoRequest(new Packet17_GetResource() { Type = Packet17_GetResource.ResourceType.Tag, Name = TagString });
+            return (BooruTag)((Packet23_Resource)tagPacket).Resource;
         }
         public BooruTag GetTag(ulong ID)
         {
@@ -261,12 +283,15 @@ namespace TA.SharpBooru.Client
             _CachePosts.Remove(Post.ID);
         }
 
-        public void AddUser(BooruUser User) { DoRequest(new Packet21_AddResource() { Type = Packet21_AddResource.ResourceType.User, Resource = User }); }
+        public void AddUser(BooruUser User)
+        {
+            DoRequest(new Packet21_AddResource() { Type = Packet21_AddResource.ResourceType.User, Resource = User });
+        }
 
         public void DeleteUser(BooruUser User) { DeleteUser(User.Username); }
         public void DeleteUser(string Username)
         {
-            throw new NotImplementedException();
+            DoRequest(new Packet19_DeleteResource() { Type = Packet19_DeleteResource.ResourceType.User, Name = Username });
         }
 
         public BooruPostList GetPosts(List<ulong> IDs)
@@ -289,7 +314,10 @@ namespace TA.SharpBooru.Client
             return _CacheAllTags;
         }
 
-        public void IsAlive() { DoRequest(new Packet2_IsAlive()); }
+        public void IsAlive()
+        {
+            DoRequest(new Packet2_IsAlive());
+        }
 
         public void AddPost(ref BooruPost NewPost) { AddPost(ref NewPost, null); }
         public void AddPost(ref BooruPost NewPost, Action<float> ProgressCallback) { NewPost.ID = AddPost(NewPost, ProgressCallback); }

@@ -41,7 +41,6 @@ namespace TA.SharpBooru
 
         public override int GetHashCode() { return ID.GetHashCode(); }
 
-        //TODO IncludeThumb, IncludeImage
         public override void ToWriter(ReaderWriter Writer)
         {
             Writer.Write(ID);
@@ -56,14 +55,19 @@ namespace TA.SharpBooru
             Writer.Write(ViewCount);
             Writer.Write(EditCount);
             Writer.Write(Score);
-            Writer.Write((uint)ImageHash.Length);
             Writer.Write(ImageHash, true);
             Tags.ToWriter(Writer);
+            Writer.Write(Thumbnail != null);
+            if (Thumbnail != null)
+                Thumbnail.ToWriter(Writer);
+            Writer.Write(Image != null);
+            if (Image != null)
+                Image.ToWriter(Writer);
         }
 
         public static BooruPost FromReader(ReaderWriter Reader)
         {
-            return new BooruPost()
+            BooruPost post = new BooruPost()
             {
                 ID = Reader.ReadULong(),
                 User = Reader.ReadString(),
@@ -77,9 +81,14 @@ namespace TA.SharpBooru
                 ViewCount = Reader.ReadULong(),
                 EditCount = Reader.ReadULong(),
                 Score = Reader.ReadLong(),
-                ImageHash = Reader.ReadBytes(),
-                Tags = BooruTagList.FromReader(Reader)
+                ImageHash = Reader.ReadBytes()
             };
+            post.Tags = BooruTagList.FromReader(Reader);
+            if (Reader.ReadBool())
+                post.Thumbnail = BooruImage.FromReader(Reader);
+            if (Reader.ReadBool())
+                post.Image = BooruImage.FromReader(Reader);
+            return post;
         }
 
         /// <summary>Creates a BooruPost from a DataRow. DOES NOT include Tags, Thumb and Image</summary>
@@ -150,7 +159,6 @@ namespace TA.SharpBooru
                 Thumbnail.Dispose();
                 Thumbnail = null;
             }
-            Tags.Clear();
         }
     }
 

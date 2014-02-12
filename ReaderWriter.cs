@@ -9,8 +9,17 @@ namespace TA.SharpBooru
         public readonly Stream ReadStream;
         public readonly Stream WriteStream;
 
+        private byte[] _SingleByteBuffer = new byte[1];
+
+        private void CheckEndianness()
+        {
+            if (!BitConverter.IsLittleEndian)
+                throw new Exception("BigEndian isn't supported");
+        }
+
         public ReaderWriter(Stream Stream)
         {
+            CheckEndianness();
             DisposeStreams = false;
             ReadStream = Stream;
             WriteStream = Stream;
@@ -18,6 +27,7 @@ namespace TA.SharpBooru
 
         public ReaderWriter(Stream ReadStream, Stream WriteStream)
         {
+            CheckEndianness();
             DisposeStreams = false;
             this.ReadStream = ReadStream;
             this.WriteStream = WriteStream;
@@ -32,7 +42,13 @@ namespace TA.SharpBooru
             }
         }
 
-        public void Write(byte Byte) { WriteStream.Write(new byte[1] { Byte }, 0, 1); }
+        public void Flush() { WriteStream.Flush(); }
+
+        public void Write(byte Byte)
+        {
+            _SingleByteBuffer[0] = Byte;
+            WriteStream.Write(_SingleByteBuffer, 0, 1);
+        }
 
         public byte ReadByte()
         {
@@ -53,58 +69,63 @@ namespace TA.SharpBooru
         public byte[] ReadBytes(uint Length)
         {
             byte[] buffer = new byte[Length];
-            if (ReadStream.Read(buffer, 0, buffer.Length) != Length)
-                throw new EndOfStreamException();
+            if (Length > 0)
+            {
+                int total_read = 0;
+                while (true)
+                {
+                    int read = ReadStream.Read(buffer, total_read, buffer.Length - total_read);
+                    if (read > 0)
+                    {
+                        total_read += read;
+                        if (total_read == Length)
+                            return buffer;
+                    }
+                    else throw new EndOfStreamException();
+                }
+            }
             else return buffer;
         }
 
         public void Write(ushort UShort)
         {
-            Write((byte)(UShort & 0xFF));
             Write((byte)(UShort >> 8));
+            Write((byte)(UShort & 0xFF));
         }
 
         public ushort ReadUShort()
         {
-            byte[] bytes = ReadBytes(2);
-            return (ushort)(bytes[0] | bytes[1] << 8);
+            byte higherByte = ReadByte();
+            return (ushort)(higherByte << 8 | ReadByte());
         }
 
         public void Write(uint UInt)
         {
-            Write((ushort)(UInt & 0xFFFF));
             Write((ushort)(UInt >> 16));
+            Write((ushort)(UInt & 0xFFFF));
         }
 
         public uint ReadUInt()
         {
-            ushort ushort1 = ReadUShort();
-            return (uint)(ushort1 | ReadUShort() << 16);
+            ushort higherUShort = ReadUShort();
+            return (uint)(higherUShort << 16 | ReadUShort());
         }
 
         public void Write(ulong ULong)
         {
-            Write((uint)(ULong & 0xFFFFFFFF));
             Write((uint)(ULong >> 32));
+            Write((uint)(ULong & 0xFFFFFFFF));
         }
 
         public ulong ReadULong()
         {
-            uint uint1 = ReadUInt();
-            return (ulong)(uint1 | ReadUInt() << 32);
+            uint higherUInt = ReadUInt();
+            return (ulong)(higherUInt << 32 | ReadUInt());
         }
 
-        public void Write(char Char)
-        {
-            Write((byte)(Char & 0xFF));
-            Write((byte)((Char >> 8) & 0xFF));
-        }
+        public void Write(char Char) { unchecked { Write((ushort)Char); } }
 
-        public char ReadChar()
-        {
-            byte[] bytes = ReadBytes(2);
-            return (char)(bytes[0] | bytes[1] << 8);
-        }
+        public char ReadChar() { unchecked { return (char)ReadUShort(); } }
 
         public void Write(string String, bool LengthPrefix)
         {
@@ -123,7 +144,7 @@ namespace TA.SharpBooru
             return new string(chars);
         }
 
-        public void Write(bool Bool) { Write((byte)1); }
+        public void Write(bool Bool) { Write((byte)(Bool ? 1 : 0)); }
 
         public bool ReadBool() { return ReadByte() > 0; }
 

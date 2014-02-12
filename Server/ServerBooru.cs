@@ -5,6 +5,7 @@ using System.Data;
 using System.Collections.Generic;
 using System.Data.SQLite;
 using System.Threading;
+using TA.SharpBooru.NetIO.Encryption;
 
 namespace TA.SharpBooru.Server
 {
@@ -13,6 +14,7 @@ namespace TA.SharpBooru.Server
         private SQLiteWrapper _DB;
         private BooruInfo _BooruInfo = null;
         private string _Folder;
+        private RSA _RSA;
 
         public BooruInfo BooruInfo
         {
@@ -29,6 +31,7 @@ namespace TA.SharpBooru.Server
         public string ThumbFolder { get { return Path.Combine(_Folder, "thumbs"); } }
         //public string AvatarFolder { get { return Path.Combine(_Folder, "avatars"); } }
         public SQLiteWrapper DB { get { return _DB; } }
+        public RSA RSA { get { return _RSA; } }
 
         public ServerBooru(string Folder)
         {
@@ -40,6 +43,11 @@ namespace TA.SharpBooru.Server
                     {
                         _Folder = Folder;
                         _DB = new SQLiteWrapper(dbPath);
+                        string rsaPath = Path.Combine(Folder, "rsa.xml");
+                        _RSA = new RSA();
+                        if (File.Exists(rsaPath))
+                            _RSA.LoadKeys(rsaPath);
+                        else _RSA.SaveKeys(rsaPath);
                         return;
                     }
             throw new Exception("No valid booru directory");

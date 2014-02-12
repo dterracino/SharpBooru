@@ -12,10 +12,6 @@ namespace TA.SharpBooru.Client
 
         public ResponseWaiter(uint RequestID) { this.RequestID = RequestID; }
 
-        public void Dispose()
-        {
-            Response.Dispose();
-            WaitEvent.Dispose();
-        }
+        public void Dispose() { WaitEvent.Dispose(); }
     }
 }

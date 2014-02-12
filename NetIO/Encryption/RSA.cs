@@ -7,10 +7,10 @@ namespace TA.SharpBooru.NetIO.Encryption
 {
     public class RSA : IDisposable
     {
-        private bool _Private = false;
+        private bool _Private;
         private RSACryptoServiceProvider _RSA = new RSACryptoServiceProvider(4096);
 
-        public RSA() { }
+        public RSA() { _Private = true; }
         public RSA(string File) { LoadKeys(File); }
         public RSA(byte[] Modulus, byte[] Exponent) { SetPublicKey(Modulus, Exponent); }
 
@@ -19,30 +19,16 @@ namespace TA.SharpBooru.NetIO.Encryption
         public void SaveKeys(string File)
         {
             using (FileStream fs = new FileStream(File, FileMode.CreateNew, FileAccess.Write, FileShare.Read))
-            using (ReaderWriter writer = new ReaderWriter(fs))
-            {
-                writer.Write(_Private);
-                RSAParameters rsaParams = _RSA.ExportParameters(_Private);
-                writer.Write(rsaParams.Modulus, true);
-                writer.Write(rsaParams.Exponent, true);
-                if (_Private)
-                    writer.Write(rsaParams.D, true);
-            }
+            using (StreamWriter writer = new StreamWriter(fs, Encoding.ASCII))
+                writer.WriteLine(_RSA.ToXmlString(_Private).Replace("><", ">" + Environment.NewLine + "<"));
         }
 
         public void LoadKeys(string File)
         {
             using (FileStream fs = new FileStream(File, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (ReaderWriter reader = new ReaderWriter(fs))
-            {
-                RSAParameters rsaParams = new RSAParameters();
-                _Private = reader.ReadBool();
-                rsaParams.Modulus = reader.ReadBytes();
-                rsaParams.Exponent = reader.ReadBytes();
-                if (_Private)
-                    rsaParams.D = reader.ReadBytes();
-                _RSA.ImportParameters(rsaParams);
-            }
+            using (StreamReader reader = new StreamReader(fs, Encoding.ASCII))
+                _RSA.FromXmlString(reader.ReadToEnd());
+            _Private = !_RSA.PublicOnly;
         }
 
         public void GetPublicKey(out byte[] Modulus, out byte[] Exponent)
@@ -59,6 +45,7 @@ namespace TA.SharpBooru.NetIO.Encryption
                 Modulus = Modulus,
                 Exponent = Exponent
             };
+            _Private = false;
             _RSA.ImportParameters(rsaParams);
         }
 
@@ -77,8 +64,13 @@ namespace TA.SharpBooru.NetIO.Encryption
             return sb.ToString();
         }
 
-        public byte[] EncryptPublic(byte[] Data) { return _RSA.Encrypt(Data, true); }
+        public byte[] EncryptPublic(byte[] Data) { return _RSA.Encrypt(Data, false); }
 
-        public byte[] DecryptPrivate(byte[] Data) { return _RSA.Decrypt(Data, true); }
+        public byte[] DecryptPrivate(byte[] Data)
+        {
+            if (_Private)
+                return _RSA.Decrypt(Data, false);
+            else throw new Exception("No private key");
+        }
     }
 }
