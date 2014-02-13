@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace TA.SharpBooru
 {
-    public class BooruImage : IDisposable, ICloneable
+    public class BooruImage : BooruResource, IDisposable, ICloneable
     {
         private Bitmap _Bitmap;
         private byte[] _Bytes;
@@ -317,7 +317,10 @@ namespace TA.SharpBooru
             return ((float)Hash1.Length - bitcount) / Hash1.Length;
         }
 
-        public void ToWriter(BinaryWriter Writer, Action<float> ProgressCallback = null)
+        public override void ToWriter(ReaderWriter Writer) { Writer.Write(Bytes, true); }
+
+        /*
+        public void ToWriter(BinaryWriter Writer, Action<float> ProgressCallback)
         {
             Writer.Write(Bytes.Length);
             if (ProgressCallback != null)
@@ -334,11 +337,8 @@ namespace TA.SharpBooru
             }
             else Writer.Write(Bytes);
         }
+        */
 
-        public static BooruImage FromReader(BinaryReader Reader)
-        {
-            int length = Reader.ReadInt32();
-            return BooruImage.FromBytes(Reader.ReadBytes(length));
-        }
+        public static BooruImage FromReader(ReaderWriter Reader) { return BooruImage.FromBytes(Reader.ReadBytes()); }
     }
 }

@@ -1,13 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading;
-using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
 using Mono.Unix.Native;
-using CommandLine;
 
 namespace TA.SharpBooru.Server
 {
@@ -47,28 +43,20 @@ namespace TA.SharpBooru.Server
             else if (!Directory.Exists(location))
                 throw new DirectoryNotFoundException("Booru location not found");
 
-            _Logger.LogLine("Loading certificate...");
-            string certificateFile = Path.Combine(location, "cert.pfx");
-            if (!File.Exists(certificateFile))
-                throw new FileNotFoundException("Certificate (cert.pfx) not found");
-            X509Certificate2 sCertificate = new X509Certificate2(certificateFile, "sharpbooru");
-
             _Logger.LogLine("Loading booru database...");
             ServerBooru booru = new ServerBooru(location);
 
             _Logger.LogLine("Creating server instance...");
-            _BooruServer = new BooruServer(booru, _Logger, sCertificate, localEndPoint);
-            
+            if (localEndPoint.Port < 1)
+                localEndPoint.Port = 2400;
+            _BooruServer = new BooruServer(booru, _Logger, localEndPoint);
+
             /*
             _Logger.LogLine("Starting BroadcastListener...");
             _BroadcastListenerThread = new Thread(() =>
                 {
                     while (true)
-                        try
-                        {
-                            string booruName = booru.GetMiscOption<string>(BooruMiscOption.BooruName);
-                            Broadcaster.ListenForBroadcast(booruName, 2400);
-                        }
+                        try { Broadcaster.ListenForBroadcast(booru.BooruInfo.BooruName, localEndPoint.Port); }
                         catch (Exception ex)
                         {
                             if (_BroadcastListenerThreadRunning)
@@ -87,7 +75,7 @@ namespace TA.SharpBooru.Server
                 ServerHelper.SetupSignal(Signum.SIGTERM, () => Cancel(waitEvent));
             }
 
-            _Logger.LogLine("Starting server (ProtocolVersion = {0})...", BooruProtocol.ProtocolVersion);
+            _Logger.LogLine("Starting server (ProtocolVersion = {0})...", BooruServer.ProtocolVersion);
             _BooruServer.Start();
 
             if (setuidUser != null)

@@ -10,7 +10,7 @@ namespace TA.SharpBooru.Client.WebServer
 {
     public class BooruWebServer
     {
-        private ClientBooru _Booru;
+        private BooruClient _Booru;
         private Logger _Logger;
         private SmartThreadPool _Pool;
         private HttpListener _Listener;
@@ -20,19 +20,19 @@ namespace TA.SharpBooru.Client.WebServer
         private bool _EnableDirectoryListing;
         //private CookieManager _CookieManager;
 
-        public ClientBooru Booru { get { return _Booru; } }
+        public BooruClient Booru { get { return _Booru; } }
         public Logger Logger { get { return _Logger; } }
         public VFSDirectory RootDirectory { get { return _RootDirectory; } }
         public RequestSecurityManager RSM { get { return _RSM; } }
         public bool EnableDirectoryListing { get { return _EnableDirectoryListing; } set { _EnableDirectoryListing = value; } }
         //public CookieManager CookieManager { get { return _CookieManager; } }
 
-        public BooruWebServer(ClientBooru Booru, Logger Logger) : this(Booru, Logger, "http://*:80/") { }
-        public BooruWebServer(ClientBooru Booru, Logger Logger, string ListenerPrefix)
+        public BooruWebServer(BooruClient Booru, Logger Logger) : this(Booru, Logger, "http://*:80/") { }
+        public BooruWebServer(BooruClient Booru, Logger Logger, string ListenerPrefix)
             : this(Booru, Logger, new string[1] { ListenerPrefix }.ToList(), true) { }
-        public BooruWebServer(ClientBooru Booru, Logger Logger, string ListenerPrefix, bool EnableRSM)
+        public BooruWebServer(BooruClient Booru, Logger Logger, string ListenerPrefix, bool EnableRSM)
             : this(Booru, Logger, new string[1] { ListenerPrefix }.ToList(), EnableRSM) { }
-        public BooruWebServer(ClientBooru Booru, Logger Logger, List<string> ListenerPrefixes, bool EnableRSM)
+        public BooruWebServer(BooruClient Booru, Logger Logger, List<string> ListenerPrefixes, bool EnableRSM)
         {
             _Logger = Logger;
             if (Booru == null)
@@ -129,12 +129,12 @@ namespace TA.SharpBooru.Client.WebServer
                         executionException = ex;
                         try
                         {
-                            var bEx = ex as BooruProtocol.BooruException;
+                            var bEx = ex as BooruException;
                             if (bEx != null)
                                 switch (bEx.ErrorCode)
                                 {
-                                    case BooruProtocol.ErrorCode.NoPermission: bContext.HTTPCode = 403; break;
-                                    case BooruProtocol.ErrorCode.ResourceNotFound: bContext.HTTPCode = 404; break;
+                                    case BooruException.ErrorCodes.NoPermission: bContext.HTTPCode = 403; break;
+                                    case BooruException.ErrorCodes.ResourceNotFound: bContext.HTTPCode = 404; break;
                                     default: bContext.HTTPCode = 500; break;
                                 }
                             else bContext.HTTPCode = 500;

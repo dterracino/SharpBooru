@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 
 namespace TA.SharpBooru
 {
@@ -57,6 +58,22 @@ namespace TA.SharpBooru
                     else break;
                 }
                 _Writer.Flush();
+            }
+        }
+
+        public void LogPublicFields(object Object)
+        {
+            if (Object != null)
+            {
+                Type objType = Object.GetType();
+                lock (_Lock)
+                {
+                        WriteANSI(1, 37);
+                    foreach (PropertyInfo pInfo in objType.GetProperties())
+                        _Writer.Write("- {0} = {1}", pInfo.Name, pInfo.GetValue(Object, null));
+                    foreach (FieldInfo fInfo in objType.GetFields())
+                        _Writer.Write("- {0} = {1}", fInfo.Name, fInfo.GetValue(Object));
+                }
             }
         }
     }

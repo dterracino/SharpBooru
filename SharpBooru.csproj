@@ -36,7 +36,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -69,12 +69,40 @@
       <HintPath>System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BooruException.cs" />
+    <Compile Include="BooruInfo.cs" />
+    <Compile Include="BooruResource.cs" />
     <Compile Include="Client\CLI\BooruConsole.cs" />
+    <Compile Include="Client\BooruClient.cs" />
+    <Compile Include="NetIO\Encryption\RSA.cs" />
+    <Compile Include="NetIO\Packets\BooruPackets\Packet23_Resource.cs" />
+    <Compile Include="NetIO\Packets\BooruPackets\Packet18_GetAllTags.cs" />
+    <Compile Include="NetIO\Packets\BooruPackets\Packet16_Login.cs" />
+    <Compile Include="NetIO\Packets\BooruPackets\Packet19_DeleteResource.cs" />
+    <Compile Include="NetIO\Packets\BooruPackets\Packet20_EditResource.cs" />
+    <Compile Include="NetIO\Packets\BooruPackets\Packet21_AddResource.cs" />
+    <Compile Include="NetIO\Packets\BooruPackets\Packet22_Search.cs" />
+    <Compile Include="NetIO\Packets\BooruPackets\Packet24_StringList.cs" />
+    <Compile Include="NetIO\Packets\BooruPackets\Packet25_ULongList.cs" />
+    <Compile Include="NetIO\Packets\BooruPackets\Packet26_SearchImg.cs" />
+    <Compile Include="NetIO\Packets\BooruPackets\Packet27_AddAlias.cs" />
+    <Compile Include="NetIO\Packets\CorePackets\Packet4_ServerInfo.cs" />
+    <Compile Include="NetIO\Packets\CorePackets\Packet5_Encryption.cs" />
+    <Compile Include="NetIO\Packets\Packet.cs" />
+    <Compile Include="NetIO\Packets\CorePackets\Packet0_Success.cs" />
+    <Compile Include="NetIO\Packets\CorePackets\Packet1_Exception.cs" />
+    <Compile Include="NetIO\Packets\CorePackets\Packet2_IsAlive.cs" />
+    <Compile Include="NetIO\Packets\CorePackets\Packet3_Disconnet.cs" />
+    <Compile Include="NetIO\Packets\BooruPackets\Packet17_GetResource.cs" />
+    <Compile Include="Client\ResponseWaiter.cs" />
+    <Compile Include="ReaderWriter.cs" />
+    <Compile Include="Server\ClientHandler.cs" />
     <Compile Include="ImageOptimizer.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Client\GUI\Controls\ImageBox\ImageBox.cs">
@@ -189,14 +217,11 @@
     <Compile Include="BooruAPIs\KonachanAPI.cs" />
     <Compile Include="BooruAPIs\SafebooruAPI.cs" />
     <Compile Include="BooruImage.cs" />
-    <Compile Include="BooruMiscOption.cs" />
     <Compile Include="BooruPost.cs" />
-    <Compile Include="BooruProtocol.cs" />
     <Compile Include="Server\BooruSearch.cs" />
     <Compile Include="BooruTag.cs" />
     <Compile Include="BooruUser.cs" />
     <Compile Include="Broadcaster.cs" />
-    <Compile Include="ClientBooru.cs" />
     <Compile Include="CommandLine\Attributes\AssemblyLicenseAttribute.cs" />
     <Compile Include="CommandLine\Attributes\AssemblyUsageAttribute.cs" />
     <Compile Include="CommandLine\Attributes\BaseOptionAttribute.cs" />
@@ -369,28 +394,6 @@
     <None Include="Resources\icon_imgsearch.png" />
     <None Include="Resources\icon_import.png" />
     <None Include="Resources\icon_refresh.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 und x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

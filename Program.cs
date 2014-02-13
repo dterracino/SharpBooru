@@ -2,6 +2,10 @@
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
+<<<<<<< HEAD
+=======
+using TA.SharpBooru.Client;
+>>>>>>> devel_packets
 using TA.SharpBooru.Server;
 using TA.SharpBooru.Client.GUI;
 using TA.SharpBooru.Client.CLI;
@@ -19,7 +23,8 @@ namespace TA.SharpBooru
             Console.Title = "SharpBooru";
             Console.Write(Properties.Resources.ascii_banner);
             Console.WriteLine();
-            
+            Console.WriteLine();
+
             Logger sLogger = new Logger(Console.Out);
             Options options = new Options();
             try
@@ -29,9 +34,11 @@ namespace TA.SharpBooru
                     if (options.Mode == Options.RunMode.Server)
                     {
                         Console.Title = "SharpBooru Server";
-                        ushort port = options.Port < 1 ? (ushort)2400 : options.Port;
+                        if (Helper.IsWindows())
+                            Console.WindowWidth = 120;
                         ServerWrapper wrapper = new ServerWrapper(sLogger);
-                        wrapper.StartServer(options.Location, options.Username, new IPEndPoint(IPAddress.Any, port));
+                        IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Any, options.Port);
+                        wrapper.StartServer(options.Location, options.Username, localEndPoint);
                     }
                     else if (options.Mode == Options.RunMode.Standalone)
                     {
@@ -40,11 +47,11 @@ namespace TA.SharpBooru
                         string location = options.Location ?? Environment.CurrentDirectory;
                         wrapper.StartServer(location, null, new IPEndPoint(IPAddress.Loopback, 0), false);
                         IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Loopback, wrapper.BooruServer.Port);
-                        using (ClientBooru booru = new ClientBooru(serverEndPoint, options.Username ?? "guest", options.Password ?? "guest"))
+                        using (BooruClient booru = ConnectBooru(serverEndPoint, options.Username, options.Password))
                             RunClientGUI(booru);
                         wrapper.Cancel(null);
                     }
-                    else using (ClientBooru booru = new ClientBooru(options.Server, options.Username ?? "guest", options.Password ?? "password"))
+                    else using (BooruClient booru = ConnectBooru(options.Server, options.Username, options.Password))
                             switch (options.Mode)
                             {
                                 case Options.RunMode.GUI: RunClientGUI(booru); break;
@@ -59,15 +66,19 @@ namespace TA.SharpBooru
                 sLogger.LogException("SharpBooru", ex);
                 return 1;
             }
-            finally
-            {
-                Helper.CleanTempFolder();
-            }
+            finally { Helper.CleanTempFolder(); }
         }
 
-        private static ClientBooru ConnectBooru(Options options) { return new ClientBooru(options.Server, options.Username ?? "guest", options.Password ?? "guest"); }
+        private static BooruClient ConnectBooru(IPEndPoint endPoint, string username = null, string password = null)
+        {
+            BooruClient client = new BooruClient();
+            client.Connect(endPoint);
+            if (username != null && password != null)
+                client.Login(username, password);
+            return client;
+        }
 
-        private static void RunClientWebserver(ClientBooru booru, ushort port, Logger logger)
+        private static void RunClientWebserver(BooruClient booru, ushort port, Logger logger)
         {
             Console.Title = "SharpBooru Webserver";
 
@@ -95,7 +106,7 @@ namespace TA.SharpBooru
             Thread.Sleep(Timeout.Infinite);
         }
 
-        private static void RunClientGUI(ClientBooru booru)
+        private static void RunClientGUI(BooruClient booru)
         {
             //TODO Show connect dialog when connection string not given
             Application.EnableVisualStyles();
@@ -107,7 +118,7 @@ namespace TA.SharpBooru
             }
         }
 
-        private static void RunClientCLI(ClientBooru booru, string command = null)
+        private static void RunClientCLI(BooruClient booru, string command = null)
         {
             Console.Title = "SharpBooru CLI Client";
 

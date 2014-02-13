@@ -11,10 +11,10 @@ namespace TA.SharpBooru.Client.GUI
 {
     public partial class ImportDialog : Form
     {
-        private ClientBooru _Booru;
+        private BooruClient _Booru;
         private List<string> _AllTags;
 
-        public ImportDialog(ClientBooru Booru)
+        public ImportDialog(BooruClient Booru)
         {
             _Booru = Booru;
             InitializeComponent();

@@ -6,7 +6,7 @@ namespace TA.SharpBooru.Server
 {
     public abstract class Server
     {
-        private Logger _Logger = null;
+        private Logger _Logger = Logger.Null;
         private SmartThreadPool _ThreadPool = new SmartThreadPool();
         protected Thread _ConnectClientThread = null;
         protected bool _ConnectClientThreadRunning = false;
@@ -15,8 +15,8 @@ namespace TA.SharpBooru.Server
         public SmartThreadPool ThreadPool { get { return _ThreadPool; } }
         public Logger Logger
         {
-            get { return _Logger ?? Logger.Null; }
-            set { _Logger = value; }
+            get { return _Logger; }
+            set { _Logger = value ?? Logger.Null; }
         }
 
         public abstract string ServerName { get; }
@@ -24,7 +24,6 @@ namespace TA.SharpBooru.Server
 
         public abstract object ConnectClient();
         public abstract void HandleClient(object Client);
-        public abstract bool HandleException(Exception Ex);
         public abstract void StartListener();
         public abstract void StopListener();
 
@@ -70,37 +69,38 @@ namespace TA.SharpBooru.Server
                 else throw new Exception("Not running");
         }
 
-        protected void _HandlerStage1()
+        private void _HandlerStage1()
         {
             while (_ConnectClientThreadRunning)
             {
+                object client = null;
                 try
                 {
-                    object client = ConnectClient();
+                    client = ConnectClient();
                     if (_ConnectClientThreadRunning)
                         _ThreadPool.QueueWorkItem(new WorkItemCallback(_HandlerStage2), client);
                 }
                 catch (Exception ex)
                 {
                     if (!_ConnectClientThreadRunning)
-                        break; //Exit the thread silently
-                    else if (!HandleException(ex))
-                        throw ex;
+                        break; //Ignore exception
+                    else HandleException(client, ex);
                 }
             }
         }
 
-        protected object _HandlerStage2(object Client)
+        private object _HandlerStage2(object Client)
         {
             try { HandleClient(Client); }
             catch (Exception ex)
             {
                 if (!_ConnectClientThreadRunning)
-                    return null;
-                else if (!HandleException(ex))
-                    throw ex;
+                    return null; //Ignore exception
+                else HandleException(Client, ex);
             }
             return null;
         }
+
+        public virtual void HandleException(object Client, Exception Ex) { Logger.LogException(ServerName, Ex); }
     }
 }

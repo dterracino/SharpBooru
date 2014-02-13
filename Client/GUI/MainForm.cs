@@ -7,10 +7,10 @@ namespace TA.SharpBooru.Client.GUI
 {
     public partial class MainForm : Form
     {
-        private ClientBooru _Booru = null;
+        private BooruClient _Booru = null;
         private string _LastSearch = null;
 
-        public MainForm(ClientBooru Booru)
+        public MainForm(BooruClient Booru)
         {
             _Booru = Booru;
             InitializeComponent();
@@ -79,21 +79,15 @@ namespace TA.SharpBooru.Client.GUI
                 {
                     try
                     {
-                        _Booru.ChangeUser(ld.Username, ld.Password);
+                        _Booru.Login(ld.Username, ld.Password);
                         SetTitle();
                         CheckPermissions();
                     }
-                    catch (BooruProtocol.BooruException bEx) { MessageBox.Show(bEx.Message, "ERROR: Change User", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+                    catch (BooruException bEx) { MessageBox.Show(bEx.Message, "ERROR: Change User", MessageBoxButtons.OK, MessageBoxIcon.Error); }
                 }
         }
 
-        private void SetTitle()
-        {
-            Text = string.Format("SharpBooru GUI Client  -  {0} by {1} [{2}]",
-                _Booru.GetBooruMiscOption<string>(BooruMiscOption.BooruName),
-                _Booru.GetBooruMiscOption<string>(BooruMiscOption.BooruCreator),
-                _Booru.CurrentUser.Username);
-        }
+        private void SetTitle() { Text = string.Format("SharpBooru GUI Client  -  {0} by {1} [{2}]", _Booru.BooruInfo.BooruName, _Booru.BooruInfo.BooruCreator, _Booru.CurrentUser.Username); }
 
         private void CheckPermissions()
         {
