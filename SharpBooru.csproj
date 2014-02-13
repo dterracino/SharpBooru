@@ -80,6 +80,7 @@
     <Compile Include="BooruResource.cs" />
     <Compile Include="Client\CLI\BooruConsole.cs" />
     <Compile Include="Client\BooruClient.cs" />
+    <Compile Include="NetIO\Encryption\AES.cs" />
     <Compile Include="NetIO\Encryption\RSA.cs" />
     <Compile Include="NetIO\Packets\BooruPackets\Packet23_Resource.cs" />
     <Compile Include="NetIO\Packets\BooruPackets\Packet18_GetAllTags.cs" />

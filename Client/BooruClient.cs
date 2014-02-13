@@ -18,6 +18,7 @@ namespace TA.SharpBooru.Client
 
         private const ushort ProtocolVersion = 50;
 
+        private AES _AES = null;
         private Logger _Logger;
         private List<ResponseWaiter> _Waiters;
         private TcpClient _Client;
@@ -82,18 +83,18 @@ namespace TA.SharpBooru.Client
                 {
                     if (serverInfo.Encryption)
                     {
-                        byte[] key = new byte[256 / 8];
-                        Helper.Random.NextBytes(key); //TODO RNGCryptoServiceProvider
-                        key = rsa.EncryptPublic(key);
-                        (new Packet5_Encryption() { Key = key }).PacketToWriter(_ReaderWriter);
-                        //TODO Switch to AES
+                        byte[] key = new byte[32];
+                        using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
+                            rng.GetBytes(key);
+                        (new Packet5_Encryption() { Key = rsa.EncryptPublic(key) }).PacketToWriter(_ReaderWriter);
+                        _AES = new AES(key);
                     }
                     else (new Packet0_Success()).PacketToWriter(_ReaderWriter);
                 }
                 else throw new BooruException(BooruException.ErrorCodes.FingerprintNotAccepted);
             }
-            _BooruInfo = (BooruInfo)((Packet23_Resource)Packet.PacketFromReader(_ReaderWriter)).Resource;
-            _CurrentUser = (BooruUser)((Packet23_Resource)Packet.PacketFromReader(_ReaderWriter)).Resource;
+            _BooruInfo = (BooruInfo)((Packet23_Resource)Packet.PacketFromReader(_ReaderWriter, _AES)).Resource;
+            _CurrentUser = (BooruUser)((Packet23_Resource)Packet.PacketFromReader(_ReaderWriter, _AES)).Resource;
             _Logger.LogPublicFields(_BooruInfo);
             //TODO Log user
             return null;
@@ -110,8 +111,7 @@ namespace TA.SharpBooru.Client
                 lock (_ReaderWriter)
                 {
                     _ReaderWriter.Write(GetNextRequestID());
-                    (new Packet3_Disconnect()).PacketToWriter(_ReaderWriter);
-                    _ReaderWriter.Flush();
+                    (new Packet3_Disconnect()).PacketToWriter(_ReaderWriter, _AES);
                 }
             }
             catch { }
@@ -129,7 +129,7 @@ namespace TA.SharpBooru.Client
                 while (true)
                 {
                     uint requestID = _ReaderWriter.ReadUInt();
-                    Packet packet = Packet.PacketFromReader(_ReaderWriter);
+                    Packet packet = Packet.PacketFromReader(_ReaderWriter, _AES);
                     ProgressResponse(requestID, packet);
                 }
             }
@@ -159,7 +159,7 @@ namespace TA.SharpBooru.Client
                 lock (_ReaderWriter)
                 {
                     _ReaderWriter.Write(requestID);
-                    RequestPacket.PacketToWriter(_ReaderWriter);
+                    RequestPacket.PacketToWriter(_ReaderWriter, _AES);
                 }
                 if (Timeout.HasValue)
                     waiter.WaitEvent.Wait(Timeout.Value);

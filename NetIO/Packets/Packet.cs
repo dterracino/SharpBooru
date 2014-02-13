@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using TA.SharpBooru.NetIO.Encryption;
 using TA.SharpBooru.NetIO.Packets.CorePackets;
 using TA.SharpBooru.NetIO.Packets.BooruPackets;
 
@@ -7,15 +8,23 @@ namespace TA.SharpBooru.NetIO.Packets
 {
     /*   --- Packet Layout ---
      * 
-     *                      <-------------------C# Packet class------------------>
-     *                                       <-------------Packet body----------->
-     *    _________________ ________________ _____________________ _______________
-     *   |                 |                |                     |               |
-     *   |  RequestID (4)  |  PacketID (2)  |  PayloadLength (4)  |  Payload (n)  |
-     *   |_________________|________________|_____________________|_______________|
+     *                      <-----------------------C# Packet class---------------------->
+     *                                       <-----------------Packet body--------------->
+     *    _________________ ________________ _____________________ ________ ______________
+     *   |                 |                |                     |        :              |
+     *   |  RequestID (4)  |  PacketID (2)  |  PayloadLength (4)  |  NEBB  : Payload (n)  |
+     *   |_________________|________________|_____________________|________:______________|
+     *
+     *   If you use AES to encrypt the packet, only the NEBB and the Payload will be encrypted (together).
+     *   All other values remain unencrypted.
+     * 
+     *   The NEBB (non-empty body byte) is only sent when AES encryption is used, the value of the NEBB
+     *   is regardless, but it would be good to give it a new random value each time a packet is sent.
+     *   At the moment it's value is constant and set to 0x17. The NEBB is needed because the .net AES
+     *   algorithm will crash when you try to encrypt/decrypt an empty byte[].
      * 
      *   RequestID is sent first. Every request has an answer, if no data is replied, use Packet0_Success.
-     *   The request and answer have the same RequestID.
+     *   The request and answer have the same RequestID. MSB first.
      *
      *   PacketID's < 16 are reserved for internal protocol use.
      *   
@@ -30,13 +39,18 @@ namespace TA.SharpBooru.NetIO.Packets
 
         public abstract void Dispose();
 
-        public void PacketToWriter(ReaderWriter Writer, bool Flush = true)
+        public void PacketToWriter(ReaderWriter Writer, AES AES = null, bool Flush = true)
         {
             Writer.Write(PacketID);
             using (MemoryStream bodyStream = new MemoryStream())
             {
-                using (ReaderWriter bodyWriter = new ReaderWriter(bodyStream))
+                using (Stream cryptoStream = AES != null ? AES.CreateEncryptorStream(bodyStream) : null)
+                using (ReaderWriter bodyWriter = new ReaderWriter(cryptoStream ?? bodyStream))
+                {
+                    if (AES != null)
+                        bodyWriter.Write((byte)0x17); //NEBB
                     ToWriter(bodyWriter);
+                }
                 Writer.Write(bodyStream.ToArray(), true);
             }
             if (Flush)
@@ -49,11 +63,15 @@ namespace TA.SharpBooru.NetIO.Packets
             return this;
         }
 
-        public static Packet PacketFromReader(ReaderWriter Reader)
+        public static Packet PacketFromReader(ReaderWriter Reader, AES AES = null)
         {
             ushort packetID = Reader.ReadUShort();
             using (MemoryStream bodyStream = new MemoryStream(Reader.ReadBytes()))
-            using (ReaderWriter bodyReader = new ReaderWriter(bodyStream))
+            using (Stream cryptoStream = AES != null ? AES.CreateDecryptorStream(bodyStream) : null)
+            using (ReaderWriter bodyReader = new ReaderWriter(cryptoStream ?? bodyStream))
+            {
+                if (AES != null)
+                    bodyReader.ReadByte();
                 switch (packetID)
                 {
                     //CorePackets
@@ -78,7 +96,8 @@ namespace TA.SharpBooru.NetIO.Packets
                     case 26: return (new Packet26_SearchImg()).FromReaderReturn(bodyReader);
                     case 27: return (new Packet27_AddAlias()).FromReaderReturn(bodyReader);
                 }
-            return null;
+                return null;
+            }
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using System.Collections.Generic;
 using TA.SharpBooru.NetIO.Packets;
+using TA.SharpBooru.NetIO.Encryption;
 using TA.SharpBooru.NetIO.Packets.CorePackets;
 using TA.SharpBooru.NetIO.Packets.BooruPackets;
 
@@ -17,6 +18,7 @@ namespace TA.SharpBooru.Server
         private NetworkStream _Stream;
         private ReaderWriter _ReaderWriter;
         private Logger _Logger;
+        private AES _AES = null;
 
         public ClientHandler(Logger Logger, ServerBooru Booru, TcpClient Client)
         {
@@ -53,7 +55,7 @@ namespace TA.SharpBooru.Server
             {
                 Packet5_Encryption encryptionPacket = (Packet5_Encryption)response;
                 byte[] key = _Booru.RSA.DecryptPrivate(encryptionPacket.Key);
-                //TODO Switch to AES
+                _AES = new AES(key);
             }
             else if (response is Packet0_Success)
             {
@@ -61,8 +63,8 @@ namespace TA.SharpBooru.Server
                     throw new Exception("Client hasn't exchanged session key");
             }
             else throw new Exception("Packet is no valid response");
-            (new Packet23_Resource() { Type = Packet23_Resource.ResourceType.BooruInfo, Resource = _Booru.BooruInfo }).PacketToWriter(_ReaderWriter, false);
-            (new Packet23_Resource() { Type = Packet23_Resource.ResourceType.User, Resource = _User }).PacketToWriter(_ReaderWriter);
+            (new Packet23_Resource() { Type = Packet23_Resource.ResourceType.BooruInfo, Resource = _Booru.BooruInfo }).PacketToWriter(_ReaderWriter, _AES, false);
+            (new Packet23_Resource() { Type = Packet23_Resource.ResourceType.User, Resource = _User }).PacketToWriter(_ReaderWriter, _AES);
         }
 
         public void Dispose()
@@ -87,7 +89,7 @@ namespace TA.SharpBooru.Server
                 {
                     string remote = string.Format("{0} ({1})", _User.Username, _Client.Client.RemoteEndPoint);
                     uint requestID = _ReaderWriter.ReadUInt();
-                    using (Packet requestPacket = Packet.PacketFromReader(_ReaderWriter))
+                    using (Packet requestPacket = Packet.PacketFromReader(_ReaderWriter, _AES))
                     {
                         _Logger.LogLine("Got request {0} {1} from {2}", requestID, requestPacket.GetType().Name, remote);
                         try { responsePacket = HandlePacket(requestPacket); }
@@ -101,7 +103,7 @@ namespace TA.SharpBooru.Server
                     {
                         _Logger.LogLine("Sent response {0} {1} to {2}", requestID, responsePacket.GetType().Name, remote);
                         _ReaderWriter.Write(requestID);
-                        responsePacket.PacketToWriter(_ReaderWriter);
+                        responsePacket.PacketToWriter(_ReaderWriter, _AES);
                     }
                 }
                 catch (Exception ex)
