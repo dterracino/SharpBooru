@@ -19,9 +19,11 @@ namespace TA.SharpBooru.Server
         private TcpClient _Client;
         private NetworkStream _Stream;
         private ReaderWriter _ReaderWriter;
+        private Logger _Logger;
 
-        public ClientHandler(ServerBooru Booru, TcpClient Client)
+        public ClientHandler(Logger Logger, ServerBooru Booru, TcpClient Client)
         {
+            _Logger = Logger;
             _Booru = Booru;
             _User = _Booru.Login(null, "guest", "guest");
             _Client = Client;
@@ -49,7 +51,7 @@ namespace TA.SharpBooru.Server
             serverInfo.PacketToWriter(_ReaderWriter);
             Packet response = Packet.PacketFromReader(_ReaderWriter);
             if (response is Packet3_Disconnect)
-                throw new Exception("Client declined fingerprint");
+                throw new BooruException(BooruException.ErrorCodes.FingerprintNotAccepted);
             else if (response is Packet5_Encryption)
             {
                 Packet5_Encryption encryptionPacket = (Packet5_Encryption)response;
@@ -59,7 +61,7 @@ namespace TA.SharpBooru.Server
             else if (response is Packet0_Success)
             {
                 if (serverInfo.Encryption)
-                    throw new Exception("Client doesn't exchanged session key");
+                    throw new Exception("Client hasn't exchanged session key");
             }
             else throw new Exception("Packet is no valid response");
             (new Packet23_Resource() { Type = Packet23_Resource.ResourceType.BooruInfo, Resource = _Booru.BooruInfo }).PacketToWriter(_ReaderWriter, false);
@@ -78,7 +80,7 @@ namespace TA.SharpBooru.Server
             try { DoHandshake(); }
             catch (Exception ex)
             {
-                //TODO Handle exception
+                _Logger.LogException("Handshake", ex);
                 _ContinueHandling = false;
             }
             while (_ContinueHandling)
@@ -89,15 +91,22 @@ namespace TA.SharpBooru.Server
                     uint requestID = _ReaderWriter.ReadUInt();
                     using (Packet requestPacket = Packet.PacketFromReader(_ReaderWriter))
                     {
+                        string remote = string.Format("{0} ({1})", _User.Username, _Client.Client.RemoteEndPoint);
+                        _Logger.LogLine("Got request {0} {1} from {2}", requestID, requestPacket.GetType().Name, remote);
                         try { responsePacket = HandlePacket(requestPacket); }
-                        catch (Exception ex) { responsePacket = new Packet1_Exception() { Exception = ex }; }
+                        catch (Exception ex) 
+                        {
+                            _Logger.LogException("PacketHandler", ex);
+                            responsePacket = new Packet1_Exception() { Exception = ex }; 
+                        }
+                        _Logger.LogLine("Sent response {0} {1} to {2}", requestID, responsePacket.GetType().Name, remote);
                     }
                     _ReaderWriter.Write(requestID);
                     responsePacket.PacketToWriter(_ReaderWriter);
                 }
                 catch (Exception ex)
                 {
-                    //TODO Handle exception
+                    _Logger.LogException("ClientHandler", ex);
                     _ContinueHandling = false;
                 }
                 if (responsePacket != null)
@@ -111,7 +120,10 @@ namespace TA.SharpBooru.Server
             {
                 case 2: break;
 
-                case 3: _ContinueHandling = false; break;
+                case 3:
+                    _Logger.LogLine("{0} ({1}) disconnected", _User.Username, _Client.Client.RemoteEndPoint);
+                    _ContinueHandling = false;
+                    break;
 
                 case 16:
                     Packet16_Login packet16 = (Packet16_Login)reqPacket;

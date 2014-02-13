@@ -6,7 +6,7 @@ namespace TA.SharpBooru.Server
 {
     public abstract class Server
     {
-        private Logger _Logger = null;
+        private Logger _Logger = Logger.Null;
         private SmartThreadPool _ThreadPool = new SmartThreadPool();
         protected Thread _ConnectClientThread = null;
         protected bool _ConnectClientThreadRunning = false;
@@ -15,8 +15,8 @@ namespace TA.SharpBooru.Server
         public SmartThreadPool ThreadPool { get { return _ThreadPool; } }
         public Logger Logger
         {
-            get { return _Logger ?? Logger.Null; }
-            set { _Logger = value; }
+            get { return _Logger; }
+            set { _Logger = value ?? Logger.Null; }
         }
 
         public abstract string ServerName { get; }
@@ -26,7 +26,6 @@ namespace TA.SharpBooru.Server
         public abstract void HandleClient(object Client);
         public abstract void StartListener();
         public abstract void StopListener();
-        public virtual bool HandleException(object Client, Exception Ex) { return false; }
 
         private string ServerString
         {
@@ -84,9 +83,8 @@ namespace TA.SharpBooru.Server
                 catch (Exception ex)
                 {
                     if (!_ConnectClientThreadRunning)
-                        break; //Exit the thread silently
-                    else if (!HandleException(client, ex))
-                        throw ex;
+                        break; //Ignore exception
+                    else HandleException(client, ex);
                 }
             }
         }
@@ -97,11 +95,12 @@ namespace TA.SharpBooru.Server
             catch (Exception ex)
             {
                 if (!_ConnectClientThreadRunning)
-                    return null;
-                else if (!HandleException(Client, ex))
-                    throw ex;
+                    return null; //Ignore exception
+                else HandleException(Client, ex);
             }
             return null;
         }
+
+        public virtual void HandleException(object Client, Exception Ex) { Logger.LogException(ServerName, Ex); }
     }
 }

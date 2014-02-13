@@ -24,11 +24,16 @@ namespace TA.SharpBooru.Server
         public override string ServerName { get { return "NetIO Server"; } }
         public override string ServerInfo { get { return "LocalEndPoint " + _Listener.LocalEndpoint.ToString(); } }
 
-        public override object ConnectClient() { return _Listener.AcceptTcpClient(); }
+        public override object ConnectClient()
+        {
+            TcpClient client = _Listener.AcceptTcpClient();
+            Logger.LogLine("Client {0} connected", client.Client.RemoteEndPoint);
+            return client;
+        }
 
         public override void HandleClient(object Client)
         {
-            using (ClientHandler handler = new ClientHandler(_Booru, Client as TcpClient))
+            using (ClientHandler handler = new ClientHandler(Logger, _Booru, Client as TcpClient))
                 handler.Handle();
         }
 

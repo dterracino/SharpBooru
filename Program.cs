@@ -20,6 +20,7 @@ namespace TA.SharpBooru
             Console.Title = "SharpBooru";
             Console.Write(Properties.Resources.ascii_banner);
             Console.WriteLine();
+            Console.WriteLine();
 
             Logger sLogger = new Logger(Console.Out);
             Options options = new Options();
@@ -30,9 +31,11 @@ namespace TA.SharpBooru
                     if (options.Mode == Options.RunMode.Server)
                     {
                         Console.Title = "SharpBooru Server";
-                        ushort port = options.Port < 1 ? (ushort)2400 : options.Port;
+                        if (Helper.IsWindows())
+                            Console.WindowWidth = 120;
                         ServerWrapper wrapper = new ServerWrapper(sLogger);
-                        wrapper.StartServer(options.Location, options.Username, new IPEndPoint(IPAddress.Any, port));
+                        IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Any, options.Port);
+                        wrapper.StartServer(options.Location, options.Username, localEndPoint);
                     }
                     else if (options.Mode == Options.RunMode.Standalone)
                     {

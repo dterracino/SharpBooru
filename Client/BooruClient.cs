@@ -12,7 +12,7 @@ using TA.SharpBooru.NetIO.Packets.BooruPackets;
 
 namespace TA.SharpBooru.Client
 {
-    public class BooruClient:IDisposable
+    public class BooruClient : IDisposable
     {
         public delegate bool CheckFingerprintDelegate(string Fingerprint);
 
@@ -35,12 +35,11 @@ namespace TA.SharpBooru.Client
             return _CurrentRequestID;
         }
 
-        public BooruClient(Logger Logger = null) { _Logger = Logger; }
+        public BooruClient(Logger Logger = null) { _Logger = Logger ?? Logger.Null; }
 
         public void Connect(IPEndPoint EndPoint, CheckFingerprintDelegate CheckFingerprintDelegate = null)
         {
-            if (_Logger != null)
-                _Logger.LogLine("Connecting to {0} port {1}...", EndPoint.Address, EndPoint.Port);
+            _Logger.LogLine("Connecting to {0} port {1}...", EndPoint.Address, EndPoint.Port);
             _Client = new TcpClient();
             _Client.Connect(EndPoint);
             _Stream = _Client.GetStream();
@@ -61,30 +60,24 @@ namespace TA.SharpBooru.Client
 
         private Exception DoHandshake(CheckFingerprintDelegate ChkDelegate)
         {
-            if (_Logger != null)
-                _Logger.LogLine("ProtocolVersion is {0}", ProtocolVersion);
+            _Logger.LogLine("ProtocolVersion is {0}", ProtocolVersion);
             _ReaderWriter.Write(ProtocolVersion);
             _ReaderWriter.Flush();
             ushort serverProtocolVersion = _ReaderWriter.ReadUShort();
             if (serverProtocolVersion != ProtocolVersion)
                 return new BooruException(BooruException.ErrorCodes.ProtocolVersionMismatch, string.Format("Server {0} != Client {1}", serverProtocolVersion, ProtocolVersion));
             Packet4_ServerInfo serverInfo = (Packet4_ServerInfo)Packet.PacketFromReader(_ReaderWriter);
-            if (_Logger != null)
-            {
-                _Logger.LogLine("Encryption is {0}", serverInfo.Encryption ? "needed" : "not needed");
-                _Logger.LogLine("ServerName is {0}", serverInfo.ServerName);
-                _Logger.LogLine("AdminContact is {0}", serverInfo.AdminContact);
-            }
+            _Logger.LogLine("Encryption is {0}", serverInfo.Encryption ? "needed" : "not needed");
+            _Logger.LogLine("ServerName is {0}", serverInfo.ServerName);
+            _Logger.LogLine("AdminContact is {0}", serverInfo.AdminContact);
             using (RSA rsa = new RSA(serverInfo.Modulus, serverInfo.Exponent))
             {
                 string fingerprint = rsa.GetFingerprint();
-                if (_Logger != null)
-                    _Logger.LogLine("Server Fingerprint is {0}", fingerprint);
+                _Logger.LogLine("Server Fingerprint is {0}", fingerprint);
                 bool fingerprintOK = true;
                 if (ChkDelegate != null)
                     fingerprintOK = ChkDelegate(rsa.GetFingerprint());
-                else if (_Logger != null)
-                    _Logger.LogLine("No FingerprintCheckDelegate -> Fingerprint accepted");
+                else _Logger.LogLine("No FingerprintCheckDelegate -> Fingerprint accepted");
                 if (fingerprintOK)
                 {
                     if (serverInfo.Encryption)
@@ -101,11 +94,8 @@ namespace TA.SharpBooru.Client
             }
             _BooruInfo = (BooruInfo)((Packet23_Resource)Packet.PacketFromReader(_ReaderWriter)).Resource;
             _CurrentUser = (BooruUser)((Packet23_Resource)Packet.PacketFromReader(_ReaderWriter)).Resource;
-            if (_Logger != null)
-            {
-                _Logger.LogPublicFields(_BooruInfo);
-                //TODO Log user
-            }
+            _Logger.LogPublicFields(_BooruInfo);
+            //TODO Log user
             return null;
         }
 
@@ -135,10 +125,7 @@ namespace TA.SharpBooru.Client
                     ProgressResponse(requestID, packet);
                 }
             }
-            catch (Exception ex)
-            {
-
-            }
+            catch (Exception ex) { _Logger.LogLine("PacketReceiver", ex); }
         }
 
         private void ProgressResponse(uint RequestID, Packet response)
