@@ -136,12 +136,12 @@ namespace TA.SharpBooru.Client.WebServer
                         executionException = ex;
                         try
                         {
-                            var bEx = ex as BooruProtocol.BooruException;
+                            var bEx = ex as BooruException;
                             if (bEx != null)
                                 switch (bEx.ErrorCode)
                                 {
-                                    case BooruProtocol.ErrorCode.NoPermission: bContext.HTTPCode = 403; break;
-                                    case BooruProtocol.ErrorCode.ResourceNotFound: bContext.HTTPCode = 404; break;
+                                    case BooruException.ErrorCodes.NoPermission: bContext.HTTPCode = 403; break;
+                                    case BooruException.ErrorCodes.ResourceNotFound: bContext.HTTPCode = 404; break;
                                     default: bContext.HTTPCode = 500; break;
                                 }
                             else bContext.HTTPCode = 500;

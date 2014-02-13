@@ -79,35 +79,35 @@ namespace TA.SharpBooru
             sb.AppendLine("This program can run in multiple modes:");
             sb.AppendLine("  -m, --mode       Mode can be server, gui, cli or webserver");
             sb.AppendLine();
-            sb.AppendLine("The other command line switches are different for the modes");
+            sb.AppendLine("The other command line switches depend on the mode");
             sb.AppendLine();
 
             sb.AppendLine("Server Mode [-m server]");
             sb.AppendLine("  -l, --location   Location of the booru");
             sb.AppendLine("  -u, --username   Username for SetUID");
-            sb.AppendLine("      --port       TCPListener port [2400]");
+            sb.AppendLine("      --port       Port [2400]");
             sb.AppendLine("You must provide -l, all other switches are optional");
             sb.AppendLine();
 
             sb.AppendLine("GUI Mode [-m gui]");
             sb.AppendLine("  -s, --server     Server to connect to [localhost]");
-            sb.AppendLine("  -u, --username   Username for auto login [guest]");
-            sb.AppendLine("  -s, --server     Password for auto login [guest]");
+            sb.AppendLine("  -u, --username   Username for auto login");
+            sb.AppendLine("  -s, --server     Password for auto login");
             sb.AppendLine("All switches are optional");
             sb.AppendLine();
 
             sb.AppendLine("CLI Mode [-m cli]");
             sb.AppendLine("  -s, --server     Server to connect to [localhost]");
-            sb.AppendLine("  -u, --username   Username for auto login [guest]");
-            sb.AppendLine("  -s, --server     Password for auto login [guest]");
-            sb.AppendLine("  -c, --command    Command to execute [null]");
+            sb.AppendLine("  -u, --username   Username for auto login");
+            sb.AppendLine("  -s, --server     Password for auto login");
+            sb.AppendLine("  -c, --command    Command to execute");
             sb.AppendLine("All switches are optional");
             sb.AppendLine();
 
             sb.AppendLine("WebServer Mode");
             sb.AppendLine("  -s, --server     Server to connect to [localhost]");
-            sb.AppendLine("  -u, --username   Username for auto login [guest]");
-            sb.AppendLine("  -s, --server     Password for auto login [guest]");
+            sb.AppendLine("  -u, --username   Username for auto login");
+            sb.AppendLine("  -s, --server     Password for auto login");
             sb.AppendLine("      --port       HTTP port [80]");
             sb.AppendLine("All switches are optional");
             sb.AppendLine();

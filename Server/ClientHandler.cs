@@ -12,8 +12,6 @@ namespace TA.SharpBooru.Server
 {
     public class ClientHandler : IDisposable
     {
-        private const ushort ProtocolVersion = 50;
-
         private ServerBooru _Booru;
         private BooruUser _User;
 
@@ -33,12 +31,11 @@ namespace TA.SharpBooru.Server
 
         private void DoHandshake()
         {
-            _ReaderWriter.Write(ProtocolVersion);
+            _ReaderWriter.Write(BooruServer.ProtocolVersion);
             _ReaderWriter.Flush();
             ushort clientProtocolVersion = _ReaderWriter.ReadUShort();
-            if (clientProtocolVersion != ProtocolVersion)
-                throw new Exception(string.Format("ClientProtocolVersion {0} != ServerProtocolVersion {1}", clientProtocolVersion, ProtocolVersion));
-            
+            if (clientProtocolVersion != BooruServer.ProtocolVersion)
+                throw new BooruException(BooruException.ErrorCodes.ProtocolVersionMismatch, string.Format("Client {0} != Server {1}", clientProtocolVersion, BooruServer.ProtocolVersion));
             byte[] exp, mod;
             _Booru.RSA.GetPublicKey(out mod, out exp);
             Packet4_ServerInfo serverInfo = new Packet4_ServerInfo()

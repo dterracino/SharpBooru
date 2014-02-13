@@ -119,7 +119,9 @@ namespace TA.SharpBooru
 
         public ulong ReadULong()
         {
-            uint higherUInt = ReadUInt();
+            //higherUInt must be ulong, or "<< 32" will not work
+            //maybe because int is used internally?
+            ulong higherUInt = ReadUInt();
             return (ulong)(higherUInt << 32 | ReadUInt());
         }
 

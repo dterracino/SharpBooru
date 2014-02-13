@@ -7,6 +7,8 @@ namespace TA.SharpBooru.Server
 {
     public class BooruServer : Server, IDisposable
     {
+        public const ushort ProtocolVersion = 50;
+
         private ServerBooru _Booru;
         private TcpListener _Listener;
 

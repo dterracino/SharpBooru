@@ -75,6 +75,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BooruException.cs" />
     <Compile Include="BooruInfo.cs" />
     <Compile Include="BooruResource.cs" />
     <Compile Include="Client\CLI\BooruConsole.cs" />
@@ -217,7 +218,6 @@
     <Compile Include="BooruAPIs\SafebooruAPI.cs" />
     <Compile Include="BooruImage.cs" />
     <Compile Include="BooruPost.cs" />
-    <Compile Include="BooruProtocol.cs" />
     <Compile Include="Server\BooruServer.cs" />
     <Compile Include="Server\BooruSearch.cs" />
     <Compile Include="BooruTag.cs" />

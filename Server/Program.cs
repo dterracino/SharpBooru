@@ -80,7 +80,7 @@ namespace TA.SharpBooru.Server
                 ServerHelper.SetupSignal(Signum.SIGTERM, () => Cancel(waitEvent));
             }
 
-            _Logger.LogLine("Starting server (ProtocolVersion = {0})...", BooruProtocol.ProtocolVersion);
+            _Logger.LogLine("Starting server (ProtocolVersion = {0})...", BooruServer.ProtocolVersion);
             _BooruServer.Start();
 
             if (_Options.Username != null)

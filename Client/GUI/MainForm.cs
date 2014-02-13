@@ -83,7 +83,7 @@ namespace TA.SharpBooru.Client.GUI
                         SetTitle();
                         CheckPermissions();
                     }
-                    catch (BooruProtocol.BooruException bEx) { MessageBox.Show(bEx.Message, "ERROR: Change User", MessageBoxButtons.OK, MessageBoxIcon.Error); }
+                    catch (BooruException bEx) { MessageBox.Show(bEx.Message, "ERROR: Change User", MessageBoxButtons.OK, MessageBoxIcon.Error); }
                 }
         }
 
