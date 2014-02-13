@@ -199,7 +199,6 @@
     <Compile Include="Client\WebServer\HttpMultipartDataParser\ParameterPart.cs" />
     <Compile Include="Client\WebServer\HttpMultipartDataParser\RebufferableBinaryReader.cs" />
     <Compile Include="Client\WebServer\HttpMultipartDataParser\SubsequenceFinder.cs" />
-    <Compile Include="Client\WebServer\RequestSecurityManager.cs" />
     <Compile Include="Client\WebServer\WebserverHelper.cs" />
     <Compile Include="Client\WebServer\VirtualFileSystem\BaseClasses.cs" />
     <Compile Include="Client\WebServer\VirtualFileSystem\VFSBooruImageFile.cs" />

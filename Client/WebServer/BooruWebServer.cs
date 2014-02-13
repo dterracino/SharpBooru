@@ -16,14 +16,12 @@ namespace TA.SharpBooru.Client.WebServer
         private HttpListener _Listener;
         private Thread _AcceptConnectionsThread;
         private VFSDirectory _RootDirectory;
-        private RequestSecurityManager _RSM;
         private bool _EnableDirectoryListing;
         //private CookieManager _CookieManager;
 
         public BooruClient Booru { get { return _Booru; } }
         public Logger Logger { get { return _Logger; } }
         public VFSDirectory RootDirectory { get { return _RootDirectory; } }
-        public RequestSecurityManager RSM { get { return _RSM; } }
         public bool EnableDirectoryListing { get { return _EnableDirectoryListing; } set { _EnableDirectoryListing = value; } }
         //public CookieManager CookieManager { get { return _CookieManager; } }
 
@@ -48,7 +46,6 @@ namespace TA.SharpBooru.Client.WebServer
             _EnableDirectoryListing = EnableDirectoryListing;
             _Pool = new SmartThreadPool(3000, 500, 10);
             _RootDirectory = new VFSDirectory(string.Empty);
-            _RSM = EnableRSM ? new RequestSecurityManager() : null;
             //_CookieManager = new CookieManager();
         }
 
@@ -102,48 +99,41 @@ namespace TA.SharpBooru.Client.WebServer
                 Logger.LogLine("Request from {2}: {0} {1}", bContext.Method, bContext.InnerContext.Request.Url, bContext.ClientIP);
                 try
                 {
-                    int RSMCode = RSM == null ? 200 : RSM.CheckAllowedConnectionAndReturnHttpCode(bContext.ClientIP);
                     if (!(bContext.Method == "POST" || bContext.Method == "GET"))
                         throw new NotImplementedException(string.Format("HTTP method {0} not implemented", bContext.Method));
-                    internalHandleRequestS2(bContext, RSMCode);
+                    internalHandleRequestS2(bContext);
                     if (!(bContext.HTTPCode < 400))
                         throw new WebException(string.Format("Returned to [c7]{0}[cr]: {1} - {2}", bContext.ClientIP.ToString(), bContext.HTTPCode, WebserverHelper.GetHTTPCodeDescription(bContext.HTTPCode)));
                 }
                 catch (Exception ex) { Logger.LogException("HandleRequest", ex); }
-                if (RSM != null)
-                    RSM.RequestProcessed(bContext.ClientIP);
                 return null;
             }
         }
 
-        private void internalHandleRequestS2(Context bContext, int RSMCode)
+        private void internalHandleRequestS2(Context bContext)
         {
             Exception executionException = null;
-            if (RSMCode == 200)
-            {
-                VFSFile file = _RootDirectory.GetFile(bContext.RequestPath);
-                if (file != null)
-                    try { file.Execute(bContext); }
-                    catch (Exception ex)
+            VFSFile file = _RootDirectory.GetFile(bContext.RequestPath);
+            if (file != null)
+                try { file.Execute(bContext); }
+                catch (Exception ex)
+                {
+                    executionException = ex;
+                    try
                     {
-                        executionException = ex;
-                        try
-                        {
-                            var bEx = ex as BooruException;
-                            if (bEx != null)
-                                switch (bEx.ErrorCode)
-                                {
-                                    case BooruException.ErrorCodes.NoPermission: bContext.HTTPCode = 403; break;
-                                    case BooruException.ErrorCodes.ResourceNotFound: bContext.HTTPCode = 404; break;
-                                    default: bContext.HTTPCode = 500; break;
-                                }
-                            else bContext.HTTPCode = 500;
-                        }
-                        catch { }
+                        var bEx = ex as BooruException;
+                        if (bEx != null)
+                            switch (bEx.ErrorCode)
+                            {
+                                case BooruException.ErrorCodes.NoPermission: bContext.HTTPCode = 403; break;
+                                case BooruException.ErrorCodes.ResourceNotFound: bContext.HTTPCode = 404; break;
+                                default: bContext.HTTPCode = 500; break;
+                            }
+                        else bContext.HTTPCode = 500;
                     }
-                else bContext.HTTPCode = 404;
-            }
-            else bContext.HTTPCode = RSMCode;
+                    catch { }
+                }
+            else bContext.HTTPCode = 404;
             try
             {
                 if (!(bContext.HTTPCode < 400))

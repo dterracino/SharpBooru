@@ -4,13 +4,10 @@ using System.Net;
 using System.Web;
 using System.Linq;
 using System.Text;
-using System.Security;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Collections.Specialized;
 using HttpMultipartParser;
-using Mono.Unix;
-using Mono.Unix.Native;
 
 namespace TA.SharpBooru.Client.WebServer
 {
