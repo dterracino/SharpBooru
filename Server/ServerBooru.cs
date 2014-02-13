@@ -53,8 +53,6 @@ namespace TA.SharpBooru.Server
             throw new Exception("No valid booru directory");
         }
 
-        public void Dispose() { _DB.Dispose(); }
-
         public BooruPost GetPost(BooruUser User, ulong PostID, bool IncludeThumbnail)
         {
             DataRow postRow = _DB.ExecuteRow(SQLStatements.GetPostByID, PostID);

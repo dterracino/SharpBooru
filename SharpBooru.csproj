@@ -103,6 +103,7 @@
     <Compile Include="Client\ResponseWaiter.cs" />
     <Compile Include="ReaderWriter.cs" />
     <Compile Include="Server\ClientHandler.cs" />
+    <Compile Include="ImageOptimizer.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Client\GUI\Controls\ImageBox\ImageBox.cs">
       <SubType>Component</SubType>
@@ -198,9 +199,8 @@
     <Compile Include="Client\WebServer\HttpMultipartDataParser\ParameterPart.cs" />
     <Compile Include="Client\WebServer\HttpMultipartDataParser\RebufferableBinaryReader.cs" />
     <Compile Include="Client\WebServer\HttpMultipartDataParser\SubsequenceFinder.cs" />
-    <Compile Include="Client\WebServer\Program.cs" />
     <Compile Include="Client\WebServer\RequestSecurityManager.cs" />
-    <Compile Include="Client\WebServer\ServerHelper.cs" />
+    <Compile Include="Client\WebServer\WebserverHelper.cs" />
     <Compile Include="Client\WebServer\VirtualFileSystem\BaseClasses.cs" />
     <Compile Include="Client\WebServer\VirtualFileSystem\VFSBooruImageFile.cs" />
     <Compile Include="Client\WebServer\VirtualFileSystem\VFSBooruPostFile.cs" />
@@ -218,7 +218,6 @@
     <Compile Include="BooruAPIs\SafebooruAPI.cs" />
     <Compile Include="BooruImage.cs" />
     <Compile Include="BooruPost.cs" />
-    <Compile Include="Server\BooruServer.cs" />
     <Compile Include="Server\BooruSearch.cs" />
     <Compile Include="BooruTag.cs" />
     <Compile Include="BooruUser.cs" />
@@ -316,7 +315,8 @@
     <Compile Include="Client\GUI\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Server\Program.cs" />
+    <Compile Include="Server\BooruServer.cs" />
+    <Compile Include="Server\ServerWrapper.cs" />
     <Compile Include="Server\ServerBooru.cs" />
     <Compile Include="Server\ServerHelper.cs" />
     <Compile Include="Server\SQLStatements.cs" />
@@ -385,6 +385,7 @@
     <None Include="Resources\icon_edit.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\ascii_banner.txt" />
     <Content Include="Resources\icon.ico" />
     <Content Include="Resources\icon_clone.png" />
     <None Include="Resources\imgscript_js.txt" />
@@ -393,28 +394,6 @@
     <None Include="Resources\icon_imgsearch.png" />
     <None Include="Resources\icon_import.png" />
     <None Include="Resources\icon_refresh.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 und x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

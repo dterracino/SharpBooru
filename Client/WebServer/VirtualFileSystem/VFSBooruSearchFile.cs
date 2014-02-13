@@ -25,7 +25,7 @@ namespace TA.SharpBooru.Client.WebServer.VFS
 
         public override void Execute(Context Context)
         {
-            ServerHelper.WriteHeader(Context, Title);
+            WebserverHelper.WriteHeader(Context, Title);
             int thumbsPerPage = 60; //TODO ThumbsPerPage property
             //int thumbsPerPage = Context.Booru.GetProperty<int>(Booru.Property.ServerThumbsPerPage);
             string tagSearch = string.Empty;
@@ -44,8 +44,8 @@ namespace TA.SharpBooru.Client.WebServer.VFS
             if (count > thumbsPerPage)
                 count = thumbsPerPage;
             postIDs = postIDs.GetRange(page * thumbsPerPage, count);
-            ServerHelper.WriteTableHeader(Context);
-            ServerHelper.WriteSearchTextBox(Context, Name, tagSearch);
+            WebserverHelper.WriteTableHeader(Context);
+            WebserverHelper.WriteSearchTextBox(Context, Name, tagSearch);
             /*
             Context.OutWriter.Write("<br>");
             Dictionary<BooruTag, int> top20dict = BooruHelper.GetTop20Tags(Context.Booru, posts);
@@ -63,7 +63,7 @@ namespace TA.SharpBooru.Client.WebServer.VFS
                 ServerHelper.WriteSubSectionFooter(Context);
             }
             */
-            ServerHelper.WriteTableMiddle(Context);
+            WebserverHelper.WriteTableMiddle(Context);
             if (postIDs.Count > 0)
             {
                 Context.OutWriter.Write("<div class=\"wrap\">");
@@ -90,8 +90,8 @@ namespace TA.SharpBooru.Client.WebServer.VFS
                 Context.OutWriter.Write("</div>");
             }
             else Context.OutWriter.Write("Nobody here but us chickens! - Why chickens?!");
-            ServerHelper.WriteTableFooter(Context);
-            ServerHelper.WriteFooter(Context);
+            WebserverHelper.WriteTableFooter(Context);
+            WebserverHelper.WriteFooter(Context);
         }
     }
 }

@@ -1,32 +1,24 @@
 ﻿using System;
 using System.IO;
+using System.Net;
 using System.Threading;
 using System.Runtime.CompilerServices;
 using Mono.Unix.Native;
 
 namespace TA.SharpBooru.Server
 {
-    public class Program
+    public class ServerWrapper
     {
-        public static void subMain(Options options, Logger logger)
-        {
-            Program program = new Program(options, logger);
-            program.Run();
-        }
+        public ServerWrapper(Logger Logger) { _Logger = Logger; }
 
-        public Program(Options Options, Logger Logger)
-        {
-            _Options = Options;
-            _Logger = Logger;
-        }
-
-        private Options _Options;
         private Logger _Logger;
-        private Thread _BroadcastListenerThread;
-        private bool _BroadcastListenerThreadRunning = true;
+        //private Thread _BroadcastListenerThread;
+        //private bool _BroadcastListenerThreadRunning = true;
         private BooruServer _BooruServer;
 
-        public void Run()
+        public BooruServer BooruServer { get { return _BooruServer; } }
+
+        public void StartServer(string location, string setuidUser, IPEndPoint localEndPoint, bool waitForExit = true)
         {
             /*
             if (_Options.PIDFile != null)
@@ -46,23 +38,25 @@ namespace TA.SharpBooru.Server
             }
             */
 
-            if (_Options.Location == null)
+            if (location == null)
                 throw new ArgumentNullException("Please provide a booru location");
-            else if (!Directory.Exists(_Options.Location))
+            else if (!Directory.Exists(location))
                 throw new DirectoryNotFoundException("Booru location not found");
 
             _Logger.LogLine("Loading booru database...");
-            ServerBooru booru = new ServerBooru(_Options.Location);
+            ServerBooru booru = new ServerBooru(location);
 
             _Logger.LogLine("Creating server instance...");
-            ushort port = _Options.Port < 1 ? (ushort)2400 : _Options.Port;
-            _BooruServer = new BooruServer(booru, _Logger, port);
+            if (localEndPoint.Port < 1)
+                localEndPoint.Port = 2400;
+            _BooruServer = new BooruServer(booru, _Logger, localEndPoint);
 
+            /*
             _Logger.LogLine("Starting BroadcastListener...");
             _BroadcastListenerThread = new Thread(() =>
                 {
                     while (true)
-                        try { Broadcaster.ListenForBroadcast(booru.BooruInfo.BooruName, port); }
+                        try { Broadcaster.ListenForBroadcast(booru.BooruInfo.BooruName, localEndPoint.Port); }
                         catch (Exception ex)
                         {
                             if (_BroadcastListenerThreadRunning)
@@ -70,6 +64,7 @@ namespace TA.SharpBooru.Server
                         }
                 });
             _BroadcastListenerThread.Start();
+            */
 
             EventWaitHandle waitEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
             _Logger.LogLine("Registering CtrlC handler...");
@@ -83,26 +78,30 @@ namespace TA.SharpBooru.Server
             _Logger.LogLine("Starting server (ProtocolVersion = {0})...", BooruServer.ProtocolVersion);
             _BooruServer.Start();
 
-            if (_Options.Username != null)
+            if (setuidUser != null)
             {
-                _Logger.LogLine("Changing UID to user '{0}'...", _Options.Username);
-                try { ServerHelper.SetUID(_Options.Username); }
+                _Logger.LogLine("Changing UID to user '{0}'...", setuidUser);
+                try { ServerHelper.SetUID(setuidUser); }
                 catch (Exception ex) { _Logger.LogException("SetUID", ex); }
             }
 
             _Logger.LogLine("Server startup finished");
-            waitEvent.WaitOne(); //Wait for Cancel to finish
+
+            if (waitForExit)
+                waitEvent.WaitOne(); //Wait for Cancel to finish
         }
 
         private bool _CancelRunned = false;
         [MethodImpl(MethodImplOptions.Synchronized)]
-        public void Cancel(EventWaitHandle WaitEvent)
+        public void Cancel(EventWaitHandle WaitEvent = null)
         {
             if (!_CancelRunned)
             {
                 _Logger.LogLine("Stopping BroadcastListener...");
+                /*
                 _BroadcastListenerThreadRunning = false;
                 _BroadcastListenerThread.Abort();
+                */
                 _Logger.LogLine("Stopping server and waiting for clients to finish...");
                 _BooruServer.Stop(3000);
                 _Logger.LogLine("Disposing server and closing database connection...");
@@ -116,7 +115,9 @@ namespace TA.SharpBooru.Server
                 }
                 */
                 _CancelRunned = true;
-                WaitEvent.Set();
+
+                if (WaitEvent != null)
+                    WaitEvent.Set();
             }
         }
     }

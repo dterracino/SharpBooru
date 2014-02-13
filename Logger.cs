@@ -18,8 +18,8 @@ namespace TA.SharpBooru
         private void WriteANSI(params int[] Code)
         {
             if (Helper.IsUnix())
-                foreach (int code in Code)
-                    _Writer.Write("\x1b[{0}m", code);
+                for (byte i = 0; i < Code.Length; i++)
+                    _Writer.Write("\x1b[{0}m", Code[i]);
         }
 
         public void LogLine(string Format, params object[] Args)

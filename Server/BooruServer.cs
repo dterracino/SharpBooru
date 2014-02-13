@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
-using System.Collections.Generic;
 
 namespace TA.SharpBooru.Server
 {
@@ -12,11 +11,14 @@ namespace TA.SharpBooru.Server
         private ServerBooru _Booru;
         private TcpListener _Listener;
 
-        public BooruServer(ServerBooru Booru,Logger Logger, ushort Port) 
+        public ServerBooru Booru { get { return _Booru; } }
+        public ushort Port { get { return (ushort)(_Listener.LocalEndpoint as IPEndPoint).Port; } }
+
+        public BooruServer(ServerBooru Booru, Logger Logger, IPEndPoint LocalEndPoint)
         {
             _Booru = Booru;
             this.Logger = Logger;
-            _Listener = new TcpListener(new IPEndPoint(IPAddress.Any, Port));
+            _Listener = new TcpListener(LocalEndPoint);
         }
 
         public override string ServerName { get { return "NetIO Server"; } }

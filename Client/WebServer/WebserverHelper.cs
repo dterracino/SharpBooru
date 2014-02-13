@@ -14,7 +14,7 @@ using Mono.Unix.Native;
 
 namespace TA.SharpBooru.Client.WebServer
 {
-    public class ServerHelper
+    public class WebserverHelper
     {
         private const string DOCTYPE = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">";
 
@@ -111,26 +111,6 @@ namespace TA.SharpBooru.Client.WebServer
             Context.OutWriter.Write("<form action=\"{0}\" method=\"GET\">", Target);
             Context.OutWriter.Write("<input class=\"search\" type=\"text\" name=\"tags\" value=\"{0}\">", Value ?? string.Empty);
             Context.OutWriter.Write("</form>");
-        }
-
-        public static void SetUID(string Username)
-        {
-            if (Username == null)
-                throw new ArgumentNullException("Username");
-            else if (string.IsNullOrWhiteSpace(Username))
-                throw new ArgumentException("Username");
-            else if (!Helper.IsUnix())
-                throw new PlatformNotSupportedException("Not running Unix");
-            else if (Syscall.getuid() != 0)
-                throw new SecurityException("Not running as root");
-            else
-            {
-                Passwd passwordStruct = Syscall.getpwnam(Username);
-                if (passwordStruct == null)
-                    throw new UnixIOException(string.Format("User {0} not found", Username));
-                else if (Syscall.setuid(passwordStruct.pw_uid) != 0)
-                    throw new Exception("SetUID failed");
-            }
         }
 
         public static DictionaryEx ParseParameters(string Query)

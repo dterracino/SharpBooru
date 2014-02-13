@@ -27,10 +27,10 @@ namespace TA.SharpBooru.Client.WebServer.VFS
             if (!string.IsNullOrWhiteSpace(MimeType))
                 Context.MimeType = MimeType;
             if (UseHelperHTMLWrapping)
-                ServerHelper.WriteHeader(Context, Title ?? "Text output");
+                WebserverHelper.WriteHeader(Context, Title ?? "Text output");
             _Delegate(Context);
             if (UseHelperHTMLWrapping)
-                ServerHelper.WriteFooter(Context);
+                WebserverHelper.WriteFooter(Context);
         }
     }
 }

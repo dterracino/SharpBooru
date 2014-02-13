@@ -16,11 +16,11 @@
 
         public override void Execute(Context Context)
         {
-            ServerHelper.WriteMinimalHeader(Context, string.Format("ERROR {0}", _ErrorCode));
-            Context.OutWriter.Write("<span style=\"font-family: arial\"><span style=\"font-size: 40px\">ERROR {0}</span><br>{1}", _ErrorCode, ServerHelper.GetHTTPCodeDescription(_ErrorCode));
-            ServerHelper.WriteBackButton(Context, true, "Eat shit and die!");
+            WebserverHelper.WriteMinimalHeader(Context, string.Format("ERROR {0}", _ErrorCode));
+            Context.OutWriter.Write("<span style=\"font-family: arial\"><span style=\"font-size: 40px\">ERROR {0}</span><br>{1}", _ErrorCode, WebserverHelper.GetHTTPCodeDescription(_ErrorCode));
+            WebserverHelper.WriteBackButton(Context, true, "Eat shit and die!");
             Context.OutWriter.Write("</span>");
-            ServerHelper.WriteMinimalFooter(Context);
+            WebserverHelper.WriteMinimalFooter(Context);
         }
     }
 }
