@@ -105,7 +105,11 @@ namespace TA.SharpBooru.Client
         {
             if (_ReceiverThread.IsAlive)
                 _ReceiverThread.Abort();
-            try { (new Packet3_Disconnect()).PacketToWriter(_ReaderWriter); }
+            try
+            {
+                _ReaderWriter.Write(GetNextRequestID());
+                (new Packet3_Disconnect()).PacketToWriter(_ReaderWriter);
+            }
             catch { }
             lock (_Waiters) //Maybe aborted _ReceiverThread locked _Waiters, Deadlock?
                 foreach (ResponseWaiter rWaiter in _Waiters)
