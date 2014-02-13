@@ -54,7 +54,7 @@ namespace TA.SharpBooru
                                 string question = string.Format("Server fingerprint = {0}, accept?", fp);
                                 return MessageBox.Show(question, "Fingerprint", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
                             };
-                        using (BooruClient booru = ConnectBooru(options.Server, fpChecker, options.Username, options.Password))
+                        using (BooruClient booru = ConnectBooru(options.Server, options.AcceptFingerprint ? null : fpChecker, options.Username, options.Password))
                             RunClientGUI(booru);
                     }
                     else if (options.Mode == Options.RunMode.CLI)
@@ -72,7 +72,7 @@ namespace TA.SharpBooru
                                         return false;
                                 }
                             };
-                        using (BooruClient booru = ConnectBooru(options.Server, fpChecker, options.Username, options.Password))
+                        using (BooruClient booru = ConnectBooru(options.Server, options.AcceptFingerprint ? null : fpChecker, options.Username, options.Password))
                             RunClientCLI(booru, options.Command);
                     }
                     else if (options.Mode == Options.RunMode.WebServer)

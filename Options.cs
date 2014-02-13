@@ -51,6 +51,9 @@ namespace TA.SharpBooru
         [Option('l', "location", Required = false, DefaultValue = null)]
         public string Location { get; set; }
 
+        [Option("accept-fp", Required = false, DefaultValue = false)]
+        public bool AcceptFingerprint { get; set; }
+
         /*
         [Option('c', "certificate", Required = false, HelpText = "The .pfx server certificate")]
         public string Certificate { get; set; }
@@ -71,7 +74,6 @@ namespace TA.SharpBooru
             string copyright = GetAssemblyAttribute<AssemblyCopyrightAttribute>(x => x.Copyright);
             sb.Append(copyright);
             sb.AppendLine();
-
             sb.AppendLine();
 
             sb.AppendLine("This program can run in multiple modes:");
@@ -91,6 +93,7 @@ namespace TA.SharpBooru
             sb.AppendLine("  -s, --server     Server to connect to [localhost]");
             sb.AppendLine("  -u, --username   Username for auto login");
             sb.AppendLine("  -s, --server     Password for auto login");
+            sb.AppendLine("      --accept-fp  Accept the server fingerprint");
             sb.AppendLine("All switches are optional");
             sb.AppendLine();
 
@@ -99,6 +102,7 @@ namespace TA.SharpBooru
             sb.AppendLine("  -u, --username   Username for auto login");
             sb.AppendLine("  -s, --server     Password for auto login");
             sb.AppendLine("  -c, --command    Command to execute");
+            sb.AppendLine("      --accept-fp  Accept the server fingerprint");
             sb.AppendLine("All switches are optional");
             sb.AppendLine();
 
