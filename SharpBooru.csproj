@@ -384,7 +384,8 @@
     <None Include="Resources\icon_edit.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\ascii_banner.txt" />
+    <Content Include="Resources\ascii_banner_unix.txt" />
+    <None Include="Resources\ascii_banner_windows.txt" />
     <Content Include="Resources\icon.ico" />
     <Content Include="Resources\icon_clone.png" />
     <None Include="Resources\imgscript_js.txt" />

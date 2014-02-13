@@ -18,8 +18,7 @@ namespace TA.SharpBooru
         public static int Main(string[] args)
         {
             Console.Title = "SharpBooru";
-            Console.Write(Properties.Resources.ascii_banner);
-            Console.WriteLine();
+            Console.WriteLine(Helper.IsWindows() ? Properties.Resources.ascii_banner_windows : Properties.Resources.ascii_banner_unix);
             Console.WriteLine();
 
             Logger sLogger = new Logger(Console.Out);
