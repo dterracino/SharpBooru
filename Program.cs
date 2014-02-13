@@ -43,17 +43,44 @@ namespace TA.SharpBooru
                         string location = options.Location ?? Environment.CurrentDirectory;
                         wrapper.StartServer(location, null, new IPEndPoint(IPAddress.Loopback, 0), false);
                         IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Loopback, wrapper.BooruServer.Port);
-                        using (BooruClient booru = ConnectBooru(serverEndPoint, options.Username, options.Password))
+                        using (BooruClient booru = ConnectBooru(serverEndPoint, null, options.Username, options.Password))
                             RunClientGUI(booru);
                         wrapper.Cancel(null);
                     }
-                    else using (BooruClient booru = ConnectBooru(options.Server, options.Username, options.Password))
-                            switch (options.Mode)
+                    else if (options.Mode == Options.RunMode.GUI)
+                    {
+                        BooruClient.CheckFingerprintDelegate fpChecker = fp =>
                             {
-                                case Options.RunMode.GUI: RunClientGUI(booru); break;
-                                case Options.RunMode.CLI: RunClientCLI(booru, options.Command); break;
-                                case Options.RunMode.WebServer: RunClientWebserver(booru, options.Port, sLogger); break;
-                            }
+                                string question = string.Format("Server fingerprint = {0}, accept?", fp);
+                                return MessageBox.Show(question, "Fingerprint", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
+                            };
+                        using (BooruClient booru = ConnectBooru(options.Server, fpChecker, options.Username, options.Password))
+                            RunClientGUI(booru);
+                    }
+                    else if (options.Mode == Options.RunMode.CLI)
+                    {
+                        BooruClient.CheckFingerprintDelegate fpChecker = fp =>
+                            {
+                                while (true)
+                                {
+                                    Console.Write("Server fingerprint = {0}, accept? [Y/N] ", fp);
+                                    ConsoleKey key = Console.ReadKey().Key;
+                                    Console.WriteLine();
+                                    if (key == ConsoleKey.Y)
+                                        return true;
+                                    else if (key == ConsoleKey.N)
+                                        return false;
+                                }
+                            };
+                        using (BooruClient booru = ConnectBooru(options.Server, fpChecker, options.Username, options.Password))
+                            RunClientCLI(booru, options.Command);
+                    }
+                    else if (options.Mode == Options.RunMode.WebServer)
+                    {
+                        using (BooruClient booru = ConnectBooru(options.Server, null, options.Username, options.Password))
+                            RunClientWebserver(booru, options.Port, sLogger);
+                    }
+                    else return 1;
                 }
                 return 0;
             }
@@ -65,10 +92,10 @@ namespace TA.SharpBooru
             finally { Helper.CleanTempFolder(); }
         }
 
-        private static BooruClient ConnectBooru(IPEndPoint endPoint, string username = null, string password = null)
+        private static BooruClient ConnectBooru(IPEndPoint endPoint, BooruClient.CheckFingerprintDelegate fpChecker, string username = null, string password = null)
         {
             BooruClient client = new BooruClient();
-            client.Connect(endPoint);
+            client.Connect(endPoint, fpChecker);
             if (username != null && password != null)
                 client.Login(username, password);
             return client;
