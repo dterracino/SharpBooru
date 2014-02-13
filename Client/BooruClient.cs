@@ -107,8 +107,12 @@ namespace TA.SharpBooru.Client
                 _ReceiverThread.Abort();
             try
             {
-                _ReaderWriter.Write(GetNextRequestID());
-                (new Packet3_Disconnect()).PacketToWriter(_ReaderWriter);
+                lock (_ReaderWriter)
+                {
+                    _ReaderWriter.Write(GetNextRequestID());
+                    (new Packet3_Disconnect()).PacketToWriter(_ReaderWriter);
+                    _ReaderWriter.Flush();
+                }
             }
             catch { }
             lock (_Waiters) //Maybe aborted _ReceiverThread locked _Waiters, Deadlock?

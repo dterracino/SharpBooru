@@ -85,21 +85,24 @@ namespace TA.SharpBooru.Server
                 Packet responsePacket = null;
                 try
                 {
+                    string remote = string.Format("{0} ({1})", _User.Username, _Client.Client.RemoteEndPoint);
                     uint requestID = _ReaderWriter.ReadUInt();
                     using (Packet requestPacket = Packet.PacketFromReader(_ReaderWriter))
                     {
-                        string remote = string.Format("{0} ({1})", _User.Username, _Client.Client.RemoteEndPoint);
                         _Logger.LogLine("Got request {0} {1} from {2}", requestID, requestPacket.GetType().Name, remote);
                         try { responsePacket = HandlePacket(requestPacket); }
-                        catch (Exception ex) 
+                        catch (Exception ex)
                         {
                             _Logger.LogException("PacketHandler", ex);
-                            responsePacket = new Packet1_Exception() { Exception = ex }; 
+                            responsePacket = new Packet1_Exception() { Exception = ex };
                         }
-                        _Logger.LogLine("Sent response {0} {1} to {2}", requestID, responsePacket.GetType().Name, remote);
                     }
-                    _ReaderWriter.Write(requestID);
-                    responsePacket.PacketToWriter(_ReaderWriter);
+                    if (responsePacket != null)
+                    {
+                        _Logger.LogLine("Sent response {0} {1} to {2}", requestID, responsePacket.GetType().Name, remote);
+                        _ReaderWriter.Write(requestID);
+                        responsePacket.PacketToWriter(_ReaderWriter);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -120,7 +123,7 @@ namespace TA.SharpBooru.Server
                 case 3:
                     _Logger.LogLine("{0} ({1}) disconnected", _User.Username, _Client.Client.RemoteEndPoint);
                     _ContinueHandling = false;
-                    break;
+                    return null;
 
                 case 16:
                     Packet16_Login packet16 = (Packet16_Login)reqPacket;
