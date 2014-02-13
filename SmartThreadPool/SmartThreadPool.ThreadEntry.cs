@@ -1,6 +1,4 @@
-﻿
-using System;
-using Amib.Threading.Internal;
+﻿using Amib.Threading.Internal;
 
 namespace Amib.Threading
 {

@@ -1,10 +1,7 @@
 ﻿using System;
-using System.IO;
-using System.Net;
 using System.Net.Sockets;
 using System.Collections.Generic;
 using TA.SharpBooru.NetIO.Packets;
-using TA.SharpBooru.NetIO.Encryption;
 using TA.SharpBooru.NetIO.Packets.CorePackets;
 using TA.SharpBooru.NetIO.Packets.BooruPackets;
 

@@ -2,10 +2,7 @@
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
-<<<<<<< HEAD
-=======
 using TA.SharpBooru.Client;
->>>>>>> devel_packets
 using TA.SharpBooru.Server;
 using TA.SharpBooru.Client.GUI;
 using TA.SharpBooru.Client.CLI;

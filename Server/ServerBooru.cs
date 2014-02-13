@@ -1,10 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Data;
 using System.Collections.Generic;
-using System.Data.SQLite;
-using System.Threading;
 using TA.SharpBooru.NetIO.Encryption;
 
 namespace TA.SharpBooru.Server
@@ -53,10 +50,6 @@ namespace TA.SharpBooru.Server
             throw new Exception("No valid booru directory");
         }
 
-<<<<<<< HEAD
-        public void ReadThumb(BinaryWriter Writer, ulong ID) { ReadFile(Writer, Path.Combine("thumbs", "thumb" + ID)); } //TODO X regen thumb if not found
-        public void ReadImage(BinaryWriter Writer, ulong ID) { ReadFile(Writer, Path.Combine("images", "image" + ID)); }
-=======
         public void Dispose()
         {
             _DB.Dispose();
@@ -122,7 +115,6 @@ namespace TA.SharpBooru.Server
             postsToSend.ForEach(x => ids.Add(x.ID));
             return ids;
         }
->>>>>>> devel_packets
 
         public void DeletePost(BooruUser User, ulong PostID)
         {

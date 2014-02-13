@@ -1,5 +1,4 @@
-﻿
-namespace Amib.Threading.Internal
+﻿namespace Amib.Threading.Internal
 {
     /// <summary>
     /// An internal delegate to call when the WorkItem starts or completes

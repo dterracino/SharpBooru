@@ -1,4 +1,3 @@
-
 #if !(_WINDOWS_CE) && !(_SILVERLIGHT) && !(WINDOWS_PHONE)
 
 using System;
