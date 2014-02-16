@@ -11,16 +11,20 @@ namespace TA.SharpBooru.Client.ScreenSaver
             BooruSCR game = null;
             try
             {
-                Options options = new Options();
-                if (Parser.Default.ParseArguments(args, options))
+                if (Helper.IsWindows() || Helper.IsUnix())
                 {
-                    game = new BooruSCR(options);
-                    game.Run();
-                    return 0;
+                    Options options = new Options();
+                    if (Parser.Default.ParseArguments(args, options))
+                    {
+                        game = new BooruSCR(options);
+                        game.Run();
+                        return 0;
+                    }
+                    else throw new Exception("Error while parsing arguments");
                 }
-                else throw new Exception("Error while parsing arguments");
+                else throw new PlatformNotSupportedException();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 ScreensaverHelper.HandleException(ex);
                 return 1;

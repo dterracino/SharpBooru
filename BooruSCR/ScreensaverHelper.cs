@@ -49,7 +49,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
 
         [DllImport("user32.dll", EntryPoint = "MessageBox")]
         private static extern uint _MessageBox(IntPtr hWnd, string text, string caption, int options);
-        //see http://www.pinvoke.net/default.aspx/Enums/MessageBoxOptions.html for options
+        //See http://www.pinvoke.net/default.aspx/Enums/MessageBoxOptions.html for options
 
         public static bool HandleException(Exception Ex)
         {
