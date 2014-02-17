@@ -34,6 +34,12 @@ namespace TA.SharpBooru.Client.ScreenSaver
         [Option("image-limit", Required = false, DefaultValue = 500)]
         public int ImageLimit { get; set; }
 
+        [Option("fps-limit", Required = false, DefaultValue = 60)]
+        public int FPSLimit { get; set; }
+
+        [Option("no-vsync", Required = false, DefaultValue = true)]
+        public bool NoVSync { get; set; }
+
         [HelpOption('h')]
         public string GetUsage()
         {
@@ -53,6 +59,8 @@ namespace TA.SharpBooru.Client.ScreenSaver
             sb.AppendLine("  -p, --password <pw>          Password for auto login");
             sb.AppendLine("      --search <str>           Search string");
             sb.AppendLine("      --image-limit <n>        Download max. n images [500]");
+            sb.AppendLine("      --fps-limit <n>          Limit the FPS to n, (0 = unlimited) [60]");
+            sb.AppendLine("      --no-vsync               Disable VSync");
             sb.AppendLine("All switches are optional");
 
             sb.AppendLine();

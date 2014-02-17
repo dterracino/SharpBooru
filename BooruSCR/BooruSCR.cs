@@ -39,10 +39,16 @@ namespace TA.SharpBooru.Client.ScreenSaver
             graphics.PreferredBackBufferWidth = W;
             graphics.PreferredBackBufferHeight = H;
             graphics.PreferMultiSampling = true;
+            graphics.SynchronizeWithVerticalRetrace = !_Options.NoVSync;
             graphics.ApplyChanges();
             graphics.ToggleFullScreen();
 
+            if (_Options.FPSLimit > 0)
+                TargetElapsedTime = new TimeSpan(100000000L / _Options.FPSLimit);
+            else IsFixedTimeStep = false;
+
             IsMouseVisible = false;
+
             base.Initialize();
         }
 
