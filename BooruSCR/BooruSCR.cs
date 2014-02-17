@@ -58,15 +58,16 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 _IDs.RemoveAt(R.Next(0, _IDs.Count));
 
             _ImgManager = new ImageManager(R, GraphicsDevice, _Booru, _IDs, 400);
-            _ImgManager.Start();
-
-            AddNewFBT();
             _ImgManager.NewTextureLoaded += () =>
                 {
                     lock (_Textures)
                         if (_Textures.Count < 17)
                             AddNewFBT();
                 };
+            _ImgManager.LoadingFinished += _Booru.Disconnect;
+
+            _ImgManager.Start();
+            AddNewFBT();
         }
 
         protected override void UnloadContent()

@@ -9,6 +9,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
     public class ImageManager : IDisposable
     {
         public event Action NewTextureLoaded;
+        public event Action LoadingFinished;
 
         private Random _R;
         private List<Texture2D> _Textures;
@@ -48,7 +49,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             {
                 using (BooruImage image = _Booru.GetImage(_IDs[i]))
                 using (MemoryStream ms = ScaleDown(image))
-                    if (_IsRunning)
+                    try
                     {
                         Texture2D texture = Texture2D.FromStream(_GD, ms);
                         lock (_Textures)
@@ -56,7 +57,14 @@ namespace TA.SharpBooru.Client.ScreenSaver
                         if (NewTextureLoaded != null)
                             NewTextureLoaded();
                     }
+                    catch (Exception ex)
+                    {
+                        if (_IsRunning)
+                            ScreensaverHelper.HandleException(ex);
+                    }
             }
+            if (LoadingFinished != null && _IDs.Count == _Textures.Count)
+                LoadingFinished();
         }
 
         private MemoryStream ScaleDown(BooruImage Image)
