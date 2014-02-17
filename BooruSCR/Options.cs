@@ -28,53 +28,51 @@ namespace TA.SharpBooru.Client.ScreenSaver
         [Option('p', "password", Required = false, DefaultValue = null)]
         public string Password { get; set; }
 
-        [Option("search", Required = false, DefaultValue = null)]
+        [Option('q', "search", Required = false, DefaultValue = null)]
         public string Search { get; set; }
 
-        [Option("image-limit", Required = false, DefaultValue = 500)]
+        [Option('l', "image-limit", Required = false, DefaultValue = 500)]
         public int ImageLimit { get; set; }
 
-        [Option("fps-limit", Required = false, DefaultValue = 60)]
+        [Option('f', "fps-limit", Required = false, DefaultValue = 60)]
         public int FPSLimit { get; set; }
 
-        [Option("no-vsync", Required = false, DefaultValue = true)]
+        [Option('v', "no-vsync", Required = false, DefaultValue = true)]
         public bool NoVSync { get; set; }
 
-        [Option("use-images", Required = false, DefaultValue = false)]
+        [Option('i', "use-images", Required = false, DefaultValue = false)]
         public bool UseImages { get; set; }
+
+        [Option('d', "debug", Required = false, DefaultValue = false)]
+        public bool Debug { get; set; }
 
         [HelpOption('h')]
         public string GetUsage()
         {
             StringBuilder sb = new StringBuilder();
 
-            string productName = GetAssemblyAttribute<AssemblyProductAttribute>(x => x.Product);
+            string productName = ScreensaverHelper.GetAssemblyAttribute<AssemblyProductAttribute>(x => x.Product);
             Version version = Assembly.GetExecutingAssembly().GetName().Version;
             sb.AppendFormat("{0} V{1}", productName, version);
             sb.AppendLine();
-            string copyright = GetAssemblyAttribute<AssemblyCopyrightAttribute>(x => x.Copyright);
+            string copyright = ScreensaverHelper.GetAssemblyAttribute<AssemblyCopyrightAttribute>(x => x.Copyright);
             sb.Append(copyright);
             sb.AppendLine();
             sb.AppendLine();
         
-            sb.AppendLine("  -s, --server <server>[:port] Server to connect to [localhost]");
-            sb.AppendLine("  -u, --username <un>          Username for auto login");
-            sb.AppendLine("  -p, --password <pw>          Password for auto login");
-            sb.AppendLine("      --search <str>           Search string");
-            sb.AppendLine("      --image-limit <n>        Download max. n images [500]");
-            sb.AppendLine("      --fps-limit <n>          Limit the FPS to n, (0 = unlimited) [60]");
-            sb.AppendLine("      --no-vsync               Disable VSync");
-            sb.AppendLine("      --use-images             Use images instead of thumbnails");
+            sb.AppendLine("  -s, --server <srv>[:prt] Server to connect to [localhost]");
+            sb.AppendLine("  -u, --username <un>      Username for auto login");
+            sb.AppendLine("  -p, --password <pw>      Password for auto login");
+            sb.AppendLine("  -q  --search <str>       Search string [All posts]");
+            sb.AppendLine("  -l  --image-limit <n>    Download max. n images [500]");
+            sb.AppendLine("  -f  --fps-limit <n>      Limit the FPS to n, (0 = unlimited) [60]");
+            sb.AppendLine("  -v  --no-vsync           Disable VSync");
+            sb.AppendLine("  -i  --use-images         Use images instead of thumbnails");
+            sb.AppendLine("  -d  --debug              Show debug information");
             sb.AppendLine("All switches are optional");
 
             sb.AppendLine();
             return sb.ToString();
-        }
-
-        private string GetAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
-        {
-            T attribute = (T)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(T));
-            return value.Invoke(attribute);
         }
     }
 }

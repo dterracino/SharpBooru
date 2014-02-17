@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 
@@ -59,6 +60,12 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 Console.WriteLine("{0}: {1}", Ex.GetType().Name, Ex.Message);
             else return false;
             return true;
+        }
+
+        public static string GetAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
+        {
+            T attribute = (T)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(T));
+            return value.Invoke(attribute);
         }
     }
 }

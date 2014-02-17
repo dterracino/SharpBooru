@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,6 +22,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
         private Color _BackgroundColor;
         private Options _Options;
         private BitmapFontRenderer _Font;
+        private string _ProductNameAndVersion;
 
         public BooruSCR(Options Options)
             : base()
@@ -37,6 +39,14 @@ namespace TA.SharpBooru.Client.ScreenSaver
             _Booru = new BooruClient();
             _Textures = new List<FallingBooruTexture>();
             _Font = new BitmapFontRenderer(GraphicsDevice);
+            _BackgroundHue = R.NextDouble() * 360;
+
+            if (_Options.Debug)
+            {
+                string productName = ScreensaverHelper.GetAssemblyAttribute<AssemblyProductAttribute>(x => x.Product);
+                Version version = Assembly.GetExecutingAssembly().GetName().Version;
+                _ProductNameAndVersion = string.Format("{0} V{1}", productName, version);
+            }
 
             graphics.PreferredBackBufferWidth = W;
             graphics.PreferredBackBufferHeight = H;
@@ -118,6 +128,13 @@ namespace TA.SharpBooru.Client.ScreenSaver
             lock (_Textures)
                 foreach (FallingBooruTexture texture in _Textures)
                     texture.Draw(spriteBatch);
+
+            if (_Options.Debug)
+            {
+                _Font.Draw(spriteBatch, new Vector2(0, 0), _ProductNameAndVersion);
+                _Font.Draw(spriteBatch, new Vector2(0, 16), "ElapsedMS: {0} FPS: {1}", gameTime.ElapsedGameTime.TotalMilliseconds, 1 / gameTime.ElapsedGameTime.TotalSeconds);
+                _Font.Draw(spriteBatch, new Vector2(0, 32), "Loaded Imgs: {0}", _ImgManager.TextureCount);
+            }
 
             spriteBatch.End();
             base.Draw(gameTime);
