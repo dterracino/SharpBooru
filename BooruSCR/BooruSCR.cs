@@ -63,7 +63,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             for (int i = 0; i < deleteCount; i++)
                 _IDs.RemoveAt(R.Next(0, _IDs.Count));
 
-            _ImgManager = new ImageManager(R, GraphicsDevice, _Booru, _IDs, 400);
+            _ImgManager = new ImageManager(R, GraphicsDevice, _Booru, _IDs, 400, _Options.UseImages);
             _ImgManager.NewTextureLoaded += () =>
                 {
                     lock (_Textures)

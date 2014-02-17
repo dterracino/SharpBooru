@@ -40,6 +40,9 @@ namespace TA.SharpBooru.Client.ScreenSaver
         [Option("no-vsync", Required = false, DefaultValue = true)]
         public bool NoVSync { get; set; }
 
+        [Option("use-images", Required = false, DefaultValue = false)]
+        public bool UseImages { get; set; }
+
         [HelpOption('h')]
         public string GetUsage()
         {
@@ -61,6 +64,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             sb.AppendLine("      --image-limit <n>        Download max. n images [500]");
             sb.AppendLine("      --fps-limit <n>          Limit the FPS to n, (0 = unlimited) [60]");
             sb.AppendLine("      --no-vsync               Disable VSync");
+            sb.AppendLine("      --use-images             Use images instead of thumbnails");
             sb.AppendLine("All switches are optional");
 
             sb.AppendLine();

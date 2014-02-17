@@ -19,8 +19,9 @@ namespace TA.SharpBooru.Client.ScreenSaver
         private Thread _Thread;
         private bool _IsRunning;
         private GraphicsDevice _GD;
+        private bool _UseImages;
 
-        public ImageManager(Random R, GraphicsDevice GD, BooruClient Booru, List<ulong> IDs, double MaxSideLength)
+        public ImageManager(Random R, GraphicsDevice GD, BooruClient Booru, List<ulong> IDs, double MaxSideLength, bool UseImages)
         {
             _GD = GD;
             _R = R;
@@ -29,6 +30,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             _MaxSideLength = MaxSideLength;
             _Thread = new Thread(_ThreadMethod);
             _Textures = new List<Texture2D>();
+            _UseImages = UseImages;
         }
 
         public void Start()
@@ -47,8 +49,8 @@ namespace TA.SharpBooru.Client.ScreenSaver
         {
             for (int i = 0; i < _IDs.Count && _IsRunning; i++)
             {
-                using (BooruImage image = _Booru.GetImage(_IDs[i]))
-                using (MemoryStream ms = ScaleDown(image))
+                using (BooruImage image = _UseImages ? _Booru.GetImage(_IDs[i]) : _Booru.GetThumbnail(_IDs[i]))
+                using (MemoryStream ms = _UseImages ? ScaleDown(image) : new MemoryStream(image.Bytes))
                     try
                     {
                         Texture2D texture = Texture2D.FromStream(_GD, ms);
