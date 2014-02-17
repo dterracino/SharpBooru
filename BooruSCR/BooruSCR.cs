@@ -102,7 +102,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
                     }
                 }
 
-            _BackgroundHue += 0.08;
+            _BackgroundHue += 1 / 20;
             if (_BackgroundHue > 360)
                 _BackgroundHue -= 360;
             _BackgroundColor = ScreensaverHelper.ColorFromHSV(_BackgroundHue, 0.9, 0.15);

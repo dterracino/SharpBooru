@@ -21,6 +21,8 @@ namespace TA.SharpBooru.Client.ScreenSaver
         private GraphicsDevice _GD;
         private bool _UseImages;
 
+        public int TextureCount { get { return _Textures.Count; } }
+
         public ImageManager(Random R, GraphicsDevice GD, BooruClient Booru, List<ulong> IDs, double MaxSideLength, bool UseImages)
         {
             _GD = GD;
