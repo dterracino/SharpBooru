@@ -23,10 +23,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
         {
             _GD = GD;
             _R = R;
-            _IDs = new List<ulong>(IDs.Count);
-            _IDs.AddRange(IDs);
-            for (int i = 0; i < _IDs.Count - 500; i++)
-                _IDs.RemoveAt(R.Next(0, _IDs.Count));
+            _IDs = IDs;
             _Booru = Booru;
             _MaxSideLength = MaxSideLength;
             _Thread = new Thread(_ThreadMethod);

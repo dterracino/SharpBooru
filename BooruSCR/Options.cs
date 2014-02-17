@@ -31,6 +31,9 @@ namespace TA.SharpBooru.Client.ScreenSaver
         [Option("search", Required = false, DefaultValue = null)]
         public string Search { get; set; }
 
+        [Option("image-limit", Required = false, DefaultValue = 500)]
+        public int ImageLimit { get; set; }
+
         [HelpOption('h')]
         public string GetUsage()
         {
@@ -45,10 +48,11 @@ namespace TA.SharpBooru.Client.ScreenSaver
             sb.AppendLine();
             sb.AppendLine();
         
-            sb.AppendLine("  -s, --server     Server to connect to [localhost]");
-            sb.AppendLine("  -u, --username   Username for auto login");
-            sb.AppendLine("  -p, --password   Password for auto login");
-            sb.AppendLine("      --search     Search string");
+            sb.AppendLine("  -s, --server <server>[:port] Server to connect to [localhost]");
+            sb.AppendLine("  -u, --username <un>          Username for auto login");
+            sb.AppendLine("  -p, --password <pw>          Password for auto login");
+            sb.AppendLine("      --search <str>           Search string");
+            sb.AppendLine("      --image-limit <n>        Download max. n images [500]");
             sb.AppendLine("All switches are optional");
 
             sb.AppendLine();

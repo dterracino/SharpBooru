@@ -51,7 +51,11 @@ namespace TA.SharpBooru.Client.ScreenSaver
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             _Booru.Connect(_Options.Server);
+
             _IDs = _Booru.Search(_Options.Search ?? string.Empty);
+            int deleteCount = _IDs.Count - _Options.ImageLimit;
+            for (int i = 0; i < deleteCount; i++)
+                _IDs.RemoveAt(R.Next(0, _IDs.Count));
 
             _ImgManager = new ImageManager(R, GraphicsDevice, _Booru, _IDs, 400);
             _ImgManager.Start();
