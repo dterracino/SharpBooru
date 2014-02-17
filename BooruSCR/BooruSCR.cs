@@ -20,6 +20,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
         private double _BackgroundHue;
         private Color _BackgroundColor;
         private Options _Options;
+        private BitmapFontRenderer _Font;
 
         public BooruSCR(Options Options)
             : base()
@@ -35,6 +36,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
         {
             _Booru = new BooruClient();
             _Textures = new List<FallingBooruTexture>();
+            _Font = new BitmapFontRenderer(GraphicsDevice);
 
             graphics.PreferredBackBufferWidth = W;
             graphics.PreferredBackBufferHeight = H;
@@ -80,6 +82,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
         {
             _ImgManager.Dispose();
             _Booru.Dispose();
+            _Font.Dispose();
         }
 
         protected override void Update(GameTime gameTime)
