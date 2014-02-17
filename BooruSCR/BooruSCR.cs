@@ -44,7 +44,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             graphics.ToggleFullScreen();
 
             if (_Options.FPSLimit > 0)
-                TargetElapsedTime = new TimeSpan(100000000L / _Options.FPSLimit);
+                TargetElapsedTime = new TimeSpan(10000000L / _Options.FPSLimit);
             else IsFixedTimeStep = false;
 
             IsMouseVisible = false;
