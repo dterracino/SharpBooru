@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace TA.SharpBooru.Client.ScreenSaver
 {
-    public class BitmapFontRenderer:IDisposable
+    public class BitmapFontRenderer : IDisposable
     {
         private Texture2D _Texture;
 
@@ -28,9 +28,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             byte[] bytes = Encoding.ASCII.GetBytes(Text);
             for (int i = 0; i < bytes.Length; i++)
             {
-                int x = bytes[i] & 0x0F;
-                int y = bytes[i] >> 4;
-                Rectangle srcRect = new Rectangle(x * 8, y * 16, 8, 16);
+                Rectangle srcRect = new Rectangle((bytes[i] & 0x0F) * 8, (bytes[i] >> 4) * 16, 8, 16);
                 Vector2 position = new Vector2(Position.X + i * 8, Position.Y);
                 SB.Draw(_Texture, position, srcRect, Color);
             }
