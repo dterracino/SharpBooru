@@ -15,6 +15,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
         private float _X;
         private double _Limit;
         private int _ScrHeight;
+        private float _Scale;
 
         private double _Y;
         private double _Rad;
@@ -32,6 +33,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             _FallSpeed = FallSpeed * GetVariator(R);
             _ScrHeight = (int)Screen.Y;
             _Rad = 2 * Math.PI * R.NextDouble();
+            _Scale = (float)(R.NextDouble() * 0.5 + 0.75);
         }
 
         private double GetVariator(Random R) { return R.NextDouble() + 0.5; }
@@ -50,7 +52,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
         public void Draw(SpriteBatch sb)
         {
             if (!Finished)
-                sb.Draw(_Texture, new Vector2(_X, (float)_Y), null, Color.White, (float)_Rad, _Origin, 1f, SpriteEffects.None, 0f);
+                sb.Draw(_Texture, new Vector2(_X, (float)_Y), null, Color.White, (float)_Rad, _Origin, _Scale, SpriteEffects.None, 0f);
         }
 
         public void Dispose() { Finished = true; }
