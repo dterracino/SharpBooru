@@ -75,7 +75,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             for (int i = 0; i < deleteCount; i++)
                 _IDs.RemoveAt(R.Next(0, _IDs.Count));
 
-            _ImgManager = new ImageManager(R, GraphicsDevice, _Booru, _IDs, 400, _Options.UseImages);
+            _ImgManager = new ImageManager(R, GraphicsDevice, _Booru, _IDs, _Options.ImageSize, _Options.UseImages);
             _ImgManager.NewTextureLoaded += () =>
                 {
                     lock (_Textures)
@@ -140,6 +140,6 @@ namespace TA.SharpBooru.Client.ScreenSaver
             base.Draw(gameTime);
         }
 
-        private void AddNewFBT() { _Textures.Add(new FallingBooruTexture(R, _ImgManager.GetRandomTexture(), 80, 2, new Vector2(W, H))); }
+        private void AddNewFBT() { _Textures.Add(new FallingBooruTexture(R, _ImgManager.GetRandomTexture(), 90, 2.5, 30, new Vector2(W, H))); }
     }
 }

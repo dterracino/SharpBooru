@@ -31,7 +31,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
         [Option('q', "search", Required = false, DefaultValue = null)]
         public string Search { get; set; }
 
-        [Option('l', "image-limit", Required = false, DefaultValue = 500)]
+        [Option('l', "dl-limit", Required = false, DefaultValue = 500)]
         public int ImageLimit { get; set; }
 
         [Option('f', "fps-limit", Required = false, DefaultValue = 60)]
@@ -46,6 +46,9 @@ namespace TA.SharpBooru.Client.ScreenSaver
         [Option('d', "debug", Required = false, DefaultValue = false)]
         public bool Debug { get; set; }
 
+        [Option('m', "image-size", Required = false, DefaultValue = 300)]
+        public int ImageSize { get; set; }
+
         [HelpOption('h')]
         public string GetUsage()
         {
@@ -59,16 +62,17 @@ namespace TA.SharpBooru.Client.ScreenSaver
             sb.Append(copyright);
             sb.AppendLine();
             sb.AppendLine();
-        
+
             sb.AppendLine("  -s, --server <srv>[:prt] Server to connect to [localhost]");
             sb.AppendLine("  -u, --username <un>      Username for auto login");
             sb.AppendLine("  -p, --password <pw>      Password for auto login");
             sb.AppendLine("  -q  --search <str>       Search string [All posts]");
             sb.AppendLine("  -l  --image-limit <n>    Download max. n images [500]");
-            sb.AppendLine("  -f  --fps-limit <n>      Limit the FPS to n, (0 = unlimited) [60]");
-            sb.AppendLine("  -v  --no-vsync           Disable VSync");
+            //sb.AppendLine("  -f  --fps-limit <n>      Limit the FPS to n, (0 = unlimited) [60]");
+            //sb.AppendLine("  -v  --no-vsync           Disable VSync");
             sb.AppendLine("  -i  --use-images         Use images instead of thumbnails");
             sb.AppendLine("  -d  --debug              Show debug information");
+            sb.AppendLine("  -m  --image-size <n>     Image size [300]");
             sb.AppendLine("All switches are optional");
 
             sb.AppendLine();

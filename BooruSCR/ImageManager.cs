@@ -52,7 +52,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             for (int i = 0; i < _IDs.Count && _IsRunning; i++)
             {
                 using (BooruImage image = _UseImages ? _Booru.GetImage(_IDs[i]) : _Booru.GetThumbnail(_IDs[i]))
-                using (MemoryStream ms = _UseImages ? ScaleDown(image) : new MemoryStream(image.Bytes))
+                using (MemoryStream ms = ScaleDown(image))
                     try
                     {
                         Texture2D texture = Texture2D.FromStream(_GD, ms);
