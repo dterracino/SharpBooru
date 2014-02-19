@@ -49,6 +49,9 @@ namespace TA.SharpBooru.Client.ScreenSaver
         [Option('m', "image-size", Required = false, DefaultValue = 300)]
         public int ImageSize { get; set; }
 
+        [Option('c', "image-count", Required = false, DefaultValue = 20)]
+        public int ImageCount { get; set; }
+
         [HelpOption('h')]
         public string GetUsage()
         {
@@ -73,6 +76,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             sb.AppendLine("  -i  --use-images         Use images instead of thumbnails");
             sb.AppendLine("  -d  --debug              Show debug information");
             sb.AppendLine("  -m  --image-size <n>     Image size [300]");
+            sb.AppendLine("  -c  --image-count <n>    Show n images on screen [15]");
             sb.AppendLine("All switches are optional");
 
             sb.AppendLine();
