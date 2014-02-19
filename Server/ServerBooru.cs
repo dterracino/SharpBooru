@@ -41,10 +41,17 @@ namespace TA.SharpBooru.Server
                         _Folder = Folder;
                         _DB = new SQLiteWrapper(dbPath);
                         string rsaPath = Path.Combine(Folder, "rsa.xml");
-                        _RSA = new RSA();
                         if (File.Exists(rsaPath))
-                            _RSA.LoadKeys(rsaPath);
-                        else _RSA.SaveKeys(rsaPath);
+                        {
+                            //TODO Log RSA key loading
+                            _RSA = new RSA(rsaPath);
+                        }
+                        else
+                        {
+                            //TODO Log RSA key creation
+                            _RSA = new RSA();
+                            _RSA.SaveKeys(rsaPath);
+                        }
                         return;
                     }
             throw new Exception("No valid booru directory");

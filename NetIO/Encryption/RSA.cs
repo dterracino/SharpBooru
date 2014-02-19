@@ -2,75 +2,68 @@
 using System.IO;
 using System.Text;
 using System.Security.Cryptography;
+using ArpanTECH;
 
 namespace TA.SharpBooru.NetIO.Encryption
 {
     public class RSA : IDisposable
     {
-        private bool _Private;
-        private RSACryptoServiceProvider _RSA = new RSACryptoServiceProvider(4096);
+        private RSAx _RSAx;
 
-        public RSA() { _Private = true; }
-        public RSA(string File) { LoadKeys(File); }
-        public RSA(byte[] Modulus, byte[] Exponent) { SetPublicKey(Modulus, Exponent); }
-
-        public void Dispose() { _RSA.Dispose(); }
-
-        public void SaveKeys(string File)
+        public RSA()
         {
-            using (FileStream fs = new FileStream(File, FileMode.CreateNew, FileAccess.Write, FileShare.Read))
-            using (StreamWriter writer = new StreamWriter(fs, Encoding.ASCII))
-                writer.WriteLine(_RSA.ToXmlString(_Private).Replace("><", ">" + Environment.NewLine + "<"));
+            using (RSACryptoServiceProvider internalRSA = new RSACryptoServiceProvider(4096))
+            {
+                RSAParameters rsaParameters = internalRSA.ExportParameters(true);
+                RSAxParameters rsaxParameters = new RSAxParameters(rsaParameters, 4096);
+                _RSAx = new RSAx(rsaxParameters);
+            }
         }
 
-        public void LoadKeys(string File)
+        public RSA(string File)
         {
             using (FileStream fs = new FileStream(File, FileMode.Open, FileAccess.Read, FileShare.Read))
             using (StreamReader reader = new StreamReader(fs, Encoding.ASCII))
-                _RSA.FromXmlString(reader.ReadToEnd());
-            _Private = !_RSA.PublicOnly;
+                _RSAx = new RSAx(reader.ReadToEnd(), 4096);
         }
+
+        public RSA(byte[] Modulus, byte[] Exponent)
+        {
+            RSAxParameters rsaxParameters = new RSAxParameters(Modulus, Exponent, 4096);
+            _RSAx = new RSAx(rsaxParameters);
+        }
+
+        public void Dispose() { _RSAx.Dispose(); }
+
+        public void SaveKeys(string File) { _RSAx.Parameters.ToFile(File); }
 
         public void GetPublicKey(out byte[] Modulus, out byte[] Exponent)
         {
-            RSAParameters rsaParams = _RSA.ExportParameters(false);
-            Modulus = rsaParams.Modulus;
-            Exponent = rsaParams.Exponent;
-        }
-
-        public void SetPublicKey(byte[] Modulus, byte[] Exponent)
-        {
-            RSAParameters rsaParams = new RSAParameters()
-            {
-                Modulus = Modulus,
-                Exponent = Exponent
-            };
-            _Private = false;
-            _RSA.ImportParameters(rsaParams);
+            Modulus = _RSAx.Parameters.N.ToByteArray();
+            Exponent = _RSAx.Parameters.N.ToByteArray();
         }
 
         public string GetFingerprint()
         {
-            RSAParameters rsaParams = _RSA.ExportParameters(false);
-            byte[] pubkey = new byte[rsaParams.Modulus.Length + rsaParams.Exponent.Length];
-            Array.Copy(rsaParams.Modulus, pubkey, rsaParams.Modulus.Length);
-            Array.Copy(rsaParams.Exponent, 0, pubkey, rsaParams.Modulus.Length, rsaParams.Exponent.Length);
+            byte[] modulus, exponent;
+            GetPublicKey(out modulus, out exponent);
+            byte[] temp = new byte[modulus.Length + exponent.Length];
+            Array.Copy(modulus, temp, modulus.Length);
+            Array.Copy(exponent, 0, temp, modulus.Length, exponent.Length);
             using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider())
-                pubkey = sha1.ComputeHash(pubkey);
-            StringBuilder sb = new StringBuilder(22);
-            sb.Append("0x");
+                temp = sha1.ComputeHash(temp);
+            StringBuilder sb = new StringBuilder(20);
             for (byte i = 0; i < 5; i++)
-                sb.Append(((byte)(pubkey[i] ^ pubkey[i + 5] ^ pubkey[i + 10] ^ pubkey[i + 15])).ToString("X2"));
+                sb.AppendFormat("{0:X2}", (byte)(temp[i] ^ temp[i + 5] ^ temp[i + 10] ^ temp[i + 15]));
             return sb.ToString();
         }
 
-        public byte[] EncryptPublic(byte[] Data) { return _RSA.Encrypt(Data, false); }
+        public byte[] EncryptPublic(byte[] Data) { return _RSAx.Encrypt(Data, false); }
 
-        public byte[] DecryptPrivate(byte[] Data)
-        {
-            if (_Private)
-                return _RSA.Decrypt(Data, false);
-            else throw new Exception("No private key");
-        }
+        public byte[] DecryptPublic(byte[] Data) { return _RSAx.Decrypt(Data, false); }
+
+        public byte[] EncryptPrivate(byte[] Data) { return _RSAx.Encrypt(Data, true); }
+
+        public byte[] DecryptPrivate(byte[] Data) { return _RSAx.Decrypt(Data, true); }
     }
 }

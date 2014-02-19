@@ -102,6 +102,8 @@
     <Compile Include="NetIO\Packets\CorePackets\Packet3_Disconnet.cs" />
     <Compile Include="NetIO\Packets\BooruPackets\Packet17_GetResource.cs" />
     <Compile Include="Client\ResponseWaiter.cs" />
+    <Compile Include="NetIO\Encryption\RSAx\RSAx.cs" />
+    <Compile Include="NetIO\Encryption\RSAx\RSAxParameters.cs" />
     <Compile Include="ReaderWriter.cs" />
     <Compile Include="Server\ClientHandler.cs" />
     <Compile Include="ImageOptimizer.cs" />

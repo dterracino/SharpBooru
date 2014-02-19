@@ -16,7 +16,7 @@ namespace TA.SharpBooru.Client
     {
         public delegate bool CheckFingerprintDelegate(string Fingerprint);
 
-        private const ushort ProtocolVersion = 50;
+        private const ushort ProtocolVersion = 51;
 
         private AES _AES = null;
         private Logger _Logger;
