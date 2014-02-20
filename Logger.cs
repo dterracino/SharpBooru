@@ -51,7 +51,7 @@ namespace TA.SharpBooru
                     WriteANSI(1, 31);
                     _Writer.Write(new string('-', ec));
                     WriteANSI(1, 37);
-                    _Writer.Write(" " + theException.GetType().Name + ": ");
+                    _Writer.Write(" {0}: ", theException.GetType().Name);
                     _Writer.WriteLine(theException.Message);
                     if (theException.InnerException != null)
                         theException = theException.InnerException;
@@ -68,12 +68,24 @@ namespace TA.SharpBooru
                 Type objType = Object.GetType();
                 lock (_Lock)
                 {
+                    WriteANSI(0);
+                    WriteDate();
                     WriteANSI(1, 37);
-                    _Writer.WriteLine(ObjectName);
+                    _Writer.WriteLine("Fields/Properties: {0}", ObjectName);
                     foreach (PropertyInfo pInfo in objType.GetProperties())
+                    {
+                        WriteANSI(0);
+                        WriteDate();
+                        WriteANSI(1, 37);
                         _Writer.WriteLine("- {0} = {1}", pInfo.Name, pInfo.CanRead ? pInfo.GetValue(Object, null) : "not readable");
+                    }
                     foreach (FieldInfo fInfo in objType.GetFields())
+                    {
+                        WriteANSI(0);
+                        WriteDate();
+                        WriteANSI(1, 37);
                         _Writer.WriteLine("- {0} = {1}", fInfo.Name, fInfo.GetValue(Object));
+                    }
                 }
             }
         }
