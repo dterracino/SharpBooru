@@ -71,7 +71,7 @@ namespace TA.SharpBooru
                     WriteANSI(1, 37);
                     _Writer.WriteLine(ObjectName);
                     foreach (PropertyInfo pInfo in objType.GetProperties())
-                        _Writer.WriteLine("- {0} = {1}", pInfo.Name, pInfo.GetValue(Object, null));
+                        _Writer.WriteLine("- {0} = {1}", pInfo.Name, pInfo.CanRead ? pInfo.GetValue(Object, null) : "not readable");
                     foreach (FieldInfo fInfo in objType.GetFields())
                         _Writer.WriteLine("- {0} = {1}", fInfo.Name, fInfo.GetValue(Object));
                 }
