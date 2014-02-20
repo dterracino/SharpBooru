@@ -316,9 +316,8 @@ namespace TA.SharpBooru.Server
             if (user != null)
                 if (user.MD5Password == Password || (User == null ? false : User.IsAdmin))
                 {
-                    if (user.CanLoginDirect)
-                        return user;
-                    else throw new Exception("No permission");
+                    user.MD5Password = null;
+                    return user;
                 }
             throw new Exception("Login failed");
         }
