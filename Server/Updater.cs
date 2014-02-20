@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
+using System.Data;
 using System.Text;
-using System.Reflection;
 
 namespace TA.SharpBooru.Server
 {
@@ -80,6 +80,27 @@ namespace TA.SharpBooru.Server
                         db.ExecuteNonQuery("CREATE TABLE \"public_keys\" (\"id\" INTEGER PRIMARY KEY NOT NULL, \"username\" TEXT NOT NULL, \"public_key\" TEXT NOT NULL)");
                     }
                     break;
+
+                case 51: RecreateImageHashes(); break;
+            }
+        }
+
+        private bool _ImageHashesRecreated = false;
+        private void RecreateImageHashes()
+        {
+            if (!_ImageHashesRecreated)
+            {
+                string imagePath = Path.Combine(_BooruPath, "images", "image");
+                using (SQLiteWrapper db = new SQLiteWrapper(_DatabasePath))
+                using (DataTable posts = db.ExecuteTable(SQLStatements.GetPosts))
+                    foreach (DataRow row in posts.Rows)
+                    {
+                        ulong id = Convert.ToUInt64(row["id"]);
+                        _Logger.LogLine("Recreating image hash of ID {0}...", id);
+                        using (BooruImage image = BooruImage.FromFile(imagePath + id))
+                            db.ExecuteNonQuery(SQLStatements.UpdateImageHash, Convert.ToBase64String(image.CalculateImageHash()), id);
+                    }
+                _ImageHashesRecreated = true;
             }
         }
     }

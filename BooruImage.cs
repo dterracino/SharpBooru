@@ -4,6 +4,7 @@ using System.Net;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
 
@@ -160,21 +161,18 @@ namespace TA.SharpBooru
         }
         public void Save(string File, long Quality)
         {
-            ImageCodecInfo jpegEncoder = GetJPEG();
-            if (jpegEncoder == null)
-                throw new Exception("JPEG encoder not found");
-            EncoderParameters myEncoderParams = new EncoderParameters(1);
-            myEncoderParams.Param[0] = new EncoderParameter(Encoder.Quality, Quality);
-            using (FileStream fStream = new FileStream(File, FileMode.Create, FileAccess.Write, FileShare.Read))
-                Bitmap.Save(fStream, jpegEncoder, myEncoderParams);
-        }
-
-        private ImageCodecInfo GetJPEG()
-        {
-            foreach (ImageCodecInfo i in ImageCodecInfo.GetImageEncoders())
-                if (i.FormatID == ImageFormat.Jpeg.Guid)
-                    return i;
-            return null;
+            foreach (ImageCodecInfo encoder in ImageCodecInfo.GetImageEncoders())
+                if (encoder.FormatID == ImageFormat.Jpeg.Guid)
+                {
+                    EncoderParameters myEncoderParams = new EncoderParameters(1);
+                    myEncoderParams.Param[0] = new EncoderParameter(Encoder.Quality, Quality);
+                    using (FileStream fStream = new FileStream(File, FileMode.Create, FileAccess.Write, FileShare.Read))
+                    {
+                        Bitmap.Save(fStream, encoder, myEncoderParams);
+                        return;
+                    }
+                }
+            throw new Exception("JPEG encoder not found");
         }
 
         public string MimeType
@@ -219,10 +217,7 @@ namespace TA.SharpBooru
         {
             if (bImg != null)
             {
-                MD5CryptoServiceProvider md5Provider = new MD5CryptoServiceProvider();
-                if (md5Provider.ComputeHash(Bytes).Equals(md5Provider.ComputeHash(bImg.Bytes)))
-                    return true;
-                else if (CheckPixels)
+                if (CheckPixels)
                 {
                     Bitmap B1 = Bitmap;
                     Bitmap B2 = bImg.Bitmap;
@@ -230,13 +225,14 @@ namespace TA.SharpBooru
                     {
                         BitmapData bd1 = B1.LockBits(new Rectangle(0, 0, B1.Width, B1.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
                         BitmapData bd2 = B2.LockBits(new Rectangle(0, 0, B2.Width, B2.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-                        bool is_different = false;
-                        int count = B1.Width * B1.Height * 4;
-                        is_different = Helper.MemoryCompare(bd1.Scan0, bd2.Scan0, count);
+                        bool is_different = Helper.MemoryCompare(bd1.Scan0, bd2.Scan0, B1.Width * B1.Height * 4);
                         B1.UnlockBits(bd1);
                         B2.UnlockBits(bd2);
                         return !is_different;
                     }
+                    else using (MD5CryptoServiceProvider md5Provider = new MD5CryptoServiceProvider())
+                            if (md5Provider.ComputeHash(Bytes).Equals(md5Provider.ComputeHash(bImg.Bytes)))
+                                return true;
                 }
             }
             return false;
@@ -277,44 +273,51 @@ namespace TA.SharpBooru
 
         public byte[] CalculateImageHash()
         {
-            byte sideLen = 8;
-            byte[] imgBytes = new byte[sideLen * sideLen * 3];
-            using (Bitmap hB = new Bitmap(8, 8))
+            byte sideLen = 12;
+            byte[] hash = new byte[sideLen * sideLen];
+            using (Bitmap hB = new Bitmap(sideLen, sideLen))
             {
                 using (Graphics g = CreateAAGraphics(hB))
+                {
+                    g.Clear(Color.Gray);
                     g.DrawImage(Bitmap, 0, 0, sideLen, sideLen);
+                }
                 BitmapData bd = hB.LockBits(new Rectangle(0, 0, sideLen, sideLen), ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb);
-                Marshal.Copy(bd.Scan0, imgBytes, 0, imgBytes.Length);
+                unsafe
+                {
+                    byte* ptr = (byte*)bd.Scan0.ToPointer();
+                    for (int i = 0; i < hash.Length; i++)
+                        hash[i] = (byte)((ptr[i * 3] >> 6) | (ptr[i * 3 + 1] >> 3 & 28) | (ptr[i * 3 + 2] & 224));
+                }
                 hB.UnlockBits(bd);
             }
-            byte[] hash = new byte[sideLen * sideLen];
-            for (ushort i = 0; i < hash.Length; i++)
-                hash[i] = CalcYUV(imgBytes, 3 * i);
             return hash;
         }
 
-        private byte CalcYUV(byte[] Pixels, int Index)
-        {
-            float fy = Pixels[Index] * 0.114f + Pixels[Index + 1] * 0.587f + Pixels[Index + 2] * 0.299f;
-            byte by = (byte)(fy * 63f / 255f + 0.5f);
-            byte bu = (byte)((Pixels[Index] - fy + 255) * 3f / 510f + 0.5f);
-            byte bv = (byte)((Pixels[Index + 2] - fy + 255) * 3f / 510f + 0.5f);
-            return (byte)(by << 4 | bu << 2 | bv);
-        }
-
-        public static float CompareImageHashes(byte[] Hash1, byte[] Hash2)
+        public static int CompareImageHashes(byte[] Hash1, byte[] Hash2)
         {
             if (Hash1.Length != Hash2.Length)
                 throw new ArgumentException("Hashes must have the same length");
-            ushort bitcount = 0;
-            for (ushort i = 0; i < Hash1.Length; i++)
+            int diffcount = 0;
+            for (int i = 0; i < Hash1.Length; i++)
             {
-                byte diff = (byte)(Hash1[i] ^ Hash2[i]);
-                for (byte j = 0; j < 8; j++)
-                    if ((diff & (0x01 << j)) > 0)
-                        bitcount++;
+                byte[] rgb1 = _GetRGBFromSingleByte(Hash1[i]);
+                byte[] rgb2 = _GetRGBFromSingleByte(Hash2[i]);
+                diffcount += Math.Abs((short)rgb1[0] - rgb2[0]);
+                diffcount += Math.Abs((short)rgb1[1] - rgb2[1]);
+                diffcount += Math.Abs((short)rgb1[2] - rgb2[2]);
             }
-            return ((float)Hash1.Length - bitcount) / Hash1.Length;
+            return diffcount;
+        }
+
+        private static byte[] _GetRGBFromSingleByte(byte Byte)
+        {
+            return new byte[3]
+            {
+                (byte)(Byte & 3),
+                (byte)(Byte >> 2 & 7),
+                (byte)(Byte >> 5)
+            };
         }
 
         public override void ToWriter(ReaderWriter Writer) { Writer.Write(Bytes, true); }

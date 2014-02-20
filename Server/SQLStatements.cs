@@ -19,7 +19,7 @@ tag_types.color AS color FROM tags INNER JOIN tag_types WHERE tag = ?";
         public const string GetTagByID = @"
 SELECT tags.id AS id, tags.tag AS tag, tag_types.type AS type, tag_types.description AS description,
 tag_types.color AS color FROM tags INNER JOIN tag_types WHERE id = ?";
-        public const string GetDuplicatePosts = "SELECT *, IHCOMP(hash, ?) AS hdiff FROM posts WHERE rating < ? ORDER BY hdiff DESC LIMIT ?";
+        public const string GetDuplicatePosts = "SELECT *, IHCOMP(hash, ?) AS hdiff FROM posts WHERE rating < ? ORDER BY hdiff ASC LIMIT ?";
         public const string GetOptions = "SELECT * FROM options";
         public const string GetTagTypeByTypeName = "SELECT * FROM tag_types WHERE type = ?";
         public const string GetAliases = "SELECT * FROM aliases";
@@ -47,5 +47,6 @@ tag_types.color AS color FROM tags INNER JOIN tag_types WHERE id = ?";
 
         //Updates
         public const string UpdateIncrementViewCount = "UPDATE posts SET viewcount = viewcount + 1 WHERE id = ?";
+        public const string UpdateImageHash = "UPDATE posts SET hash = ? WHERE id = ?";
     }
 }
