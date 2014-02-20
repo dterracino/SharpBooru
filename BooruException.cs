@@ -35,7 +35,7 @@ namespace TA.SharpBooru
         { _ErrorCode = ErrorCode; }
 
         public BooruException(ErrorCodes ErrorCode, string Details)
-            : base(string.Format("ErrorCode {0}: {1}{2}Details: {3}", (byte)ErrorCode, ErrorCode, Environment.NewLine, Details))
+            : base(string.Format("ErrorCode {0}: {1} - {3}", (byte)ErrorCode, ErrorCode, Environment.NewLine, Details))
         { _ErrorCode = ErrorCode; }
     }
 }

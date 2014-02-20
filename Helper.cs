@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace TA.SharpBooru
 {
@@ -56,6 +57,24 @@ namespace TA.SharpBooru
                     return _MemoryCompareWindows(Ptr1, Ptr2, Count) == 0;
                 else return _MemoryCompareMono(Ptr1, Ptr2, Count) == 0;
             return false;
+        }
+
+        public static bool MemoryCompare(byte[] Bytes1, byte[] Bytes2)
+        {
+            if (Bytes1 == Bytes2)
+                return true;
+            else if (Bytes1 == null || Bytes2 == null)
+                return false;
+            else if (Bytes1.LongLength != Bytes2.LongLength)
+                return false;
+            else if (Bytes1.LongLength < 1)
+                return true;
+            else unsafe
+                {
+                    fixed (byte* rPtr1 = Bytes1)
+                    fixed (byte* rPtr2 = Bytes2)
+                        return MemoryCompare((IntPtr)rPtr1, (IntPtr)rPtr2, Bytes1.LongLength);
+                }
         }
 
         /*
@@ -231,20 +250,11 @@ namespace TA.SharpBooru
             return sb.ToString().ToLower();
         }
 
-        public static bool MD5Compare(byte[] MD5_1, byte[] MD5_2)
-        {
-            for (int i = 0; i < 16; i++)
-                if (MD5_1[i] != MD5_2[i])
-                    return false;
-            return true;
-        }
-
         public static DateTime UnixTimeToDateTime(uint UnixTime) { return UNIX_TIME.AddSeconds(UnixTime).ToLocalTime(); }
 
         public static uint DateTimeToUnixTime(DateTime DateTime) { return (uint)(DateTime.ToUniversalTime() - UNIX_TIME).TotalSeconds; }
 
-        //Based on Mitch's answer
-        //http://stackoverflow.com/questions/2727609
+        //Based on Mitch's answer - http://stackoverflow.com/questions/2727609
         public static IPEndPoint GetIPEndPointFromString(string EndPointString, int DefaultPort = 2400)
         {
             if (string.IsNullOrWhiteSpace(EndPointString))
@@ -262,24 +272,8 @@ namespace TA.SharpBooru
                 if (!IPAddress.TryParse(values[0], out ipaddy))
                     ipaddy = GetIPAddressFromHostname(values[0]);
             }
-            else if (values.Length > 2) // IPv6
-            {
+            else if (values.Length > 2)
                 throw new ProtocolViolationException("IPv6 isn't supported");
-                /*
-                //could [a:b:c]:d
-                if (values[0].StartsWith("[") && values[values.Length - 2].EndsWith("]"))
-                {
-                    string ipaddressstring = string.Join(":", values.Take(values.Length - 1).ToArray());
-                    ipaddy = IPAddress.Parse(ipaddressstring);
-                    port = GetPortFromString(values[values.Length - 1]);
-                }
-                else //[a:b:c] or a:b:c
-                {
-                    ipaddy = IPAddress.Parse(EndPointString);
-                    port = DefaultPort;
-                }
-                */
-            }
             else throw new FormatException("Invalid endpoint ipaddress: " + EndPointString);
             if (port < IPEndPoint.MinPort)
                 throw new ArgumentException("No port specified: ", EndPointString);
@@ -315,6 +309,16 @@ namespace TA.SharpBooru
                     return validHosts[randomIndex];
                 }
             }
+        }
+
+        public static ushort GetVersionMajor() { return (ushort)Assembly.GetExecutingAssembly().GetName().Version.Major; }
+
+        private static ushort? _VersionMinor = null;
+        public static ushort GetVersionMinor()
+        {
+            if (!_VersionMinor.HasValue)
+                _VersionMinor = (ushort)Assembly.GetExecutingAssembly().GetName().Version.Minor;
+            return _VersionMinor.Value;
         }
     }
 }

@@ -43,6 +43,9 @@ namespace TA.SharpBooru.Server
             else if (!Directory.Exists(location))
                 throw new DirectoryNotFoundException("Booru location not found");
 
+            Updater updater = new Updater(_Logger, location, setuidUser);
+            updater.Update();
+
             _Logger.LogLine("Loading booru database...");
             ServerBooru booru = new ServerBooru(location);
 
@@ -75,7 +78,7 @@ namespace TA.SharpBooru.Server
                 ServerHelper.SetupSignal(Signum.SIGTERM, () => Cancel(waitEvent));
             }
 
-            _Logger.LogLine("Starting server (ProtocolVersion = {0})...", BooruServer.ProtocolVersion);
+            _Logger.LogLine("Starting server V{0}...", Helper.GetVersionMinor());
             _BooruServer.Start();
 
             if (setuidUser != null)

@@ -199,7 +199,7 @@ namespace TA.SharpBooru.Client.GUI
             byte[] md5 = Helper.MD5OfFile(tempFile);
             Process editor = Process.Start(editorEXE, tempFile);
             editor.WaitForExit();
-            bool isTheSame = Helper.MD5Compare(md5, Helper.MD5OfFile(tempFile));
+            bool isTheSame = Helper.MemoryCompare(md5, Helper.MD5OfFile(tempFile));
             if (isTheSame)
                 if (MessageBox.Show("No changes detected (maybe you have saved the image with a different name). Dou you wan't to search for the image?", "ImageEdit", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     using (OpenFileDialog ofd = new OpenFileDialog())

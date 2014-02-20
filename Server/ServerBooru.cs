@@ -18,7 +18,7 @@ namespace TA.SharpBooru.Server
             get
             {
                 if (_BooruInfo == null)
-                    using (DataTable optionsTable = _DB.ExecuteTable(SQLStatements.GetMiscOptions))
+                    using (DataTable optionsTable = _DB.ExecuteTable(SQLStatements.GetOptions))
                         _BooruInfo = BooruInfo.FromTable(optionsTable);
                 return _BooruInfo;
             }

@@ -164,7 +164,7 @@ namespace TA.SharpBooru.Client.WebServer
             this.InnerContext = HttpListenerContext;
             this.HTTPCode = 200;
             this.MimeType = "text/html";
-            SetHeader("Server", string.Format("TA.SharpBooru.Client.WebServer {0} ", Assembly.GetExecutingAssembly().GetName().Version));
+            SetHeader("Server", string.Format("SharpBooruWebServer V{0} ", Helper.GetVersionMajor()));
             //SetHeader("Expires", (DateTime.Now + TimeSpan.FromSeconds(EXPIRES_SECONDS)).ToUniversalTime().ToString("r"));
             //SetHeader("Cache-Control", string.Format("max-age={0}", EXPIRES_SECONDS));
         }

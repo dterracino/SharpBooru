@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace TA.SharpBooru
 {
-    public class Logger
+    public class Logger : IDisposable
     {
         public static Logger Null { get { return new Logger(TextWriter.Null); } }
 
@@ -61,20 +61,23 @@ namespace TA.SharpBooru
             }
         }
 
-        public void LogPublicFields(object Object)
+        public void LogPublicFields(string ObjectName, object Object)
         {
             if (Object != null)
             {
                 Type objType = Object.GetType();
                 lock (_Lock)
                 {
-                        WriteANSI(1, 37);
+                    WriteANSI(1, 37);
+                    _Writer.WriteLine(ObjectName);
                     foreach (PropertyInfo pInfo in objType.GetProperties())
-                        _Writer.Write("- {0} = {1}", pInfo.Name, pInfo.GetValue(Object, null));
+                        _Writer.WriteLine("- {0} = {1}", pInfo.Name, pInfo.GetValue(Object, null));
                     foreach (FieldInfo fInfo in objType.GetFields())
-                        _Writer.Write("- {0} = {1}", fInfo.Name, fInfo.GetValue(Object));
+                        _Writer.WriteLine("- {0} = {1}", fInfo.Name, fInfo.GetValue(Object));
                 }
             }
         }
+
+        public void Dispose() { _Writer.Dispose(); }
     }
 }

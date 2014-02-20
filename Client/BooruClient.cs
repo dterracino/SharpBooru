@@ -16,8 +16,6 @@ namespace TA.SharpBooru.Client
     {
         public delegate bool CheckFingerprintDelegate(string Fingerprint);
 
-        private const ushort ProtocolVersion = 50;
-
         private AES _AES = null;
         private Logger _Logger;
         private List<ResponseWaiter> _Waiters;
@@ -36,7 +34,11 @@ namespace TA.SharpBooru.Client
             return _CurrentRequestID;
         }
 
-        public BooruClient(Logger Logger = null) { _Logger = Logger ?? Logger.Null; }
+        public BooruClient(Logger Logger = null)
+        {
+            _Logger = Logger ?? Logger.Null;
+            _ReceiverThread = new Thread(ReceiverThreadCode);
+        }
 
         public void Connect(IPEndPoint EndPoint, CheckFingerprintDelegate CheckFingerprintDelegate = null)
         {
@@ -45,32 +47,27 @@ namespace TA.SharpBooru.Client
             _Client.Connect(EndPoint);
             _Stream = _Client.GetStream();
             _ReaderWriter = new ReaderWriter(_Stream);
+            _Waiters = new List<ResponseWaiter>();
             Exception exception = DoHandshake(CheckFingerprintDelegate);
-            if (exception == null)
-            {
-                _Waiters = new List<ResponseWaiter>();
-                _ReceiverThread = new Thread(ReceiverThreadCode);
-                _ReceiverThread.Start();
-            }
-            else
+            if (exception != null)
             {
                 Disconnect();
                 throw exception;
             }
+            else _ReceiverThread.Start();
         }
 
         private Exception DoHandshake(CheckFingerprintDelegate ChkDelegate)
         {
-            _Logger.LogLine("ProtocolVersion is {0}", ProtocolVersion);
-            _ReaderWriter.Write(ProtocolVersion);
+            ushort protocolVersion = Helper.GetVersionMinor();
+            _Logger.LogLine("ProtocolVersion is {0}", protocolVersion);
+            _ReaderWriter.Write(protocolVersion);
             _ReaderWriter.Flush();
             ushort serverProtocolVersion = _ReaderWriter.ReadUShort();
-            if (serverProtocolVersion != ProtocolVersion)
-                return new BooruException(BooruException.ErrorCodes.ProtocolVersionMismatch, string.Format("Server {0} != Client {1}", serverProtocolVersion, ProtocolVersion));
+            if (serverProtocolVersion != protocolVersion)
+                return new BooruException(BooruException.ErrorCodes.ProtocolVersionMismatch, string.Format("Server {0} != Client {1}", serverProtocolVersion, protocolVersion));
             Packet4_ServerInfo serverInfo = (Packet4_ServerInfo)Packet.PacketFromReader(_ReaderWriter);
-            _Logger.LogLine("Encryption is {0}", serverInfo.Encryption ? "needed" : "not needed");
-            _Logger.LogLine("ServerName is {0}", serverInfo.ServerName);
-            _Logger.LogLine("AdminContact is {0}", serverInfo.AdminContact);
+            _Logger.LogPublicFields("ServerInfo", serverInfo);
             using (RSA rsa = new RSA(serverInfo.Modulus, serverInfo.Exponent))
             {
                 string fingerprint = rsa.GetFingerprint();
@@ -95,8 +92,8 @@ namespace TA.SharpBooru.Client
             }
             _BooruInfo = (BooruInfo)((Packet23_Resource)Packet.PacketFromReader(_ReaderWriter, _AES)).Resource;
             _CurrentUser = (BooruUser)((Packet23_Resource)Packet.PacketFromReader(_ReaderWriter, _AES)).Resource;
-            _Logger.LogPublicFields(_BooruInfo);
-            //TODO Log user
+            _Logger.LogPublicFields("BooruInfo", _BooruInfo);
+            _Logger.LogPublicFields("CurrentUser", _CurrentUser);
             return null;
         }
 

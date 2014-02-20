@@ -6,8 +6,6 @@ namespace TA.SharpBooru.Server
 {
     public class BooruServer : Server, IDisposable
     {
-        public const ushort ProtocolVersion = 50;
-
         private ServerBooru _Booru;
         private TcpListener _Listener;
 
@@ -41,6 +39,10 @@ namespace TA.SharpBooru.Server
 
         public override void StopListener() { _Listener.Stop(); }
 
-        public void Dispose() { Stop(3000); }
+        public void Dispose() 
+        {
+            try { Stop(3000); }
+            catch { }
+        }
     }
 }

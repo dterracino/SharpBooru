@@ -32,11 +32,11 @@ namespace TA.SharpBooru.Server
 
         private void DoHandshake()
         {
-            _ReaderWriter.Write(BooruServer.ProtocolVersion);
+            _ReaderWriter.Write(Helper.GetVersionMinor());
             _ReaderWriter.Flush();
             ushort clientProtocolVersion = _ReaderWriter.ReadUShort();
-            if (clientProtocolVersion != BooruServer.ProtocolVersion)
-                throw new BooruException(BooruException.ErrorCodes.ProtocolVersionMismatch, string.Format("Client {0} != Server {1}", clientProtocolVersion, BooruServer.ProtocolVersion));
+            if (clientProtocolVersion != Helper.GetVersionMinor())
+                throw new BooruException(BooruException.ErrorCodes.ProtocolVersionMismatch, string.Format("Client {0} != Server {1}", clientProtocolVersion, Helper.GetVersionMinor()));
             byte[] exp, mod;
             _Booru.RSA.GetPublicKey(out mod, out exp);
             Packet4_ServerInfo serverInfo = new Packet4_ServerInfo()

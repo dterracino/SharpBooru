@@ -68,8 +68,7 @@ namespace TA.SharpBooru
             StringBuilder sb = new StringBuilder();
 
             string productName = GetAssemblyAttribute<AssemblyProductAttribute>(x => x.Product);
-            Version version = Assembly.GetExecutingAssembly().GetName().Version;
-            sb.AppendFormat("{0} V{1}", productName, version);
+            sb.AppendFormat("{0} V{1} PV{2}", productName, Helper.GetVersionMajor(), Helper.GetVersionMinor());
             sb.AppendLine();
             string copyright = GetAssemblyAttribute<AssemblyCopyrightAttribute>(x => x.Copyright);
             sb.Append(copyright);
