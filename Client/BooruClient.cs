@@ -101,6 +101,7 @@ namespace TA.SharpBooru.Client
 
         public void Disconnect()
         {
+            _Logger.LogLine("Disconnecting...");
             if (_ReceiverThread.IsAlive)
                 _ReceiverThread.Abort();
             try
@@ -127,6 +128,7 @@ namespace TA.SharpBooru.Client
                 {
                     uint requestID = _ReaderWriter.ReadUInt();
                     Packet packet = Packet.PacketFromReader(_ReaderWriter, _AES);
+                    _Logger.LogLine("Got response {0} {1}", requestID, packet.GetType().Name);
                     ProgressResponse(requestID, packet);
                 }
             }
@@ -158,6 +160,7 @@ namespace TA.SharpBooru.Client
                     _ReaderWriter.Write(requestID);
                     RequestPacket.PacketToWriter(_ReaderWriter, _AES);
                 }
+                _Logger.LogLine("Sent request {0} {1}", requestID, RequestPacket.GetType().Name);
                 if (Timeout.HasValue)
                     waiter.WaitEvent.Wait(Timeout.Value);
                 else waiter.WaitEvent.Wait();
