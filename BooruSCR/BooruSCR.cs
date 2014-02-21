@@ -59,7 +59,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 TargetElapsedTime = new TimeSpan(10000000L / _Options.FPSLimit);
             else IsFixedTimeStep = false;
 
-            IsMouseVisible = false;
+            //IsMouseVisible = false;
 
             base.Initialize();
         }

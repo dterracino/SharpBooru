@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace TA.SharpBooru.Client.ScreenSaver
@@ -17,9 +18,11 @@ namespace TA.SharpBooru.Client.ScreenSaver
         private int _ScrHeight;
         private float _Scale;
         private double _SpreadDegrees;
+        private Vector2 _ScaledSize;
 
         private double _Y;
         private double _Rad;
+        private bool _MouseInside;
 
         public FallingBooruTexture(Random R, Texture2D Texture, double FallSpeed, double RotateSpeed, double MaxSpreadDegree, Vector2 Screen)
         {
@@ -36,6 +39,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             _Rad = 2 * Math.PI * R.NextDouble();
             _Scale = (float)(R.NextDouble() * 0.5 + 0.75);
             _SpreadDegrees = MaxSpreadDegree * R.NextDouble() - MaxSpreadDegree / 2;
+            _ScaledSize = new Vector2((float)(_Texture.Width * _Scale), (float)(_Texture.Height * _Scale));
         }
 
         private double GetVariator(Random R) { return R.NextDouble() + 0.5; }
@@ -50,6 +54,8 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 if (_SpreadDegrees > 0)
                     _X += elapsed * _FallSpeed * Math.Tan(Math.PI / 180 * _SpreadDegrees);
                 Finished = _Y - _Limit > _ScrHeight;
+                MouseState state = Mouse.GetState();
+                _MouseInside = ScreensaverHelper.MouseInRotatedRectangle(Mouse.GetState(), new Vector2((float)_X, (float)_Y), _ScaledSize, _Rad);
             }
         }
 
@@ -58,7 +64,8 @@ namespace TA.SharpBooru.Client.ScreenSaver
             if (!Finished)
             {
                 Vector2 position = new Vector2((float)_X, (float)_Y);
-                sb.Draw(_Texture, position, null, Color.White, (float)_Rad, _Origin, _Scale, SpriteEffects.None, 0f);
+                Color color = _MouseInside ? Color.Gray : Color.White;
+                sb.Draw(_Texture, position, null, color, (float)_Rad, _Origin, _Scale, SpriteEffects.None, 0f);
             }
         }
 
