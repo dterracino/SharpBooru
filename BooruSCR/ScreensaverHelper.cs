@@ -95,8 +95,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
                     p1 = Polygon[i];
                     p2 = oldPoint;
                 }
-                if ((Polygon[i].X < Point.X) == (Point.X <= oldPoint.X)
-                    && (Point.Y - p1.Y) * (p2.X - p1.X) < (p2.Y - p1.Y) * (Point.X - p1.X))
+                if ((Polygon[i].X < Point.X) == (Point.X <= oldPoint.X) && (Point.Y - p1.Y) * (p2.X - p1.X) < (p2.Y - p1.Y) * (Point.X - p1.X))
                     inside = !inside;
                 oldPoint = Polygon[i];
             }
@@ -114,8 +113,9 @@ namespace TA.SharpBooru.Client.ScreenSaver
                     new Vector2(xPlsW, yPlsH),
                     new Vector2(xMnsW, yPlsH)
                 };
-            for (byte i = 0; i < 4; i++)
-                points[i] = RotatePoint(points[i], RectangleCenter, Radiant);
+            if (Radiant != 0)
+                for (byte i = 0; i < 4; i++)
+                    points[i] = RotatePoint(points[i], RectangleCenter, Radiant);
             return IsPointInPolygon(new Vector2(Mouse.X, Mouse.Y), points);
         }
     }

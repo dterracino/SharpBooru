@@ -69,5 +69,15 @@ namespace TA.SharpBooru.Client.ScreenSaver.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Byte[].
+        /// </summary>
+        internal static byte[] cursor {
+            get {
+                object obj = ResourceManager.GetObject("cursor", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

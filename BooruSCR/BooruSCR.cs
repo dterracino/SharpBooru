@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
@@ -23,6 +24,8 @@ namespace TA.SharpBooru.Client.ScreenSaver
         private Options _Options;
         private BitmapFontRenderer _Font;
         private string _ProductNameAndVersion;
+        private Vector2 _CursorPosition;
+        private Texture2D _CursorTexture;
 
         public BooruSCR(Options Options)
             : base()
@@ -59,7 +62,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 TargetElapsedTime = new TimeSpan(10000000L / _Options.FPSLimit);
             else IsFixedTimeStep = false;
 
-            //IsMouseVisible = false;
+            IsMouseVisible = false;
 
             base.Initialize();
         }
@@ -74,6 +77,9 @@ namespace TA.SharpBooru.Client.ScreenSaver
             int deleteCount = _IDs.Count - _Options.ImageLimit;
             for (int i = 0; i < deleteCount; i++)
                 _IDs.RemoveAt(R.Next(0, _IDs.Count));
+
+            using (MemoryStream ms = new MemoryStream(Properties.Resources.cursor))
+                _CursorTexture = Texture2D.FromStream(GraphicsDevice, ms);
 
             _ImgManager = new ImageManager(R, GraphicsDevice, _Booru, _IDs, _Options.ImageSize, _Options.UseImages);
             _ImgManager.NewTextureLoaded += () =>
@@ -93,6 +99,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             _ImgManager.Dispose();
             _Booru.Dispose();
             _Font.Dispose();
+            _CursorTexture.Dispose();
         }
 
         protected override void Update(GameTime gameTime)
@@ -117,6 +124,9 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 _BackgroundHue -= 360;
             _BackgroundColor = ScreensaverHelper.ColorFromHSV(_BackgroundHue, 0.9, 0.15);
 
+            MouseState mState = Mouse.GetState();
+            _CursorPosition = new Vector2(mState.X - (float)_CursorTexture.Width / 2, mState.Y - (float)_CursorTexture.Height / 2);
+
             base.Update(gameTime);
         }
 
@@ -135,6 +145,8 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 _Font.Draw(spriteBatch, new Vector2(0, 16), "ElapsedMS: {0} FPS: {1}", gameTime.ElapsedGameTime.TotalMilliseconds, 1 / gameTime.ElapsedGameTime.TotalSeconds);
                 _Font.Draw(spriteBatch, new Vector2(0, 32), "Loaded Imgs: {0}", _ImgManager.TextureCount);
             }
+
+            spriteBatch.Draw(_CursorTexture, _CursorPosition, Color.White);
 
             spriteBatch.End();
             base.Draw(gameTime);
