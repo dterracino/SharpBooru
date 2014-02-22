@@ -68,8 +68,11 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="$(SystemDrive)\Program Files (x86)\MonoGame\v3.0\Assemblies\WindowsGL\SDL.dll">
+    <Content Include="SDL.dll">
       <Link>SDL.dll</Link>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="oalinst.exe">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\icon.ico" />
