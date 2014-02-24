@@ -310,7 +310,7 @@ namespace TA.SharpBooru.Server
 
         public BooruUser Login(BooruUser User, string Username, string Password)
         {
-            Password = Helper.ByteToString(Helper.MD5OfString(Password));
+            Password = Helper.BytesToString(Helper.MD5OfString(Password));
             DataRow userRow = _DB.ExecuteRow(SQLStatements.GetUserByUsername, Username);
             BooruUser user = BooruUser.FromRow(userRow);
             if (user != null)

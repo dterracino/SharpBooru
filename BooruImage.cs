@@ -4,9 +4,7 @@ using System.Net;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Drawing.Drawing2D;
-using System.Collections.Generic;
 using System.Security.Cryptography;
-using System.Runtime.InteropServices;
 
 namespace TA.SharpBooru
 {

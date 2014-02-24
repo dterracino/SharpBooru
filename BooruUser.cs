@@ -24,7 +24,7 @@ namespace TA.SharpBooru
         public string Username;
         public string MD5Password;
 
-        public string Password { set { MD5Password = Helper.ByteToString(Helper.MD5OfString(value)); } }
+        public string Password { set { MD5Password = Helper.BytesToString(Helper.MD5OfString(value)); } }
 
         public override void ToWriter(ReaderWriter Writer)
         {

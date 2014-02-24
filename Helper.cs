@@ -46,7 +46,7 @@ namespace TA.SharpBooru
         [DllImport("msvcrt.dll", EntryPoint = "memcmp")]
         private static extern int _MemoryCompareWindows(IntPtr b1, IntPtr b2, long count);
         [DllImport("libc.so", EntryPoint = "memcmp")]
-        private static extern int _MemoryCompareMono(IntPtr b1, IntPtr b2, long count);
+        private static extern int _MemoryCompareUnix(IntPtr b1, IntPtr b2, long count);
 
         public static bool MemoryCompare(IntPtr Ptr1, IntPtr Ptr2, long Count)
         {
@@ -55,7 +55,17 @@ namespace TA.SharpBooru
                     return true;
                 else if (IsWindows())
                     return _MemoryCompareWindows(Ptr1, Ptr2, Count) == 0;
-                else return _MemoryCompareMono(Ptr1, Ptr2, Count) == 0;
+                else if (IsUnix())
+                    return _MemoryCompareUnix(Ptr1, Ptr2, Count) == 0;
+                else unsafe
+                    {
+                        byte* rPtr1 = (byte*)Ptr1.ToPointer();
+                        byte* rPtr2 = (byte*)Ptr2.ToPointer();
+                        for (long i = 0; i < Count; i++)
+                            if (rPtr1[i] != rPtr2[i])
+                                return false;
+                        return true;
+                    }
             return false;
         }
 
@@ -226,24 +236,24 @@ namespace TA.SharpBooru
         public static byte[] MD5OfString(string UnicodeString)
         {
             byte[] data = Encoding.Unicode.GetBytes(UnicodeString);
-            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-            return md5.ComputeHash(data);
+            using (MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider())
+                return md5.ComputeHash(data);
         }
 
         public static byte[] MD5OfData(byte[] Data)
         {
-            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
-            return md5.ComputeHash(Data);
+            using (MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider())
+                return md5.ComputeHash(Data);
         }
 
         public static byte[] MD5OfFile(string Path)
         {
-            MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider();
+            using (MD5CryptoServiceProvider md5 = new MD5CryptoServiceProvider())
             using (FileStream file = File.Open(Path, FileMode.Open, FileAccess.Read, FileShare.Read))
                 return md5.ComputeHash(file);
         }
 
-        public static string ByteToString(byte[] Data)
+        public static string BytesToString(byte[] Data)
         {
             StringBuilder sb = new StringBuilder();
             Array.ForEach<byte>(Data, x => sb.Append(x.ToString("X2")));
@@ -254,7 +264,7 @@ namespace TA.SharpBooru
 
         public static uint DateTimeToUnixTime(DateTime DateTime) { return (uint)(DateTime.ToUniversalTime() - UNIX_TIME).TotalSeconds; }
 
-        //Based on Mitch's answer - http://stackoverflow.com/questions/2727609
+        //Based on Mitch's answer http://stackoverflow.com/questions/2727609
         public static IPEndPoint GetIPEndPointFromString(string EndPointString, int DefaultPort = 2400)
         {
             if (string.IsNullOrWhiteSpace(EndPointString))
@@ -303,11 +313,7 @@ namespace TA.SharpBooru
                     throw new ArgumentException("Host not found: " + Hostname);
                 else if (validHosts.Count < 2)
                     return validHosts[0];
-                else
-                {
-                    int randomIndex = Random.Next(0, validHosts.Count);
-                    return validHosts[randomIndex];
-                }
+                else return validHosts[Random.Next(0, validHosts.Count)];
             }
         }
 
