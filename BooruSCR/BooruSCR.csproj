@@ -69,7 +69,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="SDL.dll">
-      <Link>SDL.dll</Link>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="oalinst.exe">
