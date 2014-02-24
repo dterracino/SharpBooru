@@ -22,6 +22,9 @@ namespace TA.SharpBooru.Client.ScreenSaver
         private double _Y;
         private double _Rad;
         private bool _MouseInside;
+        private bool _MouseRightButtonDown;
+
+        public event Action RightClick;
 
         public FallingBooruTexture(Random R, Texture2D Texture, double FallSpeed, double RotateSpeed, double MaxSpreadDegree, Vector2 Screen)
         {
@@ -57,21 +60,24 @@ namespace TA.SharpBooru.Client.ScreenSaver
             {
                 MouseState state = Mouse.GetState();
                 Vector2 scaledSize = new Vector2((float)(_Texture.Width * _Scale), (float)(_Texture.Height * _Scale));
-                _MouseInside = ScreensaverHelper.MouseInRotatedRectangle(Mouse.GetState(), new Vector2((float)_X, (float)_Y), scaledSize, _Rad);
+                _MouseInside = ScreensaverHelper.MouseInRotatedRectangle(state, new Vector2((float)_X, (float)_Y), scaledSize, _Rad);
                 float maxSize = Math.Max(scaledSize.X, scaledSize.Y);
                 if (maxSize < 40 || (_MouseInside && state.LeftButton == ButtonState.Pressed))
                     _Scale -= 0.01f;
                 Finished = !(_Scale > 0f);
+                if (!_MouseRightButtonDown && state.RightButton == ButtonState.Pressed && _MouseInside && RightClick != null)
+                    RightClick();
+                _MouseRightButtonDown = state.RightButton == ButtonState.Pressed;
             }
         }
 
-        public void Draw(SpriteBatch sb)
+        public void Draw(SpriteBatch SB)
         {
             if (!Finished)
             {
                 Vector2 position = new Vector2((float)_X, (float)_Y);
                 Color color = _MouseInside ? Color.Gray : Color.White;
-                sb.Draw(_Texture, position, null, color, (float)_Rad, _Origin, _Scale, SpriteEffects.None, 0f);
+                SB.Draw(_Texture, position, null, color, (float)_Rad, _Origin, _Scale, SpriteEffects.None, 0f);
             }
         }
 
