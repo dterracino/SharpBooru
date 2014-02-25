@@ -1,11 +1,10 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
 namespace TA.SharpBooru.Client.ScreenSaver
 {
+    /*
     public class BitmapFontRenderer : IDisposable
     {
         private Texture2D _Texture;
@@ -34,4 +33,5 @@ namespace TA.SharpBooru.Client.ScreenSaver
             }
         }
     }
+    */
 }

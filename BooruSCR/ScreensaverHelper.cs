@@ -1,8 +1,7 @@
 ﻿using System;
+using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 
 namespace TA.SharpBooru.Client.ScreenSaver
 {
@@ -39,7 +38,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
                     default: R = G = B = V; break;
                 }
             }
-            return new Color(Clamp((int)(R * 255.0)), Clamp((int)(G * 255.0)), Clamp((int)(B * 255.0)));
+            return Color.FromArgb(Clamp((int)(R * 255.0)), Clamp((int)(G * 255.0)), Clamp((int)(B * 255.0)));
         }
 
         private static int Clamp(int i)
@@ -69,6 +68,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             return value.Invoke(attribute);
         }
 
+        /*
         public static Vector2 RotatePoint(Vector2 Point, Vector2 Center, double Rad)
         {
             double u = Rad + Math.Atan2(Point.Y - Center.Y, Point.X - Center.X);
@@ -118,5 +118,6 @@ namespace TA.SharpBooru.Client.ScreenSaver
                     points[i] = RotatePoint(points[i], RectangleCenter, Radiant);
             return IsPointInPolygon(new Vector2(Mouse.X, Mouse.Y), points);
         }
+        */
     }
 }

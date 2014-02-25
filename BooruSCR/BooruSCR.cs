@@ -2,48 +2,45 @@
 using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+using OpenTK;
+using OpenTK.Input;
+using OpenTK.Graphics.OpenGL;
+using TA.Engine2D;
 
 namespace TA.SharpBooru.Client.ScreenSaver
 {
-    public class BooruSCR : Game
+    public class BooruSCR : GameWindow
     {
-        private GraphicsDeviceManager graphics;
-        private SpriteBatch spriteBatch;
-        private int W, H;
         private Random R;
-
         private BooruClient _Booru;
         private List<ulong> _IDs;
         private ImageManager _ImgManager;
-        private List<FallingBooruTexture> _Textures;
+        private List<FallingImage> _Textures;
         private double _BackgroundHue;
-        private Color _BackgroundColor;
         private Options _Options;
-        private BitmapFontRenderer _Font;
+        //private BitmapFontRenderer _Font;
         private string _ProductNameAndVersion;
-        private Vector2 _CursorPosition;
-        private Texture2D _CursorTexture;
-        private BackgroundBooruTexture _Background;
+
+        private Image _Cursor;
+        private Image _Background;
         private ulong _BackgroundID;
 
         public BooruSCR(Options Options)
             : base()
         {
-            graphics = new GraphicsDeviceManager(this);
-            W = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width;
-            H = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height;
             R = new Random();
             _Options = Options;
         }
 
-        protected override void Initialize()
+        protected override void OnLoad(EventArgs e) { PreLoop(); }
+        protected override void OnUnload(EventArgs e) { PostLoop(); }
+        protected override void OnUpdateFrame(FrameEventArgs e) { Update(e.Time); }
+        protected override void OnRenderFrame(FrameEventArgs e) { Draw(e.Time); }
+
+        private void PreLoop()
         {
-            _Booru = new BooruClient();
-            _Textures = new List<FallingBooruTexture>();
-            _Font = new BitmapFontRenderer(GraphicsDevice);
+            _Textures = new List<FallingImage>();
+            //_Font = new BitmapFontRenderer(GraphicsDevice);
             _BackgroundHue = R.NextDouble() * 360;
 
             if (_Options.Debug)
@@ -53,26 +50,9 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 _ProductNameAndVersion = string.Format("{0} V{1}", productName, version);
             }
 
-            graphics.PreferredBackBufferWidth = W;
-            graphics.PreferredBackBufferHeight = H;
-            graphics.PreferMultiSampling = true;
-            graphics.SynchronizeWithVerticalRetrace = !_Options.NoVSync;
-            graphics.ApplyChanges();
-            graphics.ToggleFullScreen();
+            //CursorVisible = false;
 
-            if (_Options.FPSLimit > 0)
-                TargetElapsedTime = new TimeSpan(10000000L / _Options.FPSLimit);
-            else IsFixedTimeStep = false;
-
-            IsMouseVisible = false;
-
-            base.Initialize();
-        }
-
-        protected override void LoadContent()
-        {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            _Booru = new BooruClient();
             _Booru.Connect(_Options.Server);
 
             _IDs = _Booru.Search(_Options.Search ?? string.Empty);
@@ -80,12 +60,9 @@ namespace TA.SharpBooru.Client.ScreenSaver
             for (int i = 0; i < deleteCount; i++)
                 _IDs.RemoveAt(R.Next(0, _IDs.Count));
 
-            using (MemoryStream ms = new MemoryStream(Properties.Resources.cursor))
-                _CursorTexture = Texture2D.FromStream(GraphicsDevice, ms);
+            _Cursor = new Image(Texture.FromBytes(Properties.Resources.cursor));
 
-            _Background = new BackgroundBooruTexture(W, H);
-
-            _ImgManager = new ImageManager(R, GraphicsDevice, _Booru, _IDs, _Options.ImageSize, _Options.UseImages);
+            _ImgManager = new ImageManager(R, _Booru, _IDs, _Options.ImageSize, _Options.UseImages);
             _ImgManager.NewTextureLoaded += () =>
                 {
                     lock (_Textures)
@@ -98,25 +75,25 @@ namespace TA.SharpBooru.Client.ScreenSaver
             AddNewFBT();
         }
 
-        protected override void UnloadContent()
+        private void PostLoop()
         {
             _ImgManager.Dispose();
             _Booru.Dispose();
-            _Font.Dispose();
+            //_Font.Dispose();
             _Background.Dispose();
-            _CursorTexture.Dispose();
+            _Cursor.Dispose();
         }
 
-        protected override void Update(GameTime gameTime)
+        private void Update(double Elapsed)
         {
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            if (OpenTK.Input.Keyboard.GetState().IsKeyDown(Key.Escape))
                 Exit();
 
             lock (_Textures)
                 for (int i = _Textures.Count - 1; !(i < 0); i--)
                 {
-                    FallingBooruTexture texture = _Textures[i];
-                    texture.Update(gameTime);
+                    FallingImage texture = _Textures[i];
+                    texture.Update(Elapsed);
                     if (texture.Finished)
                     {
                         _Textures.RemoveAt(i);
@@ -124,38 +101,45 @@ namespace TA.SharpBooru.Client.ScreenSaver
                     }
                 }
 
-            if (!_Background.IsBackgroundAvailable)
+            if (_Background == null)
             {
                 _BackgroundHue += 1 / 20;
                 if (_BackgroundHue > 360)
                     _BackgroundHue -= 360;
-                _BackgroundColor = ScreensaverHelper.ColorFromHSV(_BackgroundHue, 0.9, 0.15);
+                GL.ClearColor(ScreensaverHelper.ColorFromHSV(_BackgroundHue, 0.9, 0.15));
             }
 
-            MouseState mState = Mouse.GetState();
-            _CursorPosition = new Vector2(mState.X - (float)_CursorTexture.Width / 2, mState.Y - (float)_CursorTexture.Height / 2);
+            MouseState mState = OpenTK.Input.Mouse.GetState();
+            _Cursor.X = mState.X - _Cursor.Width / 2;
+            _Cursor.Y = mState.Y - _Cursor.Height / 2;
+
             if (mState.MiddleButton == ButtonState.Pressed)
             {
                 _BackgroundID = _IDs[R.Next(0, _IDs.Count)];
-                _Background.SetBooruImage(GraphicsDevice, _Booru.GetImage(_BackgroundID));
+                if (_Background != null)
+                    _Background.Dispose();
+                _Background = new Image(Texture.FromBytes(_Booru.GetImage(_BackgroundID).Bytes));
+                float num = Math.Max((float)Width / _Background.Texture.Width, (float)Height / _Background.Texture.Height);
+                _Background.Width = _Background.Texture.Width * num;
+                _Background.Height = _Background.Texture.Height * num;
+                _Background.X = 0 - (_Background.Width - Width) / 2;
+                _Background.Y = 0 - (_Background.Height - Height) / 2;
+                _Background.Color = System.Drawing.Color.Gray;
             }
-
-            base.Update(gameTime);
         }
 
-        protected override void Draw(GameTime gameTime)
+        private void Draw(double Elapsed)
         {
-            if (!_Background.IsBackgroundAvailable)
-                GraphicsDevice.Clear(_BackgroundColor);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            spriteBatch.Begin();
-
-            _Background.Draw(spriteBatch, Color.Gray);
+            if (_Background != null)
+                _Background.Draw();
 
             lock (_Textures)
-                foreach (FallingBooruTexture texture in _Textures)
-                    texture.Draw(spriteBatch);
+                foreach (FallingImage texture in _Textures)
+                    texture.Draw();
 
+            /*
             if (_Options.Debug)
             {
                 _Font.Draw(spriteBatch, new Vector2(0, 0), _ProductNameAndVersion);
@@ -163,13 +147,13 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 _Font.Draw(spriteBatch, new Vector2(0, 32), "Loaded Imgs: {0}", _ImgManager.TextureCount);
                 _Font.Draw(spriteBatch, new Vector2(0, 48), "Background ID: {0}", _Background.IsBackgroundAvailable ? _BackgroundID.ToString() : "HSV");
             }
+            */
 
-            spriteBatch.Draw(_CursorTexture, _CursorPosition, Color.White);
+            _Cursor.Draw();
 
-            spriteBatch.End();
-            base.Draw(gameTime);
+            SwapBuffers();
         }
 
-        private void AddNewFBT() { _Textures.Add(new FallingBooruTexture(R, _ImgManager.GetRandomTexture(), 90, 2.5, 30, new Vector2(W, H))); }
+        private void AddNewFBT() { _Textures.Add(new FallingImage(R, _ImgManager.GetRandomTexture(), 0.09f, 0.025f, 0.03f, Width, Height)); }
     }
 }

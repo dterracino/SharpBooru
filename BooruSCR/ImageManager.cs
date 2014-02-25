@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
+using TA.Engine2D;
 
 namespace TA.SharpBooru.Client.ScreenSaver
 {
@@ -12,26 +12,24 @@ namespace TA.SharpBooru.Client.ScreenSaver
         public event Action LoadingFinished;
 
         private Random _R;
-        private List<Texture2D> _Textures;
+        private List<Texture> _Textures;
         private List<ulong> _IDs;
         private BooruClient _Booru;
         private double _MaxSideLength;
         private Thread _Thread;
         private bool _IsRunning;
-        private GraphicsDevice _GD;
         private bool _UseImages;
 
         public int TextureCount { get { return _Textures.Count; } }
 
-        public ImageManager(Random R, GraphicsDevice GD, BooruClient Booru, List<ulong> IDs, double MaxSideLength, bool UseImages)
-        {
-            _GD = GD;
+        public ImageManager(Random R, BooruClient Booru, List<ulong> IDs, double MaxSideLength, bool UseImages)
+        { 
             _R = R;
             _IDs = IDs;
             _Booru = Booru;
             _MaxSideLength = MaxSideLength;
             _Thread = new Thread(_ThreadMethod);
-            _Textures = new List<Texture2D>();
+            _Textures = new List<Texture>();
             _UseImages = UseImages;
         }
 
@@ -52,10 +50,9 @@ namespace TA.SharpBooru.Client.ScreenSaver
             for (int i = 0; i < _IDs.Count && _IsRunning; i++)
             {
                 using (BooruImage image = _UseImages ? _Booru.GetImage(_IDs[i]) : _Booru.GetThumbnail(_IDs[i]))
-                using (MemoryStream ms = ScaleDown(image))
                     try
                     {
-                        Texture2D texture = Texture2D.FromStream(_GD, ms);
+                        Texture texture = Texture.FromBytes(ScaleDown(image));
                         lock (_Textures)
                             _Textures.Add(texture);
                         if (NewTextureLoaded != null)
@@ -71,34 +68,34 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 LoadingFinished();
         }
 
-        private MemoryStream ScaleDown(BooruImage Image)
+        private byte[] ScaleDown(BooruImage Image)
         {
             double sideLength = 0;
             lock (_R)
                 sideLength = _MaxSideLength * (_R.NextDouble() + 0.5) + 0.5;
             using (BooruImage smallImage = Image.CreateThumbnail((int)sideLength, false))
-                return new MemoryStream(smallImage.Bytes);
+                return smallImage.Bytes;
         }
 
         public void Dispose()
         {
             Stop();
-            foreach (Texture2D texture in _Textures)
+            foreach (Texture texture in _Textures)
                 texture.Dispose();
         }
 
-        public Texture2D GetRandomTexture()
+        public Texture GetRandomTexture()
         {
             while (true)
             {
-                Texture2D texture = TryGetRandomTexture();
+                Texture texture = TryGetRandomTexture();
                 if (texture != null)
                     return texture;
                 else Thread.Sleep(50);
             }
         }
 
-        public Texture2D TryGetRandomTexture()
+        public Texture TryGetRandomTexture()
         {
             lock (_Textures)
                 lock (_R)

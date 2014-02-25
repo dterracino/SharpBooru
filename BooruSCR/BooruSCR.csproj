@@ -45,7 +45,9 @@
   <ItemGroup>
     <Compile Include="BitmapFontRenderer.cs" />
     <Compile Include="BooruSCR.cs" />
-    <Compile Include="FallingBooruTexture.cs" />
+    <Compile Include="Engine2D\Texture.cs" />
+    <Compile Include="FallingImage.cs" />
+    <Compile Include="Engine2D\Image.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -56,12 +58,9 @@
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="BackgroundBooruTexture.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="MonoGame.Framework">
-      <HintPath>$(MSBuildExtensionsPath)\..\MonoGame\v3.0\Assemblies\WindowsGL\MonoGame.Framework.dll</HintPath>
-    </Reference>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL" />
     <Reference Include="SharpBooru">
       <HintPath>..\bin\Debug\SharpBooru.exe</HintPath>
     </Reference>
@@ -69,12 +68,6 @@
     <Reference Include="System.Drawing" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SDL.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="oalinst.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\icon.ico" />
   </ItemGroup>
   <ItemGroup>

@@ -37,3 +37,8 @@ namespace TA.SharpBooru.Client.ScreenSaver
         }
     }
 }
+
+//TODO
+//IsPointInside
+//Fullscreen
+//CMD Line options
