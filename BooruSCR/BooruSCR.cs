@@ -92,7 +92,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
                         if (_Textures.Count < _Options.ImageCount || _Options.ImageCount < 1)
                             AddNewFBT();
                 };
-            _ImgManager.LoadingFinished += _Booru.Disconnect;
+            //_ImgManager.LoadingFinished += _Booru.Disconnect;
 
             _ImgManager.Start();
             AddNewFBT();
