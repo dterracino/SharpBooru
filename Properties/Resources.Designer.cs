@@ -71,12 +71,12 @@ namespace TA.SharpBooru.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die     _____ __                     ____
-        ///   / ___// /_  ____ __________  / __ )____  ____  _______  __
-        ///   \__ \/ __ \/ __ `/ ___/ __ \/ __  / __ \/ __ \/ ___/ / / /
-        ///  ___/ / / / / /_/ / /  / /_/ / /_/ / /_/ / /_/ / /  / /_/ /
-        /// /____/_/ /_/\__,_/_/  / .___/_____/\____/\____/_/   \__,_/
-        ///                      /_/ by teamalpha5441 2013-2014 ähnelt.
+        ///   Sucht eine lokalisierte Zeichenfolge, die      _____ __                     ____
+        ///    / ___// /_  ____  _________  / __ )____  ____  _______  __
+        ///    \__ \/ __ \/ __ `/ ___/ __ \/ __  / __ \/ __ \/ ___/ / / /
+        ///   ___/ / / / / /_/ / /  / /_/ / /_/ / /_/ / /_/ / /  / /_/ /
+        ///  /____/_/ /_/\__,_/_/  / .___/_____/\____/\____/_/   \__,_/
+        ///                       /_/ by teamalpha5441 2013-2014 ähnelt.
         /// </summary>
         internal static string ascii_banner_unix {
             get {
@@ -94,7 +94,7 @@ namespace TA.SharpBooru.Properties {
         ///
         ///
         ///             _____ __                     ____
-        ///            / ___// /_  ____ __________  / __ )____  ____  _______  __
+        ///            / ___// /_  ____  _________  / __ )____  ____  _______  __
         ///            \__ \/ __ \/ __ `/ ___/ __ \/ __  / __ \/ __ \/ ___/ / / /
         ///           ___/ / / / / /_/ / /  / /_/ / /_/ / /_/ / /_/ / /  / /_/ /
         ///          /____/_/ /_/\__,_/_/  / .___/_____/\____/\____/_/   \__,_/
@@ -262,6 +262,16 @@ namespace TA.SharpBooru.Properties {
         internal static System.Drawing.Bitmap icon_save {
             get {
                 object obj = ResourceManager.GetObject("icon_save", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap icon_terminal {
+            get {
+                object obj = ResourceManager.GetObject("icon_terminal", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -136,7 +136,7 @@ namespace TA.SharpBooru
             Application.SetCompatibleTextRenderingDefault(false);
             using (MainForm mForm = new MainForm(booru))
             {
-                GUIHelper.HideConsoleWindow();
+                GUIHelper.ToggleConsoleWindow();
                 mForm.ShowDialog();
             }
         }

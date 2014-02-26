@@ -22,10 +22,14 @@ namespace TA.SharpBooru.Client.GUI
         [DllImport("user32.dll", EntryPoint = "ShowWindow")]
         private static extern bool ShowWindow(IntPtr hWnd, int nCmdShow);
 
-        public static void HideConsoleWindow()
+        private static bool _ConsoleHidden = false;
+        public static void ToggleConsoleWindow()
         {
             if (Helper.IsWindows())
-                ShowWindow(GetConsoleWindow(), 0);
+            {
+                ShowWindow(GetConsoleWindow(), _ConsoleHidden ? 5 : 0);
+                _ConsoleHidden = !_ConsoleHidden;
+            }
         }
 
         public static int SetListViewPadding(ListView ListView, int leftPadding, int topPadding)

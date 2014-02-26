@@ -35,6 +35,7 @@ namespace TA.SharpBooru.Client.GUI
             GUIHelper.CreateToolTip(buttonChangeUser, "Change the user");
             GUIHelper.CreateToolTip(buttonImportDialog, "Import posts into the booru");
             GUIHelper.CreateToolTip(buttonImgSearch, "Search for image duplicates");
+            GUIHelper.CreateToolTip(buttonConsole, "Shows the console window");
             SetTitle();
             CheckPermissions();
         }
@@ -110,18 +111,23 @@ namespace TA.SharpBooru.Client.GUI
 
         private void buttonImgSearch_Click(object sender, EventArgs e)
         {
-            if (Clipboard.ContainsImage())
+            using (OpenFileDialog ofd = new OpenFileDialog())
             {
-                Image cbImg = Clipboard.GetImage();
-                if (cbImg is Bitmap)
-                    using (BooruImage bImg = BooruImage.FromBitmap(cbImg as Bitmap))
+                ofd.Title = "Select image for duplicate search...";
+                ofd.Filter = "All Files|*.*";
+                if (ofd.ShowDialog() == DialogResult.OK)
+                    using (BooruImage bImg = BooruImage.FromFile(ofd.FileName))
                     {
                         byte[] imgHash = bImg.CalculateImageHash();
                         booruThumbView.Posts = _Booru.FindImageDupes(imgHash);
                     }
-                else MessageBox.Show("No valid bitmap in clipboard", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            else MessageBox.Show("No image in clipboard", "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        }
+
+        private void buttonConsole_Click(object sender, EventArgs e)
+        {
+            GUIHelper.ToggleConsoleWindow();
+            Focus();
         }
     }
 }

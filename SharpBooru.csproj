@@ -387,6 +387,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\ascii_banner_unix.txt" />
+    <None Include="Resources\icon_terminal.png" />
     <Content Include="sqlite3.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
