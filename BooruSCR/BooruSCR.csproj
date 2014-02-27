@@ -43,7 +43,7 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="BitmapFontRenderer.cs" />
+    <Compile Include="Engine2D\Font.cs" />
     <Compile Include="BooruSCR.cs" />
     <Compile Include="Engine2D\Game.cs" />
     <Compile Include="Engine2D\Texture.cs" />
