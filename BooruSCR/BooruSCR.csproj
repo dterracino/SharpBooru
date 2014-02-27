@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="BitmapFontRenderer.cs" />
     <Compile Include="BooruSCR.cs" />
+    <Compile Include="Engine2D\Game.cs" />
     <Compile Include="Engine2D\Texture.cs" />
     <Compile Include="FallingImage.cs" />
     <Compile Include="Engine2D\Image.cs" />

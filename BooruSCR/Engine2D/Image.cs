@@ -36,35 +36,75 @@ namespace TA.Engine2D
         public void Draw() { Draw(0f); }
         public void Draw(float Z)
         {
-            GL.BindTexture(TextureTarget.TextureRectangle, _Texture.ID);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
             GL.Enable(EnableCap.TextureRectangle);
+            GL.BindTexture(TextureTarget.TextureRectangle, _Texture.ID);
             GL.Begin(PrimitiveType.Quads);
-            GL.TexCoord2(SourceX, SourceY);
-            vertex3(X, Y, Z);
-            GL.TexCoord2(SourceX + SourceWidth, SourceY);
-            vertex3(X + Width, Y, Z);
-            GL.TexCoord2(SourceX + SourceWidth, SourceY + SourceHeight);
-            vertex3(X + Width, Y + Height, Z);
-            GL.TexCoord2(SourceX, SourceY + SourceHeight);
-            vertex3(X, Y + Height, Z);
+            vertex(SourceX, SourceY, X, Y, Z);
+            vertex(SourceX + SourceWidth, SourceY, X + Width, Y, Z);
+            vertex(SourceX + SourceWidth, SourceY + SourceHeight, X + Width, Y + Height, Z);
+            vertex(SourceX, SourceY + SourceHeight, X, Y + Height, Z);
             GL.End();
         }
 
-        private void tint()
+        private void vertex(float s, float t, float x, float y, float z)
         {
+            GL.TexCoord2(s, t);
             if (Color != Color.White)
                 GL.Color3(Color);
+            if (Rad != 0)
+                RotatePoint(ref x, ref y);
+            GL.Vertex3(x, y, z);
         }
 
-        private void vertex3(float X, float Y, float Z)
+        public void RotatePoint(ref float X, ref float Y)
         {
-            if (Rad != 0)
+            double u = Rad + Math.Atan2(Y - OriginY, X - OriginX);
+            double d = Math.Sqrt(Math.Pow(X - OriginX, 2) + Math.Pow(Y - OriginY, 2));
+            X = OriginX + (float)(d * Math.Cos(u));
+            Y = OriginY + (float)(d * Math.Sin(u));
+        }
+
+        public bool IsMouseInside(int MouseX, int MouseY)
+        {
+            float[] xs = new float[4] { X, X + Width, X + Width, X };
+            float[] ys = new float[4] { Y, Y, Y + Height, Y + Height };
+            PointF[] points = new PointF[4];
+            for (byte i = 0; i < 4; i++)
             {
-                double u = Rad + Math.Atan2(Y - OriginY, X - OriginX);
-                double d = Math.Sqrt(Math.Pow(X - OriginX, 2) + Math.Pow(Y - OriginY, 2));
-                GL.Vertex3(OriginX + (float)(d * Math.Cos(u)), OriginY + (float)(d * Math.Sin(u)), Z);
+                if (Rad != 0)
+                    RotatePoint(ref xs[i], ref ys[i]);
+                points[i] = new PointF(xs[i], ys[i]);
             }
-            else GL.Vertex3(X, Y, Z);
+            return IsPointInPolygon(new Point(MouseX, MouseY), points);
+        }
+
+        public static bool IsPointInPolygon(Point M, PointF[] Polygon)
+        {
+            PointF p1, p2;
+            bool inside = false;
+            if (Polygon.Length < 3)
+                return inside;
+
+            PointF oldPoint = Polygon[Polygon.Length - 1];
+            for (int i = 0; i < Polygon.Length; i++)
+            {
+                if (Polygon[i].X > oldPoint.X)
+                {
+                    p1 = oldPoint;
+                    p2 = Polygon[i];
+                }
+                else
+                {
+                    p1 = Polygon[i];
+                    p2 = oldPoint;
+                }
+                if ((Polygon[i].X < M.X) == (M.X <= oldPoint.X) && (M.Y - p1.Y) * (p2.X - p1.X) < (p2.Y - p1.Y) * (M.X - p1.X))
+                    inside = !inside;
+                oldPoint = Polygon[i];
+            }
+            return inside;
         }
     }
 }

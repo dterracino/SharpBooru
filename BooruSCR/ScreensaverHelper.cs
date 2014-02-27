@@ -67,57 +67,5 @@ namespace TA.SharpBooru.Client.ScreenSaver
             T attribute = (T)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(T));
             return value.Invoke(attribute);
         }
-
-        /*
-        public static Vector2 RotatePoint(Vector2 Point, Vector2 Center, double Rad)
-        {
-            double u = Rad + Math.Atan2(Point.Y - Center.Y, Point.X - Center.X);
-            double d = Math.Sqrt(Math.Pow(Point.X - Center.X, 2) + Math.Pow(Point.Y - Center.Y, 2));
-            return new Vector2((float)(Center.X + d * Math.Cos(u)), (float)(Center.Y + d * Math.Sin(u)));
-        }
-
-        public static bool IsPointInPolygon(Vector2 Point, Vector2[] Polygon)
-        {
-            Vector2 p1, p2;
-            bool inside = false;
-            if (Polygon.Length < 3)
-                return inside;
-            Vector2 oldPoint = Polygon[Polygon.Length - 1];
-            for (int i = 0; i < Polygon.Length; i++)
-            {
-                if (Polygon[i].X > oldPoint.X)
-                {
-                    p1 = oldPoint;
-                    p2 = Polygon[i];
-                }
-                else
-                {
-                    p1 = Polygon[i];
-                    p2 = oldPoint;
-                }
-                if ((Polygon[i].X < Point.X) == (Point.X <= oldPoint.X) && (Point.Y - p1.Y) * (p2.X - p1.X) < (p2.Y - p1.Y) * (Point.X - p1.X))
-                    inside = !inside;
-                oldPoint = Polygon[i];
-            }
-            return inside;
-        }
-
-        public static bool MouseInRotatedRectangle(MouseState Mouse, Vector2 RectangleCenter, Vector2 RectangleSize, double Radiant)
-        {
-            float xMnsW = RectangleCenter.X - RectangleSize.X / 2; float xPlsW = RectangleCenter.X + RectangleSize.X / 2;
-            float yMnsH = RectangleCenter.Y - RectangleSize.Y / 2; float yPlsH = RectangleCenter.Y + RectangleSize.Y / 2;
-            Vector2[] points = new Vector2[4]
-                {
-                    new Vector2(xMnsW, yMnsH),
-                    new Vector2(xPlsW, yMnsH),
-                    new Vector2(xPlsW, yPlsH),
-                    new Vector2(xMnsW, yPlsH)
-                };
-            if (Radiant != 0)
-                for (byte i = 0; i < 4; i++)
-                    points[i] = RotatePoint(points[i], RectangleCenter, Radiant);
-            return IsPointInPolygon(new Vector2(Mouse.X, Mouse.Y), points);
-        }
-        */
     }
 }
