@@ -51,8 +51,7 @@ namespace TA.Engine2D
         private void vertex(float s, float t, float x, float y, float z)
         {
             GL.TexCoord2(s, t);
-            if (Color != Color.White)
-                GL.Color3(Color);
+            GL.Color3(Color);
             if (Rad != 0)
                 RotatePoint(ref x, ref y);
             GL.Vertex3(x, y, z);
