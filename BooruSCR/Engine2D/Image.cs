@@ -53,14 +53,14 @@ namespace TA.Engine2D
             GL.TexCoord2(s, t);
             GL.Color3(Color);
             if (Rad != 0)
-                RotatePoint(ref x, ref y);
+                RotatePoint(ref x, ref y, X + OriginX, Y + OriginY);
             GL.Vertex3(x, y, z);
         }
 
-        public void RotatePoint(ref float X, ref float Y)
+        public void RotatePoint(ref float X, ref float Y, float cx, float cy)
         {
-            double u = Rad + Math.Atan2(Y - OriginY, X - OriginX);
-            double d = Math.Sqrt(Math.Pow(X - OriginX, 2) + Math.Pow(Y - OriginY, 2));
+            double u = Rad + Math.Atan2(Y - cy, X - cx);
+            double d = Math.Sqrt(Math.Pow(X - cx, 2) + Math.Pow(Y - cy, 2));
             X = OriginX + (float)(d * Math.Cos(u));
             Y = OriginY + (float)(d * Math.Sin(u));
         }
@@ -73,7 +73,7 @@ namespace TA.Engine2D
             for (byte i = 0; i < 4; i++)
             {
                 if (Rad != 0)
-                    RotatePoint(ref xs[i], ref ys[i]);
+                    RotatePoint(ref xs[i], ref ys[i], X + OriginX, Y + OriginY);
                 points[i] = new PointF(xs[i], ys[i]);
             }
             return IsPointInPolygon(new Point(MouseX, MouseY), points);

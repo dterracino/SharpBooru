@@ -1,5 +1,4 @@
 ﻿using System;
-using OpenTK.Input;
 using TA.Engine2D;
 
 namespace TA.SharpBooru.Client.ScreenSaver
@@ -12,10 +11,9 @@ namespace TA.SharpBooru.Client.ScreenSaver
         private float _FallSpeed;
         private float _Limit;
         private int _ScrHeight;
-        //private float _Scale;
         private float _SpreadDegrees;
 
-        private float _Rad;
+        private float _Scale;
         private bool _MouseRightButtonDown;
 
         public event Action RightClick;
@@ -23,8 +21,11 @@ namespace TA.SharpBooru.Client.ScreenSaver
         public FallingImage(Random R, Texture Texture, float FallSpeed, float RotateSpeed, float MaxSpreadDegree, int ScreenWidth, int ScreenHeight)
             : base(Texture)
         {
-            OriginX = Width / 2 - 0.5f;
-            OriginY = Height / 2 - 0.5f;
+            _Scale = (float)(R.NextDouble() * 0.5 + 0.75);
+            Width *= _Scale;
+            Height *= _Scale;
+            OriginX = Width / 2;
+            OriginY = Height / 2;
             X = ScreenWidth * (float)R.NextDouble();
             _Limit = (float)Math.Sqrt(Math.Pow(OriginX, 2) + Math.Pow(OriginY, 2)) * 1.25f + 10;
             Y = 0 - _Limit - (float)R.NextDouble() * 30;
@@ -33,8 +34,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 _RotateSpeed *= -1;
             _FallSpeed = FallSpeed * GetVariator(R);
             _ScrHeight = ScreenHeight;
-            _Rad = (float)(2 * Math.PI * R.NextDouble());
-            //_Scale = (float)(R.NextDouble() * 0.5 + 0.75);
+            Rad = (float)(2 * Math.PI * R.NextDouble());
             _SpreadDegrees = MaxSpreadDegree * (float)R.NextDouble() - MaxSpreadDegree / 2;
         }
 
@@ -54,13 +54,13 @@ namespace TA.SharpBooru.Client.ScreenSaver
             if (!Finished)
             {
                 MouseState state = Mouse.GetState();
-                Vector2 scaledSize = new Vector2((float)(_Texture.Width * _Scale), (float)(_Texture.Height * _Scale));
-                Color = ScreensaverHelper.MouseInRotatedRectangle(state, new Vector2((float)_X, (float)_Y), scaledSize, _Rad) ? Color.Gray : Color.White;
+                bool mouseInside = IsMouseInside(state.X, state.Y);
+                Color = mouseInside ? Color.Gray : Color.White;
                 float maxSize = Math.Max(scaledSize.X, scaledSize.Y);
-                if (maxSize < 40 || (_MouseInside && state.LeftButton == ButtonState.Pressed))
+                if (maxSize < 50 || (mouseInside && state.LeftButton == ButtonState.Pressed))
                     _Scale -= 0.01f;
                 Finished = !(_Scale > 0f);
-                if (!_MouseRightButtonDown && state.RightButton == ButtonState.Pressed && _MouseInside && RightClick != null)
+                if (!_MouseRightButtonDown && state.RightButton == ButtonState.Pressed && mouseInside && RightClick != null)
                     RightClick();
                 _MouseRightButtonDown = state.RightButton == ButtonState.Pressed;
             }

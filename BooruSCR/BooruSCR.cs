@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Reflection;
 using System.Collections.Generic;
 using OpenTK;
@@ -9,16 +8,15 @@ using TA.Engine2D;
 
 namespace TA.SharpBooru.Client.ScreenSaver
 {
-    public class BooruSCR : GameWindow
+    public class BooruSCR : Game
     {
-        private Random R;
         private BooruClient _Booru;
         private List<ulong> _IDs;
         private ImageManager _ImgManager;
         private List<FallingImage> _Textures;
         private double _BackgroundHue;
         private Options _Options;
-        //private BitmapFontRenderer _Font;
+        private Font _Font;
         private string _ProductNameAndVersion;
 
         private Image _Cursor;
@@ -27,21 +25,17 @@ namespace TA.SharpBooru.Client.ScreenSaver
 
         public BooruSCR(Options Options)
             : base()
-        {
-            R = new Random();
-            _Options = Options;
-        }
+        { _Options = Options; }
 
-        protected override void OnLoad(EventArgs e) { PreLoop(); }
-        protected override void OnUnload(EventArgs e) { PostLoop(); }
-        protected override void OnUpdateFrame(FrameEventArgs e) { Update(e.Time); }
-        protected override void OnRenderFrame(FrameEventArgs e) { Draw(e.Time); }
-
-        private void PreLoop()
+        protected override void PreLoop()
         {
+            VSync = _Options.NoVSync ? VSyncMode.Off : VSyncMode.On;
+            TargetUpdateFrequency = 1000;
+            TargetRenderFrequency = 1000;
+
             _Textures = new List<FallingImage>();
-            //_Font = new BitmapFontRenderer(GraphicsDevice);
-            _BackgroundHue = R.NextDouble() * 360;
+            _Font = new Font();
+            _BackgroundHue = Helper.Random.NextDouble() * 360;
 
             if (_Options.Debug)
             {
@@ -58,36 +52,37 @@ namespace TA.SharpBooru.Client.ScreenSaver
             _IDs = _Booru.Search(_Options.Search ?? string.Empty);
             int deleteCount = _IDs.Count - _Options.ImageLimit;
             for (int i = 0; i < deleteCount; i++)
-                _IDs.RemoveAt(R.Next(0, _IDs.Count));
+                _IDs.RemoveAt(Helper.Random.Next(0, _IDs.Count));
 
             _Cursor = new Image(Texture.FromBytes(Properties.Resources.cursor));
 
-            _ImgManager = new ImageManager(R, _Booru, _IDs, _Options.ImageSize, _Options.UseImages);
+            _ImgManager = new ImageManager(_Booru, _IDs, (int)(_Options.ImageSize * 1.5d + 0.5d), _Options.UseImages);
             _ImgManager.NewTextureLoaded += () =>
                 {
                     lock (_Textures)
                         if (_Textures.Count < _Options.ImageCount || _Options.ImageCount < 1)
                             AddNewFBT();
                 };
-            _ImgManager.LoadingFinished += _Booru.Disconnect;
-
+            //_ImgManager.LoadingFinished += _Booru.Disconnect;
             _ImgManager.Start();
-            AddNewFBT();
         }
 
-        private void PostLoop()
+        protected override void PostLoop()
         {
             _ImgManager.Dispose();
             _Booru.Dispose();
-            //_Font.Dispose();
-            _Background.Dispose();
+            _Font.Dispose();
+            if (_Background != null)
+                _Background.Dispose();
             _Cursor.Dispose();
         }
 
-        private void Update(double Elapsed)
+        protected override void Update(double Elapsed)
         {
             if (OpenTK.Input.Keyboard.GetState().IsKeyDown(Key.Escape))
                 Exit();
+
+            _ImgManager.CreateTextures();
 
             lock (_Textures)
                 for (int i = _Textures.Count - 1; !(i < 0); i--)
@@ -109,13 +104,12 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 GL.ClearColor(ScreensaverHelper.ColorFromHSV(_BackgroundHue, 0.9, 0.15));
             }
 
-            MouseState mState = OpenTK.Input.Mouse.GetState();
-            _Cursor.X = mState.X - _Cursor.Width / 2;
-            _Cursor.Y = mState.Y - _Cursor.Height / 2;
+            _Cursor.X = Mouse.X- _Cursor.Width / 2;
+            _Cursor.Y = Mouse.Y - _Cursor.Height / 2;
 
-            if (mState.MiddleButton == ButtonState.Pressed)
+            if (Mouse[MouseButton.Middle])
             {
-                _BackgroundID = _IDs[R.Next(0, _IDs.Count)];
+                _BackgroundID = _IDs[Helper.Random.Next(0, _IDs.Count)];
                 if (_Background != null)
                     _Background.Dispose();
                 _Background = new Image(Texture.FromBytes(_Booru.GetImage(_BackgroundID).Bytes));
@@ -128,10 +122,8 @@ namespace TA.SharpBooru.Client.ScreenSaver
             }
         }
 
-        private void Draw(double Elapsed)
+        protected override void Draw(double Elapsed)
         {
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
             if (_Background != null)
                 _Background.Draw();
 
@@ -139,21 +131,18 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 foreach (FallingImage texture in _Textures)
                     texture.Draw();
 
-            /*
             if (_Options.Debug)
             {
-                _Font.Draw(spriteBatch, new Vector2(0, 0), _ProductNameAndVersion);
-                _Font.Draw(spriteBatch, new Vector2(0, 16), "ElapsedMS: {0} FPS: {1}", gameTime.ElapsedGameTime.TotalMilliseconds, 1 / gameTime.ElapsedGameTime.TotalSeconds);
-                _Font.Draw(spriteBatch, new Vector2(0, 32), "Loaded Imgs: {0}", _ImgManager.TextureCount);
-                _Font.Draw(spriteBatch, new Vector2(0, 48), "Background ID: {0}", _Background.IsBackgroundAvailable ? _BackgroundID.ToString() : "HSV");
+                _Font.Draw(0, 0, _ProductNameAndVersion);
+                _Font.Draw(0, 16, "UPS: {0}", UpdateFrequency);
+                _Font.Draw(0, 32, "FPS: {0}", RenderFrequency);
+                _Font.Draw(0, 48, "Loaded Imgs: {0}", _ImgManager.TextureCount);
+                _Font.Draw(0, 64, "Background ID: {0}", _Background != null ? _BackgroundID.ToString() : "HSV");
             }
-            */
 
             _Cursor.Draw();
-
-            SwapBuffers();
         }
 
-        private void AddNewFBT() { _Textures.Add(new FallingImage(R, _ImgManager.GetRandomTexture(), 0.09f, 0.025f, 0.03f, Width, Height)); }
+        private void AddNewFBT() { _Textures.Add(new FallingImage(Helper.Random, _ImgManager.GetRandomTexture(Helper.Random), 0.09f, 0.025f, 0.03f, Width, Height)); }
     }
 }

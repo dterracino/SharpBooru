@@ -58,6 +58,12 @@ namespace TA.Engine2D
             return texture;
         }
 
+        public static unsafe Texture FromBytes(byte[] DecodedBytes, int Width, int Height)
+        {
+            fixed (byte* ptr = DecodedBytes)
+                return FromScan0((IntPtr)ptr, Width, Height);
+        }
+
         public static Texture FromBitmap(Bitmap Bitmap)
         {
             BitmapData bitmapData = Bitmap.LockBits(new Rectangle(0, 0, Bitmap.Width, Bitmap.Height), ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
