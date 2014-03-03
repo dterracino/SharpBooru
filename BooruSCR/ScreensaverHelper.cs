@@ -1,14 +1,18 @@
 ﻿using System;
+using System.IO;
+using System.Drawing;
 using System.Reflection;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace TA.SharpBooru.Client.ScreenSaver
 {
     public class ScreensaverHelper
     {
-        public static Color ColorFromHSV(double h, double S, double V)
+        public static Microsoft.Xna.Framework.Color ColorFromHSV(double h, double S, double V)
         {
             double H = h;
             while (H < 0) { H += 360; };
@@ -39,7 +43,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
                     default: R = G = B = V; break;
                 }
             }
-            return new Color(Clamp((int)(R * 255.0)), Clamp((int)(G * 255.0)), Clamp((int)(B * 255.0)));
+            return new Microsoft.Xna.Framework.Color(Clamp((int)(R * 255.0)), Clamp((int)(G * 255.0)), Clamp((int)(B * 255.0)));
         }
 
         private static int Clamp(int i)
@@ -117,6 +121,35 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 for (byte i = 0; i < 4; i++)
                     points[i] = RotatePoint(points[i], RectangleCenter, Radiant);
             return IsPointInPolygon(new Vector2(Mouse.X, Mouse.Y), points);
+        }
+
+        public static Texture2D Texture2DFromBytes(GraphicsDevice GD, byte[] Bytes)
+        {
+            using (MemoryStream ms = new MemoryStream(Bytes))
+            using (Bitmap bitmap = new Bitmap(ms))
+                return Texture2DFromBitmap(GD, bitmap);
+        }
+
+        public static Texture2D Texture2DFromBitmap(GraphicsDevice GD, Bitmap Bitmap)
+        {
+            var rect = new System.Drawing.Rectangle(0, 0, Bitmap.Width, Bitmap.Height);
+            BitmapData bd = Bitmap.LockBits(rect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            byte[] data = new byte[Bitmap.Width * Bitmap.Height * 4];
+            unsafe
+            {
+                byte* ptr = (byte*)bd.Scan0.ToPointer();
+                for (int i = 0; i < data.Length; i += 4)
+                {
+                    data[i] = ptr[i + 2];
+                    data[i + 1] = ptr[i + 1];
+                    data[i + 2] = ptr[i];
+                    data[i + 3] = ptr[i + 3];
+                }
+            }
+            Bitmap.UnlockBits(bd);
+            Texture2D texture = new Texture2D(GD, Bitmap.Width, Bitmap.Height, false, SurfaceFormat.Color);
+            texture.SetData<byte>(data);
+            return texture;
         }
     }
 }

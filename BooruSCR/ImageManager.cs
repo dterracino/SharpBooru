@@ -1,5 +1,5 @@
 ﻿using System;
-using System.IO;
+using System.Drawing;
 using System.Threading;
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
@@ -52,32 +52,34 @@ namespace TA.SharpBooru.Client.ScreenSaver
             for (int i = 0; i < _IDs.Count && _IsRunning; i++)
             {
                 using (BooruImage image = _UseImages ? _Booru.GetImage(_IDs[i]) : _Booru.GetThumbnail(_IDs[i]))
-                using (MemoryStream ms = ScaleDown(image))
+                {
                     try
                     {
-                        Texture2D texture = Texture2D.FromStream(_GD, ms);
+                        Texture2D texture = CreateTexture(image);
                         lock (_Textures)
                             _Textures.Add(texture);
                         if (NewTextureLoaded != null)
                             NewTextureLoaded();
+
                     }
                     catch (Exception ex)
                     {
                         if (_IsRunning)
                             ScreensaverHelper.HandleException(ex);
                     }
+                }
             }
             if (LoadingFinished != null && _IDs.Count == _Textures.Count)
                 LoadingFinished();
         }
 
-        private MemoryStream ScaleDown(BooruImage Image)
+        private Texture2D CreateTexture(BooruImage Image)
         {
             double sideLength = 0;
             lock (_R)
                 sideLength = _MaxSideLength * (_R.NextDouble() + 0.5) + 0.5;
             using (BooruImage smallImage = Image.CreateThumbnail((int)sideLength, false))
-                return new MemoryStream(smallImage.Bytes);
+                return ScreensaverHelper.Texture2DFromBitmap(_GD, smallImage.Bitmap);
         }
 
         public void Dispose()

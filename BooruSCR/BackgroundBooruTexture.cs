@@ -1,8 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
@@ -34,13 +31,12 @@ namespace TA.SharpBooru.Client.ScreenSaver
         public void SetBooruImage(GraphicsDevice GD, BooruImage Image)
         {
             Dispose();
-            using (MemoryStream ms = new MemoryStream(Image.Bytes))
-                _Texture = Texture2D.FromStream(GD, ms);
+            _Texture = ScreensaverHelper.Texture2DFromBytes(GD, Image.Bytes);
             float num = Math.Max(_Screen.X / _Texture.Width, _Screen.Y / _Texture.Height);
             Vector2 resultSize = new Vector2(_Texture.Width * num, _Texture.Height * num);
             _DrawRectangle = new Rectangle(
                 0 - (int)((resultSize.X - _Screen.X) / 2 + 0.5),
-                0 - (int)((resultSize.Y - _Screen.Y) / 2 + 0.5), 
+                0 - (int)((resultSize.Y - _Screen.Y) / 2 + 0.5),
                 (int)resultSize.X, (int)resultSize.Y);
         }
     }
