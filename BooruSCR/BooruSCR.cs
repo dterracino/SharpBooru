@@ -24,8 +24,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
         private Options _Options;
         private BitmapFontRenderer _Font;
         private string _ProductNameAndVersion;
-        private Vector2 _CursorPosition;
-        private Texture2D _CursorTexture;
+        private Cursor _Cursor;
         private BackgroundBooruTexture _Background;
         private ulong _BackgroundID;
 
@@ -80,9 +79,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             for (int i = 0; i < deleteCount; i++)
                 _IDs.RemoveAt(R.Next(0, _IDs.Count));
 
-            using (MemoryStream ms = new MemoryStream(Properties.Resources.cursor))
-                _CursorTexture = Texture2D.FromStream(GraphicsDevice, ms);
-
+            _Cursor = new Cursor(ScreensaverHelper.Texture2DFromBytes(GraphicsDevice, Properties.Resources.cursor), 1f);
             _Background = new BackgroundBooruTexture(W, H);
 
             _ImgManager = new ImageManager(R, GraphicsDevice, _Booru, _IDs, _Options.ImageSize, _Options.UseImages);
@@ -104,7 +101,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
             _Booru.Dispose();
             _Font.Dispose();
             _Background.Dispose();
-            _CursorTexture.Dispose();
+            _Cursor.Dispose();
         }
 
         protected override void Update(GameTime gameTime)
@@ -133,7 +130,8 @@ namespace TA.SharpBooru.Client.ScreenSaver
             }
 
             MouseState mState = Mouse.GetState();
-            _CursorPosition = new Vector2(mState.X - (float)_CursorTexture.Width / 2, mState.Y - (float)_CursorTexture.Height / 2);
+            _Cursor.Update(gameTime, mState);
+
             if (mState.MiddleButton == ButtonState.Pressed)
             {
                 _BackgroundID = _IDs[R.Next(0, _IDs.Count)];
@@ -164,7 +162,7 @@ namespace TA.SharpBooru.Client.ScreenSaver
                 _Font.Draw(spriteBatch, new Vector2(0, 48), "Background ID: {0}", _Background.IsBackgroundAvailable ? _BackgroundID.ToString() : "HSV");
             }
 
-            spriteBatch.Draw(_CursorTexture, _CursorPosition, Color.White);
+            _Cursor.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);
