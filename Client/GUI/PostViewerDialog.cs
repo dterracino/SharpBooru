@@ -46,11 +46,13 @@ namespace TA.SharpBooru.Client.GUI
             Index = StartIndex;
             GUIHelper.CreateToolTip(buttonDeletePost, "Delete post");
             GUIHelper.CreateToolTip(buttonSaveImage, "Save image");
-            GUIHelper.CreateToolTip(buttonSetWallpaper, "Set image as desktop wallpaper");
+            GUIHelper.CreateToolTip(buttonSetWallpaper, "Set as desktop wallpaper");
             GUIHelper.CreateToolTip(buttonNextPost, "Next post");
             GUIHelper.CreateToolTip(buttonPreviousPost, "Previous post");
             GUIHelper.CreateToolTip(buttonEditImage, "Edit image");
             GUIHelper.CreateToolTip(buttonEditPost, "Edit post");
+            GUIHelper.CreateToolTip(buttonClone, "Clone post");
+            GUIHelper.CreateToolTip(buttonCopy, "Copy image to clipboard");
             SetLoadingMode(false);
         }
 
@@ -111,6 +113,7 @@ namespace TA.SharpBooru.Client.GUI
                 tagList.Enabled = !LoadingMode;
                 buttonEditImage.Enabled = !LoadingMode && cUser.CanEditPosts && Helper.IsWindows();
                 buttonClone.Enabled = !LoadingMode && cUser.CanAddPosts;
+                buttonCopy.Enabled = !LoadingMode;
             }
             else Invoke(new Action<bool>(SetLoadingMode), LoadingMode);
         }
@@ -257,5 +260,7 @@ namespace TA.SharpBooru.Client.GUI
                 imageBox.ZoomToFit();
             }
         }
+
+        private void buttonCopy_Click(object sender, EventArgs e) { Clipboard.SetImage(_Post.Image.Bitmap); }
     }
 }
