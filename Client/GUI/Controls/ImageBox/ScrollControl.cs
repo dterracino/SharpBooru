@@ -162,7 +162,6 @@ namespace Cyotek.Windows.Forms
         x = this.HorizontalScroll.Value;
         y = this.VerticalScroll.Value;
 
-        // TODO: Find if we are hovering over a horizontal scrollbar and scroll that instead of the default vertical.
         if (this.VerticalScroll.Visible && this.VerticalScroll.Enabled)
         {
           if (ModifierKeys == Keys.Control)

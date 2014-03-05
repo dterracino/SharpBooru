@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 
 namespace TA.SharpBooru.NetIO.Encryption
 {
-    public class AES:IDisposable
+    public class AES : IDisposable
     {
         private AesCryptoServiceProvider _AES;
 
@@ -17,7 +17,7 @@ namespace TA.SharpBooru.NetIO.Encryption
         }
 
         public AES(byte[] Key)
-            : this() 
+            : this()
         { this.Key = Key; }
 
         public void Dispose() { _AES.Dispose(); }

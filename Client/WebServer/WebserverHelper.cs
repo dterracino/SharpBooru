@@ -88,10 +88,8 @@ namespace TA.SharpBooru.Client.WebServer
 
         public static void WriteMinimalFooter(Context Context) { Context.OutWriter.Write("</div></body></html>"); }
 
-        public static string GetStyle(Context Context)
-        {
-            return string.Format(Properties.Resources.style_css, 120); //TODO Get server thumbs size
-        }
+        //TODO Get server thumbs size
+        public static string GetStyle(Context Context) { return string.Format(Properties.Resources.style_css, 120); }
 
         public static void WriteTableHeader(Context Context, string TableClass = null)
         {

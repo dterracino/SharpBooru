@@ -42,7 +42,6 @@ namespace TA.SharpBooru.Client.WebServer
             if (ListenerPrefixes.Count < 1)
                 ListenerPrefixes.Add("http://*:80/");
             ListenerPrefixes.ForEach(x => _Listener.Prefixes.Add(x));
-            _Listener.IgnoreWriteExceptions = false; //TODO
             _EnableDirectoryListing = EnableDirectoryListing;
             _Pool = new SmartThreadPool(3000, 500, 10);
             _RootDirectory = new VFSDirectory(string.Empty);
