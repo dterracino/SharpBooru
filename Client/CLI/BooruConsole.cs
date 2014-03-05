@@ -42,7 +42,6 @@ namespace TA.SharpBooru.Client.CLI
                             if (imgViewer != null)
                                 imgViewer.WaitForExit();
                 })));
-            /* TODO Command image dupes
             Commands.Add(new Command("image dupes", "image dupes <Folder>", new Action<string>(folder =>
                 {
                     string[] files = Directory.GetFiles(folder);
@@ -50,15 +49,13 @@ namespace TA.SharpBooru.Client.CLI
                         using (BooruImage img = BooruImage.FromFile(file))
                         {
                             Console.Write("{0} -", Path.GetFileName(file));
-                            ulong hash = img.CalculateImageHash();
-                            List<ulong> dupes = _Booru.FindImageDupes(hash);
+                            List<ulong> dupes = _Booru.FindImageDupes(img.CalculateImageHash());
                             if (dupes.Count > 0)
                                 foreach (ulong dupeID in dupes)
                                     Console.WriteLine(" {0}", dupeID);
                             else Console.WriteLine(" no dupes");
                         }
                 })));
-            */
             Commands.Add(new Command("tag delete", "tag delete <ID>", new Action<ulong>(id => _Booru.DeleteTag(id))));
             Commands.Add(new Command("user change", "user change <Username> <Password>", new Action<string, string>((un, pw) => _Booru.Login(un, pw))));
             Commands.Add(new Command("user add", "user add <Username> <Password> <CanAddPosts> <CanDeletePosts> <CanEditPosts> <CanDeleteTags> <CanEditTags> <CanLoginDirect> <CanLoginOnline> <AdvancePostControl> <IsAdmin> <MaxRating>", new Action<string, string, bool, bool, bool, bool, bool, bool, bool, bool, bool, ushort>((un, pw, cap, cdp, cep, cdt, cet, cld, clo, apc, ia, mr) =>
