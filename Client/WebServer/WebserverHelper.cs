@@ -18,7 +18,7 @@ namespace TA.SharpBooru.Client.WebServer
         public static void WriteMinimalHeader(Context Context, string Title)
         {
             string header = DOCTYPE + @"<html><head><title>{0} - {1}</title><meta http-equiv=""Content-Type"" content=""text/html; charset=UTF-8""></head><body><div>";
-            Context.OutWriter.Write(header, Title, "BOORU"); //TODO Get booru name
+            Context.OutWriter.Write(header, Title, Context.Booru.BooruInfo.BooruName);
         }
 
         public static void WriteHeader(Context Context, string Title, string AdditionalHeadContent)
@@ -44,7 +44,7 @@ namespace TA.SharpBooru.Client.WebServer
             if (Context.User.Perm_Admin)
                 links.Add("Admin", "/admin");
             */
-            string booruName = "SharpBooru"; //TODO Get booru name
+            string booruName = Context.Booru.BooruInfo.BooruName;
 
             Context.OutWriter.Write("{0}<html><head><title>{1} - {2}</title>", DOCTYPE, Title, booruName);
             Context.OutWriter.Write("<link rel=\"stylesheet\" type=\"text/css\" href=\"style\">");

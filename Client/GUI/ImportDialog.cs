@@ -155,9 +155,9 @@ namespace TA.SharpBooru.Client.GUI
         private void AddRowInternal(string file, string tags, string source, string comment, byte? rating, BooruImage thumb)
         {
             if (!rating.HasValue)
-                rating = 7; //TODO StandardRating
+                rating = _Booru.BooruInfo.DefaultRating;
             Bitmap thumbBitmap = null;
-            try { thumbBitmap = thumb.CreateThumbnail(256, false).Bitmap; } //TODO ThumbnailSize
+            try { thumbBitmap = thumb.CreateThumbnail(_Booru.BooruInfo.ThumbnailSize, true).Bitmap; }
             catch { thumbBitmap = null; }
             DataGridViewRow row = new DataGridViewRow();
             row.Cells.Add(new DataGridViewTextBoxCell() { Value = file.Trim() });
