@@ -27,9 +27,9 @@ namespace TA.SharpBooru.Client.GUI
                     value = _PostIDs.Count - 1;
                 if (value != _Index)
                 {
+                    _Index = value;
                     BooruPost postToShow = _Booru.GetPost(_PostIDs[value]);
                     ChangePost(postToShow);
-                    _Index = value;
                 }
             }
         }
@@ -125,10 +125,8 @@ namespace TA.SharpBooru.Client.GUI
             {
                 _Booru.DeletePost(_Post.ID);
                 _PostIDs.Remove(_Post.ID);
-                if (buttonNextPost.Enabled)
-                    Index++;
-                else if (buttonPreviousPost.Enabled)
-                    Index--;
+                if (_PostIDs.Count > 0)
+                    ChangePost(_Booru.GetPost(_PostIDs[Index]));
                 else Close();
             }
         }
