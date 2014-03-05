@@ -101,9 +101,12 @@ namespace TA.SharpBooru.Client
 
         public void Disconnect()
         {
-            _Logger.LogLine("Disconnecting...");
-            if (_ReceiverThread.IsAlive)
-                _ReceiverThread.Abort();
+            _Logger.LogLine("Disconnecting..."); 
+            //Maybe the _ReceiverThread locked _Waiters. 
+            //To avoid a deadlock, lock _Waiters before aborting _ReceiverThread
+            lock (_Waiters)
+                if (_ReceiverThread.IsAlive)
+                    _ReceiverThread.Abort();
             try
             {
                 lock (_ReaderWriter)
@@ -113,7 +116,7 @@ namespace TA.SharpBooru.Client
                 }
             }
             catch { }
-            lock (_Waiters) //Maybe aborted _ReceiverThread locked _Waiters, Deadlock?
+            lock (_Waiters)
                 foreach (ResponseWaiter rWaiter in _Waiters)
                     rWaiter.WaitEvent.Set();
             try { _Client.Close(); }
