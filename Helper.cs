@@ -18,27 +18,6 @@ namespace TA.SharpBooru
 
         public static readonly Random Random = new Random();
 
-        /*
-        [DllImport("kernel32.dll", EntryPoint = "AllocConsole")]
-        [return: MarshalAsAttribute(UnmanagedType.Bool)]
-        private static extern bool _AllocConsole();
-
-        [DllImport("kernel32.dll", SetLastError = true, EntryPoint = "GetStdHandle")]
-        private static extern IntPtr GetStdHandle(int nStdHandle);
-        private const int STD_OUTPUT_HANDLE = -11;
-
-        [DllImport("kernel32.dll", EntryPoint = "SetStdHandle")]
-        private static extern void _SetStdHandle(UInt32 nStdHandle, IntPtr handle);
-
-        [DllImport("kernel32.dll", EntryPoint = "AttachConsole")]
-        [return: MarshalAsAttribute(UnmanagedType.Bool)]
-        private static extern bool _AttachConsole(UInt32 PID);
-
-        [DllImport("kernel32.dll", EntryPoint = "FreeConsole")]
-        [return: MarshalAsAttribute(UnmanagedType.Bool)]
-        private static extern bool _FreeConsole();
-        */
-
         [DllImport("user32.dll", EntryPoint = "EnableWindow")]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool _EnableWindow(IntPtr hWnd, bool bEnable);
@@ -86,33 +65,6 @@ namespace TA.SharpBooru
                         return MemoryCompare((IntPtr)rPtr1, (IntPtr)rPtr2, Bytes1.LongLength);
                 }
         }
-
-        /*
-        public static bool AllocConsole()
-        {
-            if (!IsMono())
-                if (_AllocConsole())
-                {
-                    _SetStdHandle(0xFFFFFFF5, new IntPtr(7));
-                    return true;
-                }
-            return false;
-        }
-
-        public static bool FreeConsole()
-        {
-            if (!IsMono())
-                return _FreeConsole();
-            else return false;
-        }
-
-        public static bool AttachParentConsole()
-        {
-            if (!IsMono())
-                return _AttachConsole(0x0ffffffff);
-            return false;
-        }
-        */
 
         public static string DownloadTemporary(string URI)
         {
