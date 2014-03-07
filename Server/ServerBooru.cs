@@ -12,6 +12,7 @@ namespace TA.SharpBooru.Server
         private BooruInfo _BooruInfo = null;
         private string _Folder;
         private RSA _RSA;
+        private ImageOptimizer _ImgOptimizer;
 
         public BooruInfo BooruInfo
         {
@@ -32,6 +33,7 @@ namespace TA.SharpBooru.Server
 
         public ServerBooru(string Folder)
         {
+            _ImgOptimizer = new ImageOptimizer(null);
             string dbPath = Path.Combine(Folder, "booru.db");
             if (File.Exists(dbPath))
                 if (Directory.Exists(Path.Combine(Folder, "images")))
@@ -54,6 +56,7 @@ namespace TA.SharpBooru.Server
         {
             _DB.Dispose();
             _RSA.Dispose();
+            _ImgOptimizer.Dispose();
         }
 
         public BooruPost GetPost(BooruUser User, ulong PostID, bool IncludeThumbnail)
@@ -198,9 +201,13 @@ namespace TA.SharpBooru.Server
                 if (post != null)
                 {
                     //Maybe Width + Height checks?
-                    Image.Save(Path.Combine(ImageFolder, "image" + PostID));
+                    string thumbPath = Path.Combine(ThumbFolder, "thumb" + PostID);
+                    string imagePath = Path.Combine(ImageFolder, "image" + PostID);
                     using (BooruImage thumbImage = Image.CreateThumbnail(BooruInfo.ThumbnailSize, false))
-                        thumbImage.Save(Path.Combine(ThumbFolder, "thumb" + PostID), BooruInfo.ThumbnailQuality);
+                        thumbImage.Save(thumbPath, BooruInfo.ThumbnailQuality);
+                    Image.Save(imagePath);
+                    _ImgOptimizer.Optimize(thumbPath);
+                    _ImgOptimizer.Optimize(imagePath);
                     post.Width = (uint)Image.Bitmap.Width;
                     post.Height = (uint)Image.Bitmap.Height;
                     post.ImageHash = Image.CalculateImageHash();
@@ -230,9 +237,13 @@ namespace TA.SharpBooru.Server
                 PostWithImage.ImageHash = PostWithImage.Image.CalculateImageHash();
                 PostWithImage.ID = (uint)_DB.ExecuteInsert("posts", PostWithImage.ToDictionary(false));
                 //Maybe Width + Height checks?
-                PostWithImage.Image.Save(Path.Combine(ImageFolder, "image" + PostWithImage.ID));
+                string thumbPath = Path.Combine(ThumbFolder, "thumb" + PostWithImage.ID);
+                string imagePath = Path.Combine(ImageFolder, "image" + PostWithImage.ID);
                 using (BooruImage thumbImage = PostWithImage.Image.CreateThumbnail(BooruInfo.ThumbnailSize, false))
-                    thumbImage.Save(Path.Combine(ThumbFolder, "thumb" + PostWithImage.ID), BooruInfo.ThumbnailQuality);
+                    thumbImage.Save(thumbPath, BooruInfo.ThumbnailQuality);
+                PostWithImage.Image.Save(imagePath);
+                _ImgOptimizer.Optimize(thumbPath);
+                _ImgOptimizer.Optimize(imagePath);
                 AddPostTags(PostWithImage);
                 return PostWithImage.ID;
             }

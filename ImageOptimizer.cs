@@ -1,12 +1,62 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Diagnostics;
 using System.Drawing.Imaging;
+using System.Collections.Generic;
 
 namespace TA.SharpBooru
 {
-    public class ImageOptimizer
+    public class ImageOptimizer : IDisposable
     {
+        private class OptimizationProcess : IDisposable
+        {
+            private Logger Logger;
+            private string ImgFile;
+            private Process Process;
+            private Thread Thread;
+
+            public OptimizationProcess(Logger Logger, string ImgFile)
+            {
+                this.ImgFile = ImgFile;
+                this.Logger = Logger;
+                Thread = new Thread(Optimize) { Name = "OptiThread" };
+            }
+
+            private void Optimize()
+            {
+                if (Logger != null)
+                    Logger.LogLine("Optimizing file {0}...", ImgFile);
+                Process = new Process();
+                Process.StartInfo = GetPSI(ImgFile);
+                try
+                {
+                    Process.Start();
+                    Process.WaitForExit();
+                    if (Process.ExitCode == 0)
+                    {
+                        File.Delete(ImgFile);
+                        File.Move(ImgFile + ".new", ImgFile);
+                        Logger.LogLine("Optimization of file {0} successfull", ImgFile);
+                    }
+                    else throw new Exception("Optimization failed");
+                }
+                catch
+                {
+                    File.Delete(ImgFile + ".new");
+                    Logger.LogLine("Optimization of file {0} failed", ImgFile);
+                }
+            }
+
+            public void Start() { Thread.Start(); }
+
+            public void Dispose()
+            {
+                Thread.Join();
+                Process.Dispose();
+            }
+        }
+
         private const string OPTI_PNG_EXE = "optipng";
         private const string OPTI_JPG_EXE = "jpegtran";
         private const string OPTI_GIF_EXE = "gifsicle";
@@ -15,59 +65,51 @@ namespace TA.SharpBooru
         private const string OPTI_JPG_ARGS = "-progressive -verbose -optimize -outfile {1} {0}";
         private const string OPTI_GIF_ARGS = "-O2 {0} -V -o {1}";
 
-        public static void TryOptimizeSilent(string File, Logger Logger = null) { TryOptimize(File, Logger); }
+        private List<OptimizationProcess> _OptiProcesses = new List<OptimizationProcess>();
+        private Logger _Logger = null;
 
-        public static bool TryOptimize(string File, Logger Logger = null)
+        public ImageOptimizer(Logger Logger) { _Logger = Logger ?? Logger.Null; }
+
+        public void Optimize(string ImageFile)
         {
-            try
+            OptimizationProcess optiProcess = new OptimizationProcess(_Logger, ImageFile);
+            optiProcess.Start();
+            lock (_OptiProcesses)
+                _OptiProcesses.Add(optiProcess);
+        }
+
+        public void Dispose() { FinishAllOptimizationProcesses(); }
+        public void FinishAllOptimizationProcesses()
+        {
+            lock (_OptiProcesses)
             {
-                if (Logger != null)
-                    Logger.LogLine("Optimizing file {0}...", File);
-                Optimize(File);
-                if (Logger != null)
-                    Logger.LogLine("Optimization of file {0} finished", File);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                if (Logger != null)
-                    Logger.LogException("ImageOptimization", ex);
-                return false;
+                for (int i = 0; i < _OptiProcesses.Count; i++)
+                    _OptiProcesses[i].Dispose();
             }
         }
 
-        public static void Optimize(string File)
+        private static ProcessStartInfo GetPSI(string File)
         {
             using (BooruImage img = BooruImage.FromFile(File))
             {
                 if (img.ImageFormat == ImageFormat.Png)
-                    OptimizeStage2(OPTI_PNG_EXE, OPTI_PNG_ARGS, File);
+                    return GetPSI2(OPTI_PNG_EXE, OPTI_PNG_ARGS, File);
                 else if (img.ImageFormat == ImageFormat.Jpeg)
-                    OptimizeStage2(OPTI_JPG_EXE, OPTI_JPG_ARGS, File);
+                    return GetPSI2(OPTI_JPG_EXE, OPTI_JPG_ARGS, File);
                 else if (img.ImageFormat == ImageFormat.Gif)
-                    OptimizeStage2(OPTI_GIF_EXE, OPTI_GIF_ARGS, File);
+                    return GetPSI2(OPTI_GIF_EXE, OPTI_GIF_ARGS, File);
                 else throw new BadImageFormatException("Optimization not supported for this ImageFormat");
             }
         }
 
-        private static void OptimizeStage2(string Exe, string Args, string ImgFile)
+        private static ProcessStartInfo GetPSI2(string exe, string args, string file)
         {
-            Process process = new Process();
-            process.StartInfo = new ProcessStartInfo()
+            return new ProcessStartInfo()
             {
-                FileName = Exe,
-                Arguments = string.Format(Args, ImgFile + ".bak", ImgFile),
+                FileName = exe,
+                Arguments = string.Format(args, file, file + ".new"),
                 UseShellExecute = false
             };
-            File.Copy(ImgFile, ImgFile + ".bak");
-            process.Start();
-            process.WaitForExit();
-            if (process.ExitCode != 0)
-            {
-                File.Move(ImgFile + ".bak", ImgFile);
-                throw new Exception("Optimization failed");
-            }
-            else File.Delete(ImgFile + ".bak");
         }
     }
 }
