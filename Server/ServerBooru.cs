@@ -333,6 +333,28 @@ namespace TA.SharpBooru.Server
             throw new Exception("Login failed");
         }
 
+        public BooruUser Login(BooruUser User, byte[] Modulus, byte[] Exponent, byte[] Signature)
+        {
+            using (RSA rsa = new RSA(Modulus, Exponent))
+            {
+                bool signatureCheckResult = true;
+                if (!User.IsAdmin)
+                {
+                    byte[] pubkey = Helper.CombineByteArrays(Modulus, Exponent);
+                    signatureCheckResult = rsa.CheckSignature(pubkey, Signature);
+                }
+                if (signatureCheckResult)
+                {
+                    string username = _DB.ExecuteScalar<string>(SQLStatements.GetUsernameByPublicKey, rsa.GetPublicKey());
+                    DataRow userRow = _DB.ExecuteRow(SQLStatements.GetUserByUsername, username);
+                    BooruUser user = BooruUser.FromRow(userRow);
+                    if (user != null)
+                        return user;
+                }
+            }
+            throw new BooruException(BooruException.ErrorCodes.LoginFailed);
+        }
+
         private bool IsPrivacyAllowed(BooruPost Post, BooruUser User)
         {
             if (Post.Private && !User.IsAdmin)

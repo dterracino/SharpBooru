@@ -95,6 +95,7 @@ namespace TA.SharpBooru.NetIO.Packets
                     case 25: return (new Packet25_ULongList()).FromReaderReturn(bodyReader);
                     case 26: return (new Packet26_SearchImg()).FromReaderReturn(bodyReader);
                     case 27: return (new Packet27_AddAlias()).FromReaderReturn(bodyReader);
+                    case 28: return (new Packet28_PubKeyLogin()).FromReaderReturn(bodyReader);
                 }
                 return null;
             }

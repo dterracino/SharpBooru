@@ -9,6 +9,7 @@ namespace TA.SharpBooru.NetIO.Encryption
     {
         private bool _Private;
         private RSACryptoServiceProvider _RSA = new RSACryptoServiceProvider(4096);
+        private SHA1CryptoServiceProvider _SHA1 = new SHA1CryptoServiceProvider();
 
         public RSA() { _Private = true; }
         public RSA(string File) { LoadKeys(File); }
@@ -38,6 +39,13 @@ namespace TA.SharpBooru.NetIO.Encryption
             Exponent = rsaParams.Exponent;
         }
 
+        public string GetPublicKey()
+        {
+            RSAParameters rsaParams = _RSA.ExportParameters(false);
+            byte[] pubKey = Helper.CombineByteArrays(rsaParams.Modulus, rsaParams.Exponent);
+            return Convert.ToBase64String(pubKey);
+        }
+
         public void SetPublicKey(byte[] Modulus, byte[] Exponent)
         {
             RSAParameters rsaParams = new RSAParameters()
@@ -52,11 +60,8 @@ namespace TA.SharpBooru.NetIO.Encryption
         public string GetFingerprint()
         {
             RSAParameters rsaParams = _RSA.ExportParameters(false);
-            byte[] pubkey = new byte[rsaParams.Modulus.Length + rsaParams.Exponent.Length];
-            Array.Copy(rsaParams.Modulus, pubkey, rsaParams.Modulus.Length);
-            Array.Copy(rsaParams.Exponent, 0, pubkey, rsaParams.Modulus.Length, rsaParams.Exponent.Length);
-            using (SHA1CryptoServiceProvider sha1 = new SHA1CryptoServiceProvider())
-                pubkey = sha1.ComputeHash(pubkey);
+            byte[] pubkey = Helper.CombineByteArrays(rsaParams.Modulus, rsaParams.Exponent);
+            pubkey = _SHA1.ComputeHash(pubkey);
             StringBuilder sb = new StringBuilder(22);
             sb.Append("0x");
             for (byte i = 0; i < 5; i++)
@@ -72,5 +77,9 @@ namespace TA.SharpBooru.NetIO.Encryption
                 return _RSA.Decrypt(Data, false);
             else throw new Exception("No private key");
         }
+
+        public byte[] Sign(byte[] Data) { return _RSA.SignData(Data, _SHA1); }
+
+        public bool CheckSignature(byte[] Data, byte[] Signature) { return _RSA.VerifyData(Data, _SHA1, Signature); }
     }
 }

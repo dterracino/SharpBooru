@@ -24,6 +24,7 @@ tag_types.color AS color FROM tags INNER JOIN tag_types WHERE id = ?";
         public const string GetTagTypeByTypeName = "SELECT * FROM tag_types WHERE type = ?";
         public const string GetAliases = "SELECT * FROM aliases";
         public const string GetAliasByString = "SELECT * FROM aliases WHERE alias = ?";
+        public const string GetUsernameByPublicKey = "SELECT username FROM public_keys WHERE public_key = ?";
 
         //Counts
         public const string GetPostCountByID = "SELECT COUNT(*) FROM posts WHERE id = ?";

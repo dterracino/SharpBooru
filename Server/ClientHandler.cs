@@ -187,6 +187,11 @@ namespace TA.SharpBooru.Server
                     Packet27_AddAlias packet27 = (Packet27_AddAlias)reqPacket;
                     _Booru.AddAlias(_User, packet27.Alias, packet27.TagID);
                     break;
+
+                case 28:
+                    Packet28_PubKeyLogin packet28 = (Packet28_PubKeyLogin)reqPacket;
+                    _User = _Booru.Login(_User, packet28.Modulus, packet28.Exponent, packet28.Signature);
+                    return new Packet23_Resource() { Type = Packet23_Resource.ResourceType.User, Resource = _User };
             }
             return new Packet0_Success();
         }

@@ -93,6 +93,7 @@
     <Compile Include="NetIO\Packets\BooruPackets\Packet25_ULongList.cs" />
     <Compile Include="NetIO\Packets\BooruPackets\Packet26_SearchImg.cs" />
     <Compile Include="NetIO\Packets\BooruPackets\Packet27_AddAlias.cs" />
+    <Compile Include="NetIO\Packets\BooruPackets\Packet28_PubKeyLogin.cs" />
     <Compile Include="NetIO\Packets\CorePackets\Packet4_ServerInfo.cs" />
     <Compile Include="NetIO\Packets\CorePackets\Packet5_Encryption.cs" />
     <Compile Include="NetIO\Packets\Packet.cs" />

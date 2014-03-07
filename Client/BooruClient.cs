@@ -365,5 +365,15 @@ namespace TA.SharpBooru.Client
             Packet resultPacket = DoRequest(new Packet26_SearchImg() { ImageHash = ImageHash });
             return ((Packet25_ULongList)resultPacket).ULongList;
         }
+
+        public void Login(RSA RSA)
+        {
+            byte[] modulus, exponent;
+            RSA.GetPublicKey(out modulus, out exponent);
+            byte[] pubkey = Helper.CombineByteArrays(modulus, exponent);
+            byte[] signature = RSA.Sign(pubkey);
+            Packet currentUserPacket = DoRequest(new Packet28_PubKeyLogin() { Modulus = modulus, Exponent = exponent, Signature = signature });
+            _CurrentUser = (BooruUser)((Packet23_Resource)currentUserPacket).Resource;
+        }
     }
 }

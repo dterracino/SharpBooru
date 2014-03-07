@@ -278,5 +278,13 @@ namespace TA.SharpBooru
                 _VersionMinor = (ushort)Assembly.GetExecutingAssembly().GetName().Version.Minor;
             return _VersionMinor.Value;
         }
+
+        public static byte[] CombineByteArrays(byte[] Array1, byte[] Array2)
+        {
+            byte[] resultArray = new byte[Array1.Length + Array2.Length];
+            Array.Copy(Array1, resultArray, Array1.Length);
+            Array.Copy(Array2, 0, resultArray, Array1.Length, Array2.Length);
+            return resultArray;
+        }
     }
 }
