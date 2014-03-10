@@ -76,7 +76,7 @@ namespace TA.SharpBooru.Client.GUI
                                 ?? GetSpecialFolder(Environment.SpecialFolder.Personal)
                                 ?? GetSpecialFolder(Environment.SpecialFolder.Windows)
                                 ?? Path.GetTempPath();
-                string bgFile = Path.Combine(bgPath, "SharpBooruWallpaper.bmp");
+                string bgFile = Path.Combine(bgPath, "SharpBooruWallpaper");
                 Bitmap.Save(ref bgFile, true, ImageFormat.Bmp);
                 return _SystemParametersInfo(0x14, 0, bgFile, 0x03);
             }
