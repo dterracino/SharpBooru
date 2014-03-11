@@ -135,7 +135,7 @@ namespace TA.SharpBooru.Client
                     ProgressResponse(requestID, packet);
                 }
             }
-            catch (Exception ex) { _Logger.LogLine("PacketReceiver", ex); }
+            catch (Exception ex) { _Logger.LogException("PacketReceiver", ex); }
         }
 
         private void ProgressResponse(uint RequestID, Packet response)
