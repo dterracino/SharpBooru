@@ -82,6 +82,13 @@ namespace TA.SharpBooru.Server
                     break;
 
                 case 51: RecreateImageHashes(); break;
+
+                case 53:
+                    string oldPath = Path.Combine(_BooruPath, "rsa.xml");
+                    string newPath = Path.Combine(_BooruPath, "keypair.xml");
+                    if (File.Exists(oldPath))
+                        File.Move(oldPath, newPath);
+                    break;
             }
         }
 

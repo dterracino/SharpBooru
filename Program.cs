@@ -77,10 +77,8 @@ namespace TA.SharpBooru
                             RunClientCLI(booru, options.Command);
                     }
                     else if (options.Mode == Options.RunMode.WebServer)
-                    {
                         using (BooruClient booru = ConnectBooru(sLogger, options.Server, null, options))
                             RunClientWebserver(booru, options.Port, sLogger);
-                    }
                     else return 1;
                 }
                 return 0;

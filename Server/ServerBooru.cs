@@ -42,7 +42,7 @@ namespace TA.SharpBooru.Server
                     {
                         _Folder = Folder;
                         _DB = new SQLiteWrapper(dbPath);
-                        string rsaPath = Path.Combine(Folder, "rsa.xml");
+                        string rsaPath = Path.Combine(Folder, "keypair.xml");
                         _RSA = new RSA();
                         if (File.Exists(rsaPath))
                             _RSA.LoadKeys(rsaPath);
