@@ -42,6 +42,9 @@ namespace TA.SharpBooru
         [Option('p', "password", Required = false, DefaultValue = null)]
         public string Password { get; set; }
 
+        [Option('k', "keypair", Required = false, DefaultValue = null)]
+        public string Keypair { get; set; }
+
         [Option('c', "command", Required = false, DefaultValue = null)]
         public string Command { get; set; }
 
@@ -53,14 +56,6 @@ namespace TA.SharpBooru
 
         [Option("accept-fp", Required = false, DefaultValue = false)]
         public bool AcceptFingerprint { get; set; }
-
-        /*
-        [Option('c', "certificate", Required = false, HelpText = "The .pfx server certificate")]
-        public string Certificate { get; set; }
-
-        [Option('w', "certificate-password", Required = false, DefaultValue = "sharpbooru", HelpText = "The password for the certificate")]
-        public string CertificatePassword { get; set; }
-        */
 
         [HelpOption('h')]
         public string GetUsage() 
@@ -92,25 +87,31 @@ namespace TA.SharpBooru
             sb.AppendLine("  -s, --server     Server to connect to [localhost]");
             sb.AppendLine("  -u, --username   Username for auto login");
             sb.AppendLine("  -p, --password   Password for auto login");
+            sb.AppendLine("  -k, --keypair    Keypair XML file for auto login");
             sb.AppendLine("      --accept-fp  Accept the server fingerprint");
             sb.AppendLine("All switches are optional");
+            sb.AppendLine("A keypair file has priority over username and password");
             sb.AppendLine();
 
             sb.AppendLine("CLI Mode [-m cli]");
             sb.AppendLine("  -s, --server     Server to connect to [localhost]");
             sb.AppendLine("  -u, --username   Username for auto login");
             sb.AppendLine("  -p, --password   Password for auto login");
+            sb.AppendLine("  -k, --keypair    Keypair XML file for auto login");
             sb.AppendLine("  -c, --command    Command to execute");
             sb.AppendLine("      --accept-fp  Accept the server fingerprint");
             sb.AppendLine("All switches are optional");
+            sb.AppendLine("A keypair file has priority over username and password");
             sb.AppendLine();
 
             sb.AppendLine("WebServer Mode [-m webserver]");
             sb.AppendLine("  -s, --server     Server to connect to [localhost]");
             sb.AppendLine("  -u, --username   Username for auto login");
             sb.AppendLine("  -p, --password   Password for auto login");
+            sb.AppendLine("  -k, --keypair    Keypair XML file for auto login");
             sb.AppendLine("      --port       HTTP port [80]");
             sb.AppendLine("All switches are optional");
+            sb.AppendLine("A keypair file has priority over username and password");
             sb.AppendLine();
 
             sb.AppendLine("Standalone Mode [-m standalone]");
