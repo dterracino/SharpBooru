@@ -146,6 +146,7 @@ namespace TA.SharpBooru.Client.CLI
                     using (RSA rsa = new RSA(keyPairPath))
                         _Booru.Login(rsa);
                 })));
+            Commands.Add(new Command("isalive", "isalive", new Action(() => _Booru.IsAlive())));
         }
     }
 }
