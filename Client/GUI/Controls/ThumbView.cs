@@ -80,7 +80,9 @@ namespace TA.SharpBooru.Client.GUI.Controls
                 _aObjDict.Add(pBox, aObj);
                 this.Controls.Add(pBox);
             }
-            else Invoke(new Action<Bitmap, object, string, Color?>(Add), Thumbnail, aObj, ToolTipText, Border);
+            else try { Invoke(new Action<Bitmap, object, string, Color?>(Add), Thumbnail, aObj, ToolTipText, Border); }
+                catch (ObjectDisposedException) { }
+
         }
 
         public void Clear()

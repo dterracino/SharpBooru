@@ -9,6 +9,7 @@ namespace TA.SharpBooru.Client.GUI
     {
         private BooruClient _Booru = null;
         private string _LastSearch = null;
+        private List<Form> _Forms = new List<Form>();
 
         public MainForm(BooruClient Booru)
         {
@@ -48,17 +49,21 @@ namespace TA.SharpBooru.Client.GUI
                 buttonRefresh.Enabled = !Loading;
                 buttonChangeUser.Enabled = !Loading;
                 buttonImgSearch.Enabled = !Loading;
-                buttonImportDialog.Enabled = !Loading && _Booru.CurrentUser.CanAddPosts;
             }
             else this.Invoke(new Action<bool>(SetLoadingMode), Loading);
+        }
+
+        private void ShowFormListed(Form F)
+        {
+            _Forms.Add(F);
+            F.Show();
         }
 
         private void openImage(object aObj)
         {
             BooruPost post = aObj as BooruPost;
             List<ulong> postIDs = booruThumbView.Posts;
-            using (PostViewerDialog pvd = new PostViewerDialog(_Booru, postIDs, postIDs.IndexOf(post.ID)))
-                pvd.ShowDialog();
+            ShowFormListed(new PostViewerDialog(_Booru, postIDs, postIDs.IndexOf(post.ID)));
         }
 
         private void tagTextBox1_EnterPressed(object sender, EventArgs e)
@@ -67,11 +72,7 @@ namespace TA.SharpBooru.Client.GUI
             _LastSearch = searchBox.Text;
         }
 
-        private void buttonImportDialog_Click(object sender, EventArgs e)
-        {
-            using (ImportDialog iDialog = new ImportDialog(_Booru))
-                iDialog.ShowDialog();
-        }
+        private void buttonImportDialog_Click(object sender, EventArgs e) { ShowFormListed(new ImportDialog(_Booru)); }
 
         private void buttonChangeUser_Click(object sender, EventArgs e)
         {
@@ -128,6 +129,16 @@ namespace TA.SharpBooru.Client.GUI
         {
             GUIHelper.ToggleConsoleWindow();
             Focus();
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach (Form form in _Forms)
+            {
+                form.Close();
+                form.Dispose();
+            }
+            _Forms.Clear();
         }
     }
 }

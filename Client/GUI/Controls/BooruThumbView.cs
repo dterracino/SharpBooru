@@ -24,6 +24,8 @@ namespace TA.SharpBooru.Client.GUI.Controls
         private BooruClient _Booru = null;
         private List<ulong> _Posts = new List<ulong>();
         private ushort _ThumbsPerPage = 30;
+        private Thread _LoadThread;
+        private bool _LoadThreadStop = false;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public List<ulong> Posts
@@ -32,7 +34,6 @@ namespace TA.SharpBooru.Client.GUI.Controls
             set { SetPosts(value); }
         }
 
-        [MethodImpl(MethodImplOptions.Synchronized)]
         public void SetPosts(List<ulong> PostIDs)
         {
             if (InvokeRequired)
@@ -97,6 +98,7 @@ namespace TA.SharpBooru.Client.GUI.Controls
                         ImageRightClick(sender, e, aObj);
                 };
             RefreshLabel();
+            Disposed += (sender, e) => StopLoadThread();
         }
 
         public void SetBooru(BooruClient Booru) { _Booru = Booru; }
@@ -107,8 +109,9 @@ namespace TA.SharpBooru.Client.GUI.Controls
                 LoadingStarted();
             if (AsynchronousLoading)
             {
-                Thread loadThread = new Thread(loadPage);
-                loadThread.Start();
+                StopLoadThread();
+                _LoadThread = new Thread(loadPage);
+                _LoadThread.Start();
             }
             else loadPage();
         }
@@ -122,7 +125,7 @@ namespace TA.SharpBooru.Client.GUI.Controls
             if (postCount > _ThumbsPerPage)
                 postCount = _ThumbsPerPage;
             thumbView.Clear();
-            for (int i = 0; i < postCount; i++)
+            for (int i = 0; i < postCount && !_LoadThreadStop; i++)
             {
                 ulong postID = _Posts[i + postIndex];
                 if (_Booru != null)
@@ -146,6 +149,17 @@ namespace TA.SharpBooru.Client.GUI.Controls
             SetLoadingMode(false);
             if (LoadingFinished != null)
                 LoadingFinished();
+        }
+
+        private void StopLoadThread()
+        {
+            if (_LoadThread != null)
+            {
+                _LoadThreadStop = true;
+                _LoadThread.Join(10 * 1000);
+                _LoadThreadStop = false;
+                _LoadThread.Abort();
+            }
         }
 
         private void SetLoadingMode(bool LoadingMode)
