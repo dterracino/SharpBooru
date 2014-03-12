@@ -69,9 +69,9 @@ namespace TA.SharpBooru.Server
                 post.Tags = BooruTagList.FromTable(tagTable);
                 if (post.Rating <= User.MaxRating && IsPrivacyAllowed(post, User))
                     return post;
-                else throw new Exception("No permission");
+                else throw new BooruException(BooruException.ErrorCodes.NoPermission);
             }
-            else throw new Exception("Not found");
+            else throw new BooruException(BooruException.ErrorCodes.ResourceNotFound);
         }
 
         public BooruImage GetThumbnail(BooruUser User, ulong PostID)
@@ -82,9 +82,9 @@ namespace TA.SharpBooru.Server
             {
                 if (post.Rating <= User.MaxRating && IsPrivacyAllowed(post, User))
                     return BooruImage.FromFile(Path.Combine(ThumbFolder, "thumb" + PostID));
-                else throw new Exception("No permission");
+                else throw new BooruException(BooruException.ErrorCodes.NoPermission);
             }
-            else throw new Exception("Not found");
+            else throw new BooruException(BooruException.ErrorCodes.ResourceNotFound);
         }
 
         public BooruImage GetImage(BooruUser User, ulong PostID)
@@ -99,9 +99,9 @@ namespace TA.SharpBooru.Server
                     _DB.ExecuteNonQuery(SQLStatements.UpdateIncrementViewCount, PostID);
                     return image;
                 }
-                else throw new Exception("No permission");
+                else throw new BooruException(BooruException.ErrorCodes.NoPermission);
             }
-            else throw new Exception("Not found");
+            else throw new BooruException(BooruException.ErrorCodes.ResourceNotFound);
         }
 
         public List<ulong> Search(BooruUser User, string SearchExpression)
@@ -130,9 +130,9 @@ namespace TA.SharpBooru.Server
                     File.Delete(Path.Combine(ThumbFolder, "thumb" + PostID));
                     File.Delete(Path.Combine(ImageFolder, "image" + PostID));
                 }
-                else throw new Exception("Not found");
+                else throw new BooruException(BooruException.ErrorCodes.ResourceNotFound);
             }
-            else throw new Exception("No permission");
+            else throw new BooruException(BooruException.ErrorCodes.NoPermission);
         }
 
         public void DeleteTag(BooruUser User, ulong TagID)
@@ -144,9 +144,9 @@ namespace TA.SharpBooru.Server
                     _DB.ExecuteNonQuery(SQLStatements.DeleteTagByID, TagID);
                     _DB.ExecuteNonQuery(SQLStatements.DeletePostTagsByTagID, TagID);
                 }
-                else throw new Exception("Not found");
+                else throw new BooruException(BooruException.ErrorCodes.ResourceNotFound);
             }
-            else throw new Exception("No permission");
+            else throw new BooruException(BooruException.ErrorCodes.NoPermission);
         }
 
         public BooruTag GetTag(BooruUser User, string Tag)
@@ -155,7 +155,7 @@ namespace TA.SharpBooru.Server
             BooruTag tag = BooruTag.FromRow(tagRow);
             if (tag != null)
                 return tag;
-            else throw new Exception("Not found");
+            else throw new BooruException(BooruException.ErrorCodes.ResourceNotFound);
         }
 
         public BooruTag GetTag(BooruUser User, ulong TagID)
@@ -164,7 +164,7 @@ namespace TA.SharpBooru.Server
             BooruTag tag = BooruTag.FromRow(tagRow);
             if (tag != null)
                 return tag;
-            else throw new Exception("Not found");
+            else throw new BooruException(BooruException.ErrorCodes.ResourceNotFound);
         }
 
         public void AddAlias(BooruUser User, string Alias, ulong TagID)
@@ -173,23 +173,23 @@ namespace TA.SharpBooru.Server
             {
                 if (_DB.ExecuteScalar<int>(SQLStatements.GetTagCountByID, TagID) > 0)
                     _DB.ExecuteNonQuery(SQLStatements.InsertAlias, Alias, TagID);
-                else throw new Exception("Not found");
+                else throw new BooruException(BooruException.ErrorCodes.ResourceNotFound);
             }
-            else throw new Exception("No permission");
+            else throw new BooruException(BooruException.ErrorCodes.NoPermission);
         }
 
         public void AddUser(BooruUser User, BooruUser NewUser)
         {
             if (User.IsAdmin)
                 _DB.ExecuteInsert("users", NewUser.ToDictionary(false));
-            else throw new Exception("No permission");
+            else throw new BooruException(BooruException.ErrorCodes.NoPermission);
         }
 
         public void DeleteUser(BooruUser User, string Username)
         {
             if (User.IsAdmin)
                 _DB.ExecuteNonQuery(SQLStatements.DeleteUserByUsername, Username);
-            else throw new Exception("No permission");
+            else throw new BooruException(BooruException.ErrorCodes.NoPermission);
         }
 
         public void EditImage(BooruUser User, ulong PostID, BooruImage Image)
@@ -214,9 +214,9 @@ namespace TA.SharpBooru.Server
                     _DB.ExecuteNonQuery(SQLStatements.DeletePostByID, PostID);
                     _DB.ExecuteInsert("posts", post.ToDictionary(true));
                 }
-                else throw new Exception("Not found");
+                else throw new BooruException(BooruException.ErrorCodes.ResourceNotFound);
             }
-            else throw new Exception("No permission");
+            else throw new BooruException(BooruException.ErrorCodes.NoPermission);
         }
 
         public ulong AddPost(BooruUser User, BooruPost PostWithImage)
@@ -247,7 +247,7 @@ namespace TA.SharpBooru.Server
                 AddPostTags(PostWithImage);
                 return PostWithImage.ID;
             }
-            else throw new Exception("No permission");
+            else throw new BooruException(BooruException.ErrorCodes.NoPermission);
         }
 
         public void EditPost(BooruUser User, BooruPost Post)
@@ -270,9 +270,9 @@ namespace TA.SharpBooru.Server
                     AddPostTags(Post);
                     _DB.ExecuteInsert("posts", Post.ToDictionary(true));
                 }
-                else throw new Exception("Not found");
+                else throw new BooruException(BooruException.ErrorCodes.ResourceNotFound);
             }
-            else throw new Exception("No permission");
+            else throw new BooruException(BooruException.ErrorCodes.NoPermission);
         }
 
         public List<string> GetAllTags()
@@ -301,11 +301,11 @@ namespace TA.SharpBooru.Server
                         _DB.ExecuteNonQuery(SQLStatements.DeleteTagByID, Tag.ID);
                         _DB.ExecuteNonQuery(SQLStatements.InsertTagWithID, Tag.ID, Tag.Tag, typeID);
                     }
-                    else throw new Exception("Not found");
+                    else throw new BooruException(BooruException.ErrorCodes.ResourceNotFound);
                 }
-                else throw new Exception("Not found");
+                else throw new BooruException(BooruException.ErrorCodes.ResourceNotFound);
             }
-            else throw new Exception("No permission");
+            else throw new BooruException(BooruException.ErrorCodes.NoPermission);
         }
 
         public List<ulong> SearchImg(BooruUser User, byte[] Hash)
@@ -330,19 +330,20 @@ namespace TA.SharpBooru.Server
                     user.MD5Password = null;
                     return user;
                 }
-            throw new Exception("Login failed");
+            throw new BooruException(BooruException.ErrorCodes.LoginFailed);
         }
 
         public BooruUser Login(BooruUser User, byte[] Modulus, byte[] Exponent, byte[] Signature)
         {
             using (RSA rsa = new RSA(Modulus, Exponent))
             {
-                bool signatureCheckResult = true;
+                bool signatureCheckResult = false;
                 if (!User.IsAdmin)
                 {
                     byte[] pubkey = Helper.CombineByteArrays(Modulus, Exponent);
                     signatureCheckResult = rsa.CheckSignature(pubkey, Signature);
                 }
+                else signatureCheckResult = true;
                 if (signatureCheckResult)
                 {
                     string username = _DB.ExecuteScalar<string>(SQLStatements.GetUsernameByPublicKey, rsa.GetPublicKey());

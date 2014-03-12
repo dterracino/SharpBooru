@@ -321,10 +321,7 @@ namespace TA.SharpBooru.Client
             return _CacheAllTags;
         }
 
-        public void IsAlive()
-        {
-            DoRequest(new Packet2_IsAlive());
-        }
+        public void IsAlive() { DoRequest(new Packet2_IsAlive()); }
 
         public void AddPost(ref BooruPost NewPost) { AddPost(ref NewPost, null); }
         public void AddPost(ref BooruPost NewPost, Action<float> ProgressCallback) { NewPost.ID = AddPost(NewPost, ProgressCallback); }
