@@ -19,7 +19,7 @@ namespace TA.SharpBooru.NetIO.Encryption
 
         public void SaveKeys(string File)
         {
-            using (FileStream fs = new FileStream(File, FileMode.CreateNew, FileAccess.Write, FileShare.Read))
+            using (FileStream fs = new FileStream(File, FileMode.Create, FileAccess.Write, FileShare.Read))
             using (StreamWriter writer = new StreamWriter(fs, Encoding.ASCII))
                 writer.WriteLine(_RSA.ToXmlString(_Private).Replace("><", ">" + Environment.NewLine + "<"));
         }

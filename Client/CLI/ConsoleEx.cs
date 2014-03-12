@@ -108,8 +108,14 @@ namespace TA.SharpBooru
                 if (!string.IsNullOrWhiteSpace(cmdLine))
                 {
                     if (cmdLine == "help")
+                    {
+                        List<string> helpTexts = new List<string>();
                         foreach (var command in _Commands)
-                            Out.WriteLine(command.HelpText);
+                            helpTexts.Add(command.HelpText);
+                        helpTexts.Sort();
+                        foreach (string helpText in helpTexts)
+                            Out.WriteLine(helpText);
+                    }
                     else if (cmdLine != "exit")
                         ExecuteCmdLine(cmdLine);
                     else break;

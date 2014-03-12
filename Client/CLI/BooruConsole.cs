@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 using TA.SharpBooru.BooruAPIs;
+using TA.SharpBooru.NetIO.Encryption;
 
 namespace TA.SharpBooru.Client.CLI
 {
@@ -57,7 +59,7 @@ namespace TA.SharpBooru.Client.CLI
                         }
                 })));
             Commands.Add(new Command("tag delete", "tag delete <ID>", new Action<ulong>(id => _Booru.DeleteTag(id))));
-            Commands.Add(new Command("user change", "user change <Username> <Password>", new Action<string, string>((un, pw) => _Booru.Login(un, pw))));
+            Commands.Add(new Command("user login", "user login <Username> <Password>", new Action<string, string>((un, pw) => _Booru.Login(un, pw))));
             Commands.Add(new Command("user add", "user add <Username> <Password> <CanAddPosts> <CanDeletePosts> <CanEditPosts> <CanDeleteTags> <CanEditTags> <CanLoginDirect> <CanLoginOnline> <AdvancePostControl> <IsAdmin> <MaxRating>", new Action<string, string, bool, bool, bool, bool, bool, bool, bool, bool, bool, ushort>((un, pw, cap, cdp, cep, cdt, cet, cld, clo, apc, ia, mr) =>
                 {
                     BooruUser user = new BooruUser()
@@ -130,6 +132,20 @@ namespace TA.SharpBooru.Client.CLI
                     _Booru.SaveTag(bTag);
                 })));
             Commands.Add(new Command("alias add", "alias add <Alias> <Tag>", new Action<string, string>((alias, tagid) => _Booru.AddAlias(alias, tagid))));
+            Commands.Add(new Command("keypair create", "keypair create <KeyPairPath> <PubKeyPath>", new Action<string, string>((keyPairPath, pubKeyPath) =>
+                {
+                    using (RSA rsa = new RSA())
+                    {
+                        rsa.SaveKeys(keyPairPath);
+                        string pubKey = rsa.GetPublicKey();
+                        File.WriteAllText(pubKeyPath, pubKey, Encoding.ASCII);
+                    }
+                })));
+            Commands.Add(new Command("user login", "user login <KeyPairPath>", new Action<string>(keyPairPath =>
+                {
+                    using (RSA rsa = new RSA(keyPairPath))
+                        _Booru.Login(rsa);
+                })));
         }
     }
 }
