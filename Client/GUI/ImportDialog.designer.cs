@@ -43,6 +43,7 @@
             this.privat = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.image = new System.Windows.Forms.DataGridViewImageColumn();
             this.buttonPasteClipboard = new System.Windows.Forms.Button();
+            this.checkBoxAlwaysOnTop = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -67,9 +68,9 @@
             // 
             // splitContainer1
             // 
-            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer1.Location = new System.Drawing.Point(12, 12);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -87,9 +88,9 @@
             // 
             // sharedTagsTagTextBox
             // 
-            this.sharedTagsTagTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.sharedTagsTagTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.sharedTagsTagTextBox.Location = new System.Drawing.Point(3, 3);
             this.sharedTagsTagTextBox.Multiline = true;
             this.sharedTagsTagTextBox.Name = "sharedTagsTagTextBox";
@@ -99,9 +100,9 @@
             // 
             // splitContainer2
             // 
-            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.splitContainer2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.splitContainer2.Location = new System.Drawing.Point(3, 3);
             this.splitContainer2.Name = "splitContainer2";
             // 
@@ -118,9 +119,9 @@
             // 
             // allowedTagsCheckedListBox
             // 
-            this.allowedTagsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.allowedTagsCheckedListBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.allowedTagsCheckedListBox.FormattingEnabled = true;
             this.allowedTagsCheckedListBox.IntegralHeight = false;
             this.allowedTagsCheckedListBox.Location = new System.Drawing.Point(3, 3);
@@ -131,9 +132,9 @@
             // dataGridView
             // 
             this.dataGridView.AllowUserToAddRows = false;
-            this.dataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.image_file,
@@ -203,12 +204,24 @@
             this.buttonPasteClipboard.UseVisualStyleBackColor = true;
             this.buttonPasteClipboard.Click += new System.EventHandler(this.buttonPasteClipboard_Click);
             // 
+            // checkBoxAlwaysOnTop
+            // 
+            this.checkBoxAlwaysOnTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.checkBoxAlwaysOnTop.AutoSize = true;
+            this.checkBoxAlwaysOnTop.Location = new System.Drawing.Point(182, 571);
+            this.checkBoxAlwaysOnTop.Name = "checkBoxAlwaysOnTop";
+            this.checkBoxAlwaysOnTop.Size = new System.Drawing.Size(92, 17);
+            this.checkBoxAlwaysOnTop.TabIndex = 14;
+            this.checkBoxAlwaysOnTop.Text = "Always on top";
+            this.checkBoxAlwaysOnTop.UseVisualStyleBackColor = true;
+            // 
             // ImportDialog
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(904, 602);
+            this.Controls.Add(this.checkBoxAlwaysOnTop);
             this.Controls.Add(this.buttonPasteClipboard);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.okButton);
@@ -230,6 +243,7 @@
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -249,5 +263,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn rating;
         private System.Windows.Forms.DataGridViewCheckBoxColumn privat;
         private System.Windows.Forms.DataGridViewImageColumn image;
+        private System.Windows.Forms.CheckBox checkBoxAlwaysOnTop;
     }
 }
