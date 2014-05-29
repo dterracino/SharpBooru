@@ -144,26 +144,26 @@ namespace TA.SharpBooru.BooruAPIs
             {
                 //TODO Add pool detection
                 URL = URL.Trim().ToLower();
-                if (Regex.IsMatch(URL, "http://(www.|)gelbooru.com/index.php\\?page=post&s=view&id=[0-9]*"))
+                if (Regex.IsMatch(URL, "(http:\\/\\/|)(www.|)gelbooru.com\\/index.php\\?page=post&s=view&id=[0-9]*"))
                     return (new GelbooruAPI()).GetSinglePost(URL.Substring(URL.LastIndexOf("=") + 1));
-                else if (Regex.IsMatch(URL, "http://(www.|)gelbooru.com/index.php\\?page=post&s=view&id=[0-9]*&pool_id=[0-9]*"))
+                else if (Regex.IsMatch(URL, "(http:\\/\\/|)(www.|)gelbooru.com/i\\ndex.php\\?page=post&s=view&id=[0-9]*&pool_id=[0-9]*"))
                 {
                     int idIndex = URL.LastIndexOf("&id=") + 4;
                     return (new GelbooruAPI()).GetSinglePost(URL.Substring(idIndex, URL.LastIndexOf("=") - idIndex));
                 }
-                else if (Regex.IsMatch(URL, "http://(www.|)gelbooru.com/index.php\\?page=post&s=list"))
+                else if (Regex.IsMatch(URL, "(http:\\/\\/|)(www.|)gelbooru.com\\/index.php\\?page=post&s=list"))
                     return (new GelbooruAPI()).SearchPosts(ExtractParameterFromURLQuery(URL, "tags").Split('+'));
-                else if (Regex.IsMatch(URL, "http://(www.|)konachan.com/post/show/[0-9]*/?.*"))
+                else if (Regex.IsMatch(URL, "(http:\\/\\/|)(www.|)konachan.com\\/post/show/[0-9]*/?.*"))
                     return (new KonachanAPI(true)).GetSinglePost(Regex.Match(URL, "show/[0-9]{1,}").Value.Substring(5));
-                else if (Regex.IsMatch(URL, "http://(www.|)konachan.com/post.*"))
+                else if (Regex.IsMatch(URL, "(http:\\/\\/|)(www.|)konachan.com\\/post.*"))
                     return (new KonachanAPI(true)).SearchPosts(ExtractParameterFromURLQuery(URL, "tags").Split('+'));
-                else if (Regex.IsMatch(URL, "http://(www.|)konachan.net/post/show/[0-9]*/?.*"))
+                else if (Regex.IsMatch(URL, "(http:\\/\\/|)(www.|)konachan.net\\/post\\/show\\/[0-9]*/?.*"))
                     return (new KonachanAPI(false)).GetSinglePost(Regex.Match(URL, "show/[0-9]{1,}").Value.Substring(5));
-                else if (Regex.IsMatch(URL, "http://(www.|)konachan.net/post.*"))
+                else if (Regex.IsMatch(URL, "(http:\\/\\/|)(www.|)konachan.net\\/post.*"))
                     return (new KonachanAPI(false)).SearchPosts(ExtractParameterFromURLQuery(URL, "tags").Split('+'));
-                if (Regex.IsMatch(URL, "http://(www.|)safebooru.org/index.php\\?page=post&s=view&id=[0-9]*")) //TODO SafeBooru API link with post_id
+                if (Regex.IsMatch(URL, "(http:\\/\\/|)(www.|)safebooru.org\\/index.php\\?page=post&s=view&id=[0-9]*")) //TODO SafeBooru API link with post_id
                     return (new SafebooruAPI()).GetSinglePost(URL.Substring(URL.LastIndexOf("=") + 1));
-                else if (Regex.IsMatch(URL, "http://(www.|)safebooru.org/index.php\\?page=post&s=list"))
+                else if (Regex.IsMatch(URL, "(http:\\/\\/|)(www.|)safebooru.org\\/index.php\\?page=post&s=list"))
                     return (new SafebooruAPI()).SearchPosts(ExtractParameterFromURLQuery(URL, "tags").Split('+'));
             }
             return null;
