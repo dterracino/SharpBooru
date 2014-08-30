@@ -6,6 +6,7 @@ using System.Threading;
 using System.Runtime.CompilerServices;
 using Mono.Unix.Native;
 using TA.SharpBooru.Server.WebServer;
+using TA.SharpBooru.Server.WebServer.VFS;
 
 namespace TA.SharpBooru.Server
 {
@@ -78,6 +79,19 @@ namespace TA.SharpBooru.Server
             if (enableWebServer)
             {
                 _Logger.LogLine("Starting webserver...");
+
+                //Server.RootDirectory.Add(new VFSLoginLogoutFile("login_logout"));
+                //Server.RootDirectory.Add(new VFSAdminPanelFile("admin"));
+                _BooruWebServer.RootDirectory.Add(new VFSBooruImageFile("image", true));
+                _BooruWebServer.RootDirectory.Add(new VFSBooruImageFile("thumb", false));
+                _BooruWebServer.RootDirectory.Add(new VFSBooruPostFile("post", "Post #{0}"));
+                _BooruWebServer.RootDirectory.Add(new VFSByteFile("favicon.ico", "image/x-icon", Properties.Resources.favicon_ico));
+                _BooruWebServer.RootDirectory.Add(new VFSBooruSearchFile("index", "Search"));
+                //Server.RootDirectory.Add(new VFSBooruInfoFile("info"));
+                _BooruWebServer.RootDirectory.Add(new VFSDelegateFile("style", "text/css", c => c.OutWriter.Write(WebserverHelper.GetStyle(c)), false, null));
+                _BooruWebServer.RootDirectory.Add(new VFSStringFile("robots.txt", "text/plain", "User-agent: *\r\nDisallow: /", false, null));
+                //Server.RootDirectory.Add(new VFSBooruUploadFile("upload"));
+
                 _BooruWebServer.Start();
             }
 
