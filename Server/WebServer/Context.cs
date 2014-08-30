@@ -5,7 +5,7 @@ using System.Text;
 using System.Reflection;
 using System.Collections.Generic;
 
-namespace TA.SharpBooru.Client.WebServer
+namespace TA.SharpBooru.Server.WebServer
 {
     public class Context : IDisposable
     {
@@ -89,7 +89,7 @@ namespace TA.SharpBooru.Client.WebServer
         public IPAddress ClientIP { get { return InnerContext.Request.RemoteEndPoint.Address; } }
         public string RequestPath { get { return InnerContext.Request.Url.LocalPath ?? string.Empty; } }
         public string UserAgent { get { return InnerContext.Request.UserAgent ?? string.Empty; } }
-        public BooruClient Booru { get { return Server.Booru; } }
+        public ServerBooru Booru { get { return Server.Booru; } }
 
         public string MimeType
         {

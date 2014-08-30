@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Xml;
 using System.Threading;
 using System.Runtime.CompilerServices;
 using Mono.Unix.Native;
+using TA.SharpBooru.Server.WebServer;
 
 namespace TA.SharpBooru.Server
 {
@@ -12,36 +14,36 @@ namespace TA.SharpBooru.Server
         public ServerWrapper(Logger Logger) { _Logger = Logger; }
 
         private Logger _Logger;
-        //private Thread _BroadcastListenerThread;
-        //private bool _BroadcastListenerThreadRunning = true;
         private BooruServer _BooruServer;
+        private BooruWebServer _BooruWebServer;
 
         public BooruServer BooruServer { get { return _BooruServer; } }
+        public BooruWebServer BooruWebServer { get { return _BooruWebServer; } }
 
-        public void StartServer(string location, string setuidUser, IPEndPoint localEndPoint, bool waitForExit = true)
+        public void StartServer(string location, bool waitForExit = true)
         {
-            /*
-            if (_Options.PIDFile != null)
-            {
-                if (!File.Exists(_Options.PIDFile))
-                {
-                    _Logger.LogLine("Creating PID file...");
-                    Process currentProcess = Process.GetCurrentProcess();
-                    File.WriteAllText(_Options.PIDFile, currentProcess.Id.ToString(), Encoding.ASCII); //TODO Use FileStream
-                    if (_Options.User != null)
-                    {
-                        _Logger.LogLine("Setting PID file owner to '{0}'...", _Options.User);
-                        ServerHelper.ChOwn(_Options.PIDFile, _Options.User);
-                    }
-                }
-                else throw new Exception("PIDFile exists, make sure no 2nd instance is running and delete the PID file");
-            }
-            */
-
             if (location == null)
                 throw new ArgumentNullException("Please provide a booru location");
             else if (!Directory.Exists(location))
                 throw new DirectoryNotFoundException("Booru location not found");
+
+            XmlDocument config = new XmlDocument();
+            config.Load(Path.Combine(location, "config.xml"));
+            XmlNode booruConfigNode = config.SelectSingleNode("/BooruConfig");
+            string setuidUser = booruConfigNode.SelectSingleNode("User").InnerText;
+            XmlNode booruServerNode = booruConfigNode.SelectSingleNode("BooruServer");
+            XmlNode webServerNode = booruConfigNode.SelectSingleNode("WebServer");
+            bool enableBooruServer = Convert.ToBoolean(booruServerNode.Attributes["enable"]);
+            IPEndPoint bsLocalEP = new IPEndPoint(
+                IPAddress.Parse(booruServerNode.SelectSingleNode("ListenAddress").InnerText),
+                Convert.ToUInt16(booruServerNode.SelectSingleNode("Port").InnerText));
+            bool enableWebServer = Convert.ToBoolean(webServerNode.Attributes["enable"]);
+            IPEndPoint wsLocalEP = new IPEndPoint(
+                IPAddress.Parse(webServerNode.SelectSingleNode("ListenAddress").InnerText),
+                Convert.ToUInt16(webServerNode.SelectSingleNode("Port").InnerText));
+
+            if (!enableBooruServer && !enableWebServer)
+                throw new ArgumentException("No server enabled");
 
             Updater updater = new Updater(_Logger, location, setuidUser);
             updater.Update();
@@ -49,26 +51,12 @@ namespace TA.SharpBooru.Server
             _Logger.LogLine("Loading booru database...");
             ServerBooru booru = new ServerBooru(location);
 
-            _Logger.LogLine("Creating server instance...");
-            if (localEndPoint.Port < 1)
-                localEndPoint.Port = 2400;
-            _BooruServer = new BooruServer(booru, _Logger, localEndPoint);
-
-            /*
-            _Logger.LogLine("Starting BroadcastListener...");
-            _BroadcastListenerThread = new Thread(() =>
-                {
-                    while (true)
-                        try { Broadcaster.ListenForBroadcast(booru.BooruInfo.BooruName, localEndPoint.Port); }
-                        catch (Exception ex)
-                        {
-                            if (_BroadcastListenerThreadRunning)
-                                _Logger.LogException("BroadcastListener", ex);
-                        }
-                });
-            _BroadcastListenerThread.Start();
-            */
-
+            _Logger.LogLine("Creating server instance(s)...");
+            if (enableBooruServer)
+            _BooruServer = new BooruServer(booru, _Logger, bsLocalEP);
+            if (enableWebServer)
+                _BooruWebServer = new BooruWebServer(booru, _Logger);
+            
             EventWaitHandle waitEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
             _Logger.LogLine("Registering CtrlC handler...");
             Console.CancelKeyPress += (sender, e) => Cancel(waitEvent);
@@ -78,8 +66,17 @@ namespace TA.SharpBooru.Server
                 ServerHelper.SetupSignal(Signum.SIGTERM, () => Cancel(waitEvent));
             }
 
-            _Logger.LogLine("Starting server V{0}...", Helper.GetVersionMinor());
-            _BooruServer.Start();
+            if (enableBooruServer)
+            {
+                _Logger.LogLine("Starting server V{0}...", Helper.GetVersionMinor());
+                _BooruServer.Start();
+            }
+
+            if (enableWebServer)
+            {
+                _Logger.LogLine("Starting webserver...");
+                _BooruWebServer.Start();
+            }
 
             if (setuidUser != null)
             {
@@ -101,22 +98,18 @@ namespace TA.SharpBooru.Server
             if (!_CancelRunned)
             {
                 _Logger.LogLine("Stopping BroadcastListener...");
-                /*
-                _BroadcastListenerThreadRunning = false;
-                _BroadcastListenerThread.Abort();
-                */
-                _Logger.LogLine("Stopping server and waiting for clients to finish...");
-                _BooruServer.Stop(3000);
-                _Logger.LogLine("Disposing server and closing database connection...");
-                _BooruServer.Dispose();
-                /*
-                if (_Options.PIDFile != null)
+                if (_BooruWebServer != null)
                 {
-                    _Logger.LogLine("Removing PID file...");
-                    try { File.Delete(_Options.PIDFile); }
-                    catch (Exception ex) { _Logger.LogException("RemovePIDFile", ex); }
+                    _Logger.LogLine("Stopping webserver...");
+                    _BooruWebServer.Stop(true);
                 }
-                */
+                if (_BooruServer != null)
+                {
+                    _Logger.LogLine("Stopping server and waiting for clients to finish...");
+                    _BooruServer.Stop(3000);
+                    _Logger.LogLine("Disposing server and closing database connection...");
+                    _BooruServer.Dispose();
+                }
                 _CancelRunned = true;
 
                 if (WaitEvent != null)

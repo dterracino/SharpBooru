@@ -9,7 +9,7 @@ using System.Security.Cryptography;
 using System.Collections.Specialized;
 using HttpMultipartParser;
 
-namespace TA.SharpBooru.Client.WebServer
+namespace TA.SharpBooru.Server.WebServer
 {
     public class WebserverHelper
     {
@@ -193,16 +193,5 @@ namespace TA.SharpBooru.Client.WebServer
         public static void WriteSubSectionHeader(Context Context, string Name) { Context.OutWriter.Write("<div class=\"sub\"><h2>{0}</h2><p>", Name); }
 
         public static void WriteSubSectionFooter(Context Context) { Context.OutWriter.Write("</p></div>"); }
-
-        public static string MD5(string String, Encoding Encoding = null) { return MD5((Encoding ?? Encoding.Unicode).GetBytes(String)); }
-        public static string MD5(byte[] Bytes)
-        {
-            StringBuilder sb = new StringBuilder(32);
-            using (MD5CryptoServiceProvider MD5Provider = new MD5CryptoServiceProvider())
-                Array.ForEach(
-                    MD5Provider.ComputeHash(Bytes),
-                    x => sb.AppendFormat("{0:x2}", x));
-            return sb.ToString();
-        }
     }
 }

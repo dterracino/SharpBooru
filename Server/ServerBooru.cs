@@ -67,7 +67,9 @@ namespace TA.SharpBooru.Server
             {
                 DataTable tagTable = _DB.ExecuteTable(SQLStatements.GetTagsByPostID, PostID);
                 post.Tags = BooruTagList.FromTable(tagTable);
-                if (post.Rating <= User.MaxRating && IsPrivacyAllowed(post, User))
+                if (User == null)
+                    return post;
+                else if (post.Rating <= User.MaxRating && IsPrivacyAllowed(post, User))
                     return post;
                 else throw new BooruException(BooruException.ErrorCodes.NoPermission);
             }
@@ -80,8 +82,11 @@ namespace TA.SharpBooru.Server
             BooruPost post = BooruPost.FromRow(postRow);
             if (post != null)
             {
-                if (post.Rating <= User.MaxRating && IsPrivacyAllowed(post, User))
-                    return BooruImage.FromFile(Path.Combine(ThumbFolder, "thumb" + PostID));
+                string path = Path.Combine(ThumbFolder, "thumb" + PostID);
+                if (User == null)
+                    return BooruImage.FromFile(path);
+        else   if (post.Rating <= User.MaxRating && IsPrivacyAllowed(post, User))
+                    return BooruImage.FromFile(path);
                 else throw new BooruException(BooruException.ErrorCodes.NoPermission);
             }
             else throw new BooruException(BooruException.ErrorCodes.ResourceNotFound);
@@ -93,7 +98,7 @@ namespace TA.SharpBooru.Server
             BooruPost post = BooruPost.FromRow(postRow);
             if (post != null)
             {
-                if (post.Rating <= User.MaxRating && IsPrivacyAllowed(post, User))
+                if (User == null || (post.Rating <= User.MaxRating && IsPrivacyAllowed(post, User))) //                     TEST!!!
                 {
                     BooruImage image = BooruImage.FromFile(Path.Combine(ImageFolder, "image" + PostID));
                     _DB.ExecuteNonQuery(SQLStatements.UpdateIncrementViewCount, PostID);
@@ -110,7 +115,9 @@ namespace TA.SharpBooru.Server
             BooruPostList postsToSend = new BooruPostList();
             searchedPosts.ForEach(x =>
             {
-                if (x.Rating <= User.MaxRating && IsPrivacyAllowed(x, User))
+                if (User == null)
+                    postsToSend.Add(x);
+                else if (x.Rating <= User.MaxRating && IsPrivacyAllowed(x, User))
                     postsToSend.Add(x);
             });
             postsToSend.Sort((b1, b2) => DateTime.Compare(b2.CreationDate, b1.CreationDate));

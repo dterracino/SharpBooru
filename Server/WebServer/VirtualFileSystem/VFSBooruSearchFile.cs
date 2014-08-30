@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace TA.SharpBooru.Client.WebServer.VFS
+namespace TA.SharpBooru.Server.WebServer.VFS
 {
     public class VFSBooruSearchFile : VFSFile
     {
@@ -31,7 +31,7 @@ namespace TA.SharpBooru.Client.WebServer.VFS
             string tagSearch = string.Empty;
             if (Context.Params.GET.IsSet<string>("tags"))
                 tagSearch = Context.Params.GET.Get<string>("tags");
-            List<ulong> postIDs = Context.Booru.Search(tagSearch);
+            List<ulong> postIDs = Context.Booru.Search(null, tagSearch);
             int totalPages = (int)Math.Truncate((postIDs.Count - 1f) / thumbsPerPage) + 1;
             int page = 0;
             if (Context.Params.GET.IsSet<int>("page"))

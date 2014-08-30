@@ -4,13 +4,13 @@ using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
 using Amib.Threading;
-using TA.SharpBooru.Client.WebServer.VFS;
+using TA.SharpBooru.Server.WebServer.VFS;
 
-namespace TA.SharpBooru.Client.WebServer
+namespace TA.SharpBooru.Server.WebServer
 {
     public class BooruWebServer
     {
-        private BooruClient _Booru;
+        private ServerBooru _Booru;
         private Logger _Logger;
         private SmartThreadPool _Pool;
         private HttpListener _Listener;
@@ -19,18 +19,18 @@ namespace TA.SharpBooru.Client.WebServer
         private bool _EnableDirectoryListing;
         //private CookieManager _CookieManager;
 
-        public BooruClient Booru { get { return _Booru; } }
+        public ServerBooru Booru { get { return _Booru; } }
         public Logger Logger { get { return _Logger; } }
         public VFSDirectory RootDirectory { get { return _RootDirectory; } }
         public bool EnableDirectoryListing { get { return _EnableDirectoryListing; } set { _EnableDirectoryListing = value; } }
         //public CookieManager CookieManager { get { return _CookieManager; } }
 
-        public BooruWebServer(BooruClient Booru, Logger Logger) : this(Booru, Logger, "http://*:80/") { }
-        public BooruWebServer(BooruClient Booru, Logger Logger, string ListenerPrefix)
+        public BooruWebServer(ServerBooru Booru, Logger Logger) : this(Booru, Logger, "http://*:80/") { }
+        public BooruWebServer(ServerBooru Booru, Logger Logger, string ListenerPrefix)
             : this(Booru, Logger, new string[1] { ListenerPrefix }.ToList(), true) { }
-        public BooruWebServer(BooruClient Booru, Logger Logger, string ListenerPrefix, bool EnableRSM)
+        public BooruWebServer(ServerBooru Booru, Logger Logger, string ListenerPrefix, bool EnableRSM)
             : this(Booru, Logger, new string[1] { ListenerPrefix }.ToList(), EnableRSM) { }
-        public BooruWebServer(BooruClient Booru, Logger Logger, List<string> ListenerPrefixes, bool EnableRSM)
+        public BooruWebServer(ServerBooru Booru, Logger Logger, List<string> ListenerPrefixes, bool EnableRSM)
         {
             _Logger = Logger;
             if (Booru == null)

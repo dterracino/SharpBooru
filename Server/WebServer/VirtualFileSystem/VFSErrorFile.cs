@@ -1,4 +1,4 @@
-﻿namespace TA.SharpBooru.Client.WebServer.VFS
+﻿namespace TA.SharpBooru.Server.WebServer.VFS
 {
     public class VFSErrorFile : VFSFile
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace TA.SharpBooru.Client.WebServer.VFS
+namespace TA.SharpBooru.Server.WebServer.VFS
 {
     public class VFSRealFile : VFSFile
     {

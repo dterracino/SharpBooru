@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Collections.Generic;
 
-namespace TA.SharpBooru.Client.WebServer
+namespace TA.SharpBooru.Server.WebServer
 {
     public class DictionaryEx : Dictionary<string, object>
     {

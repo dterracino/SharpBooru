@@ -1,22 +1,21 @@
-﻿using System;
-
-namespace TA.SharpBooru.Client.WebServer.VFS
+﻿namespace TA.SharpBooru.Server.WebServer.VFS
 {
-    public class VFSDelegateFile : VFSFile
+    public class VFSStringFile : VFSFile
     {
-        private Action<Context> _Delegate;
+        private string _Content;
         private bool _UseHelperHTMLWrapping;
         private string _Title;
         private string _MimeType;
 
+        public string Content { get { return _Content; } }
         public bool UseHelperHTMLWrapping { get { return _UseHelperHTMLWrapping; } }
         public string Title { get { return _Title; } set { _Title = value; } }
         public string MimeType { get { return _MimeType; } set { _MimeType = value; } }
 
-        public VFSDelegateFile(string Name, string MimeType, Action<Context> Delegate, bool UseHelperHTMLWrapping, string Title = null)
+        public VFSStringFile(string Name, string MimeType, string Content, bool UseHelperHTMLWrapping, string Title = null)
         {
             this.Name = Name;
-            _Delegate = Delegate;
+            _Content = Content;
             _Title = Title;
             _UseHelperHTMLWrapping = UseHelperHTMLWrapping;
             _MimeType = MimeType;
@@ -28,7 +27,7 @@ namespace TA.SharpBooru.Client.WebServer.VFS
                 Context.MimeType = MimeType;
             if (UseHelperHTMLWrapping)
                 WebserverHelper.WriteHeader(Context, Title ?? "Text output");
-            _Delegate(Context);
+            Context.OutWriter.Write(_Content);
             if (UseHelperHTMLWrapping)
                 WebserverHelper.WriteFooter(Context);
         }

@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-namespace TA.SharpBooru.Client.WebServer.VFS
+namespace TA.SharpBooru.Server.WebServer.VFS
 {
     public abstract class VFSEntry
     {

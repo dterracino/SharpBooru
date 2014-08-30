@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Collections.Generic;
 
-namespace TA.SharpBooru.Client.WebServer.VFS
+namespace TA.SharpBooru.Server.WebServer.VFS
 {
     public class VFSBooruPostFile : VFSFile
     {
@@ -29,7 +29,7 @@ namespace TA.SharpBooru.Client.WebServer.VFS
             if (Context.Params.GET.IsSet<int>("id"))
             {
                 ulong id = Context.Params.GET.Get<ulong>("id");
-                using (BooruPost post = Context.Booru.GetPost(id))
+                using (BooruPost post = Context.Booru.GetPost(null, id, false))
                 {
                     WebserverHelper.WriteHeader(Context, string.Format(Title, post.ID), Properties.Resources.imgscript_js);
                     WebserverHelper.WriteTableHeader(Context, "vtable");

@@ -1,4 +1,4 @@
-﻿namespace TA.SharpBooru.Client.WebServer.VFS
+﻿namespace TA.SharpBooru.Server.WebServer.VFS
 {
     public class VFSBooruImageFile : VFSFile
     {
@@ -15,7 +15,7 @@
             if (Context.Params.GET.IsSet<int>("id"))
             {
                 ulong id = Context.Params.GET.Get<ulong>("id");
-                using (BooruImage img = _MainImage ? Context.Booru.GetImage(id) : Context.Booru.GetThumbnail(id))
+                using (BooruImage img = _MainImage ? Context.Booru.GetImage(null, id) : Context.Booru.GetThumbnail(null, id))
                 {
                     Context.MimeType = img.MimeType;
                     Context.InnerContext.Response.OutputStream.Write(img.Bytes, 0, img.Bytes.Length);
