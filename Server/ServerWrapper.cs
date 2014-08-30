@@ -55,8 +55,11 @@ namespace TA.SharpBooru.Server
             if (enableBooruServer)
             _BooruServer = new BooruServer(booru, _Logger, bsLocalEP);
             if (enableWebServer)
-                _BooruWebServer = new BooruWebServer(booru, _Logger);
-            
+            {
+                string prefix = "http://*:" + wsLocalEP.Port + "/";
+                _BooruWebServer = new BooruWebServer(booru, _Logger, prefix);
+            }
+
             EventWaitHandle waitEvent = new EventWaitHandle(false, EventResetMode.ManualReset);
             _Logger.LogLine("Registering CtrlC handler...");
             Console.CancelKeyPress += (sender, e) => Cancel(waitEvent);
