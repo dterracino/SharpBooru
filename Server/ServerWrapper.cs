@@ -33,11 +33,11 @@ namespace TA.SharpBooru.Server
             string setuidUser = booruConfigNode.SelectSingleNode("User").InnerText;
             XmlNode booruServerNode = booruConfigNode.SelectSingleNode("BooruServer");
             XmlNode webServerNode = booruConfigNode.SelectSingleNode("WebServer");
-            bool enableBooruServer = Convert.ToBoolean(booruServerNode.Attributes["enable"]);
+            bool enableBooruServer = Convert.ToBoolean(booruServerNode.Attributes["enable"].InnerText);
             IPEndPoint bsLocalEP = new IPEndPoint(
                 IPAddress.Parse(booruServerNode.SelectSingleNode("ListenAddress").InnerText),
                 Convert.ToUInt16(booruServerNode.SelectSingleNode("Port").InnerText));
-            bool enableWebServer = Convert.ToBoolean(webServerNode.Attributes["enable"]);
+            bool enableWebServer = Convert.ToBoolean(webServerNode.Attributes["enable"].InnerText);
             IPEndPoint wsLocalEP = new IPEndPoint(
                 IPAddress.Parse(webServerNode.SelectSingleNode("ListenAddress").InnerText),
                 Convert.ToUInt16(webServerNode.SelectSingleNode("Port").InnerText));
