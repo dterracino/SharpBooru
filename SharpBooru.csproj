@@ -88,6 +88,7 @@
     <Compile Include="BooruUser.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Server.cs" />
     <Compile Include="SocketListener.cs" />
     <Compile Include="SQLiteWrapper.cs" />
     <Compile Include="Program.cs" />

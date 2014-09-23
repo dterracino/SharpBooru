@@ -73,10 +73,11 @@ namespace TA.SharpBooru
             logger.LogLine("Loading booru...");
             ServerBooru booru = new ServerBooru(dir);
 
+            Socket unixSocket = null;
             if (unixEndPoint != null)
             {
                 logger.LogLine("Binding UNIX socket...");
-                Socket unixSocket = new Socket(AddressFamily.Unix, SocketType.Stream, 0);
+                unixSocket = new Socket(AddressFamily.Unix, SocketType.Stream, 0);
                 unixSocket.Bind(unixEndPoint);
                 SyscallEx.chown(unixSocketPath, user);
                 SyscallEx.chmod(unixSocketPath,
@@ -87,19 +88,32 @@ namespace TA.SharpBooru
                     FilePermissions.S_IWGRP);
             }
 
+            Socket tcpSocket = null;
             if (tcpEndPoint != null)
             {
                 logger.LogLine("Binding TCP socket...");
-                Socket tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 tcpSocket.Bind(tcpEndPoint);
             }
 
-            logger.LogLine("Starting server...");
-            //TODO Start simple unix server
-            //TODO Start 
-
             logger.LogLine("Changing UID to {0}...", user);
             SyscallEx.setuid(user);
+
+            logger.LogLine("Starting server...");
+            SocketListener unixListener = null, tcpListener = null;
+            Server server = new Server();
+            if (unixSocket != null)
+            {
+                unixListener = new SocketListener(unixSocket);
+                unixListener.SocketAccepted += socket => server.AddAcceptedSocket(false);
+                unixListener.Start();
+            }
+            if (tcpSocket != null)
+            {
+                tcpListener = new SocketListener(tcpSocket);
+                tcpListener.SocketAccepted += socket => server.AddAcceptedSocket(true);
+                tcpListener.Start();
+            }
 
             logger.LogLine("Registering exit handlers...");
             WaitHandle[] waitHandles = new WaitHandle[2];
@@ -112,7 +126,7 @@ namespace TA.SharpBooru
 
             logger.LogLine("Stopping server and closing sockets...");
             //TODO
-            if (unixEndPoint != null)
+            if (unixSocket != null)
             {
                 SyscallEx.unlink(unixSocketPath);
             }
