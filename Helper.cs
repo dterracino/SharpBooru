@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net;
 using System.Text;
-using System.Drawing;
 using System.Net.Sockets;
 using System.Collections.Generic;
 using System.Security.Cryptography;
@@ -18,12 +17,6 @@ namespace TA.SharpBooru
 
         public static readonly Random Random = new Random();
 
-        [DllImport("user32.dll", EntryPoint = "EnableWindow")]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        private static extern bool _EnableWindow(IntPtr hWnd, bool bEnable);
-
-        [DllImport("msvcrt.dll", EntryPoint = "memcmp")]
-        private static extern int _MemoryCompareWindows(IntPtr b1, IntPtr b2, long count);
         [DllImport("libc.so", EntryPoint = "memcmp")]
         private static extern int _MemoryCompareUnix(IntPtr b1, IntPtr b2, long count);
 
@@ -32,19 +25,7 @@ namespace TA.SharpBooru
             if (Ptr1 != IntPtr.Zero && Ptr2 != IntPtr.Zero)
                 if (Ptr1 == Ptr2)
                     return true;
-                else if (IsWindows())
-                    return _MemoryCompareWindows(Ptr1, Ptr2, Count) == 0;
-                else if (IsUnix())
-                    return _MemoryCompareUnix(Ptr1, Ptr2, Count) == 0;
-                else unsafe
-                    {
-                        byte* rPtr1 = (byte*)Ptr1.ToPointer();
-                        byte* rPtr2 = (byte*)Ptr2.ToPointer();
-                        for (long i = 0; i < Count; i++)
-                            if (rPtr1[i] != rPtr2[i])
-                                return false;
-                        return true;
-                    }
+                else return _MemoryCompareUnix(Ptr1, Ptr2, Count) == 0;
             return false;
         }
 
@@ -65,64 +46,6 @@ namespace TA.SharpBooru
                         return MemoryCompare((IntPtr)rPtr1, (IntPtr)rPtr2, Bytes1.LongLength);
                 }
         }
-
-        public static string DownloadTemporary(string URI)
-        {
-            try
-            {
-                string temporaryFile = GetTempFile();
-                URI = Uri.UnescapeDataString(URI);
-                using (WebClient client = new WebClient())
-                    client.DownloadFile(URI, temporaryFile);
-                return temporaryFile;
-            }
-            catch { return null; }
-        }
-
-        /*
-        public static byte[] DownloadBytes(string URI)
-        {
-            try
-            {
-                URI = Uri.UnescapeDataString(URI);
-                using (WebClient client = new WebClient())
-                    return client.DownloadData(URI);
-            }
-            catch { return null; }
-        }
-        */
-
-        private static bool? _IsMono = null;
-        public static bool IsMono()
-        {
-            if (!_IsMono.HasValue)
-                _IsMono = Type.GetType("Mono.Runtime") != null;
-            return _IsMono.Value;
-        }
-
-        public static bool IsUnix() { return Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX; }
-
-        public static bool IsWindows() { return Environment.OSVersion.Platform == PlatformID.Win32NT; }
-
-        public static bool IsConsole()
-        {
-            Stream stdin = Console.OpenStandardInput(1);
-            if (stdin == null)
-                return false;
-            else if (stdin == Stream.Null)
-                return false;
-            else return stdin.CanWrite;
-        }
-
-        public static Color RandomColor() { return RandomColor(Random); }
-        public static Color RandomColor(Random R)
-        {
-            byte[] bytes = new byte[3];
-            R.NextBytes(bytes);
-            return Color.FromArgb(bytes[0], bytes[1], bytes[2]);
-        }
-
-        public static Color OppositeColor(Color Color, bool AlsoAlpha = false) { return Color.FromArgb(AlsoAlpha ? 255 - Color.A : 255, 255 - Color.R, 255 - Color.G, 255 - Color.B); }
 
         public static bool CheckURL(string URL, bool DeepCheck = false)
         {

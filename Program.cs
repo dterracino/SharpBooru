@@ -1,15 +1,11 @@
 ﻿using System;
+using System.IO;
 using System.Net;
+using System.Xml;
+using System.Net.Sockets;
 using System.Threading;
-using System.Windows.Forms;
-using TA.SharpBooru.Client;
-using TA.SharpBooru.Server;
-using TA.SharpBooru.Client.GUI;
-using TA.SharpBooru.Client.CLI;
-using TA.SharpBooru.NetIO.Encryption;
-using TA.SharpBooru.Server.WebServer;
-using TA.SharpBooru.Server.WebServer.VFS;
-using CommandLine;
+using Mono.Unix;
+using Mono.Unix.Native;
 
 namespace TA.SharpBooru
 {
@@ -18,96 +14,111 @@ namespace TA.SharpBooru
         [STAThread]
         public static int Main(string[] args)
         {
-            Console.Title = "SharpBooru";
-            Console.WriteLine(Helper.IsWindows() ? Properties.Resources.ascii_banner_windows : Properties.Resources.ascii_banner_unix);
-            Console.WriteLine();
-
-            Logger sLogger = new Logger(Console.Out);
-            Options options = new Options();
+            Logger logger = new Logger(Console.Out);
             try
             {
-                if (Parser.Default.ParseArguments(args, options))
-                {
-                    if (options.Mode == Options.RunMode.Server)
-                    {
-                        Console.Title = "SharpBooru Server";
-                        if (Helper.IsWindows())
-                            Console.WindowWidth = 120;
-                        ServerWrapper wrapper = new ServerWrapper(sLogger);
-                        wrapper.StartServer(options.Location);
-                    }
-                    else if (options.Mode == Options.RunMode.GUI)
-                    {
-                        BooruClient.CheckFingerprintDelegate fpChecker = fp =>
-                            {
-                                string question = string.Format("Server fingerprint = {0}, accept?", fp);
-                                return MessageBox.Show(question, "Fingerprint", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes;
-                            };
-                        using (BooruClient booru = ConnectBooru(sLogger, options.Server, options.AcceptFingerprint ? null : fpChecker, options))
-                            RunClientGUI(booru);
-                    }
-                    else if (options.Mode == Options.RunMode.CLI)
-                    {
-                        BooruClient.CheckFingerprintDelegate fpChecker = fp =>
-                            {
-                                while (true)
-                                {
-                                    Console.Write("Server fingerprint = {0}, accept? [Y/N] ", fp);
-                                    ConsoleKey key = Console.ReadKey().Key;
-                                    Console.WriteLine();
-                                    if (key == ConsoleKey.Y)
-                                        return true;
-                                    else if (key == ConsoleKey.N)
-                                        return false;
-                                }
-                            };
-                        using (BooruClient booru = ConnectBooru(sLogger, options.Server, options.AcceptFingerprint ? null : fpChecker, options))
-                            RunClientCLI(booru, options.Command);
-                    }
-                    else return 1;
-                }
+                MainStage2(logger);
                 return 0;
             }
             catch (Exception ex)
             {
-                sLogger.LogException("SharpBooru", ex);
+                logger.LogException("MainStage2", ex);
                 return 1;
             }
-            finally { Helper.CleanTempFolder(); }
-        }
-
-        private static BooruClient ConnectBooru(Logger Logger, IPEndPoint endPoint, BooruClient.CheckFingerprintDelegate fpChecker, Options loginOptions)
-        {
-            BooruClient client = new BooruClient(Logger);
-            client.Connect(endPoint, fpChecker);
-            if (loginOptions.Keypair != null)
-                using (RSA rsa = new RSA(loginOptions.Keypair))
-                    client.Login(rsa);
-            else if (loginOptions.Username != null && loginOptions.Password != null)
-                client.Login(loginOptions.Username, loginOptions.Password);
-            return client;
-        }
-
-        private static void RunClientGUI(BooruClient booru)
-        {
-            //TODO Show connect dialog when connection string not given
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
-            using (MainForm mForm = new MainForm(booru))
+            finally
             {
-                GUIHelper.ToggleConsoleWindow();
-                mForm.ShowDialog();
+                try { Helper.CleanTempFolder(); }
+                catch { }
             }
         }
 
-        private static void RunClientCLI(BooruClient booru, string command = null)
+        private static void MainStage2(Logger logger)
         {
-            Console.Title = "SharpBooru CLI Client";
+            Console.Title = "SharpBooru Server";
 
-            BooruConsole bConsole = new BooruConsole(booru);
-            if (!string.IsNullOrWhiteSpace(command))
-                bConsole.ExecuteCmdLine(command);
-            else bConsole.StartInteractive();
+            if (Environment.OSVersion.Platform != PlatformID.Unix)
+                throw new PlatformNotSupportedException("Only Linux is supported");
+
+            if (Type.GetType("Mono.Runtime") == null)
+                throw new PlatformNotSupportedException("Only Mono is supported");
+
+            string dir = Environment.CurrentDirectory;
+
+            logger.LogLine("Reading configuration...");
+            XmlDocument config = new XmlDocument();
+            config.Load(Path.Combine(dir, "config.xml"));
+            XmlNode booruConfigNode = config.SelectSingleNode("/BooruConfig");
+
+            string user = booruConfigNode.SelectSingleNode("User").InnerText;
+
+            string unixSocketPath = null;
+            UnixEndPoint unixEndPoint = null;
+            XmlNode unixSocketNode = booruConfigNode.SelectSingleNode("UnixSocket");
+            if (Convert.ToBoolean(unixSocketNode.SelectSingleNode("Enabled").InnerText))
+            {
+                unixSocketPath = unixSocketNode.SelectSingleNode("Path").InnerText;
+                unixEndPoint = new UnixEndPoint(unixSocketPath);
+            }
+
+            IPEndPoint tcpEndPoint = null;
+            XmlNode tcpSocketNode = booruConfigNode.SelectSingleNode("TcpSocket");
+            if (Convert.ToBoolean(tcpSocketNode.SelectSingleNode("Enabled").InnerText))
+                tcpEndPoint = new IPEndPoint(
+                    IPAddress.Parse(tcpSocketNode.SelectSingleNode("Address").InnerText),
+                    Convert.ToUInt16(tcpSocketNode.SelectSingleNode("Port").InnerText));
+
+            if (unixEndPoint == null && tcpEndPoint == null)
+                throw new NotSupportedException("No sockets enabled");
+
+            logger.LogLine("Loading booru...");
+            ServerBooru booru = new ServerBooru(dir);
+
+            if (unixEndPoint != null)
+            {
+                logger.LogLine("Binding UNIX socket...");
+                Socket unixSocket = new Socket(AddressFamily.Unix, SocketType.Stream, 0);
+                unixSocket.Bind(unixEndPoint);
+                SyscallEx.chown(unixSocketPath, user);
+                SyscallEx.chmod(unixSocketPath,
+                    FilePermissions.S_IFSOCK |
+                    FilePermissions.S_IRUSR |
+                    FilePermissions.S_IWUSR |
+                    FilePermissions.S_IRGRP |
+                    FilePermissions.S_IWGRP);
+            }
+
+            if (tcpEndPoint != null)
+            {
+                logger.LogLine("Binding TCP socket...");
+                Socket tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                tcpSocket.Bind(tcpEndPoint);
+            }
+
+            logger.LogLine("Starting server...");
+            //TODO Start simple unix server
+            //TODO Start 
+
+            logger.LogLine("Changing UID to {0}...", user);
+            SyscallEx.setuid(user);
+
+            logger.LogLine("Registering exit handlers...");
+            WaitHandle[] waitHandles = new WaitHandle[2];
+            waitHandles[0] = new UnixSignal(Signum.SIGTERM);
+            waitHandles[1] = new ManualResetEvent(false);
+            Console.CancelKeyPress += (sender, e) => ((ManualResetEvent)waitHandles[1]).Set();
+
+            logger.LogLine("Startup finished, waiting for exit event...");
+            WaitHandle.WaitAny(waitHandles);
+
+            logger.LogLine("Stopping server and closing sockets...");
+            //TODO
+            if (unixEndPoint != null)
+            {
+                SyscallEx.unlink(unixSocketPath);
+            }
+
+            logger.LogLine("Closing booru...");
+            booru.Dispose();
         }
     }
 }

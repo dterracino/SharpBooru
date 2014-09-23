@@ -17,9 +17,8 @@ namespace TA.SharpBooru
 
         private void WriteANSI(params int[] Code)
         {
-            if (Helper.IsUnix())
-                for (byte i = 0; i < Code.Length; i++)
-                    _Writer.Write("\x1b[{0}m", Code[i]);
+            for (byte i = 0; i < Code.Length; i++)
+                _Writer.Write("\x1b[{0}m", Code[i]);
         }
 
         public void LogLine(string Format, params object[] Args)
