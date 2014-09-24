@@ -35,6 +35,7 @@ namespace TA.SharpBooru
         private static void MainStage2(Logger logger)
         {
             Console.Title = "SharpBooru Server";
+            Console.TreatControlCAsInput = true;
 
             if (Environment.OSVersion.Platform != PlatformID.Unix)
                 throw new PlatformNotSupportedException("Only Linux is supported");
@@ -117,16 +118,13 @@ namespace TA.SharpBooru
                     tcpListener.Start();
                 }
 
-                logger.LogLine("Registering exit handlers...");
-                WaitHandle[] waitHandles = new WaitHandle[2];
-                waitHandles[0] = new UnixSignal(Signum.SIGTERM);
-                waitHandles[1] = new ManualResetEvent(false);
-                Console.CancelKeyPress += (sender, e) => ((ManualResetEvent)waitHandles[1]).Set();
-
-                logger.LogLine("Startup finished, waiting for exit event...");
-                WaitHandle.WaitAny(waitHandles);
-                waitHandles[0].Dispose();
-                waitHandles[1].Dispose();
+                logger.LogLine("Registering SIGTERM handler...");
+                // Ctrl+C is not supported due to heavy crashes of Mono
+                using (UnixSignal sigtermSignal = new UnixSignal(Signum.SIGTERM))
+                {
+                    logger.LogLine("Startup finished, waiting for SIGTERM...");
+                    sigtermSignal.WaitOne();
+                }
             }
             catch (Exception ex) { logger.LogException("MainStage3", ex); }
             finally
