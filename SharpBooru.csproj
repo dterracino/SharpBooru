@@ -70,16 +70,12 @@
       <HintPath>System.Data.SQLite.dll</HintPath>
     </Reference>
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BooruException.cs" />
     <Compile Include="BooruInfo.cs" />
     <Compile Include="BooruResource.cs" />
-    <Compile Include="ClientHandler.cs" />
     <Compile Include="ReaderWriter.cs" />
     <Compile Include="ImageOptimizer.cs" />
     <Compile Include="BooruImage.cs" />
@@ -89,6 +85,7 @@
     <Compile Include="BooruUser.cs" />
     <Compile Include="Helper.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="RequestCode.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="SocketListener.cs" />
     <Compile Include="SQLiteWrapper.cs" />

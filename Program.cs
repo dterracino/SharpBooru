@@ -103,17 +103,17 @@ namespace TA.SharpBooru
                 SyscallEx.setuid(user);
 
                 logger.LogLine("Starting server...");
-                server = new Server();
+                server = new Server(booru, logger, null); //TODO Certificate
                 if (unixSocket != null)
                 {
                     unixListener = new SocketListener(unixSocket);
-                    unixListener.SocketAccepted += socket => server.AddAcceptedSocket(false);
+                    unixListener.SocketAccepted += socket => server.AddAcceptedSocket(socket, false);
                     unixListener.Start();
                 }
                 if (tcpSocket != null)
                 {
                     tcpListener = new SocketListener(tcpSocket);
-                    tcpListener.SocketAccepted += socket => server.AddAcceptedSocket(true);
+                    tcpListener.SocketAccepted += socket => server.AddAcceptedSocket(socket, true);
                     tcpListener.Start();
                 }
 

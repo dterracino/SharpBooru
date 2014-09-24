@@ -89,7 +89,7 @@ namespace TA.SharpBooru
             BooruPost post = BooruPost.FromRow(postRow);
             if (post != null)
             {
-                if (User == null || (post.Rating <= User.MaxRating && IsPrivacyAllowed(post, User))) //                     TEST!!!
+                if (User == null || (post.Rating <= User.MaxRating && IsPrivacyAllowed(post, User)))
                 {
                     BooruImage image = BooruImage.FromFile(Path.Combine(ImageFolder, "image" + PostID));
                     _DB.ExecuteNonQuery(SQLStatements.UpdateIncrementViewCount, PostID);
