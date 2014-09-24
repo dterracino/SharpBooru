@@ -73,62 +73,73 @@ namespace TA.SharpBooru
             logger.LogLine("Loading booru...");
             ServerBooru booru = new ServerBooru(dir);
 
-            Socket unixSocket = null;
-            if (unixEndPoint != null)
-            {
-                logger.LogLine("Binding UNIX socket...");
-                unixSocket = new Socket(AddressFamily.Unix, SocketType.Stream, 0);
-                unixSocket.Bind(unixEndPoint);
-                SyscallEx.chown(unixSocketPath, user);
-                SyscallEx.chmod(unixSocketPath,
-                    FilePermissions.S_IFSOCK |
-                    FilePermissions.S_IRUSR |
-                    FilePermissions.S_IWUSR |
-                    FilePermissions.S_IRGRP |
-                    FilePermissions.S_IWGRP);
-            }
-
-            Socket tcpSocket = null;
-            if (tcpEndPoint != null)
-            {
-                logger.LogLine("Binding TCP socket...");
-                tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                tcpSocket.Bind(tcpEndPoint);
-            }
-
-            logger.LogLine("Changing UID to {0}...", user);
-            SyscallEx.setuid(user);
-
-            logger.LogLine("Starting server...");
+            Server server = null;
             SocketListener unixListener = null, tcpListener = null;
-            Server server = new Server();
-            if (unixSocket != null)
+            try
             {
-                unixListener = new SocketListener(unixSocket);
-                unixListener.SocketAccepted += socket => server.AddAcceptedSocket(false);
-                unixListener.Start();
+                Socket unixSocket = null;
+                if (unixEndPoint != null)
+                {
+                    logger.LogLine("Binding UNIX socket...");
+                    unixSocket = new Socket(AddressFamily.Unix, SocketType.Stream, 0);
+                    unixSocket.Bind(unixEndPoint);
+                    SyscallEx.chown(unixSocketPath, user);
+                    SyscallEx.chmod(unixSocketPath,
+                        FilePermissions.S_IFSOCK |
+                        FilePermissions.S_IRUSR |
+                        FilePermissions.S_IWUSR |
+                        FilePermissions.S_IRGRP |
+                        FilePermissions.S_IWGRP);
+                }
+                Socket tcpSocket = null;
+                if (tcpEndPoint != null)
+                {
+                    logger.LogLine("Binding TCP socket...");
+                    tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                    tcpSocket.Bind(tcpEndPoint);
+                }
+
+                logger.LogLine("Changing UID to {0}...", user);
+                SyscallEx.setuid(user);
+
+                logger.LogLine("Starting server...");
+                server = new Server();
+                if (unixSocket != null)
+                {
+                    unixListener = new SocketListener(unixSocket);
+                    unixListener.SocketAccepted += socket => server.AddAcceptedSocket(false);
+                    unixListener.Start();
+                }
+                if (tcpSocket != null)
+                {
+                    tcpListener = new SocketListener(tcpSocket);
+                    tcpListener.SocketAccepted += socket => server.AddAcceptedSocket(true);
+                    tcpListener.Start();
+                }
+
+                logger.LogLine("Registering exit handlers...");
+                WaitHandle[] waitHandles = new WaitHandle[2];
+                waitHandles[0] = new UnixSignal(Signum.SIGTERM);
+                waitHandles[1] = new ManualResetEvent(false);
+                Console.CancelKeyPress += (sender, e) => ((ManualResetEvent)waitHandles[1]).Set();
+
+                logger.LogLine("Startup finished, waiting for exit event...");
+                WaitHandle.WaitAny(waitHandles);
+                waitHandles[0].Dispose();
+                waitHandles[1].Dispose();
             }
-            if (tcpSocket != null)
+            catch (Exception ex) { logger.LogException("MainStage3", ex); }
+            finally
             {
-                tcpListener = new SocketListener(tcpSocket);
-                tcpListener.SocketAccepted += socket => server.AddAcceptedSocket(true);
-                tcpListener.Start();
-            }
-
-            logger.LogLine("Registering exit handlers...");
-            WaitHandle[] waitHandles = new WaitHandle[2];
-            waitHandles[0] = new UnixSignal(Signum.SIGTERM);
-            waitHandles[1] = new ManualResetEvent(false);
-            Console.CancelKeyPress += (sender, e) => ((ManualResetEvent)waitHandles[1]).Set();
-
-            logger.LogLine("Startup finished, waiting for exit event...");
-            WaitHandle.WaitAny(waitHandles);
-
-            logger.LogLine("Stopping server and closing sockets...");
-            //TODO
-            if (unixSocket != null)
-            {
-                SyscallEx.unlink(unixSocketPath);
+                logger.LogLine("Stopping server and closing sockets...");
+                server.Dispose();
+                if (unixListener != null)
+                {
+                    unixListener.Dispose();
+                    SyscallEx.unlink(unixSocketPath);
+                }
+                if (tcpListener != null)
+                    tcpListener.Dispose();
             }
 
             logger.LogLine("Closing booru...");

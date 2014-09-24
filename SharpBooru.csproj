@@ -79,6 +79,7 @@
     <Compile Include="BooruException.cs" />
     <Compile Include="BooruInfo.cs" />
     <Compile Include="BooruResource.cs" />
+    <Compile Include="ClientHandler.cs" />
     <Compile Include="ReaderWriter.cs" />
     <Compile Include="ImageOptimizer.cs" />
     <Compile Include="BooruImage.cs" />
