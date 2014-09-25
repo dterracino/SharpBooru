@@ -15,9 +15,10 @@ namespace TA.SharpBooru
         public static int Main(string[] args)
         {
             Logger logger = new Logger(Console.Out);
+            string booruPath = Environment.CurrentDirectory;
             try
             {
-                MainStage2(logger);
+                MainStage2(logger, booruPath);
                 return 0;
             }
             catch (Exception ex)
@@ -29,10 +30,16 @@ namespace TA.SharpBooru
             {
                 try { Helper.CleanTempFolder(); }
                 catch { }
+                try
+                {
+                    string unixSocketPath = Path.Combine(booruPath, "socket.sock");
+                    SyscallEx.unlink(unixSocketPath);
+                }
+                catch { }
             }
         }
 
-        private static void MainStage2(Logger logger)
+        private static void MainStage2(Logger logger, string booruPath)
         {
             Console.Title = "SharpBooru Server";
             Console.TreatControlCAsInput = true;
@@ -43,7 +50,6 @@ namespace TA.SharpBooru
             if (Type.GetType("Mono.Runtime") == null)
                 throw new PlatformNotSupportedException("Only Mono is supported");
 
-            string booruPath = Environment.CurrentDirectory;
             string unixSocketPath = Path.Combine(booruPath, "socket.sock");
             UnixEndPoint unixEndPoint = new UnixEndPoint(unixSocketPath);
             string user = "booru";
@@ -56,16 +62,16 @@ namespace TA.SharpBooru
             try
             {
                 Socket unixSocket = null;
-                    logger.LogLine("Binding UNIX socket...");
-                    unixSocket = new Socket(AddressFamily.Unix, SocketType.Stream, 0);
-                    unixSocket.Bind(unixEndPoint);
-                    SyscallEx.chown(unixSocketPath, user);
-                    SyscallEx.chmod(unixSocketPath,
-                        FilePermissions.S_IFSOCK |
-                        FilePermissions.S_IRUSR |
-                        FilePermissions.S_IWUSR |
-                        FilePermissions.S_IRGRP |
-                        FilePermissions.S_IWGRP);
+                logger.LogLine("Binding UNIX socket...");
+                unixSocket = new Socket(AddressFamily.Unix, SocketType.Stream, 0);
+                unixSocket.Bind(unixEndPoint);
+                SyscallEx.chown(unixSocketPath, user);
+                SyscallEx.chmod(unixSocketPath,
+                    FilePermissions.S_IFSOCK |
+                    FilePermissions.S_IRUSR |
+                    FilePermissions.S_IWUSR |
+                    FilePermissions.S_IRGRP |
+                    FilePermissions.S_IWGRP);
 
                 logger.LogLine("Changing UID to {0}...", user);
                 SyscallEx.setuid(user);
@@ -75,7 +81,7 @@ namespace TA.SharpBooru
                 if (unixSocket != null)
                 {
                     unixListener = new SocketListener(unixSocket);
-                    unixListener.SocketAccepted += socket => 
+                    unixListener.SocketAccepted += socket =>
                         server.AddAcceptedSocket(socket);
                     unixListener.Start();
                 }
@@ -93,11 +99,7 @@ namespace TA.SharpBooru
             {
                 logger.LogLine("Stopping server and closing sockets...");
                 server.Dispose();
-                if (unixListener != null)
-                {
-                    unixListener.Dispose();
-                    SyscallEx.unlink(unixSocketPath);
-                }
+                unixListener.Dispose();
             }
 
             logger.LogLine("Closing booru...");

@@ -54,6 +54,7 @@ namespace TA.SharpBooru
         private void _ClientHandlerStage2(Stream Stream)
         {
             ReaderWriter rw = new ReaderWriter(Stream);
+            BooruUser user = _Booru.Login(null, "guest", "guest");
             while (_IsRunning)
             {
                 ushort requestCode = rw.ReadUShort();
@@ -64,7 +65,7 @@ namespace TA.SharpBooru
                     try
                     {
                         using (var rw2 = new ReaderWriter(inputMs, outputMs))
-                            _ClientHandlerStage3((RequestCode)requestCode, rw2);
+                            _ClientHandlerStage3((RequestCode)requestCode, rw2, ref user);
                         rw.Write(true);
                         rw.Write(outputMs.ToArray(), true);
                     }
@@ -73,36 +74,47 @@ namespace TA.SharpBooru
             }
         }
 
-        private void _ClientHandlerStage3(RequestCode RQ, ReaderWriter RW)
+        private void _ClientHandlerStage3(RequestCode RQ, ReaderWriter RW, ref BooruUser User)
         {
-            BooruUser user = null; //Guest user
             switch (RQ)
             {
                 case RequestCode.Get_Post:
                     {
                         ulong id = RW.ReadULong();
-                        using (var post = _Booru.GetPost(user, id, false))
+                        using (var post = _Booru.GetPost(User, id, false))
                             post.ToWriter(RW);
                     } break;
 
                 case RequestCode.Get_Thumb:
                     {
                         ulong id = RW.ReadULong();
-                        using (var thumb = _Booru.GetThumbnail(user, id))
+                        using (var thumb = _Booru.GetThumbnail(User, id))
                             thumb.ToWriter(RW);
                     } break;
 
                 case RequestCode.Get_Image:
                     {
                         ulong id = RW.ReadULong();
-                        using (var image = _Booru.GetImage(user, id))
+                        using (var image = _Booru.GetImage(User, id))
                             image.ToWriter(RW);
                     } break;
 
                 case RequestCode.Get_Tag:
                     {
                         ulong id = RW.ReadULong();
-                        _Booru.GetTag(user, id).ToWriter(RW);
+                        _Booru.GetTag(User, id).ToWriter(RW);
+                    } break;
+
+                case RequestCode.Get_Info:
+                    _Booru.BooruInfo.ToWriter(RW);
+                    break;
+
+                case RequestCode.Get_AllTags:
+                    {
+                        List<string> tags = _Booru.GetAllTags();
+                        RW.Write((uint)tags.Count);
+                        foreach (string tag in tags)
+                            RW.Write(tag, true);
                     } break;
 
                 case RequestCode.Search: //User limitations?
@@ -112,6 +124,16 @@ namespace TA.SharpBooru
                         RW.Write((uint)posts.Count);
                         foreach (var post in posts)
                             RW.Write(post.ID);
+                    } break;
+
+                case RequestCode.Search_Img:
+                    throw new NotImplementedException(); //TODO Implement
+
+                case RequestCode.Login:
+                    {
+                        string username = RW.ReadString();
+                        string password = RW.ReadString();
+                        _Booru.Login(User, username, password).ToWriter(RW);
                     } break;
             }
         }
