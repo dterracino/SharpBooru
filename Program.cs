@@ -43,44 +43,19 @@ namespace TA.SharpBooru
             if (Type.GetType("Mono.Runtime") == null)
                 throw new PlatformNotSupportedException("Only Mono is supported");
 
-            string dir = Environment.CurrentDirectory;
-
-            logger.LogLine("Reading configuration...");
-            XmlDocument config = new XmlDocument();
-            config.Load(Path.Combine(dir, "config.xml"));
-            XmlNode booruConfigNode = config.SelectSingleNode("/BooruConfig");
-
-            string user = booruConfigNode.SelectSingleNode("User").InnerText;
-
-            string unixSocketPath = null;
-            UnixEndPoint unixEndPoint = null;
-            XmlNode unixSocketNode = booruConfigNode.SelectSingleNode("UnixSocket");
-            if (Convert.ToBoolean(unixSocketNode.SelectSingleNode("Enabled").InnerText))
-            {
-                unixSocketPath = unixSocketNode.SelectSingleNode("Path").InnerText;
-                unixEndPoint = new UnixEndPoint(unixSocketPath);
-            }
-
-            IPEndPoint tcpEndPoint = null;
-            XmlNode tcpSocketNode = booruConfigNode.SelectSingleNode("TcpSocket");
-            if (Convert.ToBoolean(tcpSocketNode.SelectSingleNode("Enabled").InnerText))
-                tcpEndPoint = new IPEndPoint(
-                    IPAddress.Parse(tcpSocketNode.SelectSingleNode("Address").InnerText),
-                    Convert.ToUInt16(tcpSocketNode.SelectSingleNode("Port").InnerText));
-
-            if (unixEndPoint == null && tcpEndPoint == null)
-                throw new NotSupportedException("No sockets enabled");
+            string booruPath = Environment.CurrentDirectory;
+            string unixSocketPath = Path.Combine(booruPath, "socket.sock");
+            UnixEndPoint unixEndPoint = new UnixEndPoint(unixSocketPath);
+            string user = "booru";
 
             logger.LogLine("Loading booru...");
-            ServerBooru booru = new ServerBooru(dir);
+            ServerBooru booru = new ServerBooru(booruPath);
 
             Server server = null;
-            SocketListener unixListener = null, tcpListener = null;
+            SocketListener unixListener = null;
             try
             {
                 Socket unixSocket = null;
-                if (unixEndPoint != null)
-                {
                     logger.LogLine("Binding UNIX socket...");
                     unixSocket = new Socket(AddressFamily.Unix, SocketType.Stream, 0);
                     unixSocket.Bind(unixEndPoint);
@@ -91,31 +66,18 @@ namespace TA.SharpBooru
                         FilePermissions.S_IWUSR |
                         FilePermissions.S_IRGRP |
                         FilePermissions.S_IWGRP);
-                }
-                Socket tcpSocket = null;
-                if (tcpEndPoint != null)
-                {
-                    logger.LogLine("Binding TCP socket...");
-                    tcpSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    tcpSocket.Bind(tcpEndPoint);
-                }
 
                 logger.LogLine("Changing UID to {0}...", user);
                 SyscallEx.setuid(user);
 
                 logger.LogLine("Starting server...");
-                server = new Server(booru, logger, null); //TODO Certificate
+                server = new Server(booru, logger);
                 if (unixSocket != null)
                 {
                     unixListener = new SocketListener(unixSocket);
-                    unixListener.SocketAccepted += socket => server.AddAcceptedSocket(socket, false);
+                    unixListener.SocketAccepted += socket => 
+                        server.AddAcceptedSocket(socket);
                     unixListener.Start();
-                }
-                if (tcpSocket != null)
-                {
-                    tcpListener = new SocketListener(tcpSocket);
-                    tcpListener.SocketAccepted += socket => server.AddAcceptedSocket(socket, true);
-                    tcpListener.Start();
                 }
 
                 logger.LogLine("Registering SIGTERM handler...");
@@ -136,8 +98,6 @@ namespace TA.SharpBooru
                     unixListener.Dispose();
                     SyscallEx.unlink(unixSocketPath);
                 }
-                if (tcpListener != null)
-                    tcpListener.Dispose();
             }
 
             logger.LogLine("Closing booru...");

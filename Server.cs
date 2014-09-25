@@ -1,10 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Net;
 using System.Threading;
 using System.Net.Sockets;
-using System.Net.Security;
-using System.Security.Cryptography.X509Certificates;
 using System.Collections.Generic;
 
 namespace TA.SharpBooru
@@ -16,18 +13,16 @@ namespace TA.SharpBooru
         private bool _IsRunning = true;
         private ServerBooru _Booru;
         private Logger _Logger;
-        private X509Certificate2 _Certificate;
 
-        public Server(ServerBooru Booru, Logger Logger, X509Certificate2 Certificate)
+        public Server(ServerBooru Booru, Logger Logger)
         {
             _Booru = Booru;
             _Logger = Logger;
-            _Certificate = Certificate;
         }
 
-        public void AddAcceptedSocket(Socket Socket, bool UseSSL)
+        public void AddAcceptedSocket(Socket Socket)
         {
-            Thread thread = new Thread(new ThreadStart(() => _ClientHandlerStage1(Socket, UseSSL)));
+            Thread thread = new Thread(new ThreadStart(() => _ClientHandlerStage1(Socket)));
             thread.Name = "ClientHandler";
             thread.Start();
             lock (_ListLock)
@@ -42,20 +37,12 @@ namespace TA.SharpBooru
                     thread.Abort();
         }
 
-        private void _ClientHandlerStage1(Socket Socket, bool UseSSL)
+        private void _ClientHandlerStage1(Socket Socket)
         {
             try
             {
                 using (var netStream = new NetworkStream(Socket))
-                    if (UseSSL)
-                    {
-                        using (var sslStream = new SslStream(netStream, true))
-                        {
-                            sslStream.AuthenticateAsServer(_Certificate);
-                            _ClientHandlerStage2(sslStream);
-                        }
-                    }
-                    else _ClientHandlerStage2(netStream);
+                    _ClientHandlerStage2(netStream);
             }
             catch (Exception ex)
             {

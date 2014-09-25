@@ -76,7 +76,7 @@ namespace TA.SharpBooru
                 string path = Path.Combine(ThumbFolder, "thumb" + PostID);
                 if (User == null)
                     return BooruImage.FromFile(path);
-        else   if (post.Rating <= User.MaxRating && IsPrivacyAllowed(post, User))
+                else if (post.Rating <= User.MaxRating && IsPrivacyAllowed(post, User))
                     return BooruImage.FromFile(path);
                 else throw new BooruException(BooruException.ErrorCodes.NoPermission);
             }
