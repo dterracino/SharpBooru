@@ -57,8 +57,9 @@ namespace TA.SharpBooru
             BooruUser user = _Booru.Login(null, "guest", "guest");
             while (_IsRunning)
             {
-                ushort requestCode = rw.ReadUShort();
+                RequestCode requestCode = (RequestCode)rw.ReadUShort();
                 byte[] payload = rw.ReadBytes();
+                _Logger.LogLine("Client request: RQ = {0}, {1} bytes payload", Enum.GetName(typeof(RequestCode), requestCode), payload.Length);
                 using (var inputMs = new MemoryStream(payload))
                 using (var outputMs = new MemoryStream())
                 {
@@ -71,7 +72,11 @@ namespace TA.SharpBooru
                         if (outputBytes.Length > 0)
                             rw.Write(outputBytes, true);
                     }
-                    catch { rw.Write(false); }
+                    catch (Exception ex)
+                    {
+                        _Logger.LogException("ClientRequest", ex);
+                        rw.Write(false);
+                    }
                 }
             }
         }

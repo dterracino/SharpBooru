@@ -82,7 +82,10 @@ namespace TA.SharpBooru
                 {
                     unixListener = new SocketListener(unixSocket);
                     unixListener.SocketAccepted += socket =>
-                        server.AddAcceptedSocket(socket);
+                        {
+                            logger.LogLine("Client connected");
+                            server.AddAcceptedSocket(socket);
+                        };
                     unixListener.Start();
                 }
 
