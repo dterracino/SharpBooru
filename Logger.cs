@@ -52,6 +52,7 @@ namespace TA.SharpBooru
                     WriteANSI(1, 37);
                     _Writer.Write(" {0}: ", theException.GetType().Name);
                     _Writer.WriteLine(theException.Message);
+                    _Writer.WriteLine(theException.StackTrace);
                     if (theException.InnerException != null)
                         theException = theException.InnerException;
                     else break;
