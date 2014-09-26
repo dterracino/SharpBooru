@@ -53,5 +53,7 @@
         //Edit_XXX = 40
         
         //Delete_XXX = 50
+
+        Disconnect = 65535
     }
 }

@@ -19,13 +19,28 @@ namespace TA.SharpBooru
 
         [DllImport("libc.so", EntryPoint = "memcmp")]
         private static extern int _MemoryCompareUnix(IntPtr b1, IntPtr b2, long count);
+        
+        [DllImport("msvcrt.dll", EntryPoint = "memcmp")]
+        private static extern int _MemoryCompareWindows(IntPtr b1, IntPtr b2, long count);
 
         public static bool MemoryCompare(IntPtr Ptr1, IntPtr Ptr2, long Count)
         {
             if (Ptr1 != IntPtr.Zero && Ptr2 != IntPtr.Zero)
                 if (Ptr1 == Ptr2)
                     return true;
-                else return _MemoryCompareUnix(Ptr1, Ptr2, Count) == 0;
+                else if (Environment.OSVersion.Platform == PlatformID.Unix)
+                    return _MemoryCompareUnix(Ptr1, Ptr2, Count) == 0;
+                else if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    return _MemoryCompareWindows(Ptr1, Ptr2, Count) == 0;
+                else unsafe
+                    {
+                        byte* rPtr1 = (byte*)Ptr1.ToPointer();
+                        byte* rPtr2 = (byte*)Ptr2.ToPointer();
+                        for (long i = 0; i < Count; i++)
+                            if (rPtr1[i] != rPtr2[i])
+                                return false;
+                        return true;
+                    }
             return false;
         }
 

@@ -58,25 +58,32 @@ namespace TA.SharpBooru
             while (_IsRunning)
             {
                 RequestCode requestCode = (RequestCode)rw.ReadUShort();
-                byte[] payload = rw.ReadBytes();
-                _Logger.LogLine("Client request: RQ = {0}, {1} bytes payload", Enum.GetName(typeof(RequestCode), requestCode), payload.Length);
-                using (var inputMs = new MemoryStream(payload))
-                using (var outputMs = new MemoryStream())
+                if (requestCode != RequestCode.Disconnect)
                 {
-                    try
+                    byte[] payload = rw.ReadBytes();
+                    _Logger.LogLine("Client request: RQ = {0}, {1} bytes payload", Enum.GetName(typeof(RequestCode), requestCode), payload.Length);
+                    using (var inputMs = new MemoryStream(payload))
+                    using (var outputMs = new MemoryStream())
                     {
-                        using (var rw2 = new ReaderWriter(inputMs, outputMs))
-                            _ClientHandlerStage3((RequestCode)requestCode, rw2, ref user);
-                        rw.Write(true);
-                        var outputBytes = outputMs.ToArray();
-                        if (outputBytes.Length > 0)
-                            rw.Write(outputBytes, true);
+                        try
+                        {
+                            using (var rw2 = new ReaderWriter(inputMs, outputMs))
+                                _ClientHandlerStage3((RequestCode)requestCode, rw2, ref user);
+                            rw.Write(true);
+                            rw.Write(outputMs.ToArray(), true);
+                        }
+                        catch (Exception ex)
+                        {
+                            _Logger.LogException("ClientRequest", ex);
+                            rw.Write(false);
+                            rw.Write(ex.Message, true);
+                        }
                     }
-                    catch (Exception ex)
-                    {
-                        _Logger.LogException("ClientRequest", ex);
-                        rw.Write(false);
-                    }
+                }
+                else
+                {
+                    _Logger.LogLine("Client disconnected gracefully");
+                    break;
                 }
             }
         }
@@ -155,7 +162,7 @@ namespace TA.SharpBooru
                     {
                         string username = RW.ReadString();
                         string password = RW.ReadString();
-                        _Booru.Login(User, username, password);
+                        User = _Booru.Login(User, username, password);
                     } break;
 
                 case RequestCode.Add_Post:
