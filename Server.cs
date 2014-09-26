@@ -85,6 +85,8 @@ namespace TA.SharpBooru
         {
             switch (RQ)
             {
+                default: throw new NotSupportedException("Unknown request code");
+
                 case RequestCode.Get_Post:
                     {
                         ulong id = RW.ReadULong();
