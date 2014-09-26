@@ -65,13 +65,13 @@ namespace TA.SharpBooru
                 logger.LogLine("Binding UNIX socket...");
                 unixSocket = new Socket(AddressFamily.Unix, SocketType.Stream, 0);
                 unixSocket.Bind(unixEndPoint);
-                SyscallEx.chown(unixSocketPath, user);
                 SyscallEx.chmod(unixSocketPath,
                     FilePermissions.S_IFSOCK |
                     FilePermissions.S_IRUSR |
                     FilePermissions.S_IWUSR |
                     FilePermissions.S_IRGRP |
                     FilePermissions.S_IWGRP);
+                SyscallEx.chown(unixSocketPath, user);
 
                 logger.LogLine("Changing UID to {0}...", user);
                 SyscallEx.setuid(user);
@@ -86,7 +86,6 @@ namespace TA.SharpBooru
                     unixListener.Start();
                 }
 
-                logger.LogLine("Registering SIGTERM handler...");
                 // Ctrl+C is not supported due to heavy crashes of Mono
                 using (UnixSignal sigtermSignal = new UnixSignal(Signum.SIGTERM))
                 {

@@ -67,7 +67,9 @@ namespace TA.SharpBooru
                         using (var rw2 = new ReaderWriter(inputMs, outputMs))
                             _ClientHandlerStage3((RequestCode)requestCode, rw2, ref user);
                         rw.Write(true);
-                        rw.Write(outputMs.ToArray(), true);
+                        var outputBytes = outputMs.ToArray();
+                        if (outputBytes.Length > 0)
+                            rw.Write(outputBytes, true);
                     }
                     catch { rw.Write(false); }
                 }
@@ -117,23 +119,45 @@ namespace TA.SharpBooru
                             RW.Write(tag, true);
                     } break;
 
-                case RequestCode.Search: //User limitations?
+                case RequestCode.Get_PostTags:
                     {
-                        string pattern = RW.ReadString();
-                        BooruPostList posts = BooruSearch.DoSearch(pattern, _Booru);
-                        RW.Write((uint)posts.Count);
-                        foreach (var post in posts)
-                            RW.Write(post.ID);
+                        ulong id = RW.ReadULong();
+                        using (var post = _Booru.GetPost(User, id, false))
+                            post.Tags.ToWriter(RW);
                     } break;
 
-                case RequestCode.Search_Img:
+                case RequestCode.Get_User:
+                    User.ToWriter(RW);
+                    break;
+
+                case RequestCode.Search_String: //User limitations?
+                    {
+                        string pattern = RW.ReadString();
+                        using (var posts = BooruSearch.DoSearch(pattern, _Booru))
+                        {
+                            RW.Write((uint)posts.Count);
+                            foreach (var post in posts)
+                                RW.Write(post.ID);
+                        }
+                    } break;
+
+                case RequestCode.Search_Image:
                     throw new NotImplementedException(); //TODO Implement
 
                 case RequestCode.Login:
                     {
                         string username = RW.ReadString();
                         string password = RW.ReadString();
-                        _Booru.Login(User, username, password).ToWriter(RW);
+                        _Booru.Login(User, username, password);
+                    } break;
+
+                case RequestCode.Add_Post:
+                    using (var post = BooruPost.FromReader(RW))
+                    {
+                        post.Tags = BooruTagList.FromReader(RW);
+                        post.Image = BooruImage.FromReader(RW);
+                        ulong id = _Booru.AddPost(User, post);
+                        RW.Write(id);
                     } break;
             }
         }

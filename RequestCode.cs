@@ -1,15 +1,7 @@
 ﻿namespace TA.SharpBooru
 {
-    //DeleteResource
-    //EditResource
-    //AddResource
-
-    //SearchImg
-    //AddAlias
-
     public enum RequestCode
     {
-
         //In: ulong ID
         //Out: BooruPost Post
         Get_Post = 0,
@@ -32,17 +24,34 @@
         //Out: List<string> AllTags
         Get_AllTags = 5,
 
+        //In: ulong ID
+        //Out: BooruTagList Tags
+        Get_PostTags = 6,
+
+        Get_User = 7,
+
         //In: string Pattern
         //Out: List<ulong> IDs
-        Search = 20,
+        Search_String = 20,
 
         //In: byte[] ImageHash
         //Out: List<ulong> IDs
-        Search_Img = 21,
+        Search_Image = 21,
 
         //In: string Username
         //In: string Password
-        //Out: BooruUser User
         Login = 22,
+
+        //In: BooruPost Post
+        //In: BooruTagList Tags
+        //In: BooruImage Image
+        //Out: ulong ID
+        Add_Post = 30,
+
+        //Add_Alias = 31
+
+        //Edit_XXX = 40
+        
+        //Delete_XXX = 50
     }
 }

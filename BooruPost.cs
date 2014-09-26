@@ -55,18 +55,11 @@ namespace TA.SharpBooru
             Writer.Write(EditCount);
             Writer.Write(Score);
             Writer.Write(ImageHash, true);
-            Tags.ToWriter(Writer);
-            Writer.Write(Thumbnail != null);
-            if (Thumbnail != null)
-                Thumbnail.ToWriter(Writer);
-            Writer.Write(Image != null);
-            if (Image != null)
-                Image.ToWriter(Writer);
         }
 
         public static BooruPost FromReader(ReaderWriter Reader)
         {
-            BooruPost post = new BooruPost()
+            return new BooruPost()
             {
                 ID = Reader.ReadULong(),
                 User = Reader.ReadString(),
@@ -82,12 +75,6 @@ namespace TA.SharpBooru
                 Score = Reader.ReadLong(),
                 ImageHash = Reader.ReadBytes()
             };
-            post.Tags = BooruTagList.FromReader(Reader);
-            if (Reader.ReadBool())
-                post.Thumbnail = BooruImage.FromReader(Reader);
-            if (Reader.ReadBool())
-                post.Image = BooruImage.FromReader(Reader);
-            return post;
         }
 
         /// <summary>Creates a BooruPost from a DataRow. DOES NOT include Tags, Thumb and Image</summary>
@@ -161,7 +148,7 @@ namespace TA.SharpBooru
         }
     }
 
-    public class BooruPostList : List<BooruPost>
+    public class BooruPostList : List<BooruPost>, IDisposable
     {
         public BooruPost this[ulong ID]
         {
@@ -207,6 +194,12 @@ namespace TA.SharpBooru
             //TODO Improve (Don't remove and add, but refresh!, maybe not needed since Post is a class)
             Remove(Post.ID);
             Add(Post);
+        }
+
+        public void Dispose()
+        {
+            foreach (BooruPost post in this)
+                post.Dispose();
         }
     }
 }
