@@ -57,11 +57,5 @@ namespace TA.SharpBooru
             if (Syscall.chmod(Path, Mode) != 0)
                 throw new Exception("chmod failed");
         }
-
-        public static void unlink(string Path)
-        {
-            if (Syscall.unlink(Path) != 0)
-                throw new Exception("unlink failed");
-        }
     }
 }

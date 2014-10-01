@@ -33,7 +33,7 @@ namespace TA.SharpBooru
                 try
                 {
                     string unixSocketPath = Path.Combine(booruPath, "socket.sock");
-                    SyscallEx.unlink(unixSocketPath);
+                    File.Delete(unixSocketPath);
                 }
                 catch { }
             }
@@ -63,6 +63,11 @@ namespace TA.SharpBooru
             {
                 Socket unixSocket = null;
                 logger.LogLine("Binding UNIX socket...");
+                if (File.Exists(unixSocketPath))
+                {
+                    logger.LogLine("Socket exists, removing it...");
+                    File.Delete(unixSocketPath);
+                }
                 unixSocket = new Socket(AddressFamily.Unix, SocketType.Stream, 0);
                 unixSocket.Bind(unixEndPoint);
                 SyscallEx.chmod(unixSocketPath,
