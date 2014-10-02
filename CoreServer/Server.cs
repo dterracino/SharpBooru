@@ -148,12 +148,10 @@ namespace TA.SharpBooru
                 case RequestCode.Search_String: //User limitations?
                     {
                         string pattern = RW.ReadString();
-                        using (var posts = BooruSearch.DoSearch(pattern, _Booru))
-                        {
-                            RW.Write((uint)posts.Count);
-                            foreach (var post in posts)
-                                RW.Write(post.ID);
-                        }
+			List<ulong> ids = _Booru.Search(User, pattern);
+                        RW.Write((uint)ids.Count);
+                        foreach (ulong id in ids)
+                            RW.Write(id);
                     } break;
 
                 case RequestCode.Search_Image:
