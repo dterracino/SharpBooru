@@ -49,6 +49,7 @@ namespace TA.SharpBooru
                 if (_IsRunning)
                     _Logger.LogException("ClientHandlerStage1", ex);
             }
+            finally { Socket.Dispose(); }
         }
 
         private void _ClientHandlerStage2(Stream Stream)
