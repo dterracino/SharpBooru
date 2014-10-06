@@ -164,6 +164,10 @@ namespace TA.SharpBooru
                         User = _Booru.Login(User, username, password);
                     } break;
 
+                case RequestCode.Logout:
+                    User = _Booru.DefaultUser;
+                    break;
+
                 case RequestCode.Add_Post:
                     using (var post = BooruPost.FromReader(RW))
                     {

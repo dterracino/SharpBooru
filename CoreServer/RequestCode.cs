@@ -28,6 +28,7 @@
         //Out: BooruTagList Tags
         Get_PostTags = 6,
 
+        //Out: BooruUser User
         Get_User = 7,
 
         //In: string Pattern
@@ -42,6 +43,9 @@
         //In: string Password
         Login = 22,
 
+        // void
+        Logout = 23,
+
         //In: BooruPost Post
         //In: BooruTagList Tags
         //In: BooruImage Image
@@ -54,6 +58,8 @@
         
         //Delete_XXX = 50
 
+        //No need to send bytes after Disconnect
+        //Disconnect instantly terminates the connection
         Disconnect = 65535
     }
 }

@@ -11,6 +11,7 @@ namespace TA.SharpBooru
         private BooruInfo _BooruInfo = null;
         private string _Folder;
         private ImageOptimizer _ImgOptimizer;
+        private BooruUser _DefaultUser;
 
         public BooruInfo BooruInfo
         {
@@ -22,6 +23,8 @@ namespace TA.SharpBooru
                 return _BooruInfo;
             }
         }
+
+        public BooruUser DefaultUser { get { return _DefaultUser; } }
         //public string Folder { get { return _Folder; } }
         public string ImageFolder { get { return Path.Combine(_Folder, "images"); } }
         public string ThumbFolder { get { return Path.Combine(_Folder, "thumbs"); } }
@@ -39,6 +42,9 @@ namespace TA.SharpBooru
                     {
                         _Folder = Folder;
                         _DB = new SQLiteWrapper(dbPath);
+                        _DefaultUser = GetUser("default");
+                        if (_DefaultUser == null)
+                            throw new Exception("Default user not found");
                         return;
                     }
             throw new Exception("No valid booru directory");
@@ -320,8 +326,7 @@ namespace TA.SharpBooru
         public BooruUser Login(BooruUser User, string Username, string Password)
         {
             Password = Helper.BytesToString(Helper.MD5OfString(Password));
-            DataRow userRow = _DB.ExecuteRow(SQLStatements.GetUserByUsername, Username);
-            BooruUser user = BooruUser.FromRow(userRow);
+            BooruUser user = GetUser(Username);
             if (user != null)
                 if (user.MD5Password == Password || (User == null ? false : User.IsAdmin))
                 {
@@ -329,6 +334,12 @@ namespace TA.SharpBooru
                     return user;
                 }
             throw new BooruException(BooruException.ErrorCodes.LoginFailed);
+        }
+
+        public BooruUser GetUser(string Username)
+        {
+            DataRow userRow = _DB.ExecuteRow(SQLStatements.GetUserByUsername, Username);
+            return BooruUser.FromRow(userRow);
         }
 
         private bool IsPrivacyAllowed(BooruPost Post, BooruUser User)
