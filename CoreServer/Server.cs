@@ -54,37 +54,40 @@ namespace TA.SharpBooru
 
         private void _ClientHandlerStage2(Stream Stream)
         {
-            ReaderWriter rw = new ReaderWriter(Stream);
-            BooruUser user = _Booru.Login(null, "guest", "guest");
-            while (_IsRunning)
+            using (ReaderWriter rw = new ReaderWriter(Stream))
             {
-                RequestCode requestCode = (RequestCode)rw.ReadUShort();
-                if (requestCode != RequestCode.Disconnect)
+                BooruUser user = _Booru.DefaultUser;
+                while (_IsRunning)
                 {
-                    byte[] payload = rw.ReadBytes();
-                    _Logger.LogLine("Client request: RQ = {0}, {1} bytes payload", Enum.GetName(typeof(RequestCode), requestCode), payload.Length);
-                    using (var inputMs = new MemoryStream(payload))
-                    using (var outputMs = new MemoryStream())
+                    RequestCode requestCode = (RequestCode)rw.ReadUShort();
+                    if (requestCode != RequestCode.Disconnect)
                     {
-                        try
+                        byte[] payload = rw.ReadBytes();
+                        _Logger.LogLine("Client request: RQ = {0}, {1} bytes payload", Enum.GetName(typeof(RequestCode), requestCode), payload.Length);
+                        using (var inputMs = new MemoryStream(payload))
+                        using (var outputMs = new MemoryStream())
                         {
-                            using (var rw2 = new ReaderWriter(inputMs, outputMs))
-                                _ClientHandlerStage3((RequestCode)requestCode, rw2, ref user);
-                            rw.Write(true);
-                            rw.Write(outputMs.ToArray(), true);
-                        }
-                        catch (Exception ex)
-                        {
-                            _Logger.LogException("ClientRequest", ex);
-                            rw.Write(false);
-                            rw.Write(ex.Message, true);
+                            try
+                            {
+                                using (var rw2 = new ReaderWriter(inputMs, outputMs))
+                                    _ClientHandlerStage3((RequestCode)requestCode, rw2, ref user);
+                                rw.Write(true);
+                                rw.Write(outputMs.ToArray(), true);
+                            }
+                            catch (Exception ex)
+                            {
+                                _Logger.LogException("ClientRequest", ex);
+                                rw.Write(false);
+                                rw.Write(ex.Message, true);
+                            }
+                            rw.Flush();
                         }
                     }
-                }
-                else
-                {
-                    _Logger.LogLine("Client disconnected gracefully");
-                    break;
+                    else
+                    {
+                        _Logger.LogLine("Client disconnected gracefully");
+                        break;
+                    }
                 }
             }
         }
