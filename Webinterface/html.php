@@ -11,7 +11,8 @@ function html_header($title)
 	echo "<!DOCTYPE html>";
 	echo "<html><head><title>";
 	echo $title . "</title>";
-	echo '<link rel="stylesheet" type="text/css" href="style.php">';
+	echo '<link rel="stylesheet" type="text/css" href="style_static.css">';
+	echo '<link rel="stylesheet" type="text/css" href="style_dynamic.php">';
 	echo '<script type="text/javascript" src="script.js"></script>';
 	echo '<link rel="icon" type="image/icon" href="favicon.ico">';
 	echo '<meta charset="utf-8">';
