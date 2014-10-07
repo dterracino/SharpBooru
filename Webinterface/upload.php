@@ -73,7 +73,7 @@ if (session_loggedin())
 	echo '<tr><td>Source</td><td><input style="width: 500px;" type="text" name="source" value="Online Upload"></td></tr>';
 	echo '<tr><td>Description</td><td><input style="width: 500px;" type="text" name="description"></td></tr>';
 	echo '<tr><td>Rating</td><td><input style="width:40px;" type="number" name="rating" value="7"></td></tr>';
-	echo '<tr><td>Private</td><td><input type="checkbox" name="private" checked="checked"></td></tr>';
+	echo '<tr><td>Private</td><td><input type="checkbox" name="private"></td></tr>'; // checked="checked"
 	echo '<tr><td></td><td><input type="submit" value="Upload"></td></tr>';
 	echo "</table></form>";
 }
