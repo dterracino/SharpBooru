@@ -46,37 +46,37 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CoreServer\BooruException.cs">
+    <Compile Include="..\Server\BooruException.cs">
       <Link>BooruException.cs</Link>
     </Compile>
-    <Compile Include="..\CoreServer\BooruImage.cs">
+    <Compile Include="..\Server\BooruImage.cs">
       <Link>BooruImage.cs</Link>
     </Compile>
-    <Compile Include="..\CoreServer\BooruInfo.cs">
+    <Compile Include="..\Server\BooruInfo.cs">
       <Link>BooruInfo.cs</Link>
     </Compile>
-    <Compile Include="..\CoreServer\BooruPost.cs">
+    <Compile Include="..\Server\BooruPost.cs">
       <Link>BooruPost.cs</Link>
     </Compile>
-    <Compile Include="..\CoreServer\BooruResource.cs">
+    <Compile Include="..\Server\BooruResource.cs">
       <Link>BooruResource.cs</Link>
     </Compile>
-    <Compile Include="..\CoreServer\BooruTag.cs">
+    <Compile Include="..\Server\BooruTag.cs">
       <Link>BooruTag.cs</Link>
     </Compile>
-    <Compile Include="..\CoreServer\BooruUser.cs">
+    <Compile Include="..\Server\BooruUser.cs">
       <Link>BooruUser.cs</Link>
     </Compile>
-    <Compile Include="..\CoreServer\Helper.cs">
+    <Compile Include="..\Server\Helper.cs">
       <Link>Helper.cs</Link>
     </Compile>
-    <Compile Include="..\CoreServer\Logger.cs">
+    <Compile Include="..\Server\Logger.cs">
       <Link>Logger.cs</Link>
     </Compile>
-    <Compile Include="..\CoreServer\ReaderWriter.cs">
+    <Compile Include="..\Server\ReaderWriter.cs">
       <Link>ReaderWriter.cs</Link>
     </Compile>
-    <Compile Include="..\CoreServer\RequestCode.cs">
+    <Compile Include="..\Server\RequestCode.cs">
       <Link>RequestCode.cs</Link>
     </Compile>
     <Compile Include="Program.cs" />
