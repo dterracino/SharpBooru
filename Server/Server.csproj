@@ -58,7 +58,7 @@
     </ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>TA.SharpBooru.Program</StartupObject>
+    <StartupObject>TA.SharpBooru.Server.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Posix">
@@ -73,19 +73,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BooruException.cs" />
-    <Compile Include="BooruInfo.cs" />
-    <Compile Include="BooruResource.cs" />
-    <Compile Include="ReaderWriter.cs" />
+    <Compile Include="Common\BooruException.cs" />
+    <Compile Include="Common\BooruInfo.cs" />
+    <Compile Include="Common\BooruResource.cs" />
+    <Compile Include="Common\ReaderWriter.cs" />
     <Compile Include="ImageOptimizer.cs" />
-    <Compile Include="BooruImage.cs" />
-    <Compile Include="BooruPost.cs" />
+    <Compile Include="Common\BooruImage.cs" />
+    <Compile Include="Common\BooruPost.cs" />
     <Compile Include="BooruSearch.cs" />
-    <Compile Include="BooruTag.cs" />
-    <Compile Include="BooruUser.cs" />
-    <Compile Include="Helper.cs" />
-    <Compile Include="Logger.cs" />
-    <Compile Include="RequestCode.cs" />
+    <Compile Include="Common\BooruTag.cs" />
+    <Compile Include="Common\BooruUser.cs" />
+    <Compile Include="Common\Helper.cs" />
+    <Compile Include="Common\Logger.cs" />
+    <Compile Include="Common\RequestCode.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="SocketListener.cs" />
     <Compile Include="SQLiteWrapper.cs" />

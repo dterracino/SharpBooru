@@ -4,7 +4,7 @@ using System.Threading;
 using System.Net.Sockets;
 using System.Collections.Generic;
 
-namespace TA.SharpBooru
+namespace TA.SharpBooru.Server
 {
     public class Server : IDisposable
     {

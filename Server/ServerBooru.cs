@@ -3,7 +3,7 @@ using System.IO;
 using System.Data;
 using System.Collections.Generic;
 
-namespace TA.SharpBooru
+namespace TA.SharpBooru.Server
 {
     public class ServerBooru : IDisposable
     {

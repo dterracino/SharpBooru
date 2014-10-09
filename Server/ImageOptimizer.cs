@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.Collections.Generic;
 
-namespace TA.SharpBooru
+namespace TA.SharpBooru.Server
 {
     public class ImageOptimizer : IDisposable
     {

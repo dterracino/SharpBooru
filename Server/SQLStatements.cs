@@ -1,4 +1,4 @@
-﻿namespace TA.SharpBooru
+﻿namespace TA.SharpBooru.Server
 {
     public static class SQLStatements
     {

@@ -7,7 +7,7 @@ using System.Threading;
 using Mono.Unix;
 using Mono.Unix.Native;
 
-namespace TA.SharpBooru
+namespace TA.SharpBooru.Server
 {
     public class Program
     {

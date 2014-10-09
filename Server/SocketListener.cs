@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Net.Sockets;
 
-namespace TA.SharpBooru
+namespace TA.SharpBooru.Server
 {
     public class SocketListener : IDisposable
     {

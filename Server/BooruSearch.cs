@@ -4,7 +4,7 @@ using System.Reflection;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace TA.SharpBooru
+namespace TA.SharpBooru.Server
 {
     public static class BooruSearch
     {
