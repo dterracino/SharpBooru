@@ -12,9 +12,9 @@ namespace TA.SharpBooru.Server
         private ServerBooru _Booru;
         private Logger _Logger;
 
-        public Server(ServerBooru Booru, Logger Logger)
+        public Server(ServerBooru Booru, Logger Logger, ushort ThreadCount)
         {
-            _ThreadPool = new SThreadPool(4);
+            _ThreadPool = new SThreadPool(ThreadCount);
             _Booru = Booru;
             _Logger = Logger;
         }

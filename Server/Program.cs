@@ -82,7 +82,7 @@ namespace TA.SharpBooru.Server
                 SyscallEx.setuid(user);
 
                 logger.LogLine("Starting server...");
-                server = new Server(booru, logger);
+                server = new Server(booru, logger, 2);
                 if (unixSocket != null)
                 {
                     unixListener = new SocketListener(unixSocket);
