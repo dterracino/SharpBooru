@@ -95,6 +95,19 @@ namespace TA.SharpBooru
             return Path.Combine(tempFolder, tempFileName);
         }
 
+        public static string DownloadTemporary(string URI)
+        {
+            try
+            {
+                string temporaryFile = GetTempFile();
+                URI = Uri.UnescapeDataString(URI);
+                using (WebClient client = new WebClient())
+                    client.DownloadFile(URI, temporaryFile);
+                return temporaryFile;
+            }
+            catch { return null; }
+        }
+
         public static string RandomString(int Len) { return RandomString(Random, Len); }
         public static string RandomString(Random R, int Len)
         {
@@ -207,15 +220,7 @@ namespace TA.SharpBooru
             }
         }
 
-        public static ushort GetVersionMajor() { return (ushort)Assembly.GetExecutingAssembly().GetName().Version.Major; }
-
-        private static ushort? _VersionMinor = null;
-        public static ushort GetVersionMinor()
-        {
-            if (!_VersionMinor.HasValue)
-                _VersionMinor = (ushort)Assembly.GetExecutingAssembly().GetName().Version.Minor;
-            return _VersionMinor.Value;
-        }
+        public static Version GetVersion() { return Assembly.GetExecutingAssembly().GetName().Version; }
 
         public static byte[] CombineByteArrays(byte[] Array1, byte[] Array2)
         {

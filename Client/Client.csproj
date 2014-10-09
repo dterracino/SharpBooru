@@ -47,6 +47,19 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BooruAPIs\BooruAPI.cs" />
+    <Compile Include="BooruAPIs\BooruAPIPost.cs" />
+    <Compile Include="BooruAPIs\GelbooruAPI.cs" />
+    <Compile Include="BooruAPIs\KonachanAPI.cs" />
+    <Compile Include="BooruAPIs\LitJSON\IJsonWrapper.cs" />
+    <Compile Include="BooruAPIs\LitJSON\JsonData.cs" />
+    <Compile Include="BooruAPIs\LitJSON\JsonException.cs" />
+    <Compile Include="BooruAPIs\LitJSON\JsonMapper.cs" />
+    <Compile Include="BooruAPIs\LitJSON\JsonReader.cs" />
+    <Compile Include="BooruAPIs\LitJSON\JsonWriter.cs" />
+    <Compile Include="BooruAPIs\LitJSON\Lexer.cs" />
+    <Compile Include="BooruAPIs\LitJSON\ParserToken.cs" />
+    <Compile Include="BooruAPIs\SafebooruAPI.cs" />
     <Compile Include="CommandLine\Attributes\AssemblyLicenseAttribute.cs" />
     <Compile Include="CommandLine\Attributes\AssemblyUsageAttribute.cs" />
     <Compile Include="CommandLine\Attributes\BaseOptionAttribute.cs" />
@@ -95,6 +108,7 @@
     <Compile Include="CommandLine\Text\HeadingInfo.cs" />
     <Compile Include="CommandLine\Text\HelpText.cs" />
     <Compile Include="CommandLine\Text\_ParsingErrorsHandler.cs" />
+    <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="..\Server\Common\**\*.cs">

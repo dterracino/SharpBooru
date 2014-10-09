@@ -10,60 +10,75 @@ namespace TA.SharpBooru
     {
         public static int Main(string[] args)
         {
-            UnixEndPoint endPoint = new UnixEndPoint(args[0]);
-            using (Socket socket = new Socket(AddressFamily.Unix, SocketType.Stream, 0))
-            {
-                socket.Connect(endPoint);
+            string invokedVerb = null;
+            object invokedVerbOptions = null;
+            var mainOptions = new Options();
 
-                using (var post = new BooruPost())
-                using (var image = BooruImage.FromFile(args[1]))
+            if (CommandLine.Parser.Default.ParseArguments(args, mainOptions, (verb, subOptions) =>
                 {
-                    Console.Write("Tags: ");
-                    foreach (var tag in Console.ReadLine().Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-                        post.Tags.Add(new BooruTag(tag));
+                    invokedVerb = verb;
+                    invokedVerbOptions = subOptions;
+                }))
+            {
+                try
+                {
+                    CommonOptions commonOptions = (CommonOptions)invokedVerbOptions;
+                    UnixEndPoint endPoint = new UnixEndPoint(commonOptions.Socket);
 
-                    Console.Write("Source: ");
-                    post.Source = Console.ReadLine().Trim();
-
-                    Console.Write("Description: ");
-                    post.Description = Console.ReadLine().Trim();
-
-                    Console.Write("Rating: ");
-                    post.Rating = Convert.ToByte(Console.ReadLine());
-
-                    Console.Write("Private: ");
-                    post.Private = Convert.ToBoolean(Console.ReadLine());
-
-                    using (ReaderWriter rw_out = new ReaderWriter(new NetworkStream(socket)))
+                    using (Socket socket = new Socket(AddressFamily.Unix, SocketType.Stream, 0))
                     {
-                        rw_out.DisposeStreams = true;
+                        socket.Connect(endPoint);
 
-                        using (MemoryStream ms = new MemoryStream())
+                        switch (invokedVerb)
                         {
-                            using (ReaderWriter rw = new ReaderWriter(ms))
-                            {
-                                rw.Write(args[2], true);
-                                rw.Write(args[3], true);
-                            }
-                            Request(rw_out, RequestCode.Login, ms.ToArray());
-                        }
+                            case "add":
+                                {
+                                    AddOptions options = (AddOptions)invokedVerbOptions;
+                                    using (var post = new BooruPost())
+                                    using (var image = BooruImage.FromFile(options.ImagePath))
+                                    {
+                                        foreach (var tag in options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                                            post.Tags.Add(new BooruTag(tag));
+                                        post.Source = options.Source;
+                                        post.Description = options.Description;
+                                        post.Rating = options.Rating;
+                                        post.Private = options.Private;
 
-                        using (MemoryStream ms = new MemoryStream())
-                        {
-                            using (ReaderWriter rw = new ReaderWriter(ms))
-                            {
-                                post.ToWriter(rw);
-                                post.Tags.ToWriter(rw);
-                                image.ToWriter(rw);
-                            }
-                            using (MemoryStream result = new MemoryStream(Request(rw_out, RequestCode.Add_Post, ms.ToArray())))
-                            using (ReaderWriter result_rw = new ReaderWriter(result))
-                                Console.WriteLine("OK - ID = " + result_rw.ReadULong());
+                                        using (ReaderWriter rwo = new ReaderWriter(new NetworkStream(socket)))
+                                        {
+                                            rwo.DisposeStreams = true;
+                                            if (!string.IsNullOrWhiteSpace(options.Username))
+                                                using (MemoryStream ms = new MemoryStream())
+                                                {
+                                                    using (ReaderWriter rwi = new ReaderWriter(ms))
+                                                    {
+                                                        rwi.Write(options.Username, true);
+                                                        rwi.Write(options.Password ?? string.Empty, true);
+                                                    }
+                                                    Request(rwo, RequestCode.Login, ms.ToArray());
+                                                }
+                                            using (MemoryStream ms = new MemoryStream())
+                                            {
+                                                using (ReaderWriter rwi = new ReaderWriter(ms))
+                                                {
+                                                    post.ToWriter(rwi);
+                                                    post.Tags.ToWriter(rwi);
+                                                    image.ToWriter(rwi);
+                                                }
+                                                using (var result_ms = new MemoryStream(Request(rwo, RequestCode.Add_Post, ms.ToArray())))
+                                                using (ReaderWriter result_rw = new ReaderWriter(result_ms))
+                                                    Console.WriteLine("OK - PostID = " + result_rw.ReadULong());
+                                            }
+                                        }
+                                    }
+                                }
+                                return 0;
                         }
                     }
                 }
+                catch (Exception ex) { Console.WriteLine(ex.Message); }
             }
-            return 0;
+            return 1;
         }
 
         private static byte[] Request(ReaderWriter RW, RequestCode RQ, byte[] Payload)
