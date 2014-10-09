@@ -8,34 +8,24 @@ namespace TA.SharpBooru.Server
 {
     public class Server : IDisposable
     {
-        private List<Thread> _RunningThreads = new List<Thread>();
-        private object _ListLock = new object();
-        private bool _IsRunning = true;
+        private SThreadPool _ThreadPool;
         private ServerBooru _Booru;
         private Logger _Logger;
 
         public Server(ServerBooru Booru, Logger Logger)
         {
+            _ThreadPool = new SThreadPool(4);
             _Booru = Booru;
             _Logger = Logger;
         }
 
         public void AddAcceptedSocket(Socket Socket)
         {
-            Thread thread = new Thread(new ThreadStart(() => _ClientHandlerStage1(Socket)));
-            thread.Name = "ClientHandler";
-            thread.Start();
-            lock (_ListLock)
-                _RunningThreads.Add(thread);
+            Action action = () => _ClientHandlerStage1(Socket);
+            _ThreadPool.Queue(action);
         }
 
-        public void Dispose()
-        {
-            _IsRunning = false;
-            lock (_ListLock)
-                foreach (Thread thread in _RunningThreads)
-                    thread.Abort();
-        }
+        public void Dispose() { _ThreadPool.Dispose(); }
 
         private void _ClientHandlerStage1(Socket Socket)
         {
@@ -46,7 +36,7 @@ namespace TA.SharpBooru.Server
             }
             catch (Exception ex)
             {
-                if (_IsRunning)
+                if (_ThreadPool.IsRunning)
                     _Logger.LogException("ClientHandlerStage1", ex);
             }
             finally { Socket.Dispose(); }
@@ -57,7 +47,7 @@ namespace TA.SharpBooru.Server
             using (ReaderWriter rw = new ReaderWriter(Stream))
             {
                 BooruUser user = _Booru.DefaultUser;
-                while (_IsRunning)
+                while (_ThreadPool.IsRunning)
                 {
                     RequestCode requestCode = (RequestCode)rw.ReadUShort();
                     if (requestCode != RequestCode.Disconnect)
@@ -151,7 +141,7 @@ namespace TA.SharpBooru.Server
                 case RequestCode.Search_String: //User limitations?
                     {
                         string pattern = RW.ReadString();
-			List<ulong> ids = _Booru.Search(User, pattern);
+                        List<ulong> ids = _Booru.Search(User, pattern);
                         RW.Write((uint)ids.Count);
                         foreach (ulong id in ids)
                             RW.Write(id);
