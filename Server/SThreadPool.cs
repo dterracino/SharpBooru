@@ -48,6 +48,9 @@ namespace TA.SharpBooru
                 _IsRunning = false;
                 lock (_Queue)
                     _Queue.Clear();
+                for (ushort i = 0; i < _Threads.Length; i++)
+                    if (_Threads[i].IsAlive)
+                        _Threads[i].Abort();
             }
         }
 
