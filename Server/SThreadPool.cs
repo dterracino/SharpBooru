@@ -17,14 +17,14 @@ namespace TA.SharpBooru
         {
             _IsRunning = true;
             _Threads = new Thread[ThreadCount];
+            _Event = new AutoResetEvent(false);
+            _Queue = new Queue<Action>(128);
             for (ushort i = 0; i < ThreadCount; i++)
             {
                 _Threads[i] = new Thread(_ThreadMethod);
                 _Threads[i].Name = "SThreadPool";
                 _Threads[i].Start();
             }
-            _Event = new AutoResetEvent(false);
-            _Queue = new Queue<Action>(128);
         }
 
         public void Queue(Action Action)
@@ -60,7 +60,7 @@ namespace TA.SharpBooru
 
         private void _ThreadMethod()
         {
-            while (true)
+            while (_IsRunning)
             {
                 Action currentAction = null;
                 lock (_Queue)
