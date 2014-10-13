@@ -125,7 +125,7 @@ namespace TA.SharpBooru.Server
 
         public BooruTagList SearchTags(string Term)
         {
-            DataTable tagTable = _DB.ExecuteTable(SQLStatements.GetTagsByTerm, "%" + Term + "%");
+            DataTable tagTable = _DB.ExecuteTable(SQLStatements.GetTagsByTerm, Term.ToLower() + "%");
             return BooruTagList.FromTable(tagTable);
             //TODO Aliases support
         }
