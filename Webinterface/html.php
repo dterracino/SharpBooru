@@ -13,7 +13,6 @@ function html_header($title)
 	echo $title . "</title>";
 	echo '<link rel="stylesheet" type="text/css" href="style_static.css">';
 	echo '<link rel="stylesheet" type="text/css" href="style_dynamic.php">';
-	echo '<link rel="stylesheet" type="text/css" href="style_ac.css">';
 	echo '<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>';
 	echo '<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>';
 	echo '<script type="text/javascript" src="script.js"></script>';
