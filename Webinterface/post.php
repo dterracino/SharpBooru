@@ -22,7 +22,8 @@ if (!isset($id_err))
 {
 	try
 	{
-		$post = $booru->getPost($id);        
+		flush();
+		$post = $booru->getPost($id);
 		echo "<br>";
 		subsection_header("Tags");
 		foreach($post->tags as $tag)

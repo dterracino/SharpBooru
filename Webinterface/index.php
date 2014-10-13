@@ -5,6 +5,7 @@ require_once("booru.php");
 require_once("config.php");
 
 html_header("Booru");
+flush();
 
 if (isset($_GET["tags"]))
 	$tag_search = $_GET["tags"];
