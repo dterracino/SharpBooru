@@ -13,6 +13,9 @@ tag_types.color AS color FROM tags INNER JOIN tag_types ON type_id = tag_types.i
 SELECT tags.id AS id, tags.tag AS tag, tag_types.type AS type, tag_types.description AS description,
 tag_types.color AS color FROM (SELECT tags.* FROM tags INNER JOIN post_tags ON tags.id = post_tags.tag
 WHERE post_tags.post = ?) AS tags INNER JOIN tag_types ON type_id = tag_types.id";
+        public const string GetTagsByTerm = @"
+SELECT tags.id AS id, tags.tag AS tag, tag_types.type AS type, tag_types.description AS description,
+tag_types.color AS color FROM tags INNER JOIN tag_types WHERE tag LIKE ? LIMIT 7";
         public const string GetTagByTagString = @"
 SELECT tags.id AS id, tags.tag AS tag, tag_types.type AS type, tag_types.description AS description,
 tag_types.color AS color FROM tags INNER JOIN tag_types WHERE tag = ?";

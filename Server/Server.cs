@@ -161,6 +161,12 @@ namespace TA.SharpBooru.Server
                     User = _Booru.DefaultUser;
                     break;
 
+                case RequestCode.Search_Tags:
+                    {
+                        string term = RW.ReadString();
+                        _Booru.SearchTags(term).ToWriter(RW);
+                    } break;
+
                 case RequestCode.Add_Post:
                     using (var post = BooruPost.FromReader(RW))
                     {

@@ -46,6 +46,10 @@
         // void
         Logout = 23,
 
+	//In: string Term
+	//Out: List<BooruTag> Tags
+	Search_Tags = 24,
+
         //In: BooruPost Post
         //In: BooruTagList Tags
         //In: BooruImage Image

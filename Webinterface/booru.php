@@ -105,15 +105,38 @@ class Booru
 		return $array;
 	}
 
+	function searchTags($term)
+	{
+		$writer = new Writer();
+		$writer->WriteString($term);
+		$response = $this->request(24, $writer->GetBytes());
+		$writer->close();
+		$reader = new Reader($response);
+		$count = $reader->ReadUInt();
+		$tags = array();
+		for ($i = 0; $i < $count; $i++)
+		{
+			$reader->ReadULong(); //ID
+			$tag = new BooruTag();
+			$tag->tag = $reader->ReadString();
+			$reader->ReadString(); //Type
+			$reader->ReadString(); //Description
+			$color = $reader->ReadUInt();
+			$tag->color = "rgb(" . ($color >> 16 & 255) . "," . ($color >> 8 & 255) . "," . ($color & 255) . ")";
+			array_push($tags, $tag);
+		}
+		$reader->close();
+		return $tags;
+	}
+
 	function getPost($id)
 	{
 		$post = new BooruPost();
 		$writer = new Writer();
 		$writer->WriteULong($id);
+		$response = $this->request(0, $writer->GetBytes());
 		$id_data = $writer->GetBytes();
 		$writer->close();		
-
-		$response = $this->request(0, $id_data);
 		$reader = new Reader($response);
 		$reader->ReadULong(); //ID
 		$post->user = $reader->ReadString();
@@ -137,7 +160,7 @@ class Booru
 			$tag->tag = $reader->ReadString();
 			$reader->ReadString(); //Type
 			$reader->ReadString(); //Description
-			$color = $reader->ReadUInt(); //TODO Color
+			$color = $reader->ReadUInt();
 			$tag->color = "rgb(" . ($color >> 16 & 255) . "," . ($color >> 8 & 255) . "," . ($color & 255) . ")";
 			array_push($post->tags, $tag);
 		}

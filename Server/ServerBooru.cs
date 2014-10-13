@@ -123,6 +123,13 @@ namespace TA.SharpBooru.Server
             return ids;
         }
 
+        public BooruTagList SearchTags(string Term)
+        {
+            DataTable tagTable = _DB.ExecuteTable(SQLStatements.GetTagsByTerm, "%" + Term + "%");
+            return BooruTagList.FromTable(tagTable);
+            //TODO Aliases support
+        }
+
         public void DeletePost(BooruUser User, ulong PostID)
         {
             if (User.CanDeletePosts)

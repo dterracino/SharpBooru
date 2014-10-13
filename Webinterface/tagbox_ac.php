@@ -8,8 +8,11 @@ cache_headers(3600);
 echo "[";
 if (isset($_GET["term"]))
 {
-	$term = $_GET["term"];
-	//TODO Do search in database, output as list
+	$boorutags = $booru->SearchTags($_GET["term"]);
+	$tags = array();
+	foreach ($boorutags as $boorutag)
+		array_push($tags, $boorutag->tag);
+	echo implode(", ", $tags);
 }
 echo "]";
 
