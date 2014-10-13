@@ -65,7 +65,7 @@ if (session_loggedin())
 		echo "<br><br>";
 	}
 
-	echo '<form action="" method="POST" enctype="multipart/form-data">';
+	echo '<form method="POST" enctype="multipart/form-data">';
 	echo '<input type="hidden" name="MAX_FILE_SIZE" value="67108864">';
 	echo "<table>";
 	echo '<tr><td>File</td><td><input type="file" name="file" accept="image/*"></td></tr>';

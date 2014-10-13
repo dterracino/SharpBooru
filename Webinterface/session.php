@@ -44,7 +44,7 @@ function session_printform()
 {
 	if (session_loggedin())
 	{
-		echo '<form action="" method="POST">';
+		echo '<form method="POST">';
 		echo '<input type="hidden" name="__logout" value="logout">';
 		echo session_username();
 		echo ' <input type="submit" value="Logout">';
@@ -52,7 +52,7 @@ function session_printform()
 	}
 	else
 	{
-		echo '<form action="" method="POST">';
+		echo '<form method="POST">';
 		echo '<input style="width: 80px;" type="text" name="__un">';
 		echo ' <input style="width: 80px;" type="password" name="__pw">';
 		echo ' <input type="submit" value="Login">';
