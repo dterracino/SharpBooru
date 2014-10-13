@@ -39,7 +39,7 @@ echo "More tags:<br><i>panties red_hair</i><br><br>";
 echo "Private posts:<br><i>private=true</i><br><br>";
 echo "Eggy's images:<br><i>user=eggy</i><br><br>";
 echo "<br>";
-echo "Operators:<br><i><, <=, =, >, >=, !=</i><br><br>";
+echo "Operators:<br><i>&lt;, &lt;=, =, &gt;, &gt;=, !=</i><br><br>";
 echo "Fields:<br><i>";
  echo "ID, User, Private,<br>";
  echo "Width, Height,<br>";
