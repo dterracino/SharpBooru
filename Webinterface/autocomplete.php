@@ -8,6 +8,7 @@ cache_headers(3600);
 echo "[ ";
 if (isset($_GET["term"]))
 {
+	$parts = preg_split("/\s/", $_GET["term"], 0, PREG_SPLIT_NO_EMPTY);
 	$parts = explode(" ", $_GET["term"]);
 	$term = $parts[count($parts) - 1];
 	if (count($parts) > 1)

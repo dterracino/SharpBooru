@@ -13,6 +13,6 @@ window.onload = function () {
 			}
 		}
 
-	$(".tagbox").autocomplete({ source: "tagbox_ac.php", selectFirst: true });
+	$(".tagbox").autocomplete({ source: "autocomplete.php", selectFirst: true });
 	
 }
