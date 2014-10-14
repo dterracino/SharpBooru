@@ -7,6 +7,7 @@ $header_name = "Eggy's Booru";
 
 $header_links = array(
 	"Index" => "index.php",
+	"Random" => "random.php",
 	"GitHub" => "https://github.com/teamalpha5441"
 );
 
