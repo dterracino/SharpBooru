@@ -56,8 +56,8 @@ if (count($post_ids) > 0)
 	echo '<div class="wrap">';
 	foreach ($post_ids as $id)
 	{
-		echo '<a href="post.php?id=' . $id . '&amp;tags=' . $tag_search . '">';
-		echo '<div class="thumb"><img alt="#' . $id . '" src="image.php?id=' . $id . '"></div></a>';
+		echo '<div class="thumb"><a href="post.php?id=' . $id . '&amp;tags=' . $tag_search . '">';
+		echo '<img alt="#' . $id . '" src="image.php?id=' . $id . '"></a></div>';
 	}
 	echo '</div><br><div class="page_chooser">';
 	if ($total_pages > 0)
