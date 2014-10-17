@@ -46,9 +46,9 @@
         // void
         Logout = 23,
 
-	//In: string Term
-	//Out: List<BooruTag> Tags
-	Search_Tags = 24,
+        //In: string Term
+        //Out: List<BooruTag> Tags
+        Search_Tags = 24,
 
         //In: BooruPost Post
         //In: BooruTagList Tags
@@ -59,8 +59,12 @@
         //Add_Alias = 31
 
         //Edit_XXX = 40
-        
-        //Delete_XXX = 50
+
+        //In: ulong ID
+        Delete_Post = 50,
+
+        //Delete_Tag
+        //Delete_User
 
         //No need to send bytes after Disconnect
         //Disconnect instantly terminates the connection

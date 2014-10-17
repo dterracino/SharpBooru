@@ -175,6 +175,12 @@ namespace TA.SharpBooru.Server
                         ulong id = _Booru.AddPost(User, post);
                         RW.Write(id);
                     } break;
+
+                case RequestCode.Delete_Post:
+                    {
+                        ulong id = RW.ReadULong();
+                        _Booru.DeletePost(User, id);
+                    } break;
             }
         }
     }
