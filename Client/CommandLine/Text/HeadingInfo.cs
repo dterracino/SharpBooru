@@ -1,35 +1,10 @@
-﻿#region License
-// <copyright file="HeadingInfo.cs" company="Giacomo Stelluti Scala">
-//   Copyright 2015-2013 Giacomo Stelluti Scala
-// </copyright>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-#endregion
-#region Using Directives
+﻿// Copyright 2005-2013 Giacomo Stelluti Scala & Contributors. All rights reserved. See doc/License.md in the project root for license information.
+
 using System;
 using System.IO;
 using System.Reflection;
 using System.Text;
-
 using CommandLine.Infrastructure;
-
-#endregion
 
 namespace CommandLine.Text
 {
@@ -39,8 +14,8 @@ namespace CommandLine.Text
     /// </summary>
     public class HeadingInfo
     {
-        private readonly string _programName;
-        private readonly string _version;
+        private readonly string programName;
+        private readonly string version;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandLine.Text.HeadingInfo"/> class
@@ -62,10 +37,10 @@ namespace CommandLine.Text
         /// <exception cref="System.ArgumentException">Thrown when parameter <paramref name="programName"/> is null or empty string.</exception>
         public HeadingInfo(string programName, string version)
         {
-            Assumes.NotNullOrEmpty(programName, "programName");
+            if (string.IsNullOrWhiteSpace("programName")) throw new ArgumentException("programName");
 
-            _programName = programName;
-            _version = version;
+            this.programName = programName;
+            this.version = version;
         }
 
         /// <summary>
@@ -79,14 +54,14 @@ namespace CommandLine.Text
         {
             get
             {
-                var titleAttribute = ReflectionHelper.GetAttribute<AssemblyTitleAttribute>();
-                string title = titleAttribute == null
-                    ? ReflectionHelper.AssemblyFromWhichToPullInformation.GetName().Name
-                    : Path.GetFileNameWithoutExtension(titleAttribute.Title);
-                var versionAttribute = ReflectionHelper.GetAttribute<AssemblyInformationalVersionAttribute>();
-                string version = versionAttribute == null
-                    ? ReflectionHelper.AssemblyFromWhichToPullInformation.GetName().Version.ToString()
-                    : versionAttribute.InformationalVersion;
+                var title = ReflectionHelper.GetAttribute<AssemblyTitleAttribute>()
+                    .Return(
+                        titleAttribute => Path.GetFileNameWithoutExtension(titleAttribute.Title),
+                        ReflectionHelper.GetAssemblyName());
+                var version = ReflectionHelper.GetAttribute<AssemblyInformationalVersionAttribute>()
+                    .Return(
+                        versionAttribute => versionAttribute.InformationalVersion,
+                        ReflectionHelper.GetAssemblyVersion());
                 return new HeadingInfo(title, version);
             }
         }
@@ -107,14 +82,14 @@ namespace CommandLine.Text
         /// <returns>The <see cref="System.String"/> that contains the heading.</returns>
         public override string ToString()
         {
-            bool isVersionNull = string.IsNullOrEmpty(_version);
-            var builder = new StringBuilder(_programName.Length +
-                (!isVersionNull ? _version.Length + 1 : 0));
-            builder.Append(_programName);
+            bool isVersionNull = string.IsNullOrEmpty(this.version);
+            var builder = new StringBuilder(this.programName.Length +
+                (!isVersionNull ? this.version.Length + 1 : 0));
+            builder.Append(this.programName);
             if (!isVersionNull)
             {
                 builder.Append(' ');
-                builder.Append(_version);
+                builder.Append(this.version);
             }
 
             return builder.ToString();
@@ -130,11 +105,11 @@ namespace CommandLine.Text
         /// <exception cref="System.ArgumentNullException">Thrown when parameter <paramref name="writer"/> is null.</exception>
         public void WriteMessage(string message, TextWriter writer)
         {
-            Assumes.NotNullOrEmpty(message, "message");
-            Assumes.NotNull(writer, "writer");
+            if (string.IsNullOrWhiteSpace("message")) throw new ArgumentException("message");
+            if (writer == null) throw new ArgumentNullException("writer");
 
-            var builder = new StringBuilder(_programName.Length + message.Length + 2);
-            builder.Append(_programName);
+            var builder = new StringBuilder(this.programName.Length + message.Length + 2);
+            builder.Append(this.programName);
             builder.Append(": ");
             builder.Append(message);
             writer.WriteLine(builder.ToString());

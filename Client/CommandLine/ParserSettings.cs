@@ -1,130 +1,32 @@
-﻿#region License
-// <copyright file="ParserSettings.cs" company="Giacomo Stelluti Scala">
-//   Copyright 2015-2013 Giacomo Stelluti Scala
-// </copyright>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-#endregion
-#region Using Directives
+﻿// Copyright 2005-2013 Giacomo Stelluti Scala & Contributors. All rights reserved. See doc/License.md in the project root for license information.
+
 using System;
 using System.Globalization;
 using System.IO;
-using System.Threading;
+
 using CommandLine.Infrastructure;
-#endregion
 
 namespace CommandLine
 {
     /// <summary>
     /// Provides settings for <see cref="CommandLine.Parser"/>. Once consumed cannot be reused.
     /// </summary>
-    public sealed class ParserSettings
+    public class ParserSettings : IDisposable
     {
-        private const bool CaseSensitiveDefault = true;
-        private bool _disposed;
-        private bool _caseSensitive;
-        private bool _mutuallyExclusive;
-        private bool _ignoreUnknownArguments;
-        private TextWriter _helpWriter;
-        private CultureInfo _parsingCulture;
+        private bool disposed;
+        private bool caseSensitive;
+        private TextWriter helpWriter;
+        private bool ignoreUnknownArguments;
+        private CultureInfo parsingCulture;
+        private bool enableDashDash;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ParserSettings"/> class.
         /// </summary>
         public ParserSettings()
-            : this(CaseSensitiveDefault, false, false, null)
         {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ParserSettings"/> class,
-        /// setting the case comparison behavior.
-        /// </summary>
-        /// <param name="caseSensitive">If set to true, parsing will be case sensitive.</param>
-        public ParserSettings(bool caseSensitive)
-            : this(caseSensitive, false, false, null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ParserSettings"/> class,
-        /// setting the <see cref="System.IO.TextWriter"/> used for help method output.
-        /// </summary>
-        /// <param name="helpWriter">Any instance derived from <see cref="System.IO.TextWriter"/>,
-        /// default <see cref="System.Console.Error"/>. Setting this argument to null, will disable help screen.</param>
-        public ParserSettings(TextWriter helpWriter)
-            : this(CaseSensitiveDefault, false, false, helpWriter)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ParserSettings"/> class,
-        /// setting case comparison and help output options.
-        /// </summary>
-        /// <param name="caseSensitive">If set to true, parsing will be case sensitive.</param>
-        /// <param name="helpWriter">Any instance derived from <see cref="System.IO.TextWriter"/>,
-        /// default <see cref="System.Console.Error"/>. Setting this argument to null, will disable help screen.</param>
-        public ParserSettings(bool caseSensitive, TextWriter helpWriter)
-            : this(caseSensitive, false, false, helpWriter)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ParserSettings"/> class,
-        /// setting case comparison and mutually exclusive behaviors.
-        /// </summary>
-        /// <param name="caseSensitive">If set to true, parsing will be case sensitive.</param>
-        /// <param name="mutuallyExclusive">If set to true, enable mutually exclusive behavior.</param>
-        public ParserSettings(bool caseSensitive, bool mutuallyExclusive)
-            : this(caseSensitive, mutuallyExclusive, false, null)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ParserSettings"/> class,
-        /// setting case comparison, mutually exclusive behavior and help output option.
-        /// </summary>
-        /// <param name="caseSensitive">If set to true, parsing will be case sensitive.</param>
-        /// <param name="mutuallyExclusive">If set to true, enable mutually exclusive behavior.</param>
-        /// <param name="helpWriter">Any instance derived from <see cref="System.IO.TextWriter"/>,
-        /// default <see cref="System.Console.Error"/>. Setting this argument to null, will disable help screen.</param>
-        public ParserSettings(bool caseSensitive, bool mutuallyExclusive, TextWriter helpWriter)
-            : this(caseSensitive, mutuallyExclusive, false, helpWriter)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ParserSettings"/> class,
-        /// setting case comparison, mutually exclusive behavior and help output option.
-        /// </summary>
-        /// <param name="caseSensitive">If set to true, parsing will be case sensitive.</param>
-        /// <param name="mutuallyExclusive">If set to true, enable mutually exclusive behavior.</param>
-        /// <param name="ignoreUnknownArguments">If set to true, allow the parser to skip unknown argument, otherwise return a parse failure</param>
-        /// <param name="helpWriter">Any instance derived from <see cref="System.IO.TextWriter"/>,
-        /// default <see cref="System.Console.Error"/>. Setting this argument to null, will disable help screen.</param>
-        public ParserSettings(bool caseSensitive, bool mutuallyExclusive, bool ignoreUnknownArguments, TextWriter helpWriter)
-        {
-            CaseSensitive = caseSensitive;
-            MutuallyExclusive = mutuallyExclusive;
-            HelpWriter = helpWriter;
-            IgnoreUnknownArguments = ignoreUnknownArguments;
-            ParsingCulture = Thread.CurrentThread.CurrentCulture;
+            this.caseSensitive = true;
+            this.parsingCulture = CultureInfo.InvariantCulture;
         }
 
         /// <summary>
@@ -134,37 +36,30 @@ namespace CommandLine
         {
             Dispose(false);
         }
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether perform case sensitive comparisons.
         /// </summary>
         public bool CaseSensitive
         {
-            get
-            {
-                return _caseSensitive;
-            }
-
-            set
-            {
-                PopsicleSetter.Set(Consumed, ref _caseSensitive, value);
-            }
+            get { return this.caseSensitive; }
+            set { PopsicleSetter.Set(Consumed, ref this.caseSensitive, value); }
         }
 
         /// <summary>
-        /// Gets or sets a value indicating whether set a mutually exclusive behavior.
-        /// Default is set to false.
+        /// Gets or sets the culture used when parsing arguments to typed properties.
         /// </summary>
-        public bool MutuallyExclusive
+        /// <remarks>
+        /// Default is invariant culture, <see cref="System.Globalization.CultureInfo.InvariantCulture"/>.
+        /// </remarks>
+        public CultureInfo ParsingCulture
         {
-            get
-            {
-                return _mutuallyExclusive;
-            }
-
+            get { return this.parsingCulture; }
             set
             {
-                PopsicleSetter.Set(Consumed, ref _mutuallyExclusive, value);
+                if (value == null) throw new ArgumentNullException("value");
+
+                PopsicleSetter.Set(Consumed, ref this.parsingCulture, value); 
             }
         }
 
@@ -174,15 +69,8 @@ namespace CommandLine
         /// </summary>
         public TextWriter HelpWriter
         {
-            get
-            {
-                return _helpWriter;
-            }
-
-            set
-            {
-                PopsicleSetter.Set(Consumed, ref _helpWriter, value);
-            }
+            get { return this.helpWriter; }
+            set { PopsicleSetter.Set(Consumed, ref this.helpWriter, value); }
         }
 
         /// <summary>
@@ -198,33 +86,27 @@ namespace CommandLine
         /// </remarks>
         public bool IgnoreUnknownArguments
         {
-            get
-            {
-                return _ignoreUnknownArguments;
-            }
-
-            set
-            {
-                PopsicleSetter.Set(Consumed, ref _ignoreUnknownArguments, value);
-            }
+            get { return this.ignoreUnknownArguments; }
+            set { PopsicleSetter.Set(Consumed, ref this.ignoreUnknownArguments, value); }
         }
 
         /// <summary>
-        /// Gets or sets the culture used when parsing arguments to typed properties.
+        /// Gets or sets a value indicating whether enable double dash '--' syntax,
+        /// that forces parsing of all subsequent tokens as values.
         /// </summary>
-        /// <remarks>
-        /// Default is CurrentCulture of <see cref="System.Threading.Thread.CurrentThread"/>.
-        /// </remarks>
-        public CultureInfo ParsingCulture
+        public bool EnableDashDash
+        {
+            get { return this.enableDashDash; }
+            set { PopsicleSetter.Set(Consumed, ref this.enableDashDash, value); }
+        }
+
+        internal StringComparer NameComparer
         {
             get
             {
-                return _parsingCulture;
-            }
-
-            set
-            {
-                PopsicleSetter.Set(Consumed, ref _parsingCulture, value);
+                return CaseSensitive
+                    ? StringComparer.Ordinal
+                    : StringComparer.OrdinalIgnoreCase;
             }
         }
 
@@ -242,20 +124,20 @@ namespace CommandLine
 
         private void Dispose(bool disposing)
         {
-            if (_disposed)
+            if (this.disposed)
             {
                 return;
             }
 
             if (disposing)
             {
-                if (_helpWriter != null)
+                if (HelpWriter != null)
                 {
-                    _helpWriter.Dispose();
-                    _helpWriter = null;
+                    this.helpWriter.Dispose();
+                    this.helpWriter = null;
                 }
 
-                _disposed = true;
+                this.disposed = true;
             }
         }
     }

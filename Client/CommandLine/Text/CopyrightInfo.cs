@@ -1,34 +1,10 @@
-﻿#region License
-// <copyright file="CopyrightInfo.cs" company="Giacomo Stelluti Scala">
-//   Copyright 2015-2013 Giacomo Stelluti Scala
-// </copyright>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-#endregion
-#region Using Directives
+﻿// Copyright 2005-2013 Giacomo Stelluti Scala & Contributors. All rights reserved. See doc/License.md in the project root for license information.
+
 using System;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
-
 using CommandLine.Infrastructure;
-#endregion
 
 namespace CommandLine.Text
 {
@@ -41,11 +17,11 @@ namespace CommandLine.Text
         private const string DefaultCopyrightWord = "Copyright";
         private const string SymbolLower = "(c)";
         private const string SymbolUpper = "(C)";
-        private readonly AssemblyCopyrightAttribute _attribute;
-        private readonly bool _isSymbolUpper;
-        private readonly int[] _copyrightYears;
-        private readonly string _author;
-        private readonly int _builderSize;
+        private readonly AssemblyCopyrightAttribute attribute;
+        private readonly bool isSymbolUpper;
+        private readonly int[] copyrightYears;
+        private readonly string author;
+        private readonly int builderSize;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandLine.Text.CopyrightInfo"/> class
@@ -83,14 +59,14 @@ namespace CommandLine.Text
         /// <exception cref="System.ArgumentOutOfRangeException">Thrown when parameter <paramref name="copyrightYears"/> is not supplied.</exception>
         public CopyrightInfo(bool isSymbolUpper, string author, params int[] copyrightYears)
         {
-            Assumes.NotNullOrEmpty(author, "author");
-            Assumes.NotZeroLength(copyrightYears, "copyrightYears");
+            if (string.IsNullOrWhiteSpace(author)) throw new ArgumentException("author");
+            if (copyrightYears.Length == 0) throw new ArgumentOutOfRangeException("copyrightYears");
 
             const int ExtraLength = 10;
-            _isSymbolUpper = isSymbolUpper;
-            _author = author;
-            _copyrightYears = copyrightYears;
-            _builderSize = 12 + author.Length + (4 * copyrightYears.Length) + ExtraLength;
+            this.isSymbolUpper = isSymbolUpper;
+            this.author = author;
+            this.copyrightYears = copyrightYears;
+            this.builderSize = 12 + author.Length + (4 * copyrightYears.Length) + ExtraLength;
         }
 
         /// <summary>
@@ -107,7 +83,7 @@ namespace CommandLine.Text
         /// <param name="attribute">The attribute which text to use.</param>
         private CopyrightInfo(AssemblyCopyrightAttribute attribute)
         {
-            _attribute = attribute;
+            this.attribute = attribute;
         }
 
         /// <summary>
@@ -121,20 +97,19 @@ namespace CommandLine.Text
             get
             {
                 // if an exact copyright string has been specified, it takes precedence
-                var copyright = ReflectionHelper.GetAttribute<AssemblyCopyrightAttribute>();
-                if (copyright != null)
+                var copyrightAttr = ReflectionHelper.GetAttribute<AssemblyCopyrightAttribute>();
+                switch (copyrightAttr.Tag)
                 {
-                    return new CopyrightInfo(copyright);
+                    case MaybeType.Just:
+                        return new CopyrightInfo(copyrightAttr.FromJust());
+                    default:
+                        // if no copyright attribute exist but a company attribute does, use it as copyright holder
+                        return new CopyrightInfo(
+                                ReflectionHelper.GetAttribute<AssemblyCompanyAttribute>().FromJust(
+                                    new InvalidOperationException("CopyrightInfo::Default requires that you define AssemblyCopyrightAttribute or AssemblyCompanyAttribute.")
+                                ).Company,
+                                DateTime.Now.Year);
                 }
-
-                // if no copyright attribute exist but a company attribute does, use it as copyright holder
-                var company = ReflectionHelper.GetAttribute<AssemblyCompanyAttribute>();
-                if (company != null)
-                {
-                    return new CopyrightInfo(company.Company, DateTime.Now.Year);
-                }
-
-                throw new InvalidOperationException(SR.InvalidOperationException_CopyrightInfoRequiresAssemblyCopyrightAttributeOrAssemblyCompanyAttribute);
             }
         }
 
@@ -162,19 +137,19 @@ namespace CommandLine.Text
         /// <returns>The <see cref="System.String"/> that contains the copyright.</returns>
         public override string ToString()
         {
-            if (_attribute != null)
+            if (this.attribute != null)
             {
-                return _attribute.Copyright;
+                return this.attribute.Copyright;
             }
 
-            var builder = new StringBuilder(_builderSize);
+            var builder = new StringBuilder(this.builderSize);
             builder.Append(CopyrightWord);
             builder.Append(' ');
-            builder.Append(_isSymbolUpper ? SymbolUpper : SymbolLower);
+            builder.Append(this.isSymbolUpper ? SymbolUpper : SymbolLower);
             builder.Append(' ');
-            builder.Append(FormatYears(_copyrightYears));
+            builder.Append(FormatYears(this.copyrightYears));
             builder.Append(' ');
-            builder.Append(_author);
+            builder.Append(this.author);
             return builder.ToString();
         }
 

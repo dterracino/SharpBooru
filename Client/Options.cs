@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Reflection;
 using CommandLine;
 
@@ -7,22 +6,16 @@ namespace TA.SharpBooru
 {
     internal class Options
     {
-        [VerbOption("add")]
-        public AddOptions AddVerb { get; set; }
-    }
-
-    internal class CommonOptions
-    {
-        [Option('s', "socket", DefaultValue = "socket.sock", Required = false)]
+        [Option('s', "socket", DefaultValue = "socket.sock", Required = false, HelpText = "The UNIX socket")]
         public string Socket { get; set; }
 
-        [Option('u', "username", DefaultValue = null, Required = false)]
+        [Option('u', "username", Required = false, HelpText = "Your username")]
         public string Username { get; set; }
 
-        [Option('p', "password", DefaultValue = null, Required = false)]
+        [Option('p', "password", Required = false, HelpText = "Your password")]
         public string Password { get; set; }
 
-        [HelpOption]
+        /*
         public string GetUsage()
         {
             var sb = new StringBuilder();
@@ -50,6 +43,7 @@ namespace TA.SharpBooru
 
             return sb.ToString();
         }
+        */
 
         private string GetAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
         {
@@ -58,24 +52,25 @@ namespace TA.SharpBooru
         }
     }
 
-    internal class AddOptions : CommonOptions
+    [Verb("add", HelpText = "Add a post")]
+    internal class AddOptions : Options
     {
-        [Option('i', "image", Required = true)]
+        [Option('i', "image", Required = true, HelpText = "The posts image")]
         public string ImagePath { get; set; }
 
-        [Option('t', "tags", Required = true)]
+        [Option('t', "tags", Required = true, HelpText = "The posts tags")]
         public string Tags { get; set; }
 
-        [Option('q', "source", DefaultValue = "", Required = false)]
+        [Option('q', "source", Required = false, HelpText = "The image source")]
         public string Source { get; set; }
 
-        [Option('d', "description", DefaultValue = "", Required = false)]
+        [Option('d', "description", Required = false, HelpText = "Comments/Description")]
         public string Description { get; set; }
 
-        [Option('r', "rating", DefaultValue = (byte)7, Required = false)]
+        [Option('r', "rating", DefaultValue = (byte)7, Required = false, HelpText = "The content rating")]
         public byte Rating { get; set; }
 
-        [Option('p', "private", DefaultValue = false, Required = false)]
+        [Option('p', "private", DefaultValue = false, Required = false, HelpText = "Private")]
         public bool Private { get; set; }
     }
 }

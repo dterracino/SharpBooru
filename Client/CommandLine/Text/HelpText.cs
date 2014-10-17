@@ -1,34 +1,11 @@
-#region License
-// <copyright file="HelpText.cs" company="Giacomo Stelluti Scala">
-//   Copyright 2015-2013 Giacomo Stelluti Scala
-// </copyright>
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-#endregion
-#region Using Directives
+// Copyright 2005-2013 Giacomo Stelluti Scala & Contributors. All rights reserved. See doc/License.md in the project root for license information.
+
 using System;
 using System.Collections.Generic;
 using System.Text;
-using CommandLine.Extensions;
+using System.Linq;
 using CommandLine.Infrastructure;
-
-#endregion
+using CommandLine.Core;
 
 namespace CommandLine.Text
 {
@@ -40,26 +17,22 @@ namespace CommandLine.Text
     {
         private const int BuilderCapacity = 128;
         private const int DefaultMaximumLength = 80; // default console width
-        private const string DefaultRequiredWord = "Required.";
-        private readonly StringBuilder _preOptionsHelp;
-        private readonly StringBuilder _postOptionsHelp;
-        private readonly BaseSentenceBuilder _sentenceBuilder;
-        private int? _maximumDisplayWidth;
-        private string _heading;
-        private string _copyright;
-        private bool _additionalNewLineAfterOption;
-        private StringBuilder _optionsHelp;
-        private bool _addDashesToOption;
+        private readonly StringBuilder preOptionsHelp;
+        private readonly StringBuilder postOptionsHelp;
+        private readonly SentenceBuilder sentenceBuilder;
+        private int? maximumDisplayWidth;
+        private string heading;
+        private string copyright;
+        private bool additionalNewLineAfterOption;
+        private StringBuilder optionsHelp;
+        private bool addDashesToOption;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandLine.Text.HelpText"/> class.
         /// </summary>
         public HelpText()
+            : this(SentenceBuilder.CreateDefault(), string.Empty, string.Empty)
         {
-            _preOptionsHelp = new StringBuilder(BuilderCapacity);
-            _postOptionsHelp = new StringBuilder(BuilderCapacity);
-
-            _sentenceBuilder = BaseSentenceBuilder.CreateBuiltIn();
         }
 
         /// <summary>
@@ -67,14 +40,11 @@ namespace CommandLine.Text
         /// specifying the sentence builder.
         /// </summary>
         /// <param name="sentenceBuilder">
-        /// A <see cref="BaseSentenceBuilder"/> instance.
+        /// A <see cref="SentenceBuilder"/> instance.
         /// </param>
-        public HelpText(BaseSentenceBuilder sentenceBuilder)
-            : this()
+        public HelpText(SentenceBuilder sentenceBuilder)
+            : this(sentenceBuilder, string.Empty, string.Empty)
         {
-            Assumes.NotNull(sentenceBuilder, "sentenceBuilder");
-
-            _sentenceBuilder = sentenceBuilder;
         }
 
         /// <summary>
@@ -84,25 +54,19 @@ namespace CommandLine.Text
         /// <param name="heading">An heading string or an instance of <see cref="CommandLine.Text.HeadingInfo"/>.</param>
         /// <exception cref="System.ArgumentException">Thrown when parameter <paramref name="heading"/> is null or empty string.</exception>
         public HelpText(string heading)
-            : this()
+            : this(SentenceBuilder.CreateDefault(), heading, string.Empty)
         {
-            Assumes.NotNullOrEmpty(heading, "heading");
-
-            _heading = heading;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandLine.Text.HelpText"/> class
         /// specifying the sentence builder and heading string.
         /// </summary>
-        /// <param name="sentenceBuilder">A <see cref="BaseSentenceBuilder"/> instance.</param>
+        /// <param name="sentenceBuilder">A <see cref="SentenceBuilder"/> instance.</param>
         /// <param name="heading">A string with heading or an instance of <see cref="CommandLine.Text.HeadingInfo"/>.</param>
-        public HelpText(BaseSentenceBuilder sentenceBuilder, string heading)
-            : this(heading)
+        public HelpText(SentenceBuilder sentenceBuilder, string heading)
+            : this(sentenceBuilder, heading, string.Empty)
         {
-            Assumes.NotNull(sentenceBuilder, "sentenceBuilder");
-
-            _sentenceBuilder = sentenceBuilder;
         }
 
         /// <summary>
@@ -111,75 +75,33 @@ namespace CommandLine.Text
         /// </summary>
         /// <param name="heading">A string with heading or an instance of <see cref="CommandLine.Text.HeadingInfo"/>.</param>
         /// <param name="copyright">A string with copyright or an instance of <see cref="CommandLine.Text.CopyrightInfo"/>.</param>
-        /// <exception cref="System.ArgumentException">Thrown when one or more parameters <paramref name="heading"/> are null or empty strings.</exception>
+        /// <exception cref="System.ArgumentNullException">Thrown when one or more parameters are null or empty strings.</exception>
         public HelpText(string heading, string copyright)
-            : this()
+            : this(SentenceBuilder.CreateDefault(), heading, copyright)
         {
-            Assumes.NotNullOrEmpty(heading, "heading");
-            Assumes.NotNullOrEmpty(copyright, "copyright");
-
-            _heading = heading;
-            _copyright = copyright;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="CommandLine.Text.HelpText"/> class
         /// specifying heading and copyright strings.
         /// </summary>
-        /// <param name="sentenceBuilder">A <see cref="BaseSentenceBuilder"/> instance.</param>
+        /// <param name="sentenceBuilder">A <see cref="SentenceBuilder"/> instance.</param>
         /// <param name="heading">A string with heading or an instance of <see cref="CommandLine.Text.HeadingInfo"/>.</param>
         /// <param name="copyright">A string with copyright or an instance of <see cref="CommandLine.Text.CopyrightInfo"/>.</param>
-        /// <exception cref="System.ArgumentException">Thrown when one or more parameters <paramref name="heading"/> are null or empty strings.</exception>
-        public HelpText(BaseSentenceBuilder sentenceBuilder, string heading, string copyright)
-            : this(heading, copyright)
+        /// <exception cref="System.ArgumentNullException">Thrown when one or more parameters are null or empty strings.</exception>
+        public HelpText(SentenceBuilder sentenceBuilder, string heading, string copyright)
         {
-            Assumes.NotNull(sentenceBuilder, "sentenceBuilder");
+            if (sentenceBuilder == null) throw new ArgumentNullException("sentenceBuilder");
+            if (heading == null) throw new ArgumentNullException("heading");
+            if (copyright == null) throw new ArgumentNullException("copyright");
 
-            _sentenceBuilder = sentenceBuilder;
+            this.preOptionsHelp = new StringBuilder(BuilderCapacity);
+            this.postOptionsHelp = new StringBuilder(BuilderCapacity);
+
+            this.sentenceBuilder = sentenceBuilder;
+            this.heading = heading;
+            this.copyright = copyright;
         }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CommandLine.Text.HelpText"/> class
-        /// specifying heading and copyright strings.
-        /// </summary>
-        /// <param name="heading">A string with heading or an instance of <see cref="CommandLine.Text.HeadingInfo"/>.</param>
-        /// <param name="copyright">A string with copyright or an instance of <see cref="CommandLine.Text.CopyrightInfo"/>.</param>
-        /// <param name="options">The instance that collected command line arguments parsed with <see cref="Parser"/> class.</param>
-        /// <exception cref="System.ArgumentException">Thrown when one or more parameters <paramref name="heading"/> are null or empty strings.</exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "When DoAddOptions is called with fireEvent=false virtual member is not called")]
-        public HelpText(string heading, string copyright, object options)
-            : this()
-        {
-            Assumes.NotNullOrEmpty(heading, "heading");
-            Assumes.NotNullOrEmpty(copyright, "copyright");
-            Assumes.NotNull(options, "options");
-
-            _heading = heading;
-            _copyright = copyright;
-            DoAddOptions(options, DefaultRequiredWord, MaximumDisplayWidth, fireEvent: false);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CommandLine.Text.HelpText"/> class
-        /// specifying heading and copyright strings.
-        /// </summary>
-        /// <param name="sentenceBuilder">A <see cref="BaseSentenceBuilder"/> instance.</param>
-        /// <param name="heading">A string with heading or an instance of <see cref="CommandLine.Text.HeadingInfo"/>.</param>
-        /// <param name="copyright">A string with copyright or an instance of <see cref="CommandLine.Text.CopyrightInfo"/>.</param>
-        /// <param name="options">The instance that collected command line arguments parsed with <see cref="Parser"/> class.</param>
-        /// <exception cref="System.ArgumentException">Thrown when one or more parameters <paramref name="heading"/> are null or empty strings.</exception>
-        public HelpText(BaseSentenceBuilder sentenceBuilder, string heading, string copyright, object options)
-            : this(heading, copyright, options)
-        {
-            Assumes.NotNull(sentenceBuilder, "sentenceBuilder");
-
-            _sentenceBuilder = sentenceBuilder;
-        }
-
-        /// <summary>
-        /// Occurs when an option help text is formatted.
-        /// </summary>
-        public event EventHandler<FormatOptionHelpTextEventArgs> FormatOptionHelpText;
 
         /// <summary>
         /// Gets or sets the heading string.
@@ -189,13 +111,14 @@ namespace CommandLine.Text
         {
             get
             {
-                return _heading;
+                return this.heading;
             }
 
             set
             {
-                Assumes.NotNullOrEmpty(value, "value");
-                _heading = value;
+                if (value == null) throw new ArgumentNullException("value");
+
+                this.heading = value;
             }
         }
 
@@ -207,13 +130,14 @@ namespace CommandLine.Text
         {
             get
             {
-                return _heading;
+                return this.heading;
             }
 
             set
             {
-                Assumes.NotNullOrEmpty(value, "value");
-                _copyright = value;
+                if (value == null) throw new ArgumentNullException("value");
+
+                this.copyright = value;
             }
         }
 
@@ -223,19 +147,18 @@ namespace CommandLine.Text
         /// <value>The maximum width of the display.</value>
         public int MaximumDisplayWidth
         {
-            get { return _maximumDisplayWidth.HasValue ? _maximumDisplayWidth.Value : DefaultMaximumLength; }
-
-            set { _maximumDisplayWidth = value; }
+            get { return this.maximumDisplayWidth.HasValue ? this.maximumDisplayWidth.Value : DefaultMaximumLength; }
+            set { this.maximumDisplayWidth = value; }
         }
 
         /// <summary>
         /// Gets or sets a value indicating whether the format of options should contain dashes.
-        /// It modifies behavior of <see cref="AddOptions(System.Object)"/> method.
+        /// It modifies behavior of <see cref="AddOptions{T}(T)"/> method.
         /// </summary>
         public bool AddDashesToOption
         {
-            get { return this._addDashesToOption; }
-            set { this._addDashesToOption = value; }
+            get { return this.addDashesToOption; }
+            set { this.addDashesToOption = value; }
         }
 
         /// <summary>
@@ -243,16 +166,16 @@ namespace CommandLine.Text
         /// </summary>
         public bool AdditionalNewLineAfterOption
         {
-            get { return _additionalNewLineAfterOption; }
-            set { _additionalNewLineAfterOption = value; }
+            get { return this.additionalNewLineAfterOption; }
+            set { this.additionalNewLineAfterOption = value; }
         }
 
         /// <summary>
-        /// Gets the <see cref="BaseSentenceBuilder"/> instance specified in constructor.
+        /// Gets the <see cref="SentenceBuilder"/> instance specified in constructor.
         /// </summary>
-        public BaseSentenceBuilder SentenceBuilder
+        public SentenceBuilder SentenceBuilder
         {
-            get { return _sentenceBuilder; }
+            get { return this.sentenceBuilder; }
         }
 
         /// <summary>
@@ -261,105 +184,116 @@ namespace CommandLine.Text
         /// <returns>
         /// An instance of <see cref="CommandLine.Text.HelpText"/> class.
         /// </returns>
-        /// <param name='options'>The instance that collected command line arguments parsed with <see cref="Parser"/> class.</param>
-        public static HelpText AutoBuild(object options)
-        {
-            return AutoBuild(options, (Action<HelpText>)null);
-        }
-
-        /// <summary>
-        /// Creates a new instance of the <see cref="CommandLine.Text.HelpText"/> class using common defaults.
-        /// </summary>
-        /// <returns>
-        /// An instance of <see cref="CommandLine.Text.HelpText"/> class.
-        /// </returns>
-        /// <param name='options'>The instance that collected command line arguments parsed with <see cref="Parser"/> class.</param>
-        /// <param name='onError'>A delegate used to customize the text block for reporting parsing errors.</param>
+        /// <param name='parserResult'>The <see cref="CommandLine.ParserResult{T}"/> containing the instance that collected command line arguments parsed with <see cref="CommandLine.Parser"/> class.</param>
+        /// <param name='onError'>A delegate used to customize the text block of reporting parsing errors text block.</param>
         /// <param name="verbsIndex">If true the output style is consistent with verb commands (no dashes), otherwise it outputs options.</param>
-        public static HelpText AutoBuild(object options, Action<HelpText> onError, bool verbsIndex = false)
+        /// <remarks>The parameter <paramref name="verbsIndex"/> is not ontly a metter of formatting, it controls whether to handle verbs or options.</remarks>
+        public static HelpText AutoBuild<T>(ParserResult<T> parserResult, Func<HelpText, HelpText> onError, bool verbsIndex = false)
         {
             var auto = new HelpText
-            {
-                Heading = HeadingInfo.Default,
-                Copyright = CopyrightInfo.Default,
-                AdditionalNewLineAfterOption = true,
-                AddDashesToOption = !verbsIndex
-            };
+                {
+                    Heading = HeadingInfo.Default,
+                    Copyright = CopyrightInfo.Default,
+                    AdditionalNewLineAfterOption = true,
+                    AddDashesToOption = !verbsIndex
+                };
 
             if (onError != null)
             {
-                var list = ReflectionHelper.RetrievePropertyList<ParserStateAttribute>(options);
-                if (list != null)
+                if (FilterMeaningfulErrors(parserResult.Errors).Any())
                 {
-                    onError(auto);
+                    auto = onError(auto);
                 }
             }
 
             var license = ReflectionHelper.GetAttribute<AssemblyLicenseAttribute>();
-            if (license != null)
+            if (license.IsJust())
             {
-                license.AddToHelpText(auto, true);
+                license.FromJust().AddToHelpText(auto, true);
             }
 
             var usage = ReflectionHelper.GetAttribute<AssemblyUsageAttribute>();
-            if (usage != null)
+            if (usage.IsJust())
             {
-                usage.AddToHelpText(auto, true);
+                usage.FromJust().AddToHelpText(auto, true);
             }
 
-            auto.AddOptions(options);
+            if (verbsIndex && parserResult.VerbTypes.IsJust())
+            {
+                auto.AddVerbs(parserResult.VerbTypes.FromJust().ToArray());
+            }
+            else
+            {
+                auto.AddOptions(parserResult.Value);
+            }
 
             return auto;
         }
 
         /// <summary>
-        /// Creates a new instance of the <see cref="CommandLine.Text.HelpText"/> class using common defaults,
-        /// for verb commands scenario.
+        /// Creates a new instance of the <see cref="CommandLine.Text.HelpText"/> class,
+        /// automatically handling verbs or options scenario.
         /// </summary>
+        /// <param name='parserResult'>The <see cref="CommandLine.ParserResult{T}"/> containing the instance that collected command line arguments parsed with <see cref="CommandLine.Parser"/> class.</param>
         /// <returns>
         /// An instance of <see cref="CommandLine.Text.HelpText"/> class.
         /// </returns>
-        /// <param name='options'>The instance that collected command line arguments parsed with <see cref="Parser"/> class.</param>
-        /// <param name="verb">The verb command invoked.</param>
-        public static HelpText AutoBuild(object options, string verb)
+        /// <remarks>This feature is meant to be invoked automatically by the parser, setting the HelpWriter property
+        /// of <see cref="CommandLine.ParserSettings"/>.</remarks>
+        public static HelpText AutoBuild<T>(ParserResult<T> parserResult)
         {
-            bool found;
-            var instance = Parser.InternalGetVerbOptionsInstanceByName(verb, options, out found);
-            var verbsIndex = verb == null || !found;
-            var target = verbsIndex ? options : instance;
-            return HelpText.AutoBuild(target, current => HelpText.DefaultParsingErrorsHandler(target, current), verbsIndex);
+            switch (parserResult.Tag)
+            {
+                case ParserResultType.Options:
+                    return HelpText.AutoBuild(parserResult, current => HelpText.DefaultParsingErrorsHandler(parserResult, current));
+
+                case ParserResultType.Verbs:
+                    var helpVerbErr = parserResult.Errors.OfType<HelpVerbRequestedError>();
+                    if (helpVerbErr.Any())
+                    {
+                        var err = helpVerbErr.Single();
+                        if (err.Matched)
+                        {
+                            var pr = ParserResult.Create(ParserResultType.Options, Activator.CreateInstance(err.Type), Enumerable.Empty<Error>());
+                            return HelpText.AutoBuild(pr, current => HelpText.DefaultParsingErrorsHandler(pr, current));
+                        }
+                    }
+                    return HelpText.AutoBuild(parserResult, current => HelpText.DefaultParsingErrorsHandler(parserResult, current), true);
+
+                default:
+                    throw new InvalidOperationException();
+            }
         }
 
         /// <summary>
         /// Supplies a default parsing error handler implementation.
         /// </summary>
-        /// <param name="options">The instance that collects parsed arguments parsed and associates <see cref="CommandLine.ParserStateAttribute"/>
-        /// to a property of type <see cref="IParserState"/>.</param>
+        /// <param name='parserResult'>The <see cref="CommandLine.ParserResult{T}"/> containing the instance that collected command line arguments parsed with <see cref="CommandLine.Parser"/> class.</param>
         /// <param name="current">The <see cref="CommandLine.Text.HelpText"/> instance.</param>
-        public static void DefaultParsingErrorsHandler(object options, HelpText current)
+        public static HelpText DefaultParsingErrorsHandler<T>(ParserResult<T> parserResult, HelpText current)
         {
-            var list = ReflectionHelper.RetrievePropertyList<ParserStateAttribute>(options);
-            if (list.Count == 0)
+            if (parserResult == null) throw new ArgumentNullException("parserResult");
+            if (current == null) throw new ArgumentNullException("current");
+
+            if (FilterMeaningfulErrors(parserResult.Errors).Empty())
             {
-                return;
+                return current;
             }
 
-            var parserState = (IParserState)list[0].Left.GetValue(options, null);
-            if (parserState == null || parserState.Errors.Count == 0)
+            var errors = HelpText.RenderParsingErrorsText(parserResult, current.SentenceBuilder.FormatError, 2); // indent with two spaces
+            if (string.IsNullOrEmpty(errors))
             {
-                return;
+                return current;
             }
 
-            var errors = current.RenderParsingErrorsText(options, 2); // indent with two spaces
-            if (!string.IsNullOrEmpty(errors))
+            current.AddPreOptionsLine(string.Concat(Environment.NewLine, current.SentenceBuilder.ErrorsHeadingText()));
+            var lines = errors.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
+            foreach (var line in lines)
             {
-                current.AddPreOptionsLine(string.Concat(Environment.NewLine, current.SentenceBuilder.ErrorsHeadingText));
-                var lines = errors.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
-                foreach (var line in lines)
-                {
-                    current.AddPreOptionsLine(line);
-                }
+                current.AddPreOptionsLine(line);
             }
+
+            return current;
         }
 
         /// <summary>
@@ -377,9 +311,9 @@ namespace CommandLine.Text
         /// </summary>
         /// <param name="value">A <see cref="System.String"/> instance.</param>
         /// <exception cref="System.ArgumentNullException">Thrown when parameter <paramref name="value"/> is null or empty string.</exception>
-        public void AddPreOptionsLine(string value)
+        public HelpText AddPreOptionsLine(string value)
         {
-            AddPreOptionsLine(value, MaximumDisplayWidth);
+            return this.AddPreOptionsLine(value, MaximumDisplayWidth);
         }
 
         /// <summary>
@@ -387,9 +321,9 @@ namespace CommandLine.Text
         /// </summary>
         /// <param name="value">A <see cref="System.String"/> instance.</param>
         /// <exception cref="System.ArgumentNullException">Thrown when parameter <paramref name="value"/> is null or empty string.</exception>
-        public void AddPostOptionsLine(string value)
+        public HelpText AddPostOptionsLine(string value)
         {
-            AddLine(_postOptionsHelp, value);
+            return this.AddLine(this.postOptionsHelp, value);
         }
 
         /// <summary>
@@ -397,107 +331,80 @@ namespace CommandLine.Text
         /// </summary>
         /// <param name="options">The instance that collected command line arguments parsed with <see cref="Parser"/> class.</param>
         /// <exception cref="System.ArgumentNullException">Thrown when parameter <paramref name="options"/> is null.</exception>
-        public void AddOptions(object options)
+        public HelpText AddOptions<T>(T options)
         {
-            AddOptions(options, DefaultRequiredWord);
+            if (object.Equals(options, default(T))) throw new ArgumentNullException("options");
+
+            return this.AddOptionsImpl(this.GetOptionListFromType(options), SentenceBuilder.RequiredWord(), MaximumDisplayWidth);
+        }
+
+        /// <summary>
+        /// Adds a text block with verbs usage string.
+        /// </summary>
+        /// <param name="types">The array of <see cref="System.Type"/> with verb commands.</param>
+        /// <exception cref="System.ArgumentNullException">Thrown when parameter <paramref name="types"/> is null.</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">Thrown if <paramref name="types"/> array is empty.</exception>
+        public HelpText AddVerbs(params Type[] types)
+        {
+            if (types == null) throw new ArgumentNullException("types");
+            if (types.Length == 0) throw new ArgumentOutOfRangeException("types");
+
+            return this.AddOptionsImpl(this.AdaptVerbListToOptionList(types), SentenceBuilder.RequiredWord(), MaximumDisplayWidth);
         }
 
         /// <summary>
         /// Adds a text block with options usage string.
         /// </summary>
+        /// <param name="maximumLength">The maximum length of the help screen.</param>
         /// <param name="options">The instance that collected command line arguments parsed with the <see cref="Parser"/> class.</param>
-        /// <param name="requiredWord">The word to use when the option is required.</param>
-        /// <exception cref="System.ArgumentNullException">Thrown when parameter <paramref name="options"/> is null.</exception>
-        /// <exception cref="System.ArgumentNullException">Thrown when parameter <paramref name="requiredWord"/> is null or empty string.</exception>
-        public void AddOptions(object options, string requiredWord)
+        /// <exception cref="System.ArgumentNullException">Thrown when parameter <paramref name="options"/> is null.</exception>    
+        public HelpText AddOptions<T>(int maximumLength, T options)
         {
-            Assumes.NotNull(options, "options");
-            Assumes.NotNullOrEmpty(requiredWord, "requiredWord");
+            if (object.Equals(options, default(T))) throw new ArgumentNullException("options");
 
-            AddOptions(options, requiredWord, MaximumDisplayWidth);
+            return this.AddOptionsImpl(this.GetOptionListFromType(options), SentenceBuilder.RequiredWord(), maximumLength);
         }
 
         /// <summary>
-        /// Adds a text block with options usage string.
+        /// Adds a text block with verbs usage string.
         /// </summary>
-        /// <param name="options">The instance that collected command line arguments parsed with the <see cref="Parser"/> class.</param>
-        /// <param name="requiredWord">The word to use when the option is required.</param>
-        /// <param name="maximumLength">The maximum length of the help documentation.</param>
-        /// <exception cref="System.ArgumentNullException">Thrown when parameter <paramref name="options"/> is null.</exception>
-        /// <exception cref="System.ArgumentNullException">Thrown when parameter <paramref name="requiredWord"/> is null or empty string.</exception>
-        public void AddOptions(object options, string requiredWord, int maximumLength)
+        /// <param name="maximumLength">The maximum length of the help screen.</param>
+        /// <param name="types">The array of <see cref="System.Type"/> with verb commands.</param>
+        /// <exception cref="System.ArgumentNullException">Thrown when parameter <paramref name="types"/> is null.</exception>
+        /// <exception cref="System.ArgumentOutOfRangeException">Thrown if <paramref name="types"/> array is empty.</exception>
+        public HelpText AddVerbs(int maximumLength, params Type[] types)
         {
-            Assumes.NotNull(options, "options");
-            Assumes.NotNullOrEmpty(requiredWord, "requiredWord");
+            if (types == null) throw new ArgumentNullException("types");
+            if (types.Length == 0) throw new ArgumentOutOfRangeException("types");
 
-            DoAddOptions(options, requiredWord, maximumLength);
+            return this.AddOptionsImpl(this.AdaptVerbListToOptionList(types), SentenceBuilder.RequiredWord(), maximumLength);
         }
 
         /// <summary>
         /// Builds a string that contains a parsing error message.
         /// </summary>
-        /// <param name="options">An options target instance that collects parsed arguments parsed with the <see cref="CommandLine.ParserStateAttribute"/>
-        /// associated to a property of type <see cref="IParserState"/>.</param>
+        /// <param name='parserResult'>The <see cref="CommandLine.ParserResult{T}"/> containing the instance that collected command line arguments parsed with <see cref="CommandLine.Parser"/> class.</param>
+        /// <param name="formatError">The error formatting delegate.</param>
         /// <param name="indent">Number of spaces used to indent text.</param>
         /// <returns>The <see cref="System.String"/> that contains the parsing error message.</returns>
-        public string RenderParsingErrorsText(object options, int indent)
+        public static string RenderParsingErrorsText<T>(ParserResult<T> parserResult, Func<Error, string> formatError, int indent)
         {
-            var list = ReflectionHelper.RetrievePropertyList<ParserStateAttribute>(options);
-            if (list.Count == 0)
-            {
-                return string.Empty; // Or exception?
-            }
+            if (parserResult == null) throw new ArgumentNullException("parserResult");
 
-            var parserState = (IParserState)list[0].Left.GetValue(options, null);
-            if (parserState == null || parserState.Errors.Count == 0)
+            var meaningfulErrors = FilterMeaningfulErrors(parserResult.Errors);
+            if (meaningfulErrors.Empty())
             {
                 return string.Empty;
             }
 
             var text = new StringBuilder();
-            foreach (var e in parserState.Errors)
+            foreach (var error in meaningfulErrors)
             {
                 var line = new StringBuilder();
                 line.Append(indent.Spaces());
-                if (e.BadOption.ShortName != null)
-                {
-                    line.Append('-');
-                    line.Append(e.BadOption.ShortName);
-                    if (!string.IsNullOrEmpty(e.BadOption.LongName))
-                    {
-                        line.Append('/');
-                    }
-                }
 
-                if (!string.IsNullOrEmpty(e.BadOption.LongName))
-                {
-                    line.Append("--");
-                    line.Append(e.BadOption.LongName);
-                }
+                line.Append(formatError(error));
 
-                line.Append(" ");
-                line.Append(e.ViolatesRequired ?
-                    _sentenceBuilder.RequiredOptionMissingText :
-                    _sentenceBuilder.OptionWord);
-                if (e.ViolatesFormat)
-                {
-                    line.Append(" ");
-                    line.Append(_sentenceBuilder.ViolatesFormatText);
-                }
-
-                if (e.ViolatesMutualExclusiveness)
-                {
-                    if (e.ViolatesFormat || e.ViolatesRequired)
-                    {
-                        line.Append(" ");
-                        line.Append(_sentenceBuilder.AndWord);
-                    }
-
-                    line.Append(" ");
-                    line.Append(_sentenceBuilder.ViolatesMutualExclusivenessText);
-                }
-
-                line.Append('.');
                 text.AppendLine(line.ToString());
             }
 
@@ -511,77 +418,56 @@ namespace CommandLine.Text
         public override string ToString()
         {
             const int ExtraLength = 10;
-            var builder = new StringBuilder(GetLength(_heading) + GetLength(_copyright) +
-                GetLength(_preOptionsHelp) + GetLength(this._optionsHelp) + ExtraLength);
+            var builder = new StringBuilder(GetLength(this.heading) + GetLength(this.copyright) +
+                GetLength(this.preOptionsHelp) + GetLength(this.optionsHelp) + ExtraLength);
 
-            builder.Append(_heading);
-            if (!string.IsNullOrEmpty(_copyright))
+            builder.Append(this.heading);
+            if (!string.IsNullOrEmpty(this.copyright))
             {
                 builder.Append(Environment.NewLine);
-                builder.Append(_copyright);
+                builder.Append(this.copyright);
             }
 
-            if (_preOptionsHelp.Length > 0)
+            if (this.preOptionsHelp.Length > 0)
             {
                 builder.Append(Environment.NewLine);
-                builder.Append(_preOptionsHelp);
+                builder.Append(this.preOptionsHelp);
             }
 
-            if (this._optionsHelp != null && this._optionsHelp.Length > 0)
+            if (this.optionsHelp != null && this.optionsHelp.Length > 0)
             {
                 builder.Append(Environment.NewLine);
                 builder.Append(Environment.NewLine);
-                builder.Append(this._optionsHelp);
+                builder.Append(this.optionsHelp);
             }
 
-            if (_postOptionsHelp.Length > 0)
+            if (this.postOptionsHelp.Length > 0)
             {
                 builder.Append(Environment.NewLine);
-                builder.Append(_postOptionsHelp);
+                builder.Append(this.postOptionsHelp);
             }
 
             return builder.ToString();
         }
 
-        /// <summary>
-        /// The OnFormatOptionHelpText method also allows derived classes to handle the event without attaching a delegate.
-        /// This is the preferred technique for handling the event in a derived class.
-        /// </summary>
-        /// <param name="e">Data for the <see cref="FormatOptionHelpText"/> event.</param>
-        protected virtual void OnFormatOptionHelpText(FormatOptionHelpTextEventArgs e)
+        private static IEnumerable<Error> FilterMeaningfulErrors(IEnumerable<Error> errors)
         {
-            EventHandler<FormatOptionHelpTextEventArgs> handler = FormatOptionHelpText;
-
-            if (handler != null)
-            {
-                handler(this, e);
-            }
+            return errors.Where(
+                e => e.Tag != ErrorType.HelpRequestedError && e.Tag != ErrorType.HelpVerbRequestedError);
         }
 
         private static int GetLength(string value)
         {
-            if (value == null)
-            {
-                return 0;
-            }
-
-            return value.Length;
+            return value == null ? 0 : value.Length;
         }
 
         private static int GetLength(StringBuilder value)
         {
-            if (value == null)
-            {
-                return 0;
-            }
-
-            return value.Length;
+            return value == null ? 0 : value.Length;
         }
 
         private static void AddLine(StringBuilder builder, string value, int maximumLength)
         {
-            Assumes.NotNull(value, "value");
-
             if (builder.Length > 0)
             {
                 builder.Append(Environment.NewLine);
@@ -589,9 +475,9 @@ namespace CommandLine.Text
 
             do
             {
-                int wordBuffer = 0;
-                string[] words = value.Split(new[] { ' ' });
-                for (int i = 0; i < words.Length; i++)
+                var wordBuffer = 0;
+                var words = value.Split(new[] { ' ' });
+                for (var i = 0; i < words.Length; i++)
                 {
                     if (words[i].Length < (maximumLength - wordBuffer))
                     {
@@ -626,117 +512,135 @@ namespace CommandLine.Text
             builder.Append(value);
         }
 
-        private void DoAddOptions(object options, string requiredWord, int maximumLength, bool fireEvent = true)
+        private IEnumerable<OptionSpecification> GetOptionListFromType<T>(T options)
         {
-            var optionList = ReflectionHelper.RetrievePropertyAttributeList<BaseOptionAttribute>(options);
-            var optionHelp = ReflectionHelper.RetrieveMethodAttributeOnly<HelpOptionAttribute>(options);
-
-            if (optionHelp != null)
-            {
-                optionList.Add(optionHelp);
-            }
-
-            if (optionList.Count == 0)
-            {
-                return;
-            }
-
-            int maxLength = GetMaxLength(optionList);
-            this._optionsHelp = new StringBuilder(BuilderCapacity);
-            int remainingSpace = maximumLength - (maxLength + 6);
-            foreach (BaseOptionAttribute option in optionList)
-            {
-                AddOption(requiredWord, maxLength, option, remainingSpace, fireEvent);
-            }
+             return options.GetType().GetSpecifications(pi => Specification.FromProperty(pi))
+                .OfType<OptionSpecification>()
+                .Concat(new[] { this.CreateHelpEntry() });
         }
 
-        private void AddPreOptionsLine(string value, int maximumLength)
+        private IEnumerable<OptionSpecification> AdaptVerbListToOptionList(IEnumerable<Type> types)
         {
-            AddLine(_preOptionsHelp, value, maximumLength);
+            return (from verbTuple in Verb.SelectFromTypes(types)
+                   select new OptionSpecification(
+                       string.Empty,
+                       verbTuple.Item1.Name,
+                       false,
+                       string.Empty,
+                       -1,
+                       -1,
+                       Maybe.Nothing<object>(),
+                       typeof(bool),
+                       verbTuple.Item1.HelpText,
+                       string.Empty))
+                    .Concat(new[] { this.CreateHelpEntry() });
         }
 
-        private void AddOption(string requiredWord, int maxLength, BaseOptionAttribute option, int widthOfHelpText, bool fireEvent = true)
+        private HelpText AddOptionsImpl(IEnumerable<OptionSpecification> optionList, string requiredWord, int maximumLength)
         {
-            this._optionsHelp.Append("  ");
+            var maxLength = GetMaxLength(optionList);
+
+            this.optionsHelp = new StringBuilder(BuilderCapacity);
+
+            var remainingSpace = maximumLength - (maxLength + 6);
+
+            foreach (var option in optionList)
+            {
+                AddOption(requiredWord, maxLength, option, remainingSpace);
+            }
+
+            return this;
+        }
+
+        private OptionSpecification CreateHelpEntry()
+        {
+            return new OptionSpecification(string.Empty, "help", false, string.Empty, -1, -1, Maybe.Nothing<object>(), typeof(bool),
+                this.sentenceBuilder.HelpCommandText(this.AddDashesToOption), string.Empty);
+        }
+
+        private HelpText AddPreOptionsLine(string value, int maximumLength)
+        {
+            AddLine(this.preOptionsHelp, value, maximumLength);
+
+            return this;
+        }
+
+        private HelpText AddOption(string requiredWord, int maxLength, OptionSpecification option, int widthOfHelpText)
+        {
+            this.optionsHelp.Append("  ");
             var optionName = new StringBuilder(maxLength);
-            if (option.HasShortName)
+            if (option.ShortName.Length > 0)
             {
-                if (this._addDashesToOption)
+                if (this.addDashesToOption)
                 {
                     optionName.Append('-');
                 }
 
                 optionName.AppendFormat("{0}", option.ShortName);
                 
-                if (option.HasMetaValue)
+                if (option.MetaValue.Length > 0)
                 {
                     optionName.AppendFormat(" {0}", option.MetaValue);
                 }
 
-                if (option.HasLongName)
+                if (option.LongName.Length > 0)
                 {
                     optionName.Append(", ");
                 }
             }
 
-            if (option.HasLongName)
+            if (option.LongName.Length > 0)
             {
-                if (this._addDashesToOption)
+                if (this.addDashesToOption)
                 {
                     optionName.Append("--");
                 }
 
                 optionName.AppendFormat("{0}", option.LongName);
 
-                if (option.HasMetaValue)
+                if (option.MetaValue.Length > 0)
                 {
                     optionName.AppendFormat("={0}", option.MetaValue);
                 }
             }
 
-            this._optionsHelp.Append(optionName.Length < maxLength ?
+            this.optionsHelp.Append(optionName.Length < maxLength ?
                 optionName.ToString().PadRight(maxLength) :
                 optionName.ToString());
 
-            this._optionsHelp.Append("    ");
-            if (option.HasDefaultValue)
+            this.optionsHelp.Append("    ");
+            var optionHelpText = option.HelpText;
+            if (option.DefaultValue.IsJust())
             {
-                option.HelpText = "(Default: {0}) ".FormatLocal(option.DefaultValue) + option.HelpText;
+                optionHelpText = "(Default: {0}) ".FormatLocal(option.DefaultValue.FromJust()) + optionHelpText;
             }
 
             if (option.Required)
             {
-                option.HelpText = "{0} ".FormatInvariant(requiredWord) + option.HelpText;
+                optionHelpText = "{0} ".FormatInvariant(requiredWord) + optionHelpText;
             }
 
-            if (fireEvent)
-            {
-                var e = new FormatOptionHelpTextEventArgs(option);
-                OnFormatOptionHelpText(e);
-                option.HelpText = e.Option.HelpText;
-            }
-
-            if (!string.IsNullOrEmpty(option.HelpText))
+            if (!string.IsNullOrEmpty(optionHelpText))
             {
                 do
                 {
-                    int wordBuffer = 0;
-                    var words = option.HelpText.Split(new[] { ' ' });
-                    for (int i = 0; i < words.Length; i++)
+                    var wordBuffer = 0;
+                    var words = optionHelpText.Split(new[] { ' ' });
+                    for (var i = 0; i < words.Length; i++)
                     {
                         if (words[i].Length < (widthOfHelpText - wordBuffer))
                         {
-                            this._optionsHelp.Append(words[i]);
+                            this.optionsHelp.Append(words[i]);
                             wordBuffer += words[i].Length;
                             if ((widthOfHelpText - wordBuffer) > 1 && i != words.Length - 1)
                             {
-                                this._optionsHelp.Append(" ");
+                                this.optionsHelp.Append(" ");
                                 wordBuffer++;
                             }
                         }
                         else if (words[i].Length >= widthOfHelpText && wordBuffer == 0)
                         {
-                            this._optionsHelp.Append(words[i].Substring(0, widthOfHelpText));
+                            this.optionsHelp.Append(words[i].Substring(0, widthOfHelpText));
                             wordBuffer = widthOfHelpText;
                             break;
                         }
@@ -746,42 +650,44 @@ namespace CommandLine.Text
                         }
                     }
 
-                    option.HelpText = option.HelpText.Substring(
-                        Math.Min(wordBuffer, option.HelpText.Length)).Trim();
-                    if (option.HelpText.Length > 0)
+                    optionHelpText = optionHelpText.Substring(
+                        Math.Min(wordBuffer, optionHelpText.Length)).Trim();
+                    if (optionHelpText.Length > 0)
                     {
-                        this._optionsHelp.Append(Environment.NewLine);
-                        this._optionsHelp.Append(new string(' ', maxLength + 6));
+                        this.optionsHelp.Append(Environment.NewLine);
+                        this.optionsHelp.Append(new string(' ', maxLength + 6));
                     }
                 }
-                while (option.HelpText.Length > widthOfHelpText);
+                while (optionHelpText.Length > widthOfHelpText);
             }
 
-            this._optionsHelp.Append(option.HelpText);
-            this._optionsHelp.Append(Environment.NewLine);
-            if (_additionalNewLineAfterOption)
+            this.optionsHelp.Append(optionHelpText);
+            this.optionsHelp.Append(Environment.NewLine);
+            if (this.additionalNewLineAfterOption)
             {
-                this._optionsHelp.Append(Environment.NewLine);
+                this.optionsHelp.Append(Environment.NewLine);
             }
+
+            return this;
         }
 
-        private void AddLine(StringBuilder builder, string value)
+        private HelpText AddLine(StringBuilder builder, string value)
         {
-            Assumes.NotNull(value, "value");
-
             AddLine(builder, value, MaximumDisplayWidth);
+
+            return this;
         }
 
-        private int GetMaxLength(IEnumerable<BaseOptionAttribute> optionList)
+        private int GetMaxLength(IEnumerable<OptionSpecification> optionList)
         {
-            int length = 0;
-            foreach (BaseOptionAttribute option in optionList)
+            var length = 0;
+            foreach (var option in optionList)
             {
-                int optionLength = 0;
-                bool hasShort = option.HasShortName;
-                bool hasLong = option.HasLongName;
-                int metaLength = 0;
-                if (option.HasMetaValue)
+                var optionLength = 0;
+                var hasShort = option.ShortName.Length > 0;
+                var hasLong = option.LongName.Length > 0;
+                var metaLength = 0;
+                if (option.MetaValue.Length > 0)
                 {
                     metaLength = option.MetaValue.Length + 1;
                 }
@@ -789,7 +695,7 @@ namespace CommandLine.Text
                 if (hasShort)
                 {
                     ++optionLength;
-                    if (AddDashesToOption)
+                    if (this.AddDashesToOption)
                     {
                         ++optionLength;
                     }
@@ -800,7 +706,7 @@ namespace CommandLine.Text
                 if (hasLong)
                 {
                     optionLength += option.LongName.Length;
-                    if (AddDashesToOption)
+                    if (this.AddDashesToOption)
                     {
                         optionLength += 2;
                     }
