@@ -61,16 +61,16 @@ namespace TA.SharpBooru
         [Option('t', "tags", Required = true, HelpText = "The posts tags")]
         public string Tags { get; set; }
 
-        [Option('q', "source", Required = false, HelpText = "The image source")]
+        [Option("source", Required = false, HelpText = "The image source")]
         public string Source { get; set; }
 
-        [Option('d', "description", Required = false, HelpText = "Comments/Description")]
+        [Option("desc", Required = false, HelpText = "Comments/Description")]
         public string Description { get; set; }
 
         [Option('r', "rating", DefaultValue = (byte)7, Required = false, HelpText = "The content rating")]
         public byte Rating { get; set; }
 
-        [Option('p', "private", DefaultValue = false, Required = false, HelpText = "Private")]
+        [Option("private", DefaultValue = false, Required = false, HelpText = "Private")]
         public bool Private { get; set; }
     }
 }
