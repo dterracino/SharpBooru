@@ -69,8 +69,8 @@ namespace TA.SharpBooru
             if (Helper.CheckURL(URL))
                 try
                 {
-                    WebClient client = new WebClient();
-                    return BooruImage.FromBytes(client.DownloadData(URL));
+                    using (WebClient client = new WebClient())
+                        return BooruImage.FromBytes(client.DownloadData(URL));
                 }
                 catch { }
             return null;
