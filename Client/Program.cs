@@ -98,7 +98,13 @@ namespace TA.SharpBooru
                         return 0;
                     }
                 }
-                catch (Exception ex) { Console.WriteLine(ex.Message); }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.GetType().Name);
+                    Console.WriteLine(ex.Message);
+                    Console.WriteLine();
+                    Console.WriteLine(ex.StackTrace);
+                }
             }
             return 1;
         }
