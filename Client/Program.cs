@@ -2,8 +2,9 @@
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
-using Mono.Unix;
+using TA.SharpBooru.BooruAPIs;
 using CommandLine;
+using Mono.Unix;
 
 namespace TA.SharpBooru
 {
@@ -11,16 +12,13 @@ namespace TA.SharpBooru
     {
         public static int Main(string[] args)
         {
-            var pResult = Parser.Default.ParseArguments(args, new Type[1]
+            var pResult = Parser.Default.ParseArguments(args, new Type[]
             {
-                typeof(AddOptions)
+                typeof(AddOptions),
+                typeof(AddUrlOptions)
             });
 
-            if (pResult.Errors.Any())
-            {
-
-            }
-            else
+            if (!pResult.Errors.Any())
             {
                 try
                 {
@@ -54,19 +52,35 @@ namespace TA.SharpBooru
                                     post.Description = options.Description;
                                     post.Rating = options.Rating;
                                     post.Private = options.Private;
-
-                                    ulong postID = 0;
-                                    Request(ns, RequestCode.Add_Post, (rw) =>
-                                        {
-                                            post.ToWriter(rw);
-                                            post.Tags.ToWriter(rw);
-                                            image.ToWriter(rw);
-                                        }, (rw) =>
-                                        {
-                                            postID = rw.ReadULong();
-                                        });
-                                    Console.WriteLine("OK - PostID = " + postID);
+                                    Console.Write("Adding post... ");
+                                    ulong id = AddPost(ns, post, post.Tags, image);
+                                    Console.WriteLine(id);
                                 }
+                            }
+                            else if (commonOptions.GetType() == typeof(AddUrlOptions))
+                            {
+                                var options = (AddUrlOptions)commonOptions;
+                                var apiPosts = BooruAPI.SearchPostsPerURL(options.URL);
+                                Console.WriteLine("Importing " + apiPosts.Count + " posts");
+                                for (int i = 0; i < apiPosts.Count; i++)
+                                {
+                                    Console.Write("Downloading image {0} of {1}... ", i + 1, apiPosts.Count);
+                                    apiPosts[i].DownloadImage();
+                                    Console.WriteLine("OK");
+                                }
+                                for (int i = 0; i< apiPosts.Count; i++)
+                                    try
+                                    {
+                                        foreach (var tag in options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                                            apiPosts[i].Tags.Add(new BooruTag(tag));
+                                        apiPosts[i].Description = options.Description;
+                                        apiPosts[i].Rating = options.Rating;
+                                        apiPosts[i].Private = options.Private;
+                                        Console.Write("Importing post {0} of {1}... ", i + 1, apiPosts.Count);
+                                        ulong id = AddPost(ns, apiPosts[i], apiPosts[i].Tags, apiPosts[i].Image);
+                                        Console.WriteLine(id);
+                                    }
+                                    finally { apiPosts[i].Dispose(); }
                             }
                         }
                         return 0;
@@ -75,6 +89,21 @@ namespace TA.SharpBooru
                 catch (Exception ex) { Console.WriteLine(ex.Message); }
             }
             return 1;
+        }
+
+        private static ulong AddPost(NetworkStream NS, BooruPost Post, BooruTagList Tags, BooruImage Image)
+        {
+            ulong postID = 0;
+            Request(NS, RequestCode.Add_Post, (rw) =>
+            {
+                Post.ToWriter(rw);
+                Tags.ToWriter(rw);
+                Image.ToWriter(rw);
+            }, (rw) =>
+            {
+                postID = rw.ReadULong();
+            });
+            return postID;
         }
 
         private static void Request(NetworkStream NS, RequestCode RQ, Action<ReaderWriter> ReqCB, Action<ReaderWriter> RespCB)

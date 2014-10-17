@@ -73,4 +73,23 @@ namespace TA.SharpBooru
         [Option("private", DefaultValue = false, Required = false, HelpText = "Private")]
         public bool Private { get; set; }
     }
+
+    [Verb("addurl", HelpText = "Import a post via booru URL")]
+    internal class AddUrlOptions : Options
+    {
+        [Option("url", Required = true, HelpText = "The URL to import")]
+        public string URL { get; set; }
+
+        [Option('t', "tags", Required = true, HelpText = "The posts tags")]
+        public string Tags { get; set; }
+
+        [Option("desc", Required = false, HelpText = "Comments/Description")]
+        public string Description { get; set; }
+
+        [Option('r', "rating", DefaultValue = (byte)7, Required = false, HelpText = "The content rating")]
+        public byte Rating { get; set; }
+
+        [Option("private", DefaultValue = false, Required = false, HelpText = "Private")]
+        public bool Private { get; set; }
+    }
 }
