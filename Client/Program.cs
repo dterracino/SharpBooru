@@ -15,7 +15,8 @@ namespace TA.SharpBooru
             var pResult = Parser.Default.ParseArguments(args, new Type[]
             {
                 typeof(AddOptions),
-                typeof(AddUrlOptions)
+                typeof(AddUrlOptions),
+                typeof(DelPostOptions)
             });
 
             if (!pResult.Errors.Any())
@@ -81,6 +82,17 @@ namespace TA.SharpBooru
                                         ulong id = AddPost(ns, post, post.Tags, post.Image);
                                         Console.WriteLine(id);
                                     }
+                            }
+                            else if (commonOptions.GetType() == typeof(DelPostOptions))
+                            {
+                                var options = (DelPostOptions)commonOptions;
+                                Request(ns, RequestCode.Delete_Post, (rw) =>
+                                    {
+                                        rw.Write(options.ID);
+                                    }, (rw) =>
+                                    {
+                                        //void
+                                    });
                             }
                         }
                         return 0;

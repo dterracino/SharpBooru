@@ -92,4 +92,11 @@ namespace TA.SharpBooru
         [Option("private", DefaultValue = false, Required = false, HelpText = "Private")]
         public bool Private { get; set; }
     }
+
+    [Verb("delpost", HelpText = "Delete a post")]
+    internal class DelPostOptions : Options
+    {
+        [Option('i', "id", Required = true, HelpText = "The post ID")]
+        public ulong ID { get; set; }
+    }
 }
