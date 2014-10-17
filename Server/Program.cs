@@ -1,9 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Net;
-using System.Xml;
 using System.Net.Sockets;
-using System.Threading;
 using Mono.Unix;
 using Mono.Unix.Native;
 
@@ -11,6 +8,8 @@ namespace TA.SharpBooru.Server
 {
     public class Program
     {
+        private static bool _SocketCreated = false;
+
         [STAThread]
         public static int Main(string[] args)
         {
@@ -30,12 +29,13 @@ namespace TA.SharpBooru.Server
             {
                 try { Helper.CleanTempFolder(); }
                 catch { }
-                try
-                {
-                    string unixSocketPath = Path.Combine(booruPath, "socket.sock");
-                    File.Delete(unixSocketPath);
-                }
-                catch { }
+                if (_SocketCreated)
+                    try
+                    {
+                        string unixSocketPath = Path.Combine(booruPath, "socket.sock");
+                        File.Delete(unixSocketPath);
+                    }
+                    catch { }
             }
         }
 
@@ -70,6 +70,7 @@ namespace TA.SharpBooru.Server
                 }
                 unixSocket = new Socket(AddressFamily.Unix, SocketType.Stream, 0);
                 unixSocket.Bind(unixEndPoint);
+                _SocketCreated = true;
                 SyscallEx.chmod(unixSocketPath,
                     FilePermissions.S_IFSOCK |
                     FilePermissions.S_IRUSR |
