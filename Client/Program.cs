@@ -68,19 +68,19 @@ namespace TA.SharpBooru
                                     apiPosts[i].DownloadImage();
                                     Console.WriteLine("OK");
                                 }
-                                for (int i = 0; i< apiPosts.Count; i++)
-                                    try
+                                for (int i = 0; i < apiPosts.Count; i++)
+                                    using (BooruAPIPost post = apiPosts[i])
                                     {
                                         foreach (var tag in options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-                                            apiPosts[i].Tags.Add(new BooruTag(tag));
-                                        apiPosts[i].Description = options.Description;
-                                        apiPosts[i].Rating = options.Rating;
-                                        apiPosts[i].Private = options.Private;
+                                            post.Tags.Add(new BooruTag(tag));
+                                        if (options.Description != null)
+                                            post.Description = options.Description;
+                                        post.Rating = options.Rating;
+                                        post.Private = options.Private;
                                         Console.Write("Importing post {0} of {1}... ", i + 1, apiPosts.Count);
-                                        ulong id = AddPost(ns, apiPosts[i], apiPosts[i].Tags, apiPosts[i].Image);
+                                        ulong id = AddPost(ns, post, post.Tags, post.Image);
                                         Console.WriteLine(id);
                                     }
-                                    finally { apiPosts[i].Dispose(); }
                             }
                         }
                         return 0;
