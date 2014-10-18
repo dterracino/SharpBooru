@@ -54,9 +54,11 @@ table_middle();
 if (count($post_ids) > 0)
 {
 	echo '<div class="wrap">';
+	if (!empty($tag_search))
+		$tag_search = "&amp;tags=" . $tag_search;
 	foreach ($post_ids as $id)
 	{
-		echo '<div class="thumb"><a href="post.php?id=' . $id . '&amp;tags=' . $tag_search . '">';
+		echo '<div class="thumb"><a href="post.php?id=' . $id . $tag_search . '">';
 		echo '<img alt="#' . $id . '" src="image.php?id=' . $id . '"></a></div>';
 	}
 	echo '</div><br><div class="page_chooser">';
