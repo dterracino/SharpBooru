@@ -41,7 +41,8 @@ namespace TA.SharpBooru
                                         rw.Write(commonOptions.Password ?? string.Empty, true);
                                     }, (rw) => { });
 
-                            if (commonOptions.GetType() == typeof(AddOptions))
+                            Type oType = commonOptions.GetType();
+                            if (oType == typeof(AddOptions))
                             {
                                 var options = (AddOptions)commonOptions;
                                 using (var post = new BooruPost())
@@ -58,7 +59,7 @@ namespace TA.SharpBooru
                                     Console.WriteLine(id);
                                 }
                             }
-                            else if (commonOptions.GetType() == typeof(AddUrlOptions))
+                            else if (oType == typeof(AddUrlOptions))
                             {
                                 var options = (AddUrlOptions)commonOptions;
                                 var apiPosts = BooruAPI.SearchPostsPerURL(options.URL);
@@ -72,8 +73,22 @@ namespace TA.SharpBooru
                                 for (int i = 0; i < apiPosts.Count; i++)
                                     using (BooruAPIPost post = apiPosts[i])
                                     {
-                                        foreach (var tag in options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-                                            post.Tags.Add(new BooruTag(tag));
+                                        string[] allTags = null;
+                                        if (options.TagsOnlyKnown)
+                                            Request(ns, RequestCode.Get_AllTags, (rw) => { }, (rw) =>
+                                                {
+                                                    uint count = rw.ReadUInt();
+                                                    allTags = new string[count];
+                                                    for (int a = 0; a < count; a++)
+                                                        allTags[a] = rw.ReadString();
+                                                });
+                                        if (options.Tags != null)
+                                            foreach (var tag in options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                                            {
+                                                string nTag = tag.ToLower();
+                                                if (!(options.TagsOnlyKnown && !allTags.Contains(nTag)))
+                                                    post.Tags.Add(new BooruTag(nTag));
+                                            }
                                         if (options.Description != null)
                                             post.Description = options.Description;
                                         post.Rating = (byte)options.Rating;
@@ -83,12 +98,12 @@ namespace TA.SharpBooru
                                         Console.WriteLine(id);
                                     }
                             }
-                            else if (commonOptions.GetType() == typeof(DelOptions))
+                            else if (oType == typeof(DelOptions))
                             {
                                 var options = (DelOptions)commonOptions;
                                 Request(ns, RequestCode.Delete_Post, (rw) => rw.Write(options.ID), (rw) => { });
                             }
-                            else if (commonOptions.GetType() == typeof(GetOptions))
+                            else if (oType == typeof(GetOptions))
                             {
                                 var options = (GetOptions)commonOptions;
                                 using (var post = GetPost(ns, options.ID))
@@ -107,7 +122,7 @@ namespace TA.SharpBooru
                                     Console.WriteLine(BooruTagListToString(post.Tags));
                                 }
                             }
-                            else if (commonOptions.GetType() == typeof(EditOptions))
+                            else if (oType == typeof(EditOptions))
                             {
                                 var options = (EditOptions)commonOptions;
                                 using (var post = GetPost(ns, options.ID))

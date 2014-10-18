@@ -50,7 +50,10 @@ namespace TA.SharpBooru
         [Option("url", Required = true, HelpText = "The URL to import")]
         public string URL { get; set; }
 
-        [Option('t', "tags", Required = true, HelpText = "The posts tags")]
+        [Option("tags-only-known", DefaultValue = false, Required = false, HelpText = "Add only already known tags")]
+        public bool TagsOnlyKnown { get; set; }
+
+        [Option('t', "tags", Required = false, HelpText = "Additional tags")]
         public string Tags { get; set; }
 
         [Option("desc", Required = false, HelpText = "The description")]
