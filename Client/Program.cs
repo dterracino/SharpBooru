@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Diagnostics;
 using System.Collections.Generic;
 using TA.SharpBooru.BooruAPIs;
 using CommandLine;
@@ -19,7 +20,8 @@ namespace TA.SharpBooru
                 typeof(AddUrlOptions),
                 typeof(DelOptions),
                 typeof(GetOptions),
-                typeof(EditOptions)
+                typeof(EditOptions),
+                typeof(EditImgOptions)
             });
 
             if (!pResult.Errors.Any())
@@ -151,6 +153,39 @@ namespace TA.SharpBooru
                                             post.Tags.ToWriter(rw);
                                         }, (rw) => { });
                                 }
+                            }
+                            else if (oType == typeof(EditImgOptions))
+                            {
+                                EditImgOptions options = (EditImgOptions)commonOptions;
+                                using (BooruImage img = null)
+                                {
+                                    Request(ns, RequestCode.Get_Image, (rw) => rw.Write(options.ID), (rw) =>
+                                        {
+
+                                        });
+                                    img.Save(options.Path);
+                                }
+                                if (options.Tool != null)
+                                {
+                                    var psi = new ProcessStartInfo(options.Tool, options.Path);
+                                    Process tool = new Process() { StartInfo = psi };
+                                    tool.Start();
+                                    Console.Write("Waiting for image editor to exit...");
+                                    tool.WaitForExit();
+                                }
+                                else
+                                {
+                                    Console.Write("Edit the image and press any key to save it... ");
+                                    Console.ReadKey();
+                                    Console.WriteLine();
+                                }
+                                using (BooruImage img = BooruImage.FromFile(options.Path))
+                                    Request(ns, RequestCode.Edit_Image, (rw) =>
+                                        {
+                                            rw.Write(options.ID);
+                                            img.ToWriter(rw);
+                                        }, (rw) => { });
+                                File.Delete(options.Path);
                             }
                             //Logout
                             ns.WriteByte(0xFF);

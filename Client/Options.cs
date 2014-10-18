@@ -104,4 +104,17 @@ namespace TA.SharpBooru
         [Option("private", Required = false, HelpText = "New private setting")]
         public bool? Private { get; set; }
     }
+
+    [Verb("editimg", HelpText = "Edit a posts image")]
+    internal class EditImgOptions : Options
+    {
+        [Option('i', "id", Required = true, HelpText = "The post/image ID")]
+        public ulong ID { get; set; }
+
+        [Option("path", Required = true, HelpText = "The temporary image path")]
+        public string Path { get; set; }
+
+        [Option("tool", Required = false, HelpText = "The image editor program")]
+        public string Tool { get; set; }
+    }
 }
