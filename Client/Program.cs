@@ -61,7 +61,7 @@ namespace TA.SharpBooru
                                     Console.WriteLine(id);
                                 }
                             }
-                            else if (oType == typeof(AddUrlOptions))
+                            else if (oType == typeof(AddUrlOptions)) //TODO Only import one image
                             {
                                 var options = (AddUrlOptions)commonOptions;
                                 var apiPosts = BooruAPI.SearchPostsPerURL(options.URL);
@@ -90,6 +90,8 @@ namespace TA.SharpBooru
                                                     post.Tags.RemoveAt(a);
                                         }
                                         if (options.Tags != null)
+                                        {
+                                            options.Tags = options.Tags.ToLower();
                                             if (options.TagsNoDelta)
                                             {
                                                 string[] parts = options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -98,8 +100,10 @@ namespace TA.SharpBooru
                                                     post.Tags.Add(new BooruTag(part));
                                             }
                                             else TagDelta(ref post.Tags, options.Tags);
-                                        if (options.Description != null)
-                                            post.Description = options.Description;
+                                        }
+                                        if (options.Description == null)
+                                            post.Description = "Imported from " + post.APIName;
+                                        else post.Description = options.Description;
                                         post.Rating = (byte)options.Rating;
                                         post.Private = options.Private;
                                         Console.Write("Importing post {0} of {1}... ", i + 1, apiPosts.Count);
@@ -146,6 +150,8 @@ namespace TA.SharpBooru
                                     if (options.Source != null)
                                         post.Source = options.Source;
                                     if (options.Tags != null)
+                                    {
+                                        options.Tags = options.Tags.ToLower();
                                         if (options.TagsNoDelta)
                                         {
                                             string[] parts = options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -154,6 +160,7 @@ namespace TA.SharpBooru
                                                 post.Tags.Add(new BooruTag(part));
                                         }
                                         else TagDelta(ref post.Tags, options.Tags);
+                                    }
                                     Request(ns, RequestCode.Edit_Post, (rw) =>
                                         {
                                             post.ToWriter(rw);
