@@ -6,7 +6,7 @@ namespace TA.SharpBooru
 {
     internal class Options
     {
-        [Option('s', "socket", DefaultValue = "socket.sock", Required = false, HelpText = "The UNIX socket")]
+        [Option('s', "socket", Required = false, HelpText = "The UNIX socket")]
         public string Socket { get; set; }
 
         [Option('u', "username", Required = false, HelpText = "Your username")]

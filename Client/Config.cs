@@ -32,7 +32,6 @@ namespace TA.SharpBooru
                 string socket = rootNode.SelectSingleNode("Socket").InnerText;
                 string username = rootNode.SelectSingleNode("Username").InnerText;
                 string password = rootNode.SelectSingleNode("Password").InnerText;
-
                 return new Config(socket, username, password);
             }
 

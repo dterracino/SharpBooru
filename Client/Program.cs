@@ -39,6 +39,8 @@ namespace TA.SharpBooru
                         if (commonOptions.Password == null)
                             commonOptions.Password = config.Password;
                     }
+                    else if (commonOptions.Socket == null)
+                        commonOptions.Socket = "socket.sock";
 
                     UnixEndPoint endPoint = new UnixEndPoint(commonOptions.Socket);
 
