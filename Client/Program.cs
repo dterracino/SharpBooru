@@ -16,7 +16,9 @@ namespace TA.SharpBooru
             {
                 typeof(AddOptions),
                 typeof(AddUrlOptions),
-                typeof(DelPostOptions)
+                typeof(DelOptions),
+                typeof(GetOptions),
+                typeof(EditOptions)
             });
 
             if (!pResult.Errors.Any())
@@ -36,10 +38,7 @@ namespace TA.SharpBooru
                                     {
                                         rw.Write(commonOptions.Username, true);
                                         rw.Write(commonOptions.Password ?? string.Empty, true);
-                                    }, (rw) =>
-                                    {
-                                        //void
-                                    });
+                                    }, (rw) => { });
 
                             if (commonOptions.GetType() == typeof(AddOptions))
                             {
@@ -83,16 +82,50 @@ namespace TA.SharpBooru
                                         Console.WriteLine(id);
                                     }
                             }
-                            else if (commonOptions.GetType() == typeof(DelPostOptions))
+                            else if (commonOptions.GetType() == typeof(DelOptions))
                             {
-                                var options = (DelPostOptions)commonOptions;
-                                Request(ns, RequestCode.Delete_Post, (rw) =>
+                                var options = (DelOptions)commonOptions;
+                                Request(ns, RequestCode.Delete_Post, (rw) => rw.Write(options.ID), (rw) => { });
+                            }
+                            else if (commonOptions.GetType() == typeof(GetOptions))
+                            {
+                                var options = (GetOptions)commonOptions;
+                                using (var post = GetPost(ns, options.ID))
+                                {
+                                    Console.WriteLine("User        " + post.User);
+                                    Console.WriteLine("Private     " + (post.Private ? "yes" : "no"));
+                                    Console.WriteLine("Source      " + post.Source ?? string.Empty);
+                                    Console.WriteLine("Description " + post.Description ?? string.Empty);
+                                    Console.WriteLine("Rating      " + post.Rating);
+                                    Console.WriteLine("Size        {0}x{1}", post.Width, post.Height);
+                                    Console.WriteLine("Date        {0}", post.CreationDate);
+                                    Console.WriteLine("ViewCount   " + post.ViewCount);
+                                    Console.WriteLine("EditCount   " + post.EditCount);
+                                    Console.WriteLine("Score       " + post.Score);
+                                    Console.WriteLine();
+                                    Console.WriteLine(BooruTagListToString(post.Tags));
+                                }
+                            }
+                            else if (commonOptions.GetType() == typeof(EditOptions))
+                            {
+                                var options = (EditOptions)commonOptions;
+                                using (var post = GetPost(ns, options.ID))
+                                {
+                                    post.EditCount += 1;
+                                    if (options.Description != null)
+                                        post.Description = options.Description;
+                                    if (options.Private.HasValue)
+                                        post.Private = options.Private.Value;
+                                    if (options.Rating.HasValue)
+                                        post.Rating = options.Rating.Value;
+                                    if (options.Source != null)
+                                        post.Source = options.Source;
+                                    if (options.Tags != null)
                                     {
-                                        rw.Write(options.ID);
-                                    }, (rw) =>
-                                    {
-                                        //void
-                                    });
+                                        //TODO Implement tag delta
+                                    }
+                                    Request(ns, RequestCode.Edit_Post, (rw) => post.ToWriter(rw), (rw) => { });
+                                }
                             }
                         }
                         return 0;
@@ -107,6 +140,26 @@ namespace TA.SharpBooru
                 }
             }
             return 1;
+        }
+
+        private static string BooruTagListToString(BooruTagList Tags)
+        {
+            string[] strTags = new string[Tags.Count];
+            for (int i = 0; i < strTags.Length; i++)
+            {
+                string tag = Tags[i].Tag;
+                var color = Tags[i].Color;
+                strTags[i] = string.Format("\x1b[38;2;{0};{1};{2}m{3}", color.R, color.G, color.B, tag);
+            }
+            return string.Join(" ", strTags) + "\x1b[0m";
+        }
+
+        private static BooruPost GetPost(NetworkStream NS, ulong ID)
+        {
+            BooruPost post = null;
+            Request(NS, RequestCode.Get_Post, (rw) => rw.Write(ID), (rw) => { post = BooruPost.FromReader(rw); });
+            Request(NS, RequestCode.Get_PostTags, (rw) => rw.Write(ID), (rw) => { post.Tags = BooruTagList.FromReader(rw); });
+            return post;
         }
 
         private static ulong AddPost(NetworkStream NS, BooruPost Post, BooruTagList Tags, BooruImage Image)

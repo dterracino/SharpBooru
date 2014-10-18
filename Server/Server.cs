@@ -176,6 +176,22 @@ namespace TA.SharpBooru.Server
                         RW.Write(id);
                     } break;
 
+                case RequestCode.Edit_Post:
+                    {
+                        using (var post = BooruPost.FromReader(RW))
+                        {
+                            post.Tags = BooruTagList.FromReader(RW);
+                            _Booru.EditPost(User, post);
+                        }
+                    } break;
+
+                case RequestCode.Edit_Image:
+                    {
+                        ulong id = RW.ReadULong();
+                        using (var image = BooruImage.FromReader(RW))
+                            _Booru.EditImage(User, id, image);
+                    } break;
+
                 case RequestCode.Delete_Post:
                     {
                         ulong id = RW.ReadULong();

@@ -93,10 +93,39 @@ namespace TA.SharpBooru
         public bool Private { get; set; }
     }
 
-    [Verb("delpost", HelpText = "Delete a post")]
-    internal class DelPostOptions : Options
+    [Verb("del", HelpText = "Delete a post")]
+    internal class DelOptions : Options
     {
         [Option('i', "id", Required = true, HelpText = "The post ID")]
         public ulong ID { get; set; }
+    }
+
+    [Verb("get", HelpText = "Get a post")]
+    internal class GetOptions : Options
+    {
+        [Option('i', "id", Required = true, HelpText = "The post ID")]
+        public ulong ID { get; set; }
+    }
+
+    [Verb("edit", HelpText = "Edit a post")]
+    internal class EditOptions : Options
+    {
+        [Option('i', "id", Required = true, HelpText = "The post ID")]
+        public ulong ID { get; set; }
+
+        [Option('t', "tags", Required = false, HelpText = "The posts tags delta")]
+        public string Tags { get; set; }
+
+        [Option("source", Required = false, HelpText = "The new image source")]
+        public string Source { get; set; }
+
+        [Option("desc", Required = false, HelpText = "New Comments/Description")]
+        public string Description { get; set; }
+
+        [Option('r', "rating", Required = false, HelpText = "The new content rating")]
+        public byte? Rating { get; set; }
+
+        [Option("private", Required = false, HelpText = "New Private")]
+        public bool? Private { get; set; }
     }
 }

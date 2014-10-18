@@ -58,7 +58,15 @@
 
         //Add_Alias = 31
 
-        //Edit_XXX = 40
+        //In: BooruPost Post
+        //In: BooruTagList Tags
+        Edit_Post = 40,
+
+        //In: ulong ID
+        //In: BooruImage Image
+        Edit_Image = 41,
+
+        //Edit_Tag
 
         //In: ulong ID
         Delete_Post = 50,
