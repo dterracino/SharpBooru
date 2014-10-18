@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Collections.Generic;
 using TA.SharpBooru.BooruAPIs;
 using CommandLine;
 using Mono.Unix;
@@ -121,9 +122,7 @@ namespace TA.SharpBooru
                                     if (options.Source != null)
                                         post.Source = options.Source;
                                     if (options.Tags != null)
-                                    {
-                                        //TODO Implement tag delta
-                                    }
+                                        TagDelta(ref post.Tags, options.Tags);
                                     Request(ns, RequestCode.Edit_Post, (rw) => post.ToWriter(rw), (rw) => { });
                                 }
                             }
@@ -140,6 +139,22 @@ namespace TA.SharpBooru
                 }
             }
             return 1;
+        }
+
+        private static void TagDelta(ref BooruTagList Tags, string deltaString)
+        {
+            var removeTags = new List<string>();
+            var addTags = new List<string>();
+            string[] deltaParts = deltaString.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (string part in deltaParts)
+                if (part.StartsWith("-") && part.Length > 1)
+                    removeTags.Add(part.Substring(1).ToLower());
+                else addTags.Add(part.ToLower());
+            for (int i = Tags.Count - 1; !(i < 0); i--)
+                if (removeTags.Contains(Tags[i].Tag))
+                    Tags.RemoveAt(i);
+            foreach (string addTag in addTags)
+                Tags.Add(new BooruTag(addTag));
         }
 
         private static string BooruTagListToString(BooruTagList Tags)
