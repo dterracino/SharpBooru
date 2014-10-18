@@ -47,9 +47,11 @@ namespace TA.SharpBooru
                             if (oType == typeof(AddOptions))
                             {
                                 var options = (AddOptions)commonOptions;
+                                Console.Write("Loading image... ");
                                 using (var post = new BooruPost())
                                 using (var image = BooruImage.FromFile(options.ImagePath))
                                 {
+                                    Console.WriteLine("OK");
                                     foreach (var tag in options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
                                         post.Tags.Add(new BooruTag(tag));
                                     post.Source = options.Source;
@@ -79,7 +81,11 @@ namespace TA.SharpBooru
                                     Console.Write("Downloading image... ");
                                     apiPost.DownloadImage();
                                 }
-                                else apiPost.Image = BooruImage.FromFile(options.CustomImagePath);
+                                else
+                                {
+                                    Console.Write("Loading image... ");
+                                    apiPost.Image = BooruImage.FromFile(options.CustomImagePath);
+                                }
                                 Console.WriteLine("OK");
                                 if (!options.AllTags)
                                 {
