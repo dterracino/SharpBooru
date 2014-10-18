@@ -137,6 +137,9 @@ namespace TA.SharpBooru
                                         }, (rw) => { });
                                 }
                             }
+                            //Logout
+                            ns.WriteByte(0xFF);
+                            ns.WriteByte(0xFF);
                         }
                         return 0;
                     }
