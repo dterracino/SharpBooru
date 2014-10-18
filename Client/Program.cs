@@ -75,8 +75,9 @@ namespace TA.SharpBooru
                                 for (int i = 0; i < apiPosts.Count; i++)
                                     using (BooruAPIPost post = apiPosts[i])
                                     {
-                                        string[] allTags = null;
                                         if (options.TagsOnlyKnown)
+                                        {
+                                            string[] allTags = null;
                                             Request(ns, RequestCode.Get_AllTags, (rw) => { }, (rw) =>
                                                 {
                                                     uint count = rw.ReadUInt();
@@ -84,13 +85,13 @@ namespace TA.SharpBooru
                                                     for (int a = 0; a < count; a++)
                                                         allTags[a] = rw.ReadString();
                                                 });
+                                            for (int a = post.Tags.Count - 1; !(a < 0); a++)
+                                                if (!allTags.Contains(post.Tags[a].Tag))
+                                                    post.Tags.RemoveAt(a);
+                                        }
                                         if (options.Tags != null)
                                             foreach (var tag in options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-                                            {
-                                                string nTag = tag.ToLower();
-                                                if (!(options.TagsOnlyKnown && !allTags.Contains(nTag)))
-                                                    post.Tags.Add(new BooruTag(nTag));
-                                            }
+                                                post.Tags.Add(new BooruTag(tag));
                                         if (options.Description != null)
                                             post.Description = options.Description;
                                         post.Rating = (byte)options.Rating;
@@ -176,7 +177,7 @@ namespace TA.SharpBooru
                                 else
                                 {
                                     Console.Write("Edit the image and press any key to save it... ");
-                                    Console.ReadKey();
+                                    Console.ReadKey(true);
                                     Console.WriteLine();
                                 }
                                 using (BooruImage eImg = BooruImage.FromFile(path))
