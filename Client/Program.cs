@@ -123,7 +123,11 @@ namespace TA.SharpBooru
                                         post.Source = options.Source;
                                     if (options.Tags != null)
                                         TagDelta(ref post.Tags, options.Tags);
-                                    Request(ns, RequestCode.Edit_Post, (rw) => post.ToWriter(rw), (rw) => { });
+                                    Request(ns, RequestCode.Edit_Post, (rw) =>
+                                        {
+                                            post.ToWriter(rw);
+                                            post.Tags.ToWriter(rw);
+                                        }, (rw) => { });
                                 }
                             }
                         }
