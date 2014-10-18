@@ -122,7 +122,14 @@ namespace TA.SharpBooru
                                     if (options.Source != null)
                                         post.Source = options.Source;
                                     if (options.Tags != null)
-                                        TagDelta(ref post.Tags, options.Tags);
+                                        if (options.TagsNoDelta)
+                                        {
+                                            string[] parts = options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                            post.Tags.Clear();
+                                            foreach (string part in parts)
+                                                post.Tags.Add(new BooruTag(part));
+                                        }
+                                        else TagDelta(ref post.Tags, options.Tags);
                                     Request(ns, RequestCode.Edit_Post, (rw) =>
                                         {
                                             post.ToWriter(rw);

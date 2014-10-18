@@ -15,36 +15,6 @@ namespace TA.SharpBooru
         [Option('p', "password", Required = false, HelpText = "Your password")]
         public string Password { get; set; }
 
-        /*
-        public string GetUsage()
-        {
-            var sb = new StringBuilder();
-            string productName = GetAssemblyAttribute<AssemblyProductAttribute>(x => x.Product);
-            string copyright = GetAssemblyAttribute<AssemblyCopyrightAttribute>(x => x.Copyright);
-            sb.AppendLine(productName + " V" + Helper.GetVersion());
-            sb.Append(copyright);
-            sb.AppendLine();
-
-            sb.AppendLine("Common options");
-            sb.AppendLine(" -s --socket      UNIX domain socket [socket.sock]");
-            sb.AppendLine(" -u --username    Login username");
-            sb.AppendLine(" -p --password    Login password");
-            sb.AppendLine("    --help        Show this help screen");
-            sb.AppendLine();
-
-            sb.AppendLine("Subcommand \"add\" options");
-            sb.AppendLine(" -i --image       Image file");
-            sb.AppendLine(" -t --tags        Tags describing the image");
-            sb.AppendLine(" -q --source      Image source (URL/path) []");
-            sb.AppendLine(" -d --description Description/comment []");
-            sb.AppendLine(" -r --rating      Image content rating [7]");
-            sb.AppendLine("    --private     Private [no]");
-            sb.AppendLine();
-
-            return sb.ToString();
-        }
-        */
-
         private string GetAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
         {
             T attribute = (T)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(T));
@@ -64,7 +34,7 @@ namespace TA.SharpBooru
         [Option("source", Required = false, HelpText = "The image source")]
         public string Source { get; set; }
 
-        [Option("desc", Required = false, HelpText = "Comments/Description")]
+        [Option("desc", Required = false, HelpText = "The description")]
         public string Description { get; set; }
 
         [Option('r', "rating", DefaultValue = (byte)7, Required = false, HelpText = "The content rating")]
@@ -83,7 +53,7 @@ namespace TA.SharpBooru
         [Option('t', "tags", Required = true, HelpText = "The posts tags")]
         public string Tags { get; set; }
 
-        [Option("desc", Required = false, HelpText = "Comments/Description")]
+        [Option("desc", Required = false, HelpText = "The description")]
         public string Description { get; set; }
 
         [Option('r', "rating", DefaultValue = (byte)7, Required = false, HelpText = "The content rating")]
@@ -113,13 +83,16 @@ namespace TA.SharpBooru
         [Option('i', "id", Required = true, HelpText = "The post ID")]
         public ulong ID { get; set; }
 
+        [Option("tags-no-delta", Required = false, HelpText = "--tags defines the new tags, not only delta")]
+        public bool TagsNoDelta { get; set; }
+
         [Option('t', "tags", Required = false, HelpText = "The posts tags delta")]
         public string Tags { get; set; }
 
         [Option("source", Required = false, HelpText = "The new image source")]
         public string Source { get; set; }
 
-        [Option("desc", Required = false, HelpText = "New Comments/Description")]
+        [Option("desc", Required = false, HelpText = "Then new description")]
         public string Description { get; set; }
 
         [Option('r', "rating", Required = false, HelpText = "The new content rating")]
