@@ -106,6 +106,7 @@
     <Compile Include="CommandLine\Text\SentenceBuilder.cs" />
     <Compile Include="CommandLine\ValueAttribute.cs" />
     <Compile Include="CommandLine\VerbAttribute.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="Options.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

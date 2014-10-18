@@ -29,6 +29,17 @@ namespace TA.SharpBooru
                 try
                 {
                     var commonOptions = (Options)pResult.Value;
+                    Config config = Config.TryLoad();
+                    if (config != null)
+                    {
+                        if (commonOptions.Socket == null)
+                            commonOptions.Socket = config.Socket;
+                        if (commonOptions.Username == null)
+                            commonOptions.Username = config.Username;
+                        if (commonOptions.Password == null)
+                            commonOptions.Password = config.Password;
+                    }
+
                     UnixEndPoint endPoint = new UnixEndPoint(commonOptions.Socket);
 
                     using (Socket socket = new Socket(AddressFamily.Unix, SocketType.Stream, 0))
