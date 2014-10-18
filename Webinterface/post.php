@@ -34,7 +34,12 @@ if (!isset($id_err))
 			echo $tag_encoded . "</a></span><br>";
 		}
 		subsection_footer();
-		subsection("User", htmlentities($post->user));
+		subsection_header("User");
+		echo htmlentities($post->user);
+		if ($post->private)
+			echo " <i>(private)</i>";
+		else echo " <i>(public)</i>";
+		subsection_footer();
 		$source = htmlentities($post->source);
 		if (filter_var($post->source, FILTER_VALIDATE_URL))
 			$source = '<a href="' . $source . '">' . $source . "</a>";

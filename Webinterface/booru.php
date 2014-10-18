@@ -19,6 +19,7 @@ class BooruPost
 	public $height;
 	public $date;
 	public $tags;
+	public $private;
 }
 
 class Booru
@@ -140,7 +141,7 @@ class Booru
 		$reader = new Reader($response);
 		$reader->ReadULong(); //ID
 		$post->user = $reader->ReadString();
-		$reader->ReadBool(); //Private
+		$post->private = $reader->ReadBool();
 		$post->source = $reader->ReadString();
 		$post->description = $reader->ReadString();
 		$post->rating = $reader->ReadByte();
