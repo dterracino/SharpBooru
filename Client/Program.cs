@@ -157,17 +157,17 @@ namespace TA.SharpBooru
                             else if (oType == typeof(EditImgOptions))
                             {
                                 EditImgOptions options = (EditImgOptions)commonOptions;
-                                using (BooruImage img = null)
+                                BooruImage img = null;
+                                string path = options.Path;
+                                try
                                 {
-                                    Request(ns, RequestCode.Get_Image, (rw) => rw.Write(options.ID), (rw) =>
-                                        {
-
-                                        });
-                                    img.Save(options.Path);
+                                    Request(ns, RequestCode.Get_Image, (rw) => rw.Write(options.ID), (rw) => { img = BooruImage.FromReader(rw); });
+                                    img.Save(ref path, true);
                                 }
+                                finally { img.Dispose(); }
                                 if (options.Tool != null)
                                 {
-                                    var psi = new ProcessStartInfo(options.Tool, options.Path);
+                                    var psi = new ProcessStartInfo(options.Tool, path);
                                     Process tool = new Process() { StartInfo = psi };
                                     tool.Start();
                                     Console.Write("Waiting for image editor to exit...");
@@ -179,11 +179,11 @@ namespace TA.SharpBooru
                                     Console.ReadKey();
                                     Console.WriteLine();
                                 }
-                                using (BooruImage img = BooruImage.FromFile(options.Path))
+                                using (BooruImage eImg = BooruImage.FromFile(path))
                                     Request(ns, RequestCode.Edit_Image, (rw) =>
                                         {
                                             rw.Write(options.ID);
-                                            img.ToWriter(rw);
+                                            eImg.ToWriter(rw);
                                         }, (rw) => { });
                                 File.Delete(options.Path);
                             }
