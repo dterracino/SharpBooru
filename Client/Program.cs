@@ -136,9 +136,7 @@ namespace TA.SharpBooru
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine(ex.GetType().Name);
-                    Console.WriteLine(ex.Message);
-                    Console.WriteLine();
+                    Console.WriteLine(ex.GetType().FullName + ": " + ex.Message);
                     Console.WriteLine(ex.StackTrace);
                 }
             }
