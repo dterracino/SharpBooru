@@ -156,7 +156,7 @@ namespace TA.SharpBooru
             var addTags = new List<string>();
             string[] deltaParts = deltaString.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string part in deltaParts)
-                if (part.StartsWith("-") && part.Length > 1)
+                if (part.StartsWith("_") && part.Length > 1)
                     removeTags.Add(part.Substring(1).ToLower());
                 else addTags.Add(part.ToLower());
             for (int i = Tags.Count - 1; !(i < 0); i--)
