@@ -50,10 +50,13 @@ namespace TA.SharpBooru
         [Option("url", Required = true, HelpText = "The URL to import")]
         public string URL { get; set; }
 
+        [Option("custom-image", Required = false, HelpText = "The custom image to import")]
+        public string CustomImagePath { get; set; }
+
         [Option("all-tags", DefaultValue = false, Required = false, HelpText = "Add all tags, not only already known")]
         public bool AllTags { get; set; }
 
-        [Option("tags-no-delta", DefaultValue = false, Required = false, HelpText = "--tags defines the new tags, not only delta")]
+        [Option("tags-no-delta", DefaultValue = false, Required = false, HelpText = "--tags defines all tags, not only delta")]
         public bool TagsNoDelta { get; set; }
 
         [Option('t', "tags", Required = false, HelpText = "Additional tags (delta)")]
@@ -89,7 +92,7 @@ namespace TA.SharpBooru
         [Option('i', "id", Required = true, HelpText = "The post ID")]
         public ulong ID { get; set; }
 
-        [Option("tags-no-delta", DefaultValue = false, Required = false, HelpText = "--tags defines the new tags, not only delta")]
+        [Option("tags-no-delta", DefaultValue = false, Required = false, HelpText = "--tags defines all tags, not only delta")]
         public bool TagsNoDelta { get; set; }
 
         [Option('t', "tags", Required = false, HelpText = "The posts tags delta")]

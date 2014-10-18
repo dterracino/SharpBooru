@@ -65,51 +65,56 @@ namespace TA.SharpBooru
                             {
                                 var options = (AddUrlOptions)commonOptions;
                                 var apiPosts = BooruAPI.SearchPostsPerURL(options.URL);
-                                Console.WriteLine("Importing " + apiPosts.Count + " posts");
-                                for (int i = 0; i < apiPosts.Count; i++)
+                                if (apiPosts.Count < 1)
+                                    throw new Exception("No post to import detected");
+                                else if (apiPosts.Count > 1)
                                 {
-                                    Console.Write("Downloading image {0} of {1}... ", i + 1, apiPosts.Count);
-                                    apiPosts[i].DownloadImage();
-                                    Console.WriteLine("OK");
+                                    Console.WriteLine("Multiple posts found, importing only the first one");
+                                    for (int i = 1; i < apiPosts.Count; i++)
+                                        apiPosts[i].Dispose();
                                 }
-                                for (int i = 0; i < apiPosts.Count; i++)
-                                    using (BooruAPIPost post = apiPosts[i])
+                                var apiPost = apiPosts[0];
+                                if (options.CustomImagePath == null)
+                                {
+                                    Console.Write("Downloading image... ");
+                                    apiPost.DownloadImage();
+                                }
+                                else apiPost.Image = BooruImage.FromFile(options.CustomImagePath);
+                                Console.WriteLine("OK");
+                                if (!options.AllTags)
+                                {
+                                    string[] allTags = null;
+                                    Request(ns, RequestCode.Get_AllTags, (rw) => { }, (rw) =>
+                                        {
+                                            uint count = rw.ReadUInt();
+                                            allTags = new string[count];
+                                            for (int a = 0; a < count; a++)
+                                                allTags[a] = rw.ReadString();
+                                        });
+                                    for (int a = apiPost.Tags.Count - 1; !(a < 0); a--)
+                                        if (!allTags.Contains(apiPost.Tags[a].Tag))
+                                            apiPost.Tags.RemoveAt(a);
+                                }
+                                if (options.Tags != null)
+                                {
+                                    options.Tags = options.Tags.ToLower();
+                                    if (options.TagsNoDelta)
                                     {
-                                        if (!options.AllTags)
-                                        {
-                                            string[] allTags = null;
-                                            Request(ns, RequestCode.Get_AllTags, (rw) => { }, (rw) =>
-                                                {
-                                                    uint count = rw.ReadUInt();
-                                                    allTags = new string[count];
-                                                    for (int a = 0; a < count; a++)
-                                                        allTags[a] = rw.ReadString();
-                                                });
-                                            for (int a = post.Tags.Count - 1; !(a < 0); a--)
-                                                if (!allTags.Contains(post.Tags[a].Tag))
-                                                    post.Tags.RemoveAt(a);
-                                        }
-                                        if (options.Tags != null)
-                                        {
-                                            options.Tags = options.Tags.ToLower();
-                                            if (options.TagsNoDelta)
-                                            {
-                                                string[] parts = options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-                                                post.Tags.Clear();
-                                                foreach (string part in parts)
-                                                    post.Tags.Add(new BooruTag(part));
-                                            }
-                                            else TagDelta(ref post.Tags, options.Tags);
-                                        }
-                                        if (options.Description == null)
-                                            post.Description = "Imported from " + post.APIName;
-                                        else post.Description = options.Description;
-                                        post.Rating = (byte)options.Rating;
-                                        post.Private = options.Private;
-                                        Console.Write("Importing post {0} of {1}... ", i + 1, apiPosts.Count);
-                                        ulong id = AddPost(ns, post, post.Tags, post.Image);
-                                        Console.WriteLine(id);
+                                        string[] parts = options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                        apiPost.Tags.Clear();
+                                        foreach (string part in parts)
+                                            apiPost.Tags.Add(new BooruTag(part));
                                     }
+                                    else TagDelta(ref apiPost.Tags, options.Tags);
+                                }
+                                if (options.Description == null)
+                                    apiPost.Description = "Imported from " + apiPost.APIName;
+                                else apiPost.Description = options.Description;
+                                apiPost.Rating = (byte)options.Rating;
+                                apiPost.Private = options.Private;
+                                Console.Write("Importing post... ");
+                                ulong id = AddPost(ns, apiPost, apiPost.Tags, apiPost.Image);
+                                Console.WriteLine(id);
                             }
                             else if (oType == typeof(DelOptions))
                             {
