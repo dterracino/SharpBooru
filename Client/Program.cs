@@ -85,7 +85,7 @@ namespace TA.SharpBooru
                                                     for (int a = 0; a < count; a++)
                                                         allTags[a] = rw.ReadString();
                                                 });
-                                            for (int a = post.Tags.Count - 1; !(a < 0); a++)
+                                            for (int a = post.Tags.Count - 1; !(a < 0); a--)
                                                 if (!allTags.Contains(post.Tags[a].Tag))
                                                     post.Tags.RemoveAt(a);
                                         }
