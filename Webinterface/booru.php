@@ -175,7 +175,7 @@ class Booru
 		$writer->WriteString($username);
 		$writer->WriteString($password);
 		$data = $writer->GetBytes();
-		$writer->close();		
+		$writer->close();
 
 		try
 		{

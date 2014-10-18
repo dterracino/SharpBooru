@@ -15,7 +15,7 @@ class Reader
 
 	function ReadBool() { return $this->ReadByte() <> 0; }
 
-	function ReadByte() { return fread($this->handle, 1); }
+	function ReadByte() { return unpack("C", fread($this->handle, 1))[1]; }
 
 	function ReadBytes() { return fread($this->handle, $this->ReadUInt()); }
 
