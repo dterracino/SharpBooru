@@ -51,7 +51,7 @@ namespace TA.SharpBooru
                                         post.Tags.Add(new BooruTag(tag));
                                     post.Source = options.Source;
                                     post.Description = options.Description;
-                                    post.Rating = options.Rating;
+                                    post.Rating = (byte)options.Rating;
                                     post.Private = options.Private;
                                     Console.Write("Adding post... ");
                                     ulong id = AddPost(ns, post, post.Tags, image);
@@ -76,7 +76,7 @@ namespace TA.SharpBooru
                                             post.Tags.Add(new BooruTag(tag));
                                         if (options.Description != null)
                                             post.Description = options.Description;
-                                        post.Rating = options.Rating;
+                                        post.Rating = (byte)options.Rating;
                                         post.Private = options.Private;
                                         Console.Write("Importing post {0} of {1}... ", i + 1, apiPosts.Count);
                                         ulong id = AddPost(ns, post, post.Tags, post.Image);
@@ -117,8 +117,8 @@ namespace TA.SharpBooru
                                         post.Description = options.Description;
                                     if (options.Private.HasValue)
                                         post.Private = options.Private.Value;
-                                    if (options.Rating.HasValue)
-                                        post.Rating = options.Rating.Value;
+                                    if (!(options.Rating < 0) && options.Rating < byte.MaxValue)
+                                        post.Rating = (byte)options.Rating;
                                     if (options.Source != null)
                                         post.Source = options.Source;
                                     if (options.Tags != null)
@@ -194,10 +194,7 @@ namespace TA.SharpBooru
                 Post.ToWriter(rw);
                 Tags.ToWriter(rw);
                 Image.ToWriter(rw);
-            }, (rw) =>
-            {
-                postID = rw.ReadULong();
-            });
+            }, (rw) => { postID = rw.ReadULong(); });
             return postID;
         }
 

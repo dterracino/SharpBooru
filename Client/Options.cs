@@ -37,8 +37,8 @@ namespace TA.SharpBooru
         [Option("desc", Required = false, HelpText = "The description")]
         public string Description { get; set; }
 
-        [Option('r', "rating", DefaultValue = (byte)7, Required = false, HelpText = "The content rating")]
-        public byte Rating { get; set; }
+        [Option('r', "rating", DefaultValue = 7, Required = false, HelpText = "The content rating")]
+        public int Rating { get; set; }
 
         [Option("private", DefaultValue = false, Required = false, HelpText = "Private")]
         public bool Private { get; set; }
@@ -56,10 +56,10 @@ namespace TA.SharpBooru
         [Option("desc", Required = false, HelpText = "The description")]
         public string Description { get; set; }
 
-        [Option('r', "rating", DefaultValue = (byte)7, Required = false, HelpText = "The content rating")]
-        public byte Rating { get; set; }
+        [Option('r', "rating", DefaultValue = 7, Required = false, HelpText = "The content rating")]
+        public int Rating { get; set; }
 
-        [Option("private", DefaultValue = false, Required = false, HelpText = "Private")]
+        [Option("private", DefaultValue = false, Required = false, HelpText = "Private setting")]
         public bool Private { get; set; }
     }
 
@@ -83,7 +83,7 @@ namespace TA.SharpBooru
         [Option('i', "id", Required = true, HelpText = "The post ID")]
         public ulong ID { get; set; }
 
-        [Option("tags-no-delta", Required = false, HelpText = "--tags defines the new tags, not only delta")]
+        [Option("tags-no-delta", DefaultValue = false, Required = false, HelpText = "--tags defines the new tags, not only delta")]
         public bool TagsNoDelta { get; set; }
 
         [Option('t', "tags", Required = false, HelpText = "The posts tags delta")]
@@ -95,10 +95,10 @@ namespace TA.SharpBooru
         [Option("desc", Required = false, HelpText = "Then new description")]
         public string Description { get; set; }
 
-        [Option('r', "rating", Required = false, HelpText = "The new content rating")]
-        public byte? Rating { get; set; }
+        [Option('r', "rating", DefaultValue = -1, Required = false, HelpText = "The new content rating")]
+        public int Rating { get; set; }
 
-        [Option("private", Required = false, HelpText = "New Private")]
+        [Option("private", Required = false, HelpText = "New private setting")]
         public bool? Private { get; set; }
     }
 }
