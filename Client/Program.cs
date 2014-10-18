@@ -75,7 +75,7 @@ namespace TA.SharpBooru
                                 for (int i = 0; i < apiPosts.Count; i++)
                                     using (BooruAPIPost post = apiPosts[i])
                                     {
-                                        if (options.TagsOnlyKnown)
+                                        if (!options.AllTags)
                                         {
                                             string[] allTags = null;
                                             Request(ns, RequestCode.Get_AllTags, (rw) => { }, (rw) =>
@@ -90,8 +90,14 @@ namespace TA.SharpBooru
                                                     post.Tags.RemoveAt(a);
                                         }
                                         if (options.Tags != null)
-                                            foreach (var tag in options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-                                                post.Tags.Add(new BooruTag(tag));
+                                            if (options.TagsNoDelta)
+                                            {
+                                                string[] parts = options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                                                post.Tags.Clear();
+                                                foreach (string part in parts)
+                                                    post.Tags.Add(new BooruTag(part));
+                                            }
+                                            else TagDelta(ref post.Tags, options.Tags);
                                         if (options.Description != null)
                                             post.Description = options.Description;
                                         post.Rating = (byte)options.Rating;

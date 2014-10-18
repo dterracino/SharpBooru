@@ -50,10 +50,13 @@ namespace TA.SharpBooru
         [Option("url", Required = true, HelpText = "The URL to import")]
         public string URL { get; set; }
 
-        [Option("tags-only-known", DefaultValue = false, Required = false, HelpText = "Add only already known tags")]
-        public bool TagsOnlyKnown { get; set; }
+        [Option("all-tags", DefaultValue = false, Required = false, HelpText = "Add all tags, not only already known")]
+        public bool AllTags { get; set; }
 
-        [Option('t', "tags", Required = false, HelpText = "Additional tags")]
+        [Option("tags-no-delta", DefaultValue = false, Required = false, HelpText = "--tags defines the new tags, not only delta")]
+        public bool TagsNoDelta { get; set; }
+
+        [Option('t', "tags", Required = false, HelpText = "Additional tags (delta)")]
         public string Tags { get; set; }
 
         [Option("desc", Required = false, HelpText = "The description")]
