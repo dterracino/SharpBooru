@@ -19,21 +19,24 @@ namespace TA.SharpBooru
 
         public static Config TryLoad()
         {
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Personal);
-            path = Path.Combine(path, ".config", "booru", "client.conf");
+            string[] paths = new string[3];
+            paths[0] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), ".config", "booru", "client.conf");
+            paths[1] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "booru.conf");
+            paths[2] = "/etc/booru/client.conf";
 
-            if (File.Exists(path))
-            {
-                XmlDocument xml = new XmlDocument();
-                using (FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read))
+            for (int i = 0; i < paths.Length; i++)
+                if (File.Exists(paths[i]))
+                {
+                    XmlDocument xml = new XmlDocument();
+                    using (FileStream fs = new FileStream(paths[i], FileMode.Open, FileAccess.Read, FileShare.Read))
                         xml.Load(fs);
 
-                XmlNode rootNode = xml.SelectSingleNode("/BooruClientConfig");
-                string socket = rootNode.SelectSingleNode("Socket").InnerText;
-                string username = rootNode.SelectSingleNode("Username").InnerText;
-                string password = rootNode.SelectSingleNode("Password").InnerText;
-                return new Config(socket, username, password);
-            }
+                    XmlNode rootNode = xml.SelectSingleNode("/BooruClientConfig");
+                    string socket = rootNode.SelectSingleNode("Socket").InnerText;
+                    string username = rootNode.SelectSingleNode("Username").InnerText;
+                    string password = rootNode.SelectSingleNode("Password").InnerText;
+                    return new Config(socket, username, password);
+                }
 
             return null;
         }

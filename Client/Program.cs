@@ -39,8 +39,10 @@ namespace TA.SharpBooru
                         if (commonOptions.Password == null)
                             commonOptions.Password = config.Password;
                     }
-                    else if (commonOptions.Socket == null)
+                    else if (commonOptions.Socket == null && File.Exists("socket.sock"))
                         commonOptions.Socket = "socket.sock";
+                    else if (commonOptions.Socket == null && File.Exists("/srv/booru/socket.sock"))
+                        commonOptions.Socket = "/etc/booru/socket.sock";
 
                     UnixEndPoint endPoint = new UnixEndPoint(commonOptions.Socket);
 
