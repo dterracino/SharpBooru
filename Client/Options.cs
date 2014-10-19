@@ -22,7 +22,7 @@ namespace TA.SharpBooru
         }
     }
 
-    [Verb("add", HelpText = "Add a post")]
+    [Verb("add", HelpText = "Adds a post")]
     internal class AddOptions : Options
     {
         [Option('i', "image", Required = true, HelpText = "The posts image")]
@@ -44,7 +44,7 @@ namespace TA.SharpBooru
         public bool Private { get; set; }
     }
 
-    [Verb("addurl", HelpText = "Import a post via booru URL")]
+    [Verb("addurl", HelpText = "Imports a post via booru URL")]
     internal class AddUrlOptions : Options
     {
         [Option("url", Required = true, HelpText = "The URL to import")]
@@ -72,21 +72,21 @@ namespace TA.SharpBooru
         public bool Private { get; set; }
     }
 
-    [Verb("del", HelpText = "Delete a post")]
+    [Verb("del", HelpText = "Deletes a post")]
     internal class DelOptions : Options
     {
         [Option('i', "id", Required = true, HelpText = "The post ID")]
         public ulong ID { get; set; }
     }
 
-    [Verb("get", HelpText = "Get a post")]
+    [Verb("get", HelpText = "Gets a post")]
     internal class GetOptions : Options
     {
         [Option('i', "id", Required = true, HelpText = "The post ID")]
         public ulong ID { get; set; }
     }
 
-    [Verb("edit", HelpText = "Edit a post")]
+    [Verb("edit", HelpText = "Edits a post")]
     internal class EditOptions : Options
     {
         [Option('i', "id", Required = true, HelpText = "The post ID")]
@@ -111,7 +111,7 @@ namespace TA.SharpBooru
         public bool? Private { get; set; }
     }
 
-    [Verb("editimg", HelpText = "Edit a posts image")]
+    [Verb("editimg", HelpText = "Edits a posts image")]
     internal class EditImgOptions : Options
     {
         [Option('i', "id", Required = true, HelpText = "The post/image ID")]
@@ -124,7 +124,7 @@ namespace TA.SharpBooru
         public string Tool { get; set; }
     }
 
-    [Verb("getimg", HelpText = "Get a posts image")]
+    [Verb("getimg", HelpText = "Gets a posts image")]
     internal class GetImgOptions : Options
     {
         [Option('i', "id", Required = true, HelpText = "The post/image ID")]
@@ -132,6 +132,15 @@ namespace TA.SharpBooru
 
         [Option("path", Required = true, HelpText = "The image path (w/o extension)")]
         public string Path { get; set; }
+    }
 
+    [Verb("setimg", HelpText = "Sets a posts image")]
+    internal class SetImgOptions : Options
+    {
+        [Option('i', "id", Required = true, HelpText = "The post/image ID")]
+        public ulong ID { get; set; }
+
+        [Option("path", Required = true, HelpText = "The image path (w/o extension)")]
+        public string Path { get; set; }
     }
 }
