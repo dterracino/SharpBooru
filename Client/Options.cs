@@ -117,10 +117,21 @@ namespace TA.SharpBooru
         [Option('i', "id", Required = true, HelpText = "The post/image ID")]
         public ulong ID { get; set; }
 
-        [Option("path", Required = true, HelpText = "The temporary image path")]
+        [Option("path", Required = true, HelpText = "The temporary image path (w/o extension)")]
         public string Path { get; set; }
 
         [Option("tool", Required = false, HelpText = "The image editor program")]
         public string Tool { get; set; }
+    }
+
+    [Verb("getimg", HelpText = "Get a posts image")]
+    internal class GetImgOptions : Options
+    {
+        [Option('i', "id", Required = true, HelpText = "The post/image ID")]
+        public ulong ID { get; set; }
+
+        [Option("path", Required = true, HelpText = "The image path (w/o extension)")]
+        public string Path { get; set; }
+
     }
 }

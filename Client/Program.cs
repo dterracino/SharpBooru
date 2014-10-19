@@ -21,7 +21,8 @@ namespace TA.SharpBooru
                 typeof(DelOptions),
                 typeof(GetOptions),
                 typeof(EditOptions),
-                typeof(EditImgOptions)
+                typeof(EditImgOptions),
+                typeof(GetImgOptions)
             });
 
             if (!pResult.Errors.Any())
@@ -226,6 +227,18 @@ namespace TA.SharpBooru
                                             eImg.ToWriter(rw);
                                         }, (rw) => { });
                                 File.Delete(options.Path);
+                            }
+                            else if (oType == typeof(GetImgOptions))
+                            {
+                                GetImgOptions options = (GetImgOptions)commonOptions;
+                                BooruImage img = null;
+                                try
+                                {
+                                    Request(ns, RequestCode.Get_Image, (rw) => rw.Write(options.ID), (rw) => { img = BooruImage.FromReader(rw); });
+                                    string path = options.Path;
+                                    img.Save(ref path, true);
+                                }
+                                finally { img.Dispose(); }
                             }
                             //Logout
                             ns.WriteByte(0xFF);
