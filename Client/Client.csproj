@@ -60,6 +60,7 @@
     <Compile Include="BooruAPIs\LitJSON\Lexer.cs" />
     <Compile Include="BooruAPIs\LitJSON\ParserToken.cs" />
     <Compile Include="BooruAPIs\SafebooruAPI.cs" />
+    <Compile Include="ColorHelper.cs" />
     <Compile Include="CommandLine\Core\DescriptorType.cs" />
     <Compile Include="CommandLine\Core\InstanceBuilder.cs" />
     <Compile Include="CommandLine\Core\InstanceChooser.cs" />

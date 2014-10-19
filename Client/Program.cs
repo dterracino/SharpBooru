@@ -290,7 +290,8 @@ namespace TA.SharpBooru
             {
                 string tag = Tags[i].Tag;
                 var color = Tags[i].Color;
-                strTags[i] = string.Format("\x1b[38;2;{0};{1};{2}m{3}", color.R, color.G, color.B, tag);
+                //strTags[i] = string.Format("\x1b[38;2;{0};{1};{2}m{3}", color.R, color.G, color.B, tag);
+                strTags[i] = "\x1b[38;5;" + ColorHelper.GetXTermIndexFromColor(color) + "m" + tag;
             }
             return string.Join(" ", strTags) + "\x1b[0m";
         }
