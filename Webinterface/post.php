@@ -5,6 +5,7 @@ require_once("booru.php");
 require_once("config.php");
 
 html_header("Booru");
+flush();
 
 if (isset($_GET["tags"]))
 	$tag_search = $_GET["tags"];
@@ -17,7 +18,7 @@ else if (!is_numeric($id))
 	$id_err = "ID is not numeric";
 
 table_header("vtable");
-nav_searchbox("index.php", $tag_search);
+nav_searchbox($tag_search);
 if (!isset($id_err))
 {
 	try
@@ -30,7 +31,7 @@ if (!isset($id_err))
 		{
 			echo '<span style="color:' . $tag->color . '">';
 			$tag_encoded = htmlspecialchars($tag->tag);
-			echo '<a href="index.php?tags=' . $tag_encoded . '">';
+			echo '<a href="search.php?tags=' . $tag_encoded . '">';
 			echo $tag_encoded . "</a></span><br>";
 		}
 		subsection_footer();

@@ -64,9 +64,9 @@ function table_header($class)
 function table_middle() { echo '</td><td style="padding-left:14px;">'; }
 function table_footer() { echo '</td></tr></table>'; }
 
-function nav_searchbox($action, $value)
+function nav_searchbox($value)
 {
-	echo '<form action="' . $action . '" method="GET">';
+	echo '<form action="search.php" method="GET">';
 	echo '<input class="search tagbox" type="text" name="tags" value="';
 	echo $value . '"></form>';
 }
