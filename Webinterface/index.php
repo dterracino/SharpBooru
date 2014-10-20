@@ -7,11 +7,14 @@ require_once("config.php");
 html_header("Booru");
 flush();
 
-echo '<div style="width: 400px; margin-left: auto; margin-right: auto; margin-top: 180px; text-align: center;">';
+$counter = (string)count($booru->search(""));
+$counter_len = strlen($counter);
 
-$count = (string)count($booru->search(""));
-for ($i = 0; $i < strlen($count); $i++)
-	echo '<img alt="' . $count[$i] . '" src="counter/' . $count[$i] . '.png">';
+$div_width = 68 * ($counter_len + 1);
+echo '<div style="width: ' . $div_width . 'px; margin-left: auto; margin-right: auto; margin-top: 180px; text-align: center;">';
+
+for ($i = 0; $i < $counter_len; $i++)
+	echo '<img alt="' . $counter[$i] . '" src="counter/' . $counter[$i] . '.png">';
 
 echo "<br><br>";
 
