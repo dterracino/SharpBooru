@@ -138,6 +138,10 @@ namespace TA.SharpBooru.Server
                     User.ToWriter(RW);
                     break;
 
+                case RequestCode.Get_PostCount:
+                    RW.Write(_Booru.GetPostCount());
+                    break;
+
                 case RequestCode.Search_String: //User limitations?
                     {
                         string pattern = RW.ReadString();

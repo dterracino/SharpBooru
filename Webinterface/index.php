@@ -7,7 +7,7 @@ require_once("config.php");
 html_header("Booru");
 flush();
 
-$counter = (string)count($booru->search(""));
+$counter = (string)$booru->postCount();
 $counter_len = strlen($counter);
 
 $div_width = 68 * ($counter_len + 1);

@@ -286,6 +286,8 @@ namespace TA.SharpBooru.Server
             else throw new BooruException(BooruException.ErrorCodes.NoPermission);
         }
 
+        public uint GetPostCount() { return _DB.ExecuteScalar<uint>(SQLStatements.GetPostCount); }
+
         public List<string> GetAllTags()
         {
             DataTable tagTable = _DB.ExecuteTable(SQLStatements.GetTags);

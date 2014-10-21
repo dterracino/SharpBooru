@@ -31,6 +31,9 @@
         //Out: BooruUser User
         Get_User = 7,
 
+        //Out: uint PostCount
+        Get_PostCount = 8,
+
         //In: string Pattern
         //Out: List<ulong> IDs
         Search_String = 20,

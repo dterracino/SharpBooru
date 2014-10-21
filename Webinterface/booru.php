@@ -106,6 +106,15 @@ class Booru
 		return $array;
 	}
 
+	function postCount()
+	{
+		$response = $this->request(8, "");
+		$reader = new Reader($response);
+		$count = $reader->ReadUInt();
+		$reader->close();
+		return $count;
+	}
+
 	function searchTags($term)
 	{
 		$writer = new Writer();
