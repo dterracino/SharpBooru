@@ -45,6 +45,11 @@ if (!isset($id_err))
 		if (filter_var($post->source, FILTER_VALIDATE_URL))
 			$source = '<a href="' . $source . '">' . $source . "</a>";
 		subsection("Source", $source);
+		if (!empty($post->description))
+		{
+			$description = htmlentities($post->description);
+			subsection("Description", $post->description);
+		}
 		subsection("Rating", $post->rating);
 		subsection("Size", $post->width . "x" . $post->height);
 		$cdate = date("d.m.Y H:i", $post->date);

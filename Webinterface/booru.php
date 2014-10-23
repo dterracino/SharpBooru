@@ -14,6 +14,7 @@ class BooruPost
 {
 	public $user;
 	public $source;
+	public $description;
 	public $rating;
 	public $width;
 	public $height;
