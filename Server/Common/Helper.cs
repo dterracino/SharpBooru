@@ -10,12 +10,18 @@ using System.Reflection;
 
 namespace TA.SharpBooru
 {
-    public class Helper
+    public static class Helper
     {
-        private const string TEMP_FOLDER_NAME = "SharpBooru";
         private static readonly DateTime UNIX_TIME = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         public static readonly Random Random = new Random();
+        private static readonly string TempFolder;
+
+        static Helper()
+        {
+            TempFolder = RandomString(32);
+            TempFolder = Path.Combine(Path.GetTempPath(), TempFolder);
+        }
 
         [DllImport("libc.so", EntryPoint = "memcmp")]
         private static extern int _MemoryCompareUnix(IntPtr b1, IntPtr b2, long count);
@@ -89,10 +95,9 @@ namespace TA.SharpBooru
         public static string GetTempFile()
         {
             string tempFileName = RandomString(16) + ".tmp";
-            string tempFolder = Path.Combine(Path.GetTempPath(), TEMP_FOLDER_NAME);
-            if (!Directory.Exists(tempFolder))
-                Directory.CreateDirectory(tempFolder);
-            return Path.Combine(tempFolder, tempFileName);
+            if (!Directory.Exists(TempFolder))
+                Directory.CreateDirectory(TempFolder);
+            return Path.Combine(TempFolder, tempFileName);
         }
 
         public static string DownloadTemporary(string URI)
@@ -119,10 +124,9 @@ namespace TA.SharpBooru
 
         public static int CleanTempFolder()
         {
-            string tempPath = Path.Combine(Path.GetTempPath(), TEMP_FOLDER_NAME);
-            if (Directory.Exists(tempPath))
+            if (Directory.Exists(TempFolder))
             {
-                string[] fileNames = Directory.GetFiles(tempPath);
+                string[] fileNames = Directory.GetFiles(TempFolder);
                 int deletedCount = 0;
                 foreach (string file in fileNames)
                     try
