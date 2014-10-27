@@ -40,8 +40,8 @@ namespace TA.SharpBooru
         [Option('r', "rating", DefaultValue = 7, Required = false, HelpText = "The content rating")]
         public int Rating { get; set; }
 
-        [Option("private", DefaultValue = false, Required = false, HelpText = "Private")]
-        public bool Private { get; set; }
+        [Option("private", Required = false, HelpText = "Private")]
+        public bool? Private { get; set; }
     }
 
     [Verb("addurl", HelpText = "Imports a post via booru URL")]
@@ -68,8 +68,8 @@ namespace TA.SharpBooru
         [Option('r', "rating", DefaultValue = 7, Required = false, HelpText = "The content rating")]
         public int Rating { get; set; }
 
-        [Option("private", DefaultValue = false, Required = false, HelpText = "Private setting")]
-        public bool Private { get; set; }
+        [Option("private", Required = false, HelpText = "Private setting")]
+        public bool? Private { get; set; }
     }
 
     [Verb("del", HelpText = "Deletes a post")]
@@ -140,7 +140,7 @@ namespace TA.SharpBooru
         [Option('i', "id", Required = true, HelpText = "The post/image ID")]
         public ulong ID { get; set; }
 
-        [Option("path", Required = true, HelpText = "The image path (w/o extension)")]
+        [Option("path", Required = true, HelpText = "The image path")]
         public string Path { get; set; }
     }
 }

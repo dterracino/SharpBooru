@@ -69,18 +69,22 @@ namespace TA.SharpBooru
                                 using (var image = BooruImage.FromFile(options.ImagePath))
                                 {
                                     Console.WriteLine("OK");
-                                    foreach (var tag in options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
-                                        post.Tags.Add(new BooruTag(tag));
-                                    post.Source = options.Source;
+                                    if (options.Tags != null)
+                                        foreach (var tag in options.Tags.Split(new char[1] { ' ' }, StringSplitOptions.RemoveEmptyEntries))
+                                            post.Tags.Add(new BooruTag(tag));
+                                    if (options.Source != null)
+                                        post.Source = options.Source;
+                                    if (options.Description != null)
                                     post.Description = options.Description;
                                     post.Rating = (byte)options.Rating;
-                                    post.Private = options.Private;
+                                    if (options.Private.HasValue)
+                                        post.Private = options.Private.Value;
                                     Console.Write("Adding post... ");
                                     ulong id = AddPost(ns, post, post.Tags, image);
                                     Console.WriteLine(id);
                                 }
                             }
-                            else if (oType == typeof(AddUrlOptions)) //TODO Only import one image
+                            else if (oType == typeof(AddUrlOptions))
                             {
                                 var options = (AddUrlOptions)commonOptions;
                                 var apiPosts = BooruAPI.SearchPostsPerURL(options.URL);
@@ -134,7 +138,8 @@ namespace TA.SharpBooru
                                     apiPost.Description = "Imported from " + apiPost.APIName;
                                 else apiPost.Description = options.Description;
                                 apiPost.Rating = (byte)options.Rating;
-                                apiPost.Private = options.Private;
+                                if (options.Private.HasValue)
+                                    apiPost.Private = options.Private.Value;
                                 Console.Write("Importing post... ");
                                 ulong id = AddPost(ns, apiPost, apiPost.Tags, apiPost.Image);
                                 Console.WriteLine(id);
