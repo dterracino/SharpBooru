@@ -6,11 +6,12 @@ require_once("session.php");
 
 function html_header($title)
 {
-	global $header_name, $header_motd, $header_links, $header_links_loggedin;
+	global $booru_name, $motd, $header_links, $header_links_loggedin, $logo_link;
 
 	echo "<!DOCTYPE html>";
 	echo "<html><head><title>";
 	echo $title . "</title>";
+	echo '<meta name="viewport" content="width=800" >';
 	echo '<link rel="stylesheet" type="text/css" href="style_static.css">';
 	echo '<link rel="stylesheet" type="text/css" href="style_dynamic.php">';
 	echo '<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>';
@@ -19,28 +20,27 @@ function html_header($title)
 	echo '<link rel="icon" type="image/icon" href="favicon.ico">';
 	echo '<meta charset="utf-8">';
 	echo '</head><body><div class="main">';
-	echo '<div class="header"><div class="innerheader">';
-	echo '<span class="hl"><a href="index.php">' . $header_name . '</a></span><br>';
+	echo '<div class="header">';
+	// echo '<a href="index.php">' . $header_name . '</a> ';
+	echo '<a href="' . $logo_link . '">';
+	echo '<img class="title" alt="' . $booru_name . '" src="images/title.svg">';
+	echo "</a>";
 
 	//Links
 	if (session_loggedin())
 		$header_links = array_merge($header_links, $header_links_loggedin);
 	$link_count = count($header_links);
-	$i = 0;
 	foreach ($header_links as $key => $value)
 	{
-		echo '<a href="' . $value . '">' . $key . "</a>";
-		if (!(++$i === $link_count))
-			echo " | ";
+		echo '<a href="' . $value . '">';
+		echo '<img class="link" alt="' . $value . '" src="images/' . $key . '">';
+		echo "</a>";
 	}
 
-	if (isset($header_motd))
-	{
-		echo '</div><div class="motd"><b>Notice:</b> ';
-		echo $header_motd;
-	}
+	if (isset($motd))
+		echo '<div class="motd"><b>Notice:</b> ' . $motd . "</div>";
 
-	echo '</div><div class="login">';
+	echo '<div class="login">';
 	session_printform();
 	
 	echo '</div></div><div class="body">';
