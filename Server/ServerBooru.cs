@@ -255,7 +255,7 @@ namespace TA.SharpBooru.Server
                 PostWithImage.Image.Save(imagePath);
                 _ImgOptimizer.Optimize(thumbPath);
                 _ImgOptimizer.Optimize(imagePath);
-                AddPostTags(PostWithImage);
+                CheckAndAddPostTags(ref PostWithImage);
                 return PostWithImage.ID;
             }
             else throw new BooruException(BooruException.ErrorCodes.NoPermission);
@@ -278,7 +278,7 @@ namespace TA.SharpBooru.Server
                     }
                     _DB.ExecuteNonQuery(SQLStatements.DeletePostByID, Post.ID);
                     _DB.ExecuteNonQuery(SQLStatements.DeletePostTagsByPostID, Post.ID);
-                    AddPostTags(Post);
+                    CheckAndAddPostTags(ref Post);
                     _DB.ExecuteInsert("posts", Post.ToDictionary(true));
                 }
                 else throw new BooruException(BooruException.ErrorCodes.ResourceNotFound);
@@ -358,8 +358,14 @@ namespace TA.SharpBooru.Server
             else return true;
         }
 
-        private void AddPostTags(BooruPost newPost)
+        private void CheckAndAddPostTags(ref BooruPost newPost)
         {
+            for (int i = newPost.Tags.Count - 1; !(i < 0); i--)
+            {
+                newPost.Tags[i].Tag = newPost.Tags[i].Tag.Trim().ToLower();
+                if (string.IsNullOrWhiteSpace(newPost.Tags[i].Tag))
+                    newPost.Tags.RemoveAt(i);
+            }
             foreach (BooruTag tag in newPost.Tags)
             {
                 DataRow existingTagRow = _DB.ExecuteRow(SQLStatements.GetTagByTagString, tag.Tag);
