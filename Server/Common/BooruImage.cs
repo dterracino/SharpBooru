@@ -246,18 +246,19 @@ namespace TA.SharpBooru
             {
                 //TODO Maybe use floats instead of int division?
                 Point resultPoint = new Point((th_size.Width - resultSize.Width) / 2, (th_size.Height - resultSize.Height) / 2);
-                Bitmap th = new Bitmap(th_size.Width, th_size.Height);
-                using (Graphics g = CreateAAGraphics(th))
-                    g.DrawImage(Bitmap, resultPoint.X, resultPoint.Y, resultSize.Width, resultSize.Height);
-                return BooruImage.FromBitmap(th);
+                using (Bitmap th = new Bitmap(th_size.Width, th_size.Height))
+                {
+                    using (Graphics g = CreateAAGraphics(th))
+                        g.DrawImage(Bitmap, resultPoint.X, resultPoint.Y, resultSize.Width, resultSize.Height);
+                    return BooruImage.FromBitmap(th);
+                }
             }
-            else
-            {
-                Bitmap th = new Bitmap(resultSize.Width, resultSize.Height);
-                using (Graphics g = CreateAAGraphics(th))
-                    g.DrawImage(Bitmap, 0f, 0f, resultSize.Width, resultSize.Height);
-                return BooruImage.FromBitmap(th);
-            }
+            else using (Bitmap th = new Bitmap(resultSize.Width, resultSize.Height))
+                {
+                    using (Graphics g = CreateAAGraphics(th))
+                        g.DrawImage(Bitmap, 0f, 0f, resultSize.Width, resultSize.Height);
+                    return BooruImage.FromBitmap(th);
+                }
         }
 
         private Graphics CreateAAGraphics(Bitmap Bitmap)
