@@ -6,13 +6,13 @@ namespace TA.SharpBooru
 {
     internal class Options
     {
-        [Option('s', "socket", Required = false, HelpText = "The UNIX socket")]
+        [Option("socket", Required = false, HelpText = "The UNIX socket")]
         public string Socket { get; set; }
 
-        [Option('u', "username", Required = false, HelpText = "Your username")]
+        [Option("username", Required = false, HelpText = "Your username")]
         public string Username { get; set; }
 
-        [Option('p', "password", Required = false, HelpText = "Your password")]
+        [Option("password", Required = false, HelpText = "Your password")]
         public string Password { get; set; }
 
         private string GetAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
@@ -31,23 +31,23 @@ namespace TA.SharpBooru
         [Option('t', "tags", Required = true, HelpText = "The posts tags")]
         public string Tags { get; set; }
 
-        [Option("source", Required = false, HelpText = "The image source")]
+        [Option('s', "source", Required = false, HelpText = "The image source")]
         public string Source { get; set; }
 
-        [Option("desc", Required = false, HelpText = "The description")]
+        [Option('d', "description", Required = false, HelpText = "The description")]
         public string Description { get; set; }
 
         [Option('r', "rating", DefaultValue = 7, Required = false, HelpText = "The content rating")]
         public int Rating { get; set; }
 
-        [Option("private", Required = false, HelpText = "Private")]
+        [Option('p', "private", Required = false, HelpText = "Private")]
         public bool? Private { get; set; }
     }
 
     [Verb("addurl", HelpText = "Imports a post via booru URL")]
     internal class AddUrlOptions : Options
     {
-        [Option("url", Required = true, HelpText = "The URL to import")]
+        [Option('u', "url", Required = true, HelpText = "The URL to import")]
         public string URL { get; set; }
 
         [Option("custom-image", Required = false, HelpText = "The custom image to import")]
@@ -62,13 +62,13 @@ namespace TA.SharpBooru
         [Option('t', "tags", Required = false, HelpText = "Additional tags (delta)")]
         public string Tags { get; set; }
 
-        [Option("desc", Required = false, HelpText = "The description")]
+        [Option('d', "description", Required = false, HelpText = "The description")]
         public string Description { get; set; }
 
         [Option('r', "rating", DefaultValue = 7, Required = false, HelpText = "The content rating")]
         public int Rating { get; set; }
 
-        [Option("private", Required = false, HelpText = "Private setting")]
+        [Option('p', "private", Required = false, HelpText = "Private setting")]
         public bool? Private { get; set; }
     }
 
@@ -98,16 +98,16 @@ namespace TA.SharpBooru
         [Option('t', "tags", Required = false, HelpText = "The posts tags delta")]
         public string Tags { get; set; }
 
-        [Option("source", Required = false, HelpText = "The new image source")]
+        [Option('s', "source", Required = false, HelpText = "The new image source")]
         public string Source { get; set; }
 
-        [Option("desc", Required = false, HelpText = "Then new description")]
+        [Option('d', "description", Required = false, HelpText = "Then new description")]
         public string Description { get; set; }
 
         [Option('r', "rating", DefaultValue = -1, Required = false, HelpText = "The new content rating")]
         public int Rating { get; set; }
 
-        [Option("private", Required = false, HelpText = "New private setting")]
+        [Option('p', "private", Required = false, HelpText = "New private setting")]
         public bool? Private { get; set; }
     }
 
@@ -117,11 +117,11 @@ namespace TA.SharpBooru
         [Option('i', "id", Required = true, HelpText = "The post/image ID")]
         public ulong ID { get; set; }
 
-        [Option("path", Required = true, HelpText = "The temporary image path (w/o extension)")]
+        [Option('p', "path", Required = true, HelpText = "The temporary image path (w/o extension)")]
         public string Path { get; set; }
 
-        [Option("tool", Required = false, HelpText = "The image editor program")]
-        public string Tool { get; set; }
+        [Option('e', "editor", Required = false, HelpText = "The image editor program")]
+        public string Editor { get; set; }
     }
 
     [Verb("getimg", HelpText = "Gets a posts image")]
@@ -130,7 +130,7 @@ namespace TA.SharpBooru
         [Option('i', "id", Required = true, HelpText = "The post/image ID")]
         public ulong ID { get; set; }
 
-        [Option("path", Required = true, HelpText = "The image path (w/o extension)")]
+        [Option('p', "path", Required = true, HelpText = "The image path (w/o extension)")]
         public string Path { get; set; }
     }
 
@@ -140,7 +140,7 @@ namespace TA.SharpBooru
         [Option('i', "id", Required = true, HelpText = "The post/image ID")]
         public ulong ID { get; set; }
 
-        [Option("path", Required = true, HelpText = "The image path")]
+        [Option('p', "path", Required = true, HelpText = "The image path")]
         public string Path { get; set; }
     }
 

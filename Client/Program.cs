@@ -225,9 +225,9 @@ namespace TA.SharpBooru
                                     img.Save(ref path, true);
                                 }
                                 finally { img.Dispose(); }
-                                if (options.Tool != null)
+                                if (options.Editor != null)
                                 {
-                                    var psi = new ProcessStartInfo(options.Tool, path);
+                                    var psi = new ProcessStartInfo(options.Editor, path);
                                     Process tool = new Process() { StartInfo = psi };
                                     tool.Start();
                                     Console.Write("Waiting for image editor to exit...");
