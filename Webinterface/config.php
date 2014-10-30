@@ -19,6 +19,15 @@ $header_links_loggedin = array(
 	"upload.svg" => "upload.php"
 );
 
+$special_days = array(
+	"01.05.",
+	"31.10.",
+	"24.12.",
+	"25.12.",
+	"31.12.",
+	"01.01."
+);
+
 $thumbs_per_page = 60;
 $thumb_size = 120;
 
