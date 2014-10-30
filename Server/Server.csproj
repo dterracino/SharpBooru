@@ -95,6 +95,7 @@
     <Compile Include="SThreadPool.cs" />
     <Compile Include="SyscallEx.cs" />
     <Compile Include="SQLStatements.cs" />
+    <Compile Include="MailNotificator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="sqlite3.dll">
