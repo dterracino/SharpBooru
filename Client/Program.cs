@@ -14,6 +14,18 @@ namespace TA.SharpBooru
     {
         public static int Main(string[] args)
         {
+            Console.Write("\x1b]0;SharpBooru Client\x07");
+            // Console.Title = "SharpBooru Client";
+            try { return MainStage2(args); }
+            finally
+            {
+                try { Helper.CleanTempFolder(); }
+                catch { }
+            }
+        }
+
+        public static int MainStage2(string[] args)
+        {
             var pResult = Parser.Default.ParseArguments(args, new Type[]
             {
                 typeof(AddOptions),

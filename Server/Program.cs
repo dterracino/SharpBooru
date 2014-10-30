@@ -41,7 +41,8 @@ namespace TA.SharpBooru.Server
 
         private static void MainStage2(Logger logger, string booruPath)
         {
-            Console.Title = "SharpBooru Server";
+            Console.Write("\x1b]0;SharpBooru Server\x07");
+            // Console.Title = "SharpBooru Server";
             Console.TreatControlCAsInput = true;
 
             if (Environment.OSVersion.Platform != PlatformID.Unix)
