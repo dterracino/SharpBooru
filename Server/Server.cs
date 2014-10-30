@@ -171,6 +171,12 @@ namespace TA.SharpBooru.Server
                         _Booru.SearchTags(term).ToWriter(RW);
                     } break;
 
+                case RequestCode.Start_GC:
+                    if (!User.IsAdmin)
+                        throw new BooruException(BooruException.ErrorCodes.NoPermission);
+                    else GC.Collect();
+                    break;
+
                 case RequestCode.Add_Post:
                     using (var post = BooruPost.FromReader(RW))
                     {

@@ -143,4 +143,7 @@ namespace TA.SharpBooru
         [Option("path", Required = true, HelpText = "The image path")]
         public string Path { get; set; }
     }
+
+    [Verb("gc", HelpText = "Start the server garbage collector")]
+    internal class GCOptions : Options { }
 }

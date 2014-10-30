@@ -23,7 +23,8 @@ namespace TA.SharpBooru
                 typeof(EditOptions),
                 typeof(EditImgOptions),
                 typeof(GetImgOptions),
-                typeof(SetImgOptions)
+                typeof(SetImgOptions),
+                typeof(GCOptions)
             });
 
             if (!pResult.Errors.Any())
@@ -256,6 +257,8 @@ namespace TA.SharpBooru
                                         img.ToWriter(rw);
                                     }, (rw) => { });
                             }
+                            else if (oType == typeof(GCOptions))
+                                Request(ns, RequestCode.Start_GC, (rw) => { }, (rw) => { });
                             //Logout
                             ns.WriteByte(0xFF);
                             ns.WriteByte(0xFF);

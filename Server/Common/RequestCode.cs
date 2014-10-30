@@ -46,12 +46,15 @@
         //In: string Password
         Login = 22,
 
-        // void
+        //void
         Logout = 23,
 
         //In: string Term
         //Out: List<BooruTag> Tags
         Search_Tags = 24,
+
+        //void
+        Start_GC = 25,
 
         //In: BooruPost Post
         //In: BooruTagList Tags
