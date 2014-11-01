@@ -135,6 +135,7 @@ namespace TA.SharpBooru
                         deletedCount++;
                     }
                     catch { }
+                Directory.Delete(TempFolder, false);
                 return deletedCount;
             }
             else return 0;
