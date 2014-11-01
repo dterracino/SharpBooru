@@ -24,7 +24,10 @@ if (isset($_GET["id"]))
 		cache_headers(12 * 3600);
 		$etag = etag_buffer($data);
 		if (!etag_check($etag))
+		{
+			header("Content-Length: " . strlen($data));
 			echo $data;
+		}
 	}
 	catch (Exception $ex)
 	{
