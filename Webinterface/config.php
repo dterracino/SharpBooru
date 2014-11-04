@@ -10,6 +10,7 @@ $logo_link = "index.php";
 $header_links = array(
 	"house.svg" => "index.php",
 	"tiles.svg" => "search.php",
+	"new.svg" => "newest.php",
 	"dice.svg" => "random.php",
 	"github.svg" => "random.php",
 	"github.svg" => "https://github.com/teamalpha5441"
