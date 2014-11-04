@@ -17,12 +17,17 @@ div.main {
 
 img.title {
 	max-height: 100%;
+	display: block;
+	float: left;
 }
 
-img.link {
+div.link {
 	margin-left: 7px;
 	margin-top: 10px;
-	margin-bottom: 10px;
+	width: 32px;
+	height: 32px;
+	display: block;
+	float: left;
 }
 
 div.sub {

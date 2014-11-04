@@ -32,9 +32,9 @@ function html_header($title)
 	$link_count = count($header_links);
 	foreach ($header_links as $key => $value)
 	{
-		echo '<a href="' . $value . '">';
-		echo '<img class="link" alt="' . $value . '" src="images/' . $key . '">';
-		echo "</a>";
+		echo '<div class="link"><a href="' . $value . '">';
+		echo '<img alt="' . $value . '" src="images/' . $key . '">';
+		echo "</a></div>";
 	}
 
 	if (isset($motd))
