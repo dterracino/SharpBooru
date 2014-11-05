@@ -4,9 +4,6 @@ require_once("html.php");
 require_once("booru.php");
 require_once("config.php");
 
-html_header("Booru");
-flush();
-
 if (isset($_GET["tags"]))
 	$tag_search = $_GET["tags"];
 else $tag_search = "";
@@ -16,6 +13,9 @@ if (!isset($id))
 	$id_err = "No ID given";
 else if (!is_numeric($id))
 	$id_err = "ID is not numeric";
+
+html_header("Booru - Post " . $id);
+flush();
 
 table_header("vtable");
 nav_searchbox($tag_search);
@@ -55,7 +55,7 @@ if (!isset($id_err))
 		$cdate = date("d.m.Y H:i", $post->date);
 		subsection("Date", $cdate);
 	}
-	catch (Exception $ex) { $id_err = "No permission"; }
+	catch (Exception $ex) { $id_err = "Not found or no permission"; }
 }
 table_middle();
 if (!isset($id_err))

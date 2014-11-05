@@ -4,12 +4,18 @@ require_once("html.php");
 require_once("booru.php");
 require_once("config.php");
 
-html_header("Booru");
-flush();
-
 if (isset($_GET["tags"]))
+{
 	$tag_search = $_GET["tags"];
-else $tag_search = "";
+	html_header("Booru - " . $tag_search);
+}
+else
+{
+	$tag_search = "";
+	html_header("Booru");
+}
+
+flush();
 
 $post_ids = $booru->search($tag_search);
 
