@@ -4,7 +4,7 @@ require_once("html.php");
 require_once("booru.php");
 require_once("config.php");
 
-if (isset($_GET["tags"]))
+if (!empty($_GET["tags"]))
 {
 	$tag_search = $_GET["tags"];
 	html_header_mobile("Booru - " . $tag_search, $tag_search);
@@ -52,13 +52,13 @@ if (count($post_ids) > 0)
 		if ($page > 0)
 		{
 			echo '<span class="pc_page"><span class="pc_arrow">';
-			echo '<a href="?page=' . $page . '&amp;tags=' . $tag_search . '">&#x21ab;</a></span></span>';
+			echo '<a href="?page=' . $page . $tag_search . '">&#x21ab;</a></span></span>';
 		}
 	for ($i = 0; $i < $total_pages; $i++)
 	{
 		echo '<span class="pc_page">';
 		if ($i != $page)
-			echo '<a href="?page=' . ($i + 1) . '&amp;tags=' . $tag_search . '">' . ($i + 1) . "</a>";
+			echo '<a href="?page=' . ($i + 1) . $tag_search . '">' . ($i + 1) . "</a>";
 		else echo '<span class="pc_selected">' . ($i + 1) . "</span>";
 		echo "</span>";
 	}
@@ -66,7 +66,7 @@ if (count($post_ids) > 0)
 		if ($page < $total_pages - 1)
 		{
 			echo '<span class="pc_page"><span class="pc_arrow">';
-			echo '<a href="search.php?page=' . ($page + 2) . '&amp;tags=' . $tag_search . '">&#x21ac;</a></span></span>';
+			echo '<a href="search.php?page=' . ($page + 2) . $tag_search . '">&#x21ac;</a></span></span>';
 		}
 	echo "</div>";
 }
