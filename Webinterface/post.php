@@ -17,7 +17,7 @@ else if (!is_numeric($id))
 html_header("Booru - Post " . $id);
 flush();
 
-table_header("vtable");
+table_header(NULL);
 nav_searchbox($tag_search);
 if (!isset($id_err))
 {

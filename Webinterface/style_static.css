@@ -72,10 +72,6 @@ div.wrap {
 	display: table;
 }
 
-table.vtable {
-	max-width: 100%;
-}
-
 td {
 	text-align: left;
 	vertical-align: top;
