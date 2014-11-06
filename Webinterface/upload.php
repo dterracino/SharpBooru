@@ -12,7 +12,20 @@ function isImage($buffer)
 	return in_array(get_mime($buffer), $mimeTypes);
 }
 
-html_header("Booru");
+$mobile = false;
+if (isset($_GET["target"]))
+	if ($_GET["target"] == "mobile")
+		$mobile = true;
+
+if ($mobile)
+{
+	if (isset($_GET["tags"]))
+		$tag_search = $_GET["tags"];
+	else $tag_search = "";
+
+	html_header_mobile("Booru - Upload", $tag_search);
+}
+else html_header("Booru - Upload");
 
 if (session_loggedin())
 {
@@ -65,15 +78,22 @@ if (session_loggedin())
 		echo "<br><br>";
 	}
 
+	if ($mobile)
+		$input_width = 400;
+	else $input_width = 600;
+
 	echo '<form method="POST" enctype="multipart/form-data">';
 	echo '<input type="hidden" name="MAX_FILE_SIZE" value="67108864">';
 	echo "<table>";
 	echo '<tr><td>File</td><td><input type="file" name="file" accept="image/*"></td></tr>';
-//	echo '<tr><td>Tags</td><td><input style="width: 500px;" type="text" name="tags" value="' . $upload_default_tags . '" class="tagbox"></td></tr>';
-	echo '<tr><td>Tags</td><td><textarea name="tags" style="width: 500px;" rows="4" class="tagbox">' . $upload_default_tags . '</textarea></td></tr>';
-	echo '<tr><td>Source</td><td><input style="width: 500px;" type="text" name="source" value="Online Upload"></td></tr>';
-	echo '<tr><td>Description</td><td><input style="width: 500px;" type="text" name="description"></td></tr>';
-	echo '<tr><td>Rating</td><td><input style="width:40px;" type="number" name="rating" value="7"></td></tr>';
+
+	if ($mobile)
+		echo '<tr><td>Tags</td><td><textarea name="tags" style="width: ' . $input_width . 'px; resize: none;" rows="7" class="tagbox">' . $upload_default_tags . '</textarea></td></tr>';
+	else echo '<tr><td>Tags</td><td><textarea name="tags" style="width: ' . $input_width . 'px;" rows="4" class="tagbox">' . $upload_default_tags . '</textarea></td></tr>';
+
+	echo '<tr><td>Source</td><td><input style="width: ' . $input_width . 'px;" type="text" name="source" value="Online Upload"></td></tr>';
+	echo '<tr><td>Description</td><td><input style="width: ' . $input_width . 'px;" type="text" name="description"></td></tr>';
+	echo '<tr><td>Rating</td><td><input style="width: 40px;" type="number" name="rating" value="7"></td></tr>';
 	echo '<tr><td>Private</td><td><input type="checkbox" name="private"></td></tr>'; // checked="checked"
 	echo '<tr><td></td><td><input type="submit" value="Upload"></td></tr>';
 	echo "</table></form>";

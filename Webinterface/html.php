@@ -77,8 +77,9 @@ function html_header_mobile($title, $search_value)
 //		"house.svg" => "index.php",
 		"tiles.svg" => "search_m.php",
 		"new.svg" => "specialpost.php?target=mobile&amp;type=newest",
-		"dice.svg" => "specialpost.php?target=mobile&amp;type=random"
+		"dice.svg" => "specialpost.php?target=mobile&amp;type=random",
 //		"github.svg" => "https://github.com/teamalpha5441",
+		"upload.svg" => "upload.php?target=mobile"
 	);
 	$header_links_loggedin = array(
 //		"upload.svg" => "upload.php"
