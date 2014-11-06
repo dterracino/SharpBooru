@@ -7,19 +7,6 @@ $booru_name = "Eggy's Booru";
 
 $logo_link = "index.php";
 
-$header_links = array(
-	"house.svg" => "index.php",
-	"tiles.svg" => "search.php",
-	"new.svg" => "newest.php",
-	"dice.svg" => "random.php",
-	"github.svg" => "random.php",
-	"github.svg" => "https://github.com/teamalpha5441"
-);
-
-$header_links_loggedin = array(
-	"upload.svg" => "upload.php"
-);
-
 $special_days = array(
 	"01.05.",
 	"31.10.",
@@ -29,7 +16,12 @@ $special_days = array(
 	"01.01."
 );
 
+$upload_default_tags = "todo_tags todo_source";
+
 $thumbs_per_page = 60;
 $thumb_size = 120;
+
+$mobile_thumbs_per_row = 4;
+$mobile_width = (12 + $thumb_size) * $mobile_thumbs_per_row + 10;
 
 ?>

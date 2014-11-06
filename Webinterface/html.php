@@ -4,14 +4,10 @@ require_once("session.php");
 require_once("config.php");
 require_once("session.php");
 
-function html_header($title)
+function _html_header_common($title)
 {
-	global $booru_name, $motd, $header_links, $header_links_loggedin, $logo_link;
-
 	echo "<!DOCTYPE html>";
-	echo "<html><head><title>";
-	echo $title . "</title>";
-	echo '<meta name="viewport" content="width=800" >';
+	echo "<html><head><title>" . $title . "</title>";
 	echo '<link rel="stylesheet" type="text/css" href="style_static.css">';
 	echo '<link rel="stylesheet" type="text/css" href="style_dynamic.php">';
 	echo '<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>';
@@ -19,14 +15,31 @@ function html_header($title)
 	echo '<script type="text/javascript" src="script.js"></script>';
 	echo '<link rel="icon" type="image/icon" href="favicon.ico">';
 	echo '<meta charset="utf-8">';
-	echo '</head><body><div class="main">';
+}
+
+function html_header($title)
+{
+	global $booru_name, $motd, $header_links, $header_links_loggedin, $logo_link;
+
+	_html_header_common($title);
+	echo "</head><body>";
+	echo '<div class="main">';
 	echo '<div class="header">';
-	// echo '<a href="index.php">' . $header_name . '</a> ';
 	echo '<a href="' . $logo_link . '">';
 	echo '<img class="title" alt="' . $booru_name . '" src="images/title.svg">';
 	echo "</a>";
 
-	//Links
+	$header_links = array(
+		"house.svg" => "index.php",
+		"tiles.svg" => "search.php",
+		"new.svg" => "specialpost.php?type=newest",
+		"dice.svg" => "specialpost.php?type=random",
+		"github.svg" => "https://github.com/teamalpha5441",
+		"mobile.svg" => "search_m.php"
+	);
+	$header_links_loggedin = array(
+		"upload.svg" => "upload.php"
+	);
 	if (session_loggedin())
 		$header_links = array_merge($header_links, $header_links_loggedin);
 	$link_count = count($header_links);
@@ -46,6 +59,45 @@ function html_header($title)
 	echo '</div></div><div class="body">';
 }
 
+function html_header_mobile($title, $search_value)
+{
+	global $booru_name, $header_links, $header_links_loggedin, $logo_link, $mobile_width;
+
+	_html_header_common($title);
+	echo '<meta name="viewport" content="width=' . $mobile_width . '" >';
+	echo '<link rel="stylesheet" type="text/css" href="style_mobile.php">';
+	echo "</head><body>";
+	echo '<div class="main_mobile">';
+	echo '<div class="header_mobile">';
+//	echo '<a href="' . $logo_link . '">';
+	echo '<img class="title" alt="' . $booru_name . '" src="images/title.svg">';
+//	echo "</a>";
+
+	$header_links = array(
+//		"house.svg" => "index.php",
+		"tiles.svg" => "search_m.php",
+		"new.svg" => "specialpost.php?target=mobile&amp;type=newest",
+		"dice.svg" => "specialpost.php?target=mobile&amp;type=random"
+//		"github.svg" => "https://github.com/teamalpha5441",
+	);
+	$header_links_loggedin = array(
+//		"upload.svg" => "upload.php"
+	);
+	if (session_loggedin())
+		$header_links = array_merge($header_links, $header_links_loggedin);
+	$link_count = count($header_links);
+	foreach ($header_links as $key => $value)
+	{
+		echo '<div class="link"><a href="' . $value . '">';
+		echo '<img alt="' . $value . '" src="images/' . $key . '">';
+		echo "</a></div>";
+	}
+
+	echo '<div class="search_wrapper"><form action="search_m.php" method="GET">';
+	echo '<input class="search_mobile tagbox" type="text" name="tags" value="';
+	echo $search_value . '"></form></div></div><div class="body_mobile">';
+}
+
 function html_footer()
 {
 	echo "</div></div>";
@@ -59,7 +111,6 @@ function table_header($class)
 	else echo "<table>";
 	echo '<tr><td class="nav">';
 }
-
 
 function table_middle() { echo '</td><td style="padding-left:14px;">'; }
 function table_footer() { echo '</td></tr></table>'; }

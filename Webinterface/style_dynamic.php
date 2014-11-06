@@ -8,6 +8,10 @@ cache_headers(12 * 3600);
 
 $current_date = date("d.m.", time());
 
+if (in_array($current_date, $special_days))
+	$background = "linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)";
+else $background = "black";
+
 ?>
 
 div.thumb img {
@@ -34,11 +38,5 @@ div.header {
 	white-space: nowrap;
 	overflow: hidden;
 	box-shadow: 0px 0px 16px black;
-
-<?php
-if (in_array($current_date, $special_days))
-	echo "background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);";
-else echo "background-color: black;";
-?>
-
+	background: <?php echo $background; ?>;
 }
