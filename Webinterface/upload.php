@@ -69,7 +69,8 @@ if (session_loggedin())
 	echo '<input type="hidden" name="MAX_FILE_SIZE" value="67108864">';
 	echo "<table>";
 	echo '<tr><td>File</td><td><input type="file" name="file" accept="image/*"></td></tr>';
-	echo '<tr><td>Tags</td><td><input style="width: 500px;" type="text" name="tags" value="todo_tags" class="tagbox"></td></tr>';
+//	echo '<tr><td>Tags</td><td><input style="width: 500px;" type="text" name="tags" value="' . $upload_default_tags . '" class="tagbox"></td></tr>';
+	echo '<tr><td>Tags</td><td><textarea name="tags" style="width: 500px;" rows="4" class="tagbox">' . $upload_default_tags . '</textarea></td></tr>';
 	echo '<tr><td>Source</td><td><input style="width: 500px;" type="text" name="source" value="Online Upload"></td></tr>';
 	echo '<tr><td>Description</td><td><input style="width: 500px;" type="text" name="description"></td></tr>';
 	echo '<tr><td>Rating</td><td><input style="width:40px;" type="number" name="rating" value="7"></td></tr>';
