@@ -47,7 +47,7 @@ if (count($post_ids) > 0)
 		echo '<div class="thumb"><a href="post_m.php?id=' . $id . $tag_search . '">';
 		echo '<img alt="#' . $id . '" src="image.php?id=' . $id . '"></a></div>';
 	}
-	echo '</div><br><div class="page_chooser">';
+	echo '</div><br><div class="page_chooser_mobile">';
 	if ($total_pages > 0)
 		if ($page > 0)
 		{
@@ -72,6 +72,6 @@ if (count($post_ids) > 0)
 }
 else echo "Nobody here but us chickens! - Why chickens?!";
 
-html_footer();
+html_footer_mobile();
 
 ?>

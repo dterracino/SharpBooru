@@ -62,6 +62,6 @@ if (!isset($id_err))
 }
 else echo $id_err;
 
-html_footer();
+html_footer_mobile();
 
 ?>

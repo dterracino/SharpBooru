@@ -12,7 +12,9 @@ if (in_array($current_date, $special_days))
 	$background = "linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet)";
 else $background = "black";
 
-$search_width = $mobile_width - 360;
+$search_width = $mobile_width - 270;
+if ($search_width > 300)
+	$search_width = 300;
 
 ?>
 
@@ -46,10 +48,18 @@ div.page_chooser_mobile {
 	margin-right: auto;
 	width: 80%;
 	margin-bottom: 19px;
+	line-height: 25px;
 }
 
 img.mimg_mobile {
 	display: block;
 	width: <?php echo $mobile_width - 10; ?>px;
 	height: auto;
+}
+
+div.login_mobile {
+	background: black;
+	text-align: right;
+	margin-top: 5px;
+	padding: 7px;
 }

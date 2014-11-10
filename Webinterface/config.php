@@ -21,7 +21,7 @@ $upload_default_tags = "todo_tags todo_source";
 $thumbs_per_page = 60;
 $thumb_size = 120;
 
-$mobile_thumbs_per_row = 4;
+$mobile_thumbs_per_row = 3;
 $mobile_width = (12 + $thumb_size) * $mobile_thumbs_per_row + 10;
 
 ?>

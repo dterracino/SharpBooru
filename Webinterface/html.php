@@ -77,12 +77,11 @@ function html_header_mobile($title, $search_value)
 //		"house.svg" => "index.php",
 		"tiles.svg" => "search_m.php",
 		"new.svg" => "specialpost.php?target=mobile&amp;type=newest",
-		"dice.svg" => "specialpost.php?target=mobile&amp;type=random",
+		"dice.svg" => "specialpost.php?target=mobile&amp;type=random"
 //		"github.svg" => "https://github.com/teamalpha5441",
-		"upload.svg" => "upload.php?target=mobile"
 	);
 	$header_links_loggedin = array(
-//		"upload.svg" => "upload.php"
+		"upload.svg" => "upload.php?target=mobile"
 	);
 	if (session_loggedin())
 		$header_links = array_merge($header_links, $header_links_loggedin);
@@ -102,6 +101,15 @@ function html_header_mobile($title, $search_value)
 function html_footer()
 {
 	echo "</div></div>";
+	echo "</body></html>";
+}
+
+function html_footer_mobile()
+{
+	echo '</div><div class="login_mobile">';
+	echo '<div style="display: inline-block;">';
+	session_printform();
+	echo "</div></div></div>";
 	echo "</body></html>";
 }
 

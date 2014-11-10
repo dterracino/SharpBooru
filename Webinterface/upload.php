@@ -100,6 +100,8 @@ if (session_loggedin())
 }
 else echo "Please login first";
 
-html_footer();
+if ($mobile)
+	html_footer_mobile();
+else html_footer();
 
 ?>
