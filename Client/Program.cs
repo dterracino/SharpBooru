@@ -88,7 +88,7 @@ namespace TA.SharpBooru
                                     if (options.Source != null)
                                         post.Source = options.Source;
                                     if (options.Description != null)
-                                    post.Description = options.Description;
+                                        post.Description = options.Description;
                                     post.Rating = (byte)options.Rating;
                                     if (options.Private.HasValue)
                                         post.Private = options.Private.Value;
@@ -147,9 +147,9 @@ namespace TA.SharpBooru
                                     }
                                     else TagDelta(ref apiPost.Tags, options.Tags);
                                 }
-                                if (options.Description == null)
-                                    apiPost.Description = "Imported from " + apiPost.APIName;
-                                else apiPost.Description = options.Description;
+                                //apiPost.Description = "Imported from " + apiPost.APIName;
+                                if (options.Description != null)
+                                    apiPost.Description = options.Description;
                                 apiPost.Rating = (byte)options.Rating;
                                 if (options.Private.HasValue)
                                     apiPost.Private = options.Private.Value;
