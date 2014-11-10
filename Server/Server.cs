@@ -1,5 +1,7 @@
-﻿using System;
+using System;
 using System.IO;
+using System.Text;
+using System.Net.Mail;
 using System.Threading;
 using System.Net.Sockets;
 using System.Collections.Generic;
@@ -11,12 +13,14 @@ namespace TA.SharpBooru.Server
         private SThreadPool _ThreadPool;
         private ServerBooru _Booru;
         private Logger _Logger;
+        private MailNotificator _MN;
 
-        public Server(ServerBooru Booru, Logger Logger, ushort ThreadCount)
+        public Server(ServerBooru Booru, Logger Logger, MailNotificator MailNotificator, ushort ThreadCount)
         {
             _ThreadPool = new SThreadPool(ThreadCount);
             _Booru = Booru;
             _Logger = Logger;
+            _MN = MailNotificator;
         }
 
         public void AddAcceptedSocket(Socket Socket)
@@ -184,6 +188,8 @@ namespace TA.SharpBooru.Server
                         post.Image = BooruImage.FromReader(RW);
                         ulong id = _Booru.AddPost(User, post);
                         RW.Write(id);
+                        using (var thumb = _Booru.GetThumbnail(null, id))
+                            _MN.NotificatePostAdded(id, post, thumb);
                     } break;
 
                 case RequestCode.Edit_Post:

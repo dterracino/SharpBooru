@@ -9,6 +9,8 @@ namespace TA.SharpBooru
 {
     public class MailNotificator
     {
+        private Logger _Logger;
+
         private string _Host;
         private ushort _Port;
         private NetworkCredential _Cred;
@@ -16,8 +18,10 @@ namespace TA.SharpBooru
         private MailAddress _From = null;
         private MailAddress _To = null;
 
-        public MailNotificator(string Host, ushort Port, string Username, string Password, MailAddress From, MailAddress To)
+        public MailNotificator(Logger Logger, string Host, ushort Port, string Username, string Password, MailAddress From, MailAddress To)
         {
+            _Logger = Logger;
+
             _Host = Host;
             _Port = Port;
             _Cred = new NetworkCredential(Username, Password);
@@ -51,9 +55,10 @@ namespace TA.SharpBooru
 
         public bool SendMail(string Subject, string Body, List<Attachment> Attachments)
         {
-            using (var client = ConnectClient())
-            using (var mail = new MailMessage())
-                try
+            try
+            {
+                using (var client = ConnectClient())
+                using (var mail = new MailMessage())
                 {
                     mail.From = _From;
                     mail.To.Add(_To);
@@ -65,7 +70,12 @@ namespace TA.SharpBooru
                     client.Send(mail);
                     return true;
                 }
-                catch { return false; }
+            }
+            catch (Exception ex)
+            {
+                _Logger.LogException("SendMail", ex);
+                return false;
+            }
         }
 
         public bool NotificatePostAdded(ulong ID, BooruPost Post, BooruImage Thumb)

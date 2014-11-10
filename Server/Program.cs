@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.IO;
+using System.Net.Mail;
 using System.Net.Sockets;
 using Mono.Unix;
 using Mono.Unix.Native;
@@ -51,15 +52,18 @@ namespace TA.SharpBooru.Server
             if (Type.GetType("Mono.Runtime") == null)
                 throw new PlatformNotSupportedException("Only Mono is supported");
 
-            string unixSocketPath = Path.Combine(booruPath, "socket.sock");
+            logger.LogLine("Loading configuration...");
+            Config config = new Config("config.xml");
+
+            string unixSocketPath = config.Socket;
             UnixEndPoint unixEndPoint = new UnixEndPoint(unixSocketPath);
-            string user = "booru";
 
             logger.LogLine("Loading booru...");
             ServerBooru booru = new ServerBooru(booruPath);
 
             Server server = null;
             SocketListener unixListener = null;
+            MailNotificator mn = null;
             try
             {
                 Socket unixSocket = null;
@@ -78,13 +82,20 @@ namespace TA.SharpBooru.Server
                     FilePermissions.S_IWUSR |
                     FilePermissions.S_IRGRP |
                     FilePermissions.S_IWGRP);
-                SyscallEx.chown(unixSocketPath, user);
+                SyscallEx.chown(unixSocketPath, config.User);
 
-                logger.LogLine("Changing UID to {0}...", user);
-                SyscallEx.setuid(user);
+                logger.LogLine("Changing UID to {0}...", config.User);
+                SyscallEx.setuid(config.User);
 
                 logger.LogLine("Starting server...");
-                server = new Server(booru, logger, 2);
+                mn = new MailNotificator(logger,
+                    config.MailNotificatorServer,
+                    config.MailNotificatorPort,
+                    config.MailNotificatorUsername,
+                    config.MailNotificatorPassword,
+                    config.MailNotificatorSender,
+                    config.MailNotificatorReceiver);
+                server = new Server(booru, logger, mn, 2);
                 if (unixSocket != null)
                 {
                     unixListener = new SocketListener(unixSocket);
