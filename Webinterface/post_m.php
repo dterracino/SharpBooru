@@ -19,11 +19,8 @@ flush();
 
 if (!isset($id_err))
 {
-	try
-	{
-		flush();
-		$post = $booru->getPost($id);
-	}
+	flush();
+	try { $post = $booru->getPost($id); }
 	catch (Exception $ex) { $id_err = "Not found or no permission"; }
 }
 

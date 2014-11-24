@@ -21,9 +21,9 @@ table_header(NULL);
 nav_searchbox($tag_search);
 if (!isset($id_err))
 {
+	flush();
 	try
 	{
-		flush();
 		$post = $booru->getPost($id);
 		echo "<br>";
 		subsection_header("Tags");
