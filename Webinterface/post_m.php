@@ -26,8 +26,10 @@ if (!isset($id_err))
 
 if (!isset($id_err))
 {
-	echo '<img class="mimg_mobile" alt="Image" src="image.php?type=image&amp;id=' . $id . '">';
-	echo "<br>";
+	$imgpath = "image.php?type=image&amp;id=" . $id;
+	echo '<a href="' . $imgpath . '">';
+	echo '<img class="mimg_mobile" alt="Image" src="' . $imgpath . '">';
+	echo "</a><br>";
 	subsection_header("Tags");
 	echo '<ul class="tags">';
 	foreach($post->tags as $tag)
