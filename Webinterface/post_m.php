@@ -32,13 +32,15 @@ if (!isset($id_err))
 	echo '<img class="mimg_mobile" alt="Image" src="image.php?type=image&amp;id=' . $id . '">';
 	echo "<br>";
 	subsection_header("Tags");
+	echo '<ul class="tags">';
 	foreach($post->tags as $tag)
 	{
-		echo '<span style="color:' . $tag->color . '">';
+		echo '<li><span style="color:' . $tag->color . '">';
 		$tag_encoded = htmlspecialchars($tag->tag);
 		echo '<a href="search_m.php?tags=' . $tag_encoded . '">';
-		echo $tag_encoded . "</a></span><br>";
+		echo $tag_encoded . "</a></span></li>";
 	}
+	echo "</ul>";
 	subsection_footer();
 	subsection_header("User");
 	echo htmlentities($post->user);

@@ -48,6 +48,11 @@ div.sub p {
 	padding-right: 3px;
 }
 
+ul.tags {
+	padding-left: 20px;
+	list-style-type: circle;
+}
+
 div.body {
 	padding: 80px 10px 10px 10px;
 	height: 100%;
