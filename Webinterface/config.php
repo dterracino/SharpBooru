@@ -24,6 +24,10 @@ $thumb_size = 120;
 $mobile_thumbs_per_row = 3;
 $mobile_width = (12 + $thumb_size) * $mobile_thumbs_per_row + 10;
 
-$server_base_url = $_SERVER['SERVER_NAME'];
+if (isset($_SERVER['HTTPS']))
+        $server_base_url = "https://";
+else $server_base_url = "http://";
+
+$server_base_url .= $_SERVER['SERVER_NAME'];
 
 ?>
