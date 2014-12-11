@@ -3,7 +3,7 @@
 $socket_path = "/srv/booru/socket.sock";
 
 $booru_name = "Eggy's Booru";
-// $motd = "Rewriting complete layout";
+// $motd = "Put your MOTD here";
 
 $logo_link = "index.php";
 
@@ -23,5 +23,7 @@ $thumb_size = 120;
 
 $mobile_thumbs_per_row = 3;
 $mobile_width = (12 + $thumb_size) * $mobile_thumbs_per_row + 10;
+
+$server_base_url = $_SERVER['SERVER_NAME'];
 
 ?>

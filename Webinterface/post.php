@@ -55,6 +55,14 @@ if (!isset($id_err))
 		subsection("Size", $post->width . "x" . $post->height);
 		$cdate = date("d.m.Y H:i", $post->date);
 		subsection("Date", $cdate);
+		subsection_header("IQDB");
+		echo '<a href="http://iqdb.org/?url=';
+		echo urlencode($server_base_url . "/image.php?id=" . $id);
+		echo '">Search with thumbnail</a>';
+		echo '<br><a href="http://iqdb.org/?url=';
+		echo urlencode($server_base_url . "/image.php?type=image&id=" . $id);
+		echo '">Search with image</a>';
+		subsection_footer();
 	}
 	catch (Exception $ex) { $id_err = "Not found or no permission"; }
 }
