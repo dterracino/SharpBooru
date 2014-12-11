@@ -36,6 +36,7 @@ namespace TA.SharpBooru
                 typeof(EditImgOptions),
                 typeof(GetImgOptions),
                 typeof(SetImgOptions),
+                typeof(SetImgUrlOptions),
                 typeof(GCOptions)
             });
 
@@ -150,6 +151,7 @@ namespace TA.SharpBooru
                                 //apiPost.Description = "Imported from " + apiPost.APIName;
                                 if (options.Description != null)
                                     apiPost.Description = options.Description;
+                                else apiPost.Description = string.Empty; //needed?
                                 apiPost.Rating = (byte)options.Rating;
                                 if (options.Private.HasValue)
                                     apiPost.Private = options.Private.Value;
@@ -268,6 +270,20 @@ namespace TA.SharpBooru
                                         rw.Write(options.ID);
                                         img.ToWriter(rw);
                                     }, (rw) => { });
+                            }
+                            else if (oType == typeof(SetImgUrlOptions))
+                            {
+                                SetImgUrlOptions options = (SetImgUrlOptions)commonOptions;
+                                Console.Write("Downloading image... ");
+                                using (BooruImage img = BooruImage.FromURL(options.URL))
+                                {
+                                    Console.WriteLine("OK");
+                                    Request(ns, RequestCode.Edit_Image, (rw) =>
+                                    {
+                                        rw.Write(options.ID);
+                                        img.ToWriter(rw);
+                                    }, (rw) => { });
+                                }
                             }
                             else if (oType == typeof(GCOptions))
                                 Request(ns, RequestCode.Start_GC, (rw) => { }, (rw) => { });

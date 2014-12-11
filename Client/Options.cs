@@ -144,6 +144,16 @@ namespace TA.SharpBooru
         public string Path { get; set; }
     }
 
+    [Verb("setimgurl", HelpText = "Download an image and set it as a posts image")]
+    internal class SetImgUrlOptions : Options
+    {
+        [Option('i', "id", Required = true, HelpText = "The post/image ID")]
+        public ulong ID { get; set; }
+
+        [Option('u', "url", Required = true, HelpText = "The image URL")]
+        public string URL { get; set; }
+    }
+
     [Verb("gc", HelpText = "Start the server garbage collector")]
     internal class GCOptions : Options { }
 }
