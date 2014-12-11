@@ -177,6 +177,7 @@ class Booru
 		}
 		$reader->close();
 
+		usort($post->tags, function($a, $b) { return strcmp($a->tag, $b->tag); });
 		return $post;
 	}
 
