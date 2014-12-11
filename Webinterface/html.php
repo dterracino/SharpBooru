@@ -4,24 +4,34 @@ require_once("session.php");
 require_once("config.php");
 require_once("session.php");
 
-function _html_header_common($title)
+function _html_header_common($title, $enable_jquery, $enable_boorujs, $enable_chart)
 {
 	echo "<!DOCTYPE html>";
 	echo "<html><head><title>" . $title . "</title>";
 	echo '<link rel="stylesheet" type="text/css" href="style_static.css">';
 	echo '<link rel="stylesheet" type="text/css" href="style_dynamic.php">';
-	echo '<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>';
-	echo '<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>';
-	echo '<script type="text/javascript" src="script.js"></script>';
+	if ($enable_jquery)
+	{
+		echo '<script type="text/javascript" src="js_libs/jquery.min.js"></script>';
+		echo '<script type="text/javascript" src="js_libs/jquery-ui.min.js"></script>';
+	}
+	if ($enable_boorujs)
+		echo '<script type="text/javascript" src="script.js"></script>';
+	if ($enable_chart)
+	{
+//		echo '<script type="text/javascript" src="js_libs/Chart.min.js"></script>';
+//		echo '<script type="text/javascript" src="js_libs/d3.min.js"></script>';
+	}
 	echo '<link rel="icon" type="image/icon" href="favicon.ico">';
 	echo '<meta charset="utf-8">';
 }
 
-function html_header($title)
+function html_header($title) { html_header_ex($title, true, true, false); }
+function html_header_ex($title, $enable_jquery, $enable_boorujs, $enable_chart)
 {
 	global $booru_name, $motd, $header_links, $header_links_loggedin, $logo_link;
 
-	_html_header_common($title);
+	_html_header_common($title, $enable_jquery, $enable_boorujs, $enable_chart);
 	echo "</head><body>";
 	echo '<div class="main">';
 	echo '<div class="header">';
@@ -59,11 +69,12 @@ function html_header($title)
 	echo '</div></div><div class="body">';
 }
 
-function html_header_mobile($title, $search_value)
+function html_header_mobile($title, $search_value) { html_header_mobile_ex($title, $search_value, true, true, false); }
+function html_header_mobile_ex($title, $search_value, $enable_jquery, $enable_boorujs, $enable_chart)
 {
 	global $booru_name, $header_links, $header_links_loggedin, $logo_link, $mobile_width;
 
-	_html_header_common($title);
+	_html_header_common($title, $enable_jquery, $enable_boorujs, $enable_chart);
 	echo '<meta name="viewport" content="width=' . $mobile_width . '" >';
 	echo '<link rel="stylesheet" type="text/css" href="style_mobile.php">';
 	echo "</head><body>";
