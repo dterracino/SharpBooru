@@ -30,6 +30,14 @@ div.link {
 	float: left;
 }
 
+img.hover_link_img {
+	opacity: 1;
+}
+
+img.hover_link_img:hover {
+	opacity: 0.6;
+}
+
 div.sub {
 	margin-bottom: 22px;
 }

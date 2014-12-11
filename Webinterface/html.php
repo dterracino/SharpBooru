@@ -56,7 +56,7 @@ function html_header_ex($title, $enable_jquery, $enable_boorujs, $enable_chart)
 	foreach ($header_links as $key => $value)
 	{
 		echo '<div class="link"><a href="' . $value . '">';
-		echo '<img alt="' . $value . '" src="images/' . $key . '">';
+		echo '<img class="hover_link_img" alt="' . $value . '" src="images/' . $key . '">';
 		echo "</a></div>";
 	}
 
@@ -100,7 +100,7 @@ function html_header_mobile_ex($title, $search_value, $enable_jquery, $enable_bo
 	foreach ($header_links as $key => $value)
 	{
 		echo '<div class="link"><a href="' . $value . '">';
-		echo '<img alt="' . $value . '" src="images/' . $key . '">';
+		echo '<img class="hover_link_img" alt="' . $value . '" src="images/' . $key . '">';
 		echo "</a></div>";
 	}
 
