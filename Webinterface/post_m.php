@@ -35,9 +35,8 @@ if (!isset($id_err))
 	foreach($post->tags as $tag)
 	{
 		echo '<li><span style="color:' . $tag->color . '">';
-		$tag_encoded = htmlspecialchars($tag->tag);
-		echo '<a href="search_m.php?tags=' . $tag_encoded . '">';
-		echo $tag_encoded . "</a></span></li>";
+		echo '<a href="search_m.php?tags=' . urlencode($tag->tag) . '">';
+		echo htmlspecialchars($tag->tag) . "</a></span></li>";
 	}
 	echo "</ul>";
 	subsection_footer();
