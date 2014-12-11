@@ -10,6 +10,7 @@ namespace TA.SharpBooru.Server
     {
         //TODO Implement allowedVariables
         //private static string[] allowedVariables = new string[] { "ViewCount", "EditCount", "Score", "Rating", "ID", "Width", "Height", "Private" };
+        private static Regex testSpecialRegex = new Regex(".+(<|>|=|!|<=|>=|<>).+");
         private static Regex operatorRegex = new Regex("<|>|=|!|<=|>=|<>");
 
         private class SpecialPattern
@@ -113,7 +114,7 @@ namespace TA.SharpBooru.Server
             else return false;
         }
 
-        private static bool IsSpecialPattern(string Pattern) { return operatorRegex.IsMatch(Pattern); }
+        private static bool IsSpecialPattern(string Pattern) { return testSpecialRegex.IsMatch(Pattern); }
 
         private static SpecialPattern ExtractSpecialPattern(string Pattern)
         {
