@@ -116,10 +116,13 @@ class Booru
 		return $count;
 	}
 
-	function searchTags($term)
+	function searchTags($term, $limit)
 	{
 		$writer = new Writer();
 		$writer->WriteString($term);
+		if ($limit > 255)
+			$writer->WriteByte(255);
+		else $writer->WriteByte($limit);
 		$response = $this->request(24, $writer->GetBytes());
 		$writer->close();
 		$reader = new Reader($response);

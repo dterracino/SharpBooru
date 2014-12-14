@@ -123,9 +123,11 @@ namespace TA.SharpBooru.Server
             return ids;
         }
 
-        public BooruTagList SearchTags(string Term)
+        public BooruTagList SearchTags(string Term, byte Limit)
         {
-            DataTable tagTable = _DB.ExecuteTable(SQLStatements.GetTagsByTerm, Term.ToLower() + "%");
+            //TODO Improve the next two lines
+            DataTable tagTable = Limit > 0 ? _DB.ExecuteTable(SQLStatements.GetTagsByTermLimited, Term.ToLower() + "%", Limit)
+                                           : _DB.ExecuteTable(SQLStatements.GetTagsByTerm, Term.ToLower() + "%");
             return BooruTagList.FromTable(tagTable);
             //TODO Aliases support
         }

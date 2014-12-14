@@ -14,7 +14,7 @@ if (isset($_GET["term"]))
 	if (count($parts) > 1)
 		$alw = implode(" ", array_slice($parts, 0, count($parts) - 1)) . " ";
 	else $alw = "";
-	$boorutags = $booru->SearchTags($term);
+	$boorutags = $booru->SearchTags($term, 7);
 	$tags = array();
 	foreach ($boorutags as $boorutag)
 		array_push($tags, '"' . $alw . $boorutag->tag . '"');

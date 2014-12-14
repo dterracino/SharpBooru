@@ -172,7 +172,8 @@ namespace TA.SharpBooru.Server
                 case RequestCode.Search_Tags:
                     {
                         string term = RW.ReadString();
-                        _Booru.SearchTags(term).ToWriter(RW);
+			byte limit = RW.ReadByte();
+                        _Booru.SearchTags(term, limit).ToWriter(RW);
                     } break;
 
                 case RequestCode.Start_GC:
