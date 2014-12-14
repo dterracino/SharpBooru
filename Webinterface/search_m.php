@@ -66,7 +66,7 @@ if (count($post_ids) > 0)
 		if ($page < $total_pages - 1)
 		{
 			echo '<span class="pc_page"><span class="pc_arrow">';
-			echo '<a href="search.php?page=' . ($page + 2) . $tag_search . '">&#x21ac;</a></span></span>';
+			echo '<a href="?page=' . ($page + 2) . $tag_search . '">&#x21ac;</a></span></span>';
 		}
 	echo "</div>";
 }
