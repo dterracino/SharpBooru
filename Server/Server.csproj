@@ -86,6 +86,7 @@
     <Compile Include="Common\Helper.cs" />
     <Compile Include="Common\Logger.cs" />
     <Compile Include="Common\RequestCode.cs" />
+    <Compile Include="Common\SocketParser.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="SocketListener.cs" />
