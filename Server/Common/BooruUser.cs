@@ -75,7 +75,7 @@ namespace TA.SharpBooru
                     ID = Convert.ToUInt64(Row["ID"]),
                     Username = Convert.ToString(Row["username"]),
                     MD5Password = Convert.ToString(Row["password"]),
-                    IsAdmin = Convert.ToBoolean(Row["perm_isadmin"]),
+                    IsAdmin = Convert.ToBoolean(Row["isadmin"]),
                     Enabled = Convert.ToBoolean(Row["enabled"]),
                     AdvancePostControl = Convert.ToBoolean(Row["perm_apc"]),
                     CanAddPosts = Convert.ToBoolean(Row["perm_canaddposts"]),
@@ -94,7 +94,7 @@ namespace TA.SharpBooru
             {
                 { "username", Username },
                 { "password", MD5Password },
-                { "perm_isadmin", IsAdmin.ToString() },
+                { "isadmin", IsAdmin.ToString() },
                 { "enabled", Enabled.ToString() },
                 { "perm_apc", AdvancePostControl.ToString() },
                 { "perm_canaddposts", CanAddPosts.ToString() },
