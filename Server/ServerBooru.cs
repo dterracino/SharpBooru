@@ -339,7 +339,7 @@ namespace TA.SharpBooru.Server
             Password = Helper.BytesToString(Helper.MD5OfString(Password));
             BooruUser user = GetUser(Username);
             if (user != null)
-                if (user.MD5Password == Password || (User == null ? false : User.IsAdmin))
+                if (user.Enabled && (user.MD5Password == Password || (User == null ? false : User.IsAdmin)))
                 {
                     user.MD5Password = null;
                     return user;

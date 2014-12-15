@@ -8,8 +8,7 @@ namespace TA.SharpBooru
     {
         public ulong ID;
         public bool IsAdmin;
-        public bool CanLoginDirect;
-        public bool CanLoginOnline;
+        public bool Enabled;
         public bool CanAddPosts;
         public bool AdvancePostControl;
         public bool CanDeletePosts;
@@ -35,8 +34,7 @@ namespace TA.SharpBooru
                 Writer.Write(MD5Password, true);
 
             Writer.Write(IsAdmin);
-            Writer.Write(CanLoginDirect);
-            Writer.Write(CanLoginOnline);
+            Writer.Write(Enabled);
             Writer.Write(CanAddPosts);
             Writer.Write(AdvancePostControl);
             Writer.Write(CanDeletePosts);
@@ -57,8 +55,7 @@ namespace TA.SharpBooru
                 MD5Password = includePassword ? Reader.ReadString() : null,
 
                 IsAdmin = Reader.ReadBool(),
-                CanLoginDirect = Reader.ReadBool(),
-                CanLoginOnline = Reader.ReadBool(),
+                Enabled = Reader.ReadBool(),
                 CanAddPosts = Reader.ReadBool(),
                 AdvancePostControl = Reader.ReadBool(),
                 CanDeletePosts = Reader.ReadBool(),
@@ -79,8 +76,7 @@ namespace TA.SharpBooru
                     Username = Convert.ToString(Row["username"]),
                     MD5Password = Convert.ToString(Row["password"]),
                     IsAdmin = Convert.ToBoolean(Row["perm_isadmin"]),
-                    CanLoginDirect = Convert.ToBoolean(Row["perm_canlogindirect"]),
-                    CanLoginOnline = Convert.ToBoolean(Row["perm_canloginonline"]),
+                    Enabled = Convert.ToBoolean(Row["enabled"]),
                     AdvancePostControl = Convert.ToBoolean(Row["perm_apc"]),
                     CanAddPosts = Convert.ToBoolean(Row["perm_canaddposts"]),
                     CanDeletePosts = Convert.ToBoolean(Row["perm_candeleteposts"]),
@@ -99,8 +95,7 @@ namespace TA.SharpBooru
                 { "username", Username },
                 { "password", MD5Password },
                 { "perm_isadmin", IsAdmin.ToString() },
-                { "perm_canlogindirect", CanLoginDirect.ToString() },
-                { "perm_canloginonline", CanLoginOnline.ToString() },
+                { "enabled", Enabled.ToString() },
                 { "perm_apc", AdvancePostControl.ToString() },
                 { "perm_canaddposts", CanAddPosts.ToString() },
                 { "perm_candeleteposts", CanDeletePosts.ToString() },
