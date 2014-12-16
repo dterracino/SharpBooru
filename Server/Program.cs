@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Net.Mail;
 using System.Net.Sockets;
+using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using Mono.Unix;
 using Mono.Unix.Native;
 
@@ -9,7 +11,7 @@ namespace TA.SharpBooru.Server
 {
     public class Program
     {
-        private static bool _SocketCreated = false;
+        private static List<string> _UnixSocketPaths = new List<string>(1);
 
         [STAThread]
         public static int Main(string[] args)
@@ -30,12 +32,8 @@ namespace TA.SharpBooru.Server
             {
                 try { Helper.CleanTempFolder(); }
                 catch { }
-                if (_SocketCreated)
-                    try
-                    {
-                        string unixSocketPath = Path.Combine(booruPath, "socket.sock");
-                        File.Delete(unixSocketPath);
-                    }
+                foreach (string path in _UnixSocketPaths)
+                    try { File.Delete(path); }
                     catch { }
             }
         }
@@ -55,34 +53,41 @@ namespace TA.SharpBooru.Server
             logger.LogLine("Loading configuration...");
             Config config = new Config("config.xml");
 
-            string unixSocketPath = config.Socket;
-            UnixEndPoint unixEndPoint = new UnixEndPoint(unixSocketPath);
+            X509Certificate2 cert = null;
+            if (config.CertificateNeeded)
+            {
+                logger.LogLine("Loading certificate...");
+                cert = new X509Certificate2(config.Certificate);
+            }
 
             logger.LogLine("Loading booru...");
             ServerBooru booru = new ServerBooru(booruPath);
 
             Server server = null;
-            SocketListener unixListener = null;
+            SocketListener[] sockListeners = null;
             MailNotificator mn = null;
             try
             {
-                Socket unixSocket = null;
-                logger.LogLine("Binding UNIX socket...");
-                if (File.Exists(unixSocketPath))
+                logger.LogLine("Binding sockets...");
+                // if (File.Exists(unixSocketPath))
+                // {
+                //     logger.LogLine("Socket exists, removing it...");
+                //     File.Delete(unixSocketPath);
+                // }
+                Socket[] sockets = new Socket[config.SocketConfigs.Count];
+                sockListeners = new SocketListener[sockets.Length];
+                for (byte i = 0; i < sockets.Length; i++)
                 {
-                    logger.LogLine("Socket exists, removing it...");
-                    File.Delete(unixSocketPath);
+                    var sockConf = config.SocketConfigs[i];
+                    sockets[i] = sockConf.Socket;
+                    sockets[i].Bind(sockConf.EndPoint);
+                    if (sockConf.UnixSocketPath != null)
+                    {
+                        SyscallEx.chmod(sockConf.UnixSocketPath, sockConf.UnixSocketPerms);
+                        SyscallEx.chown(sockConf.UnixSocketPath, config.User);
+                        _UnixSocketPaths.Add(sockConf.UnixSocketPath);
+                    }
                 }
-                unixSocket = new Socket(AddressFamily.Unix, SocketType.Stream, 0);
-                unixSocket.Bind(unixEndPoint);
-                _SocketCreated = true;
-                SyscallEx.chmod(unixSocketPath,
-                    FilePermissions.S_IFSOCK |
-                    FilePermissions.S_IRUSR |
-                    FilePermissions.S_IWUSR |
-                    FilePermissions.S_IRGRP |
-                    FilePermissions.S_IWGRP);
-                SyscallEx.chown(unixSocketPath, config.User);
 
                 logger.LogLine("Changing UID to {0}...", config.User);
                 SyscallEx.setuid(config.User);
@@ -96,15 +101,18 @@ namespace TA.SharpBooru.Server
                     config.MailNotificatorSender,
                     config.MailNotificatorReceiver);
                 server = new Server(booru, logger, mn, 2);
-                if (unixSocket != null)
+                for (int i = 0; i < sockets.Length; i++)
                 {
-                    unixListener = new SocketListener(unixSocket);
-                    unixListener.SocketAccepted += socket =>
+                    if (!config.SocketConfigs[i].UseTLS)
+                        sockListeners[i] = new SocketListener(sockets[i]);
+                    else if (cert != null)
+                        sockListeners[i] = new SocketListener(sockets[i], cert);
+                    sockListeners[i].SocketAccepted += socket =>
                         {
                             logger.LogLine("Client connected");
                             server.AddAcceptedSocket(socket);
                         };
-                    unixListener.Start();
+                    sockListeners[i].Start();
                 }
 
                 // Ctrl+C is not supported due to heavy crashes of Mono
@@ -119,7 +127,8 @@ namespace TA.SharpBooru.Server
             {
                 logger.LogLine("Stopping server and closing sockets...");
                 server.Dispose();
-                unixListener.Dispose();
+                foreach (var listener in sockListeners)
+                    listener.Dispose();
             }
 
             logger.LogLine("Closing booru...");
