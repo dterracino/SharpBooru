@@ -41,7 +41,7 @@ namespace TA.SharpBooru.Server
                     using (SslStream ssl = new SslStream(Stream, true))
                     {
                         ssl.AuthenticateAsServer(Certificate);
-                        _ClientHandlerStage2(Stream);
+                        _ClientHandlerStage2(ssl);
                     }
                 else _ClientHandlerStage2(Stream);
             }
