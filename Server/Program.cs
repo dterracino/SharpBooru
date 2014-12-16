@@ -103,14 +103,12 @@ namespace TA.SharpBooru.Server
                 server = new Server(booru, logger, mn, 2);
                 for (int i = 0; i < sockets.Length; i++)
                 {
-                    if (!config.SocketConfigs[i].UseTLS)
-                        sockListeners[i] = new SocketListener(sockets[i]);
-                    else if (cert != null)
-                        sockListeners[i] = new SocketListener(sockets[i], cert);
+                    bool useTLS = config.SocketConfigs[i].UseTLS;
                     sockListeners[i].SocketAccepted += socket =>
                         {
                             logger.LogLine("Client connected");
-                            server.AddAcceptedSocket(socket);
+                            NetworkStream ns = new NetworkStream(socket, true);
+                            server.AddConnectedClient(ns, useTLS ? cert : null);
                         };
                     sockListeners[i].Start();
                 }

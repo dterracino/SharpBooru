@@ -4,6 +4,8 @@ using System.Text;
 using System.Net.Mail;
 using System.Threading;
 using System.Net.Sockets;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
 using System.Collections.Generic;
 
 namespace TA.SharpBooru.Server
@@ -23,27 +25,32 @@ namespace TA.SharpBooru.Server
             _MN = MailNotificator;
         }
 
-        public void AddAcceptedSocket(Socket Socket)
+        public void AddConnectedClient(Stream Stream, X509Certificate2 Certificate)
         {
-            Action action = () => _ClientHandlerStage1(Socket);
+            Action action = () => _ClientHandlerStage1(Stream, Certificate);
             _ThreadPool.Queue(action);
         }
 
         public void Dispose() { _ThreadPool.Dispose(); }
 
-        private void _ClientHandlerStage1(Socket Socket)
+        private void _ClientHandlerStage1(Stream Stream, X509Certificate2 Certificate)
         {
             try
             {
-                using (var netStream = new NetworkStream(Socket))
-                    _ClientHandlerStage2(netStream);
+                if (Certificate != null)
+                    using (SslStream ssl = new SslStream(Stream, true))
+                    {
+                        ssl.AuthenticateAsServer(Certificate);
+                        _ClientHandlerStage2(Stream);
+                    }
+                else _ClientHandlerStage2(Stream);
             }
             catch (Exception ex)
             {
                 if (_ThreadPool.IsRunning)
                     _Logger.LogException("ClientHandlerStage1", ex);
             }
-            finally { Socket.Dispose(); }
+            finally { Stream.Dispose(); }
         }
 
         private void _ClientHandlerStage2(Stream Stream)
