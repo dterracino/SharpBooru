@@ -91,9 +91,9 @@ namespace TA.SharpBooru
 
         private static FilePermissions ParseUnixSocketPerms(string str)
         {
-            uint perms = ParseSingleOct(str[0], 4, 2, 1);
+            uint perms = ParseSingleOct(str[2], 4, 2, 1);
             perms |= ParseSingleOct(str[1], 32, 16, 8);
-            perms |= ParseSingleOct(str[2], 256, 128, 64);
+            perms |= ParseSingleOct(str[0], 256, 128, 64);
             perms |= 0xC000; //S_IFSOCK;
             return (FilePermissions)perms;
         }
