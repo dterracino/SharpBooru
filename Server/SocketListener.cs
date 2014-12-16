@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 
 namespace TA.SharpBooru.Server
 {
@@ -9,6 +10,13 @@ namespace TA.SharpBooru.Server
         private Socket _Socket;
         private Thread _ListenerThread;
         private bool _IsRunning;
+        private X509Certificate2 _Certificate;
+
+        public SocketListener(Socket Socket, X509Certificate2 Certificate)
+            : this(Socket)
+        {
+            _Certificate = Certificate;
+        }
 
         public SocketListener(Socket Socket)
         {
