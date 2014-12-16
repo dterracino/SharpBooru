@@ -6,13 +6,15 @@ namespace TA.SharpBooru
 {
     public class Config
     {
-        public readonly string Socket;
+        public readonly SocketConfig SocketConfig;
+        public readonly bool CheckCertificate;
         public readonly string Username;
         public readonly string Password;
 
-        public Config(string Socket, string Username, string Password)
+        public Config(SocketConfig SocketConfig, bool CheckCertificate, string Username, string Password)
         {
-            this.Socket = Socket;
+            this.SocketConfig = SocketConfig;
+            this.CheckCertificate = CheckCertificate;
             this.Username = Username;
             this.Password = Password;
         }
@@ -33,10 +35,13 @@ namespace TA.SharpBooru
                         xml.Load(fs);
 
                     XmlNode rootNode = xml.SelectSingleNode("/BooruConfig/Client");
-                    string socket = rootNode.SelectSingleNode("Socket").InnerText;
+
+                    bool checkCert = Convert.ToBoolean(rootNode.SelectSingleNode("CheckCertificate").InnerText);
+                    var sockConf = ConfigHelper.ParseSocketConfig(rootNode.SelectSingleNode("Socket"));
                     string username = rootNode.SelectSingleNode("Username").InnerText;
                     string password = rootNode.SelectSingleNode("Password").InnerText;
-                    return new Config(socket, username, password);
+
+                    return new Config(sockConf, checkCert, username, password);
                 }
 
             return null;

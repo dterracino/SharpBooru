@@ -6,20 +6,11 @@ namespace TA.SharpBooru
 {
     internal class Options
     {
-        [Option("socket", Required = false, HelpText = "The UNIX socket")]
-        public string Socket { get; set; }
-
         [Option("username", Required = false, HelpText = "Your username")]
         public string Username { get; set; }
 
         [Option("password", Required = false, HelpText = "Your password")]
         public string Password { get; set; }
-
-        private string GetAssemblyAttribute<T>(Func<T, string> value) where T : Attribute
-        {
-            T attribute = (T)Attribute.GetCustomAttribute(Assembly.GetExecutingAssembly(), typeof(T));
-            return value.Invoke(attribute);
-        }
     }
 
     [Verb("add", HelpText = "Adds a post")]
