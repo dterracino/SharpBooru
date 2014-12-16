@@ -75,25 +75,31 @@ namespace TA.SharpBooru
 
         private static SocketConfig ParseSocketConfig(XmlNode node)
         {
-            if (node.Name == "UnixSocket")
+            string type = node.Attributes["type"].Value.Trim().ToLower();
+            switch (type)
             {
-                var socket = new Socket(AddressFamily.Unix, SocketType.Stream, 0);
-                var endPoint = new UnixEndPoint(node.InnerText);
-                string strPerms = node.Attributes["perms"].Value.Trim();
-                return new SocketConfig(socket, endPoint)
-                {
-                    UnixSocketPath = node.InnerText,
-                    UnixSocketPerms = ParseUnixSocketPerms(strPerms)
-                };
+                case "unix":
+                    {
+                        var socket = new Socket(AddressFamily.Unix, SocketType.Stream, 0);
+                        var endPoint = new UnixEndPoint(node.InnerText);
+                        string strPerms = node.Attributes["perms"].Value.Trim();
+                        return new SocketConfig(socket, endPoint)
+                        {
+                            UnixSocketPath = node.InnerText,
+                            UnixSocketPerms = ParseUnixSocketPerms(strPerms)
+                        };
+                    }
+
+                case "tcp":
+                    {
+                        var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                        var endPoint = Helper.GetIPEndPointFromString(node.InnerText);
+                        string strTls = node.Attributes["tls"].Value.Trim();
+                        return new SocketConfig(socket, endPoint) { UseTLS = Convert.ToBoolean(strTls) };
+                    }
+
+                default: throw new Exception("Unknown node '" + node.Name + "'");
             }
-            else if (node.Name == "TcpSocket")
-            {
-                var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                var endPoint = Helper.GetIPEndPointFromString(node.InnerText);
-                string strTls = node.Attributes["tls"].Value.Trim();
-                return new SocketConfig(socket, endPoint) { UseTLS = Convert.ToBoolean(strTls) };
-            }
-            else throw new Exception("Unknown node '" + node.Name + "'");
         }
 
         private static FilePermissions ParseUnixSocketPerms(string str)
