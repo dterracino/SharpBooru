@@ -17,7 +17,7 @@ namespace TA.SharpBooru
         public bool UseTLS = false;
 
         public string UnixSocketPath = null;
-        public FilePermissions? UnixSocketPerms = null;
+        public FilePermissions UnixSocketPerms;
 
         public SocketConfig(Socket Socket, EndPoint EndPoint)
         {
@@ -41,6 +41,7 @@ namespace TA.SharpBooru
                         SocketConfig sockConf = new SocketConfig(socket, endPoint) { UnixSocketPath = Node.InnerText };
                         if (permsAttribute != null)
                             sockConf.UnixSocketPerms = ParseUnixSocketPerms(permsAttribute.Value.Trim());
+                        else sockConf.UnixSocketPerms = (FilePermissions)(0xC000 | 0x100 | 0x80 | 0x20 | 0x10);
                         return sockConf;
                     }
 
