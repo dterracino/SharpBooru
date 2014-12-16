@@ -53,10 +53,12 @@ namespace TA.SharpBooru.Server
             logger.LogLine("Loading configuration...");
             Config config = new Config("config.xml");
 
-            logger.LogLine("Loading certificate...");
             X509Certificate2 cert = null;
-            if (!string.IsNullOrWhiteSpace(config.Certificate))
+            if (config.CertificateNeeded)
+            {
+                logger.LogLine("Loading certificate...");
                 cert = new X509Certificate2(config.Certificate);
+            }
 
             logger.LogLine("Loading booru...");
             ServerBooru booru = new ServerBooru(booruPath);
@@ -105,7 +107,6 @@ namespace TA.SharpBooru.Server
                         sockListeners[i] = new SocketListener(sockets[i]);
                     else if (cert != null)
                         sockListeners[i] = new SocketListener(sockets[i], cert);
-                    else throw new Exception("Certificate not loaded"); //TODO Better exception
                     sockListeners[i].SocketAccepted += socket =>
                         {
                             logger.LogLine("Client connected");

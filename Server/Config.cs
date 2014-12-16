@@ -32,6 +32,7 @@ namespace TA.SharpBooru
         public readonly string Certificate;
 
         public readonly List<SocketConfig> SocketConfigs;
+        public readonly bool CertificateNeeded = false;
 
         public readonly bool EnableMailNotificator;
         public readonly string MailNotificatorServer;
@@ -55,6 +56,12 @@ namespace TA.SharpBooru
             SocketConfigs = new List<SocketConfig>(2);
             foreach (XmlNode node in sockNode.ChildNodes)
                 SocketConfigs.Add(ParseSocketConfig(node));
+            foreach (var sockConf in SocketConfigs)
+                if (sockConf.UseTLS)
+                {
+                    CertificateNeeded = true;
+                    break;
+                }
 
             XmlNode mnNode = rootNode.SelectSingleNode("MailNotificator");
             EnableMailNotificator = Convert.ToBoolean(mnNode.Attributes["enable"].Value);
