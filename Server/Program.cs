@@ -104,6 +104,7 @@ namespace TA.SharpBooru.Server
                 for (int i = 0; i < sockets.Length; i++)
                 {
                     bool useTLS = config.SocketConfigs[i].UseTLS;
+                    sockListeners[i] = new SocketListener(sockets[i]);
                     sockListeners[i].SocketAccepted += socket =>
                         {
                             logger.LogLine("Client connected");
