@@ -10,7 +10,7 @@ namespace TA.SharpBooru.Server
 {
     public static class SyscallEx
     {
-        [DllImport("libc.so")]
+        [DllImport("libc", EntryPoint = "setpriority")]
         private static extern int _setpriority(int which, int who, int prio);
 
         private static void CheckRoot()

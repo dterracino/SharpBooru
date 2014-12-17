@@ -33,7 +33,7 @@ namespace TA.SharpBooru.Server
                 {
                     Process.Start();
                     try { SyscallEx.setpriority(Process.Id, 19); }
-                    catch { }
+                    catch (Exception ex) { Logger.LogException("SetPriority", ex); }
                     Process.WaitForExit();
                     if (Process.ExitCode == 0)
                     {
