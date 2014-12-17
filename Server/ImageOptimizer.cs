@@ -32,6 +32,8 @@ namespace TA.SharpBooru.Server
                 try
                 {
                     Process.Start();
+                    try { SyscallEx.setpriority(Process.Id, 19); }
+                    catch { }
                     Process.WaitForExit();
                     if (Process.ExitCode == 0)
                     {
