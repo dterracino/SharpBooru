@@ -2,6 +2,7 @@
 using System.IO;
 using System.Security;
 using System.Threading;
+using System.Runtime.InteropServices;
 using Mono.Unix;
 using Mono.Unix.Native;
 
@@ -9,6 +10,9 @@ namespace TA.SharpBooru.Server
 {
     public static class SyscallEx
     {
+        [DllImport("libc.so")]
+        private static extern int _setpriority(int which, int who, int prio);
+
         private static void CheckRoot()
         {
             if (Syscall.getuid() != 0)
@@ -56,6 +60,12 @@ namespace TA.SharpBooru.Server
             CheckRoot();
             if (Syscall.chmod(Path, Mode) != 0)
                 throw new Exception("chmod failed");
+        }
+
+        public static void setpriority(int PID, int Priority)
+        {
+            if (_setpriority(0, PID, Priority) != 0)
+                throw new Exception("setpriority failed");
         }
     }
 }
