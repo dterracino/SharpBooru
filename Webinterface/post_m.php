@@ -41,10 +41,11 @@ if (!isset($id_err))
 	echo "</ul>";
 	subsection_footer();
 	subsection_header("User");
+	echo '<a href="search_m.php?tags=user%3D' . $post->user . '">';
 	echo htmlentities($post->user);
 	if ($post->private)
-		echo " <i>(private)</i>";
-	else echo " <i>(public)</i>";
+		echo "</a> <i>(private)</i>";
+	else echo "</a> <i>(public)</i>";
 	subsection_footer();
 	$source = htmlentities($post->source);
 	if (filter_var($post->source, FILTER_VALIDATE_URL))
