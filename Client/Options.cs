@@ -108,10 +108,7 @@ namespace TA.SharpBooru
         [Option('i', "id", Required = true, HelpText = "The post/image ID")]
         public ulong ID { get; set; }
 
-        [Option('p', "path", Required = true, HelpText = "The temporary image path (w/o extension)")]
-        public string Path { get; set; }
-
-        [Option('e', "editor", Required = false, HelpText = "The image editor program")]
+        [Option('e', "editor", Required = true, HelpText = "The image editor program")]
         public string Editor { get; set; }
     }
 

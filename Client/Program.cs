@@ -19,11 +19,7 @@ namespace TA.SharpBooru
             Console.Write("\x1b]0;SharpBooru Client\x07");
             // Console.Title = "SharpBooru Client";
             try { return MainStage2(args); }
-            finally
-            {
-                try { Helper.CleanTempFolder(); }
-                catch { }
-            }
+            finally { Helper.CleanTempFolder(); }
         }
 
         public static int MainStage2(string[] args)
@@ -256,35 +252,25 @@ namespace TA.SharpBooru
              else if (oType == typeof(EditImgOptions))
              {
                  EditImgOptions options = (EditImgOptions)commonOptions;
+                 string path = Helper.GetTempFile();
                  BooruImage img = null;
-                 string path = options.Path;
                  try
                  {
                      Request(str, RequestCode.Get_Image, (rw) => rw.Write(options.ID), (rw) => { img = BooruImage.FromReader(rw); });
                      img.Save(ref path, true);
                  }
                  finally { img.Dispose(); }
-                 if (options.Editor != null)
-                 {
-                     var psi = new ProcessStartInfo(options.Editor, path);
-                     Process tool = new Process() { StartInfo = psi };
-                     tool.Start();
-                     Console.Write("Waiting for image editor to exit...");
-                     tool.WaitForExit();
-                 }
-                 else
-                 {
-                     Console.Write("Edit the image and press any key to save it... ");
-                     Console.ReadKey(true);
-                     Console.WriteLine();
-                 }
+                 var psi = new ProcessStartInfo(options.Editor, path);
+                 Process tool = new Process() { StartInfo = psi };
+                 tool.Start();
+                 Console.Write("Waiting for image editor to exit...");
+                 tool.WaitForExit();
                  using (BooruImage eImg = BooruImage.FromFile(path))
                      Request(str, RequestCode.Edit_Image, (rw) =>
                          {
                              rw.Write(options.ID);
                              eImg.ToWriter(rw);
                          }, (rw) => { });
-                 File.Delete(path);
              }
              else if (oType == typeof(GetImgOptions))
              {
