@@ -93,13 +93,14 @@ namespace TA.SharpBooru.Server
                 SyscallEx.setuid(config.User);
 
                 logger.LogLine("Starting server...");
-                mn = new MailNotificator(logger,
-                    config.MailNotificatorServer,
-                    config.MailNotificatorPort,
-                    config.MailNotificatorUsername,
-                    config.MailNotificatorPassword,
-                    config.MailNotificatorSender,
-                    config.MailNotificatorReceiver);
+                if (config.EnableMailNotificator)
+                    mn = new MailNotificator(logger,
+                        config.MailNotificatorServer,
+                        config.MailNotificatorPort,
+                        config.MailNotificatorUsername,
+                        config.MailNotificatorPassword,
+                        config.MailNotificatorSender,
+                        config.MailNotificatorReceiver);
                 server = new Server(booru, logger, mn, 2);
                 for (int i = 0; i < sockets.Length; i++)
                 {

@@ -196,8 +196,9 @@ namespace TA.SharpBooru.Server
                         post.Image = BooruImage.FromReader(RW);
                         ulong id = _Booru.AddPost(User, post);
                         RW.Write(id);
-                        using (var thumb = _Booru.GetThumbnail(null, id))
-                            _MN.NotificatePostAdded(id, post, thumb);
+                        if (_MN != null)
+                            using (var thumb = _Booru.GetThumbnail(null, id))
+                                _MN.NotificatePostAdded(id, post, thumb);
                     } break;
 
                 case RequestCode.Edit_Post:
