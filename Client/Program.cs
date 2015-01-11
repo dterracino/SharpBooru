@@ -213,7 +213,7 @@ namespace TA.SharpBooru
                      Console.WriteLine("EditCount   " + post.EditCount);
                      Console.WriteLine("Score       " + post.Score);
                      Console.WriteLine();
-                     Console.WriteLine(BooruTagListToString(post.Tags));
+                     Console.WriteLine(BooruTagListToString(post.Tags, !options.NoColor));
                  }
              }
              else if (oType == typeof(EditOptions))
@@ -332,17 +332,14 @@ namespace TA.SharpBooru
                 Tags.Add(new BooruTag(addTag));
         }
 
-        private static string BooruTagListToString(BooruTagList Tags)
+        private static string BooruTagListToString(BooruTagList Tags, bool Color)
         {
             string[] strTags = new string[Tags.Count];
             for (int i = 0; i < strTags.Length; i++)
-            {
-                string tag = Tags[i].Tag;
-                var color = Tags[i].Color;
-                //strTags[i] = string.Format("\x1b[38;2;{0};{1};{2}m{3}", color.R, color.G, color.B, tag);
-                strTags[i] = "\x1b[38;5;" + ColorHelper.GetXTermIndexFromColor(color) + "m" + tag;
-            }
-            return string.Join(" ", strTags) + "\x1b[0m";
+                if (Color)
+                    strTags[i] = "\x1b[38;5;" + ColorHelper.GetXTermIndexFromColor(Tags[i].Color) + "m" + Tags[i].Tag;
+                else strTags[i] = Tags[i].Tag;
+            return string.Join(" ", strTags) + (Color ? "\x1b[0m" : string.Empty);
         }
 
         private static BooruPost GetPost(Stream str, ulong ID)

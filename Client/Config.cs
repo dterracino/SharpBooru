@@ -22,8 +22,8 @@ namespace TA.SharpBooru
         public static Config TryLoad()
         {
             string[] paths = new string[4];
-            paths[0] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), ".config", "booru", "client.conf");
-            paths[1] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "booru.conf");
+            paths[0] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), ".config", "booru", "client.xml");
+            paths[1] = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "booru.xml");
             paths[2] = "/etc/booru/client.xml";
             paths[3] = "/srv/booru/config.xml";
 

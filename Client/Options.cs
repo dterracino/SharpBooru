@@ -75,6 +75,9 @@ namespace TA.SharpBooru
     {
         [Option('i', "id", Required = true, HelpText = "The post ID")]
         public ulong ID { get; set; }
+
+        [Option("no-color", Required = false, HelpText = "Disable ANSI color output")]
+        public bool NoColor { get; set; }
     }
 
     [Verb("edit", HelpText = "Edits a post")]
