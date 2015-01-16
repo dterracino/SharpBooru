@@ -2,12 +2,13 @@
 
 require_once("booru.php");
 
-$posts = $booru->search("");
+if (isset($_GET["tags"]))
+	$tag_search = $_GET["tags"];
+else $tag_search = "";
+
+$posts = $booru->search($tag_search);
 
 $mobile = false;
-if (isset($_GET["target"]))
-	if ($_GET["target"] == "mobile")
-		$mobile = true;
 
 $index = mt_rand(0, count($posts) - 1);
 if (isset($_GET["type"]))
@@ -15,6 +16,10 @@ if (isset($_GET["type"]))
 		$index = 0;
 
 $id = $posts[$index];
+
+if (isset($_GET["target"]))
+	if ($_GET["target"] == "mobile")
+		$mobile = true;
 
 if ($mobile)
 	$url = "post_m.php";
