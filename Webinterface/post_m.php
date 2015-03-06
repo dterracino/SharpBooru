@@ -32,7 +32,7 @@ if (!isset($id_err))
 	echo "</a><br>";
 	subsection_header("Tags");
 	echo '<ul class="tags">';
-	foreach($post->tags as $tag)
+	foreach ($post->tags as $tag)
 	{
 		echo '<li><span style="color:' . $tag->color . '">';
 		echo '<a href="search_m.php?tags=' . urlencode($tag->tag) . '">';
